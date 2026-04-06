@@ -857,7 +857,8 @@
     .recovery-donut-sep { height: 1px; background: var(--sep); margin: 12px 0 14px; }
     .recovery-donut-wrap { display: flex; justify-content: center; align-items: center; padding-bottom: 2px; }
     .recovery-donut-wrap svg { display: block; }
-    .recovery-chart-card .chart-title { margin-bottom: 10px; }
+    .recovery-chart-card .chart-title { margin-bottom: 13px; }
+    .chart-card.reveal.d3 .chart-title { margin-bottom: 13px; }
     .recovery-chart-card { padding-bottom: var(--space-3); }
 
     /* ─────────────────────── Phase split (Figma 23602:6529) ─────────────────────── */
@@ -1075,6 +1076,17 @@
       letter-spacing: -0.02em;
       text-transform: none;
       line-height: 1.2;
+      margin-bottom: 52px;
+    }
+    /* Plan section — same scale as focus heading, dark text on light page */
+    #plan-heading {
+      color: var(--ink);
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      line-height: 1.2;
+      margin-top: 36px;
       margin-bottom: 52px;
     }
     .focus-stack {
@@ -2120,7 +2132,6 @@
     <!-- Sleep stage stacked bars (bottom→top: awake, light, deep, REM) -->
     <div class="chart-card reveal d3">
       <p class="chart-title">Sleep breakdown</p>
-      <p class="chart-sub">30-night avg</p>
       <div class="sleep-chart-legend" aria-label="Sleep stage averages">
         <span class="sleep-legend-item">
           <span class="legend-swatch circle" style="background:#c084fc" aria-hidden="true"></span>
@@ -2155,8 +2166,7 @@
   <!-- Training intensity vs duration (colour = next-day recovery) -->
   <div class="chart-card reveal d1 chart-stack-gap">
     <div class="chart-hd">
-      <p class="chart-title">Training intensity</p>
-      <p class="chart-meta">Per workout · 30 days</p>
+      <p class="chart-title">Training intensity vs. Next day recovery</p>
         </div>
     <div class="trimp-legend" aria-label="Workouts by next-day recovery">
       <span class="trimp-legend-item">
@@ -2271,7 +2281,6 @@
   <div class="chart-card reveal d1 chart-stack-gap">
     <div class="chart-hd">
       <p class="chart-title">Heart rate zones</p>
-      <p class="chart-meta">30-day total</p>
       </div>
     <div class="hrz-row">
       <span class="hrz-zone-lbl">90–100%</span>
@@ -2577,7 +2586,7 @@
 ═══════════════════════════════════════ -->
 <section class="focus-section-band">
   <div class="inner page-section">
-    <h2 class="section-label reveal section-label--caps" id="focus-heading">Where supplements can help most</h2>
+    <h2 class="section-label reveal section-label--caps" id="focus-heading">Your priority areas</h2>
     <div class="focus-stack">
       <div class="focus-item reveal d1">
         <p class="focus-area-label">Priority 1</p>
@@ -2714,7 +2723,7 @@
      THE PLAN
 ═══════════════════════════════════════ -->
 <div class="inner page-section">
-  <p class="section-label reveal">The Plan</p>
+  <h2 class="section-label reveal section-label--caps" id="plan-heading">Your path to longevity</h2>
 
   <div class="card proj-card reveal d1">
     <div class="proj-hero">
