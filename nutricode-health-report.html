@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nutricode — Health Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ─────────────────────── Foundation ─────────────────────── */
+    :root {
+      --font-ui:   'Urbanist', -apple-system, "Helvetica Neue", sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      /* Ink scale */
+      --ink:   #17171a;
+      --ink-2: #2c2c30;
+      --ink-3: #6b7280;
+      --ink-4: #9ca3af;
+      --ink-5: #d1d5db;
+      /* Surfaces */
+      --bg:   #f5f5f7;
+      --card: #ffffff;
+      --sep:  rgba(0,0,0,0.055);
+      /* Semantic colours — UI-level (text, badges) */
+      --green:  #1a6b37;
+      --amber:  #995000;
+      --red:    #b51c1c;
+      --blue:   #1a4ea0;
+      /* Accent colours — data, charts, indicators */
+      --green-accent: #22c55e;
+      --amber-accent: #f59e0b;
+      --red-accent:   #ef4444;
+      --blue-accent:  #3b82f6;
+      /* Tinted backgrounds */
+      --red-bg:   rgba(181,28,28,0.07);
+      --amber-bg: rgba(153,80,0,0.08);
+      --green-bg: rgba(26,107,55,0.08);
+      --blue-bg:  rgba(26,78,160,0.07);
+      /* Spacing */
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 40px;
+      --space-6: 56px;
+      /* Radius — more architectural, less playful */
+      --radius-sm:  6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      /* Card elevation — quieter */
+      --card-border: rgba(0,0,0,0.07);
+      --card-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.025);
+      /* base-new.css letter-spacing (tracking as % of font-size) */
+      --ls-9: calc(9px * 0.011);
+      --ls-9-caps: calc(9px * 0.28);
+      --ls-10: calc(10px * 0.01);
+      --ls-10-caps: calc(10px * 0.28);
+      --ls-11: calc(11px * 0.011);
+      --ls-11-caps: calc(11px * 0.28);
+      --ls-12: calc(12px * 0.008);
+      --ls-13: calc(13px * 0.011);
+      --ls-14: calc(14px * 0.013);
+      --ls-15: calc(15px * 0.021);
+      --ls-16: calc(16px * 0.018);
+      --ls-18: calc(18px * 0.02);
+      --ls-20: calc(20px * 0.02);
+      --ls-21: calc(21px * 0.02);
+      --ls-22: calc(22px * 0.02);
+      --ls-28: calc(28px * 0.02);
+      --ls-30: calc(30px * 0.02);
+      --ls-34: calc(34px * 0.02);
+      /* Minimum horizontal inset from viewport — keeps the column off screen edges on all sizes */
+      --page-edge: clamp(16px, 4.5vw, 24px);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      font-optical-sizing: auto;
+      font-style: normal;
+      font-size: 15px;
+      line-height: 1.4;
+      letter-spacing: var(--ls-15);
+      overflow-x: hidden;
+      padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
+      padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* base-new.css .font-jetbrains-mono */
+    .score-stat-val,
+    .proj-val,
+    .snap-val,
+    .snap-formula,
+    .sleep-legend-pct,
+    .donut-legend-range,
+    .donut-legend-num,
+    .phase-num,
+    .phase-duration,
+    .bio-bench-scale,
+    .bio-value,
+    .focus-card__statval-num,
+    .hrz-zone-lbl,
+    .hrz-time,
+    .act-big,
+    .act-summary-count,
+    .act-summary-dur {
+      font-optical-sizing: auto;
+      font-style: normal;
+    }
+
+    .inner {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      padding-left: 0;
+      padding-right: 0;
+      box-sizing: border-box;
+    }
+    /* Wellness block follows hero in the same .inner — spacing only (matches former .page-section top gap) */
+    .section-block--wellness {
+      margin-top: var(--space-6);
+      width: 100%;
+      min-width: 0;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .65s cubic-bezier(.22,1,.36,1), transform .65s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1 { transition-delay: .06s; }
+    .d2 { transition-delay: .12s; }
+    .d3 { transition-delay: .18s; }
+    .d4 { transition-delay: .24s; }
+    .d5 { transition-delay: .30s; }
+
+    /* ─────────────────────── Report header ─────────────────────── */
+    .report-header { padding: var(--space-5) 0 var(--space-4); }
+    .report-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      margin-bottom: var(--space-5);
+    }
+    .report-header .logo {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: var(--ls-11-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .header-sync {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+    .header-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green-accent);
+      flex-shrink: 0;
+      animation: header-dot-pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes header-dot-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
+      }
+    }
+    .header-sync-text {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--ink-4);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+
+    /* ─────────────────────── Shared card ─────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    /* ─────────────────────── Section label ─────────────────────── */
+    .section-label {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 22px;
+      line-height: 1.35;
+    }
+
+    /* ─────────────────────── Page sections ─────────────────────── */
+    .page-section { padding: var(--space-6) 0 0; }
+    .page-section:first-of-type { padding-top: var(--space-5); }
+
+    /* ─────────────────────── Report title + meta ─────────────────────── */
+    .report-name {
+      font-family: var(--font-ui);
+      font-size: 34px;
+      font-weight: 600;
+      letter-spacing: var(--ls-34);
+      color: var(--ink);
+      line-height: 1.1;
+    }
+    .report-meta-line {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-4);
+      margin-top: 8px;
+      letter-spacing: var(--ls-14);
+      line-height: 1.5;
+    }
+    .report-sep { height: 1px; background: var(--sep); border: none; margin: 0; }
+
+    /* ─────────────────────── Metric health card ─────────────────────── */
+    .metric-health-card { padding: var(--space-4) var(--space-3) var(--space-3); }
+    .metric-health-top { display: flex; align-items: flex-start; gap: var(--space-3); }
+    .score-ring-wrap { flex-shrink: 0; display: flex; align-self: flex-start; }
+    .score-ring-wrap svg { display: block; width: 116px; height: 116px; }
+    .metric-health-main { flex: 1; min-width: 0; }
+    .metric-health-phase-row {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 8px 10px; margin-bottom: 12px;
+    }
+    .phase-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 8px; border-radius: 4px;
+      background: rgba(0,0,0,0.05);
+      color: var(--ink-3);
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+    .phase-track {
+      display: flex; width: 38px; height: 3px;
+      border-radius: 2px; overflow: hidden; gap: 3px;
+    }
+    .phase-seg { flex: 1; height: 100%; border-radius: 1px; background: rgba(0,0,0,0.1); }
+    .phase-seg--on { background: var(--ink-3); }
+    .phase-of {
+      font-family: var(--font-ui);
+      font-size: 11px; font-weight: 400; color: var(--ink-5);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .score-headline {
+      font-family: var(--font-ui);
+      font-size: 22px; font-weight: 600;
+      letter-spacing: var(--ls-22);
+      color: var(--ink);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .score-context {
+      font-family: var(--font-ui);
+      font-size: 13px; color: var(--ink-3);
+      letter-spacing: var(--ls-13);
+      line-height: 1.45;
+    }
+    .metric-health-sep { height: 1px; background: var(--sep); margin: var(--space-3) 0; }
+    .limiting-label {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-5); margin-bottom: 14px;
+    }
+    .limiting-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .limiting-row {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+    }
+    .limiting-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .limiting-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .limiting-dot--red   { background: var(--red-accent); }
+    .limiting-dot--amber { background: var(--amber-accent); }
+    .limiting-name {
+      font-family: var(--font-ui);
+      font-size: 14px; font-weight: 400;
+      color: var(--ink);
+      letter-spacing: var(--ls-14);
+      line-height: 1.4;
+    }
+    .limiting-right { flex-shrink: 0; }
+    .limiting-badge {
+      display: inline-block; padding: 3px 8px; border-radius: 4px;
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+    .limiting-badge--red   { background: var(--red-bg);   color: var(--red); }
+    .limiting-badge--amber { background: var(--amber-bg); color: var(--amber); }
+
+    /* Card internal separator */
+    .card-sep { height: 1px; background: var(--sep); margin: 0 var(--space-3); }
+
+    /* Score footer stats */
+    .score-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+    .score-stat { padding: 16px 20px; display: flex; flex-direction: column; gap: 5px; }
+    .score-stat + .score-stat { border-left: 1px solid var(--sep); }
+    .score-stat-val {
+      font-family: var(--font-mono);
+      font-size: 18px; font-weight: 500;
+      letter-spacing: var(--ls-18);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .score-stat-lbl {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      color: var(--ink-5);
+    }
+
+    /* ─────────────────────── Period picker ─────────────────────── */
+    .period-picker {
+      display: flex; align-items: center; gap: 2px;
+      padding: 2px; border-radius: 7px;
+      background: rgba(0,0,0,0.07);
+      align-self: flex-start; margin-bottom: 10px;
+    }
+    .period-btn {
+      padding: 4px 10px; border-radius: 5px;
+      font-family: var(--font-ui);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+      color: var(--ink-4); border: none; background: transparent;
+      cursor: pointer; transition: background .15s, color .15s;
+    }
+    .period-btn.active {
+      background: #fff; color: var(--ink); font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+
+    /* ─────────────────────── Status tags (flat, architectural) ─────────────────────── */
+    .status-pill {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.25;
+      text-transform: uppercase;
+      padding: 3px 8px; border-radius: 4px;
+    }
+    .pill-red   { background: var(--red-bg);   color: var(--red); }
+    .pill-amber { background: var(--amber-bg); color: var(--amber); }
+    .pill-green { background: var(--green-bg); color: var(--green); }
+    .pill-gray  { background: rgba(0,0,0,0.05); color: var(--ink-3); }
+
+    /* ─────────────────────── Score projection card ─────────────────────── */
+    .proj-card { padding: var(--space-4) var(--space-3) 0; overflow: hidden; }
+    .proj-hero { margin-bottom: var(--space-3); }
+    .proj-chart-wrap {
+      margin: 0 calc(-1 * var(--space-3));
+      padding: 0 var(--space-3) var(--space-2);
+    }
+    .proj-chart-wrap svg { display: block; width: 100%; }
+    .trend-card-title {
+      font-family: var(--font-ui);
+      font-size: 20px; font-weight: 600;
+      letter-spacing: var(--ls-20);
+      color: var(--ink);
+      line-height: 1.25;
+      margin: 0;
+    }
+    .trend-card-sub {
+      font-family: var(--font-ui);
+      font-size: 13px; color: var(--ink-3);
+      margin: 8px 0 0;
+      letter-spacing: var(--ls-13);
+      line-height: 1.5;
+      max-width: 38em;
+    }
+    .proj-milestones-wrap { position: relative; }
+    .proj-milestones {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--sep);
+      margin: 0 calc(-1 * var(--space-3)); padding: 0 var(--space-3);
+    }
+    .proj-milestone { padding: var(--space-2) var(--space-1); text-align: center; }
+    .proj-milestone + .proj-milestone { border-left: 1px solid var(--sep); }
+    .proj-val {
+      font-family: var(--font-mono);
+      font-size: 16px; font-weight: 500;
+      letter-spacing: var(--ls-16);
+      line-height: 1.35;
+      color: var(--ink);
+    }
+    .proj-milestone:first-child .proj-val { color: var(--ink-4); }
+    .proj-milestone:nth-child(n+4) .proj-val { color: var(--blue); }
+    .proj-milestone:nth-child(n+4) .proj-lbl { color: var(--blue); font-weight: 600; }
+    .proj-lbl {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 400; color: var(--ink-5); margin-top: 5px;
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    /* ─────────────────────── CTA ─────────────────────── */
+    .cta-section { padding: var(--space-6) 0 72px; margin-top: var(--space-2); }
+    .cta-card { padding: var(--space-5) var(--space-4); text-align: center; }
+    .cta-eyebrow {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-5); margin-bottom: var(--space-3);
+    }
+    .cta-headline {
+      font-family: var(--font-ui);
+      font-size: 28px; font-weight: 600;
+      letter-spacing: var(--ls-28);
+      color: var(--ink);
+      margin-bottom: var(--space-2);
+      line-height: 1.15;
+    }
+    .cta-body {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      line-height: 1.4;
+      letter-spacing: var(--ls-14);
+      color: var(--ink-3);
+      margin-bottom: var(--space-4);
+      max-width: 28em; margin-left: auto; margin-right: auto;
+    }
+    .cta-btn {
+      display: block; width: 100%;
+      padding: 16px var(--space-2); min-height: 50px;
+      border-radius: var(--radius-md); background: var(--ink); color: #fff;
+      font-family: var(--font-ui); font-size: 15px; font-weight: 600;
+      letter-spacing: var(--ls-15);
+      line-height: 1.35;
+      text-align: center; text-decoration: none;
+      border: none; cursor: pointer;
+      transition: opacity .18s, transform .14s ease;
+    }
+    .cta-btn:hover { opacity: .80; transform: translateY(-1px); }
+    .cta-btn:active { opacity: 1; transform: none; }
+    .cta-note {
+      margin-top: var(--space-3); font-family: var(--font-ui);
+      font-size: 11px; color: var(--ink-5);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+
+    /* ─────────────────────── Snapshot tiles ─────────────────────── */
+    .snapshot-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: stretch;
+    }
+    .snapshot-tile {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: var(--space-3);
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex; flex-direction: column; height: 100%;
+    }
+    .snap-tile-hd {
+      flex-shrink: 0; min-height: 26px; margin-bottom: 10px;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px;
+    }
+    .snap-tile-hd .snap-name-row { width: 100%; }
+    .snap-name {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      text-transform: uppercase;
+      color: var(--ink-4); margin-bottom: 0; line-height: 1.25;
+    }
+    .snap-tile-value { flex: 1 1 0; min-height: 44px; display: flex; align-items: flex-end; }
+    .snap-tile-value--row { flex-wrap: wrap; gap: 8px 10px; align-items: flex-end; }
+    .snap-val {
+      font-family: var(--font-mono);
+      font-size: 34px; font-weight: 400;
+      letter-spacing: var(--ls-34);
+      color: var(--ink);
+      line-height: 1;
+      margin: 0;
+    }
+    .snap-unit {
+      font-family: var(--font-ui);
+      font-size: 14px; font-weight: 400; color: var(--ink-4); margin-left: 2px;
+      letter-spacing: var(--ls-14);
+      line-height: 1.4;
+    }
+    .snap-tile-sep {
+      flex-shrink: 0; height: 1px; background: var(--sep);
+      width: 50%; margin: 14px 0 10px; border: none;
+    }
+    .snap-ft {
+      flex-shrink: 0; display: flex; align-items: center; gap: 5px;
+      font-family: var(--font-ui);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+      min-height: 1.35em;
+    }
+    .snap-ft--flat { color: var(--ink-4); }
+    .snap-ft--neg  { color: var(--red); }
+    .snap-ft--pos  { color: var(--green); }
+    .snap-ft-icon { flex-shrink: 0; display: flex; align-items: center; color: inherit; }
+    .snapshot-grid--3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 520px) {
+      .snapshot-grid--3 { grid-template-columns: 1fr; }
+    }
+    .snap-name-row {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px; flex: 1; min-width: 0;
+    }
+    .snap-name-row .snap-name { flex: 1; min-width: 0; }
+    .snap-info-btn {
+      flex-shrink: 0; border: none; background: none; padding: 2px;
+      cursor: pointer; color: var(--ink-5);
+      display: flex; align-items: center; border-radius: 50%;
+      transition: color .15s ease;
+    }
+    .snap-info-btn:hover { color: var(--ink-3); }
+    .snap-tag {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.25;
+      text-transform: uppercase;
+      padding: 3px 7px; border-radius: 4px;
+    }
+    .snap-tag--hard { background: var(--amber-bg); color: var(--amber); }
+    /* TRIMP dialog */
+    .snap-info-dialog[open] {
+      display: flex; width: 100%; max-width: none; height: 100%; max-height: none;
+      margin: 0; padding: 20px; border: none; background: transparent;
+      align-items: center; justify-content: center; box-sizing: border-box;
+    }
+    .snap-info-dialog::backdrop { background: rgba(0,0,0,.35); }
+    .snap-info-dialog-panel {
+      background: var(--card); border-radius: var(--radius-md);
+      border: 1px solid var(--card-border); padding: 0;
+      max-width: min(92vw,400px); max-height: min(85vh,560px);
+      overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 16px 48px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
+    }
+    .snap-info-dialog-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--sep); flex-shrink: 0;
+    }
+    .snap-info-dialog-title {
+      margin: 0; font-family: var(--font-ui);
+      font-size: 14px; font-weight: 600; color: var(--ink);
+      letter-spacing: var(--ls-14);
+      line-height: 1.4;
+    }
+    .snap-info-dialog-close {
+      flex-shrink: 0; width: 28px; height: 28px; border: none;
+      background: rgba(0,0,0,0.06); border-radius: 50%;
+      font-size: 18px; line-height: 1; cursor: pointer; color: var(--ink-3);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .snap-info-dialog-close:hover { background: rgba(0,0,0,.1); }
+    .snap-info-panel {
+      padding: 14px 16px 18px; overflow-y: auto;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      letter-spacing: var(--ls-13);
+      line-height: 1.45;
+      color: var(--ink-3);
+    }
+    .snap-info-panel p { margin: 0 0 8px; }
+    .snap-info-panel p:last-child { margin-bottom: 0; }
+    .snap-formula {
+      font-family: var(--font-mono); font-size: 11px; color: var(--ink);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+      background: rgba(0,0,0,.04); border-radius: 4px;
+      padding: 6px 8px; margin: 6px 0 !important;
+    }
+    .snap-info-scale { margin: 0; padding: 0; list-style: none; font-size: 12px; letter-spacing: var(--ls-12); line-height: 1.5; }
+    .snap-info-scale li { margin-bottom: 2px; }
+    .snap-info-scale li:last-child { margin-bottom: 0; }
+
+    .snap-info-panel .bio-vo2-formula {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: var(--ls-11);
+      line-height: 1.45;
+      color: var(--ink);
+      background: #faf8f5;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 0 0 14px;
+    }
+    .snap-info-subhd {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: var(--ls-13);
+      margin: 14px 0 8px;
+    }
+    .bio-vo2-vars { margin: 0; padding: 0; }
+    .bio-vo2-vars > div {
+      display: grid;
+      grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+      gap: 12px 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--sep);
+    }
+    .bio-vo2-vars > div:last-child { border-bottom: none; }
+    .bio-vo2-vars dt {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: var(--ls-11);
+      line-height: 1.4;
+      margin: 0;
+    }
+    .bio-vo2-vars dd {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink-3);
+      letter-spacing: var(--ls-13);
+      line-height: 1.45;
+      margin: 0;
+    }
+    .bio-vo2-sci-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .bio-vo2-sci-card {
+      background: #faf8f5;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      letter-spacing: var(--ls-12);
+      line-height: 1.45;
+      color: var(--ink-3);
+    }
+    .bio-vo2-sci-card strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    @media (max-width: 520px) {
+      .bio-vo2-sci-grid { grid-template-columns: 1fr; }
+      .bio-vo2-vars > div { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    /* ─────────────────────── Chart cards ─────────────────────── */
+    .chart-card {
+      background: var(--card); border-radius: var(--radius-md);
+      border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+      overflow: hidden; padding: var(--space-3) var(--space-3) var(--space-2);
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .chart-hd {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2);
+    }
+    .chart-title {
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 600; color: var(--ink);
+      letter-spacing: var(--ls-13);
+      line-height: 1.25;
+    }
+    .chart-meta {
+      font-family: var(--font-ui);
+      font-size: 10px; color: var(--ink-5); text-align: right; flex-shrink: 0;
+      letter-spacing: var(--ls-10);
+      line-height: 1.4;
+    }
+    .trimp-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 12px; }
+    .trimp-legend-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-ui);
+      font-size: 11px; color: var(--ink-3);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .trimp-legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .chart-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+    @media (max-width: 520px) {
+      .chart-pair { grid-template-columns: 1fr; }
+    }
+    .chart-sub {
+      font-family: var(--font-ui);
+      font-size: 11px; color: var(--ink-5); margin-bottom: var(--space-2);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: var(--space-2); }
+    .legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--font-ui); font-size: 11px; color: var(--ink-3);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .legend-swatch { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+    .legend-swatch.circle { border-radius: 50%; }
+    .sleep-chart-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-bottom: var(--space-2); }
+    .sleep-chart-legend .sleep-legend-item {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-ui); font-size: 10px;
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .sleep-legend-name { font-weight: 600; color: var(--ink-2); }
+    .sleep-legend-pct {
+      font-family: var(--font-mono); font-weight: 400; color: var(--ink-4); font-size: 10px;
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .sleep-chart-axis {
+      display: flex; justify-content: space-between; margin-top: 5px;
+      font-family: var(--font-ui); font-size: 9px; color: var(--ink-5);
+      letter-spacing: var(--ls-9);
+      line-height: 1.35;
+    }
+    .donut-legend-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 8px;
+    }
+    .donut-legend-row:last-child { margin-bottom: 0; }
+    .donut-legend-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .donut-legend-text { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 5px; }
+    .donut-legend-name {
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 500; color: var(--ink);
+      letter-spacing: var(--ls-13);
+      line-height: 1.25;
+    }
+    .donut-legend-range {
+      font-family: var(--font-mono); font-size: 10px; color: var(--ink-4);
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .donut-legend-val { display: flex; align-items: baseline; gap: 3px; flex-shrink: 0; }
+    .donut-legend-num {
+      font-family: var(--font-mono);
+      font-size: 15px; font-weight: 500; color: var(--ink);
+      letter-spacing: var(--ls-15);
+      line-height: 1.35;
+    }
+    .donut-legend-unit {
+      font-family: var(--font-ui); font-size: 11px; color: var(--ink-4);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .recovery-donut-sep { height: 1px; background: var(--sep); margin: 12px 0 14px; }
+    .recovery-donut-wrap { display: flex; justify-content: center; align-items: center; padding-bottom: 2px; }
+    .recovery-donut-wrap svg { display: block; }
+    .recovery-chart-card .chart-title { margin-bottom: 10px; }
+    .recovery-chart-card { padding-bottom: var(--space-3); }
+
+    /* ─────────────────────── Phase split ─────────────────────── */
+    .roadmap-phases {
+      display: grid; grid-template-columns: 3fr 2fr;
+      border-top: 1px solid var(--sep);
+      margin: 0 calc(-1 * var(--space-3)); padding: 0 var(--space-3);
+    }
+    .roadmap-phase { padding: var(--space-3) var(--space-3); }
+    .roadmap-phase + .roadmap-phase { border-left: 1px solid var(--sep); }
+    .phase-num {
+      font-family: var(--font-mono);
+      font-size: 9px; font-weight: 400;
+      letter-spacing: var(--ls-9-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-5); margin-bottom: 8px;
+    }
+    .phase-name {
+      font-family: var(--font-ui);
+      font-size: 14px; font-weight: 600;
+      letter-spacing: var(--ls-14);
+      line-height: 1.35;
+      color: var(--ink); margin-bottom: 3px;
+    }
+    .phase-desc {
+      font-family: var(--font-ui); font-size: 12px; color: var(--ink-3);
+      letter-spacing: var(--ls-12);
+      line-height: 1.5;
+    }
+    .phase-duration {
+      margin-top: 8px; font-family: var(--font-mono);
+      font-size: 10px; color: var(--ink-4);
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .section-label--caps {
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      line-height: 1.35;
+      color: var(--ink-3);
+    }
+
+    /* ─────────────────────── Biometric panel ─────────────────────── */
+    .bio-stack {
+      display: flex; flex-direction: column; gap: var(--space-4);
+      padding-bottom: var(--space-4);
+    }
+    .section-label--bio { margin-bottom: 10px; }
+    .bio-panel-note {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ink-4);
+      letter-spacing: var(--ls-12);
+      line-height: 1.45;
+      margin: 0 0 22px;
+      max-width: 38em;
+    }
+    h2.bio-panel-title {
+      font-family: var(--font-ui);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: var(--ls-11-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-4); margin: 0 0 10px;
+    }
+    .bio-panel-card {
+      background: var(--card); border-radius: var(--radius-md);
+      border: 1px solid var(--card-border); box-shadow: var(--card-shadow); overflow: hidden;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .bio-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) minmax(90px,1.2fr) minmax(90px,auto);
+      gap: 10px 12px; align-items: center; padding: 13px 16px;
+      border-bottom: 1px solid var(--sep);
+    }
+    .bio-panel-card .bio-row:last-child { border-bottom: none; }
+    /* Sleep stages: extra air inside card (last row + card padding) */
+    .bio-panel-card--sleep-stages .bio-row:last-child {
+      padding-bottom: 24px;
+    }
+    .bio-panel-card--sleep-stages {
+      padding-bottom: var(--space-3);
+    }
+    .bio-row-name {
+      font-family: var(--font-ui);
+      font-size: 13px; font-weight: 400; color: var(--ink);
+      letter-spacing: var(--ls-13);
+      line-height: 1.25;
+    }
+    .bio-row-name-row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 4px;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .bio-row-name-row .bio-row-name { flex: 0 1 auto; min-width: 0; }
+    .bio-row-bar { min-width: 0; }
+    .bio-bench { position: relative; padding: 2px 0 0; }
+    .bio-bench-track-wrap { position: relative; height: 5px; }
+    .bio-bench-track {
+      height: 100%; background: rgba(0,0,0,0.07);
+      border-radius: 3px; overflow: hidden; position: relative;
+    }
+    .bio-bench-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; }
+    .bio-bench-fill--green { background: var(--green-accent); }
+    .bio-bench-fill--amber { background: var(--amber-accent); }
+    .bio-bench-tick {
+      position: absolute; top: 50%; width: 1px; height: 10px; margin-top: -5px;
+      background: rgba(0,0,0,0.22); transform: translateX(-50%); pointer-events: none;
+    }
+    .bio-bench-tick--start { left: 0; }
+    .bio-bench-tick--val { z-index: 1; }
+    /* Peer average (men 28–30, WHOOP) — dashed, distinct from your-value tick */
+    .bio-bench-tick--avg {
+      width: 0;
+      height: 12px;
+      margin-top: -6px;
+      background: none;
+      border-left: 1.5px dashed var(--ink-3);
+      opacity: 0.7;
+    }
+    .bio-bench-scale {
+      display: flex; justify-content: space-between; margin-top: 5px;
+      font-family: var(--font-mono); font-size: 9px; color: var(--ink-5);
+      letter-spacing: var(--ls-9);
+      line-height: 1.35;
+    }
+    .bio-row-right {
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 5px; text-align: right; min-width: 0;
+    }
+    .bio-row-valline {
+      display: flex; align-items: baseline; justify-content: flex-end; flex-wrap: wrap; gap: 0 3px;
+    }
+    .bio-value {
+      font-family: var(--font-mono);
+      font-size: 21px; font-weight: 500;
+      letter-spacing: var(--ls-21);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .bio-unit {
+      font-family: var(--font-ui); font-size: 10px; font-weight: 400; color: var(--ink-4);
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .bio-badge {
+      display: inline-block; font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.25;
+      padding: 3px 7px; border-radius: 4px;
+    }
+    .bio-badge.optimal   { background: var(--green-bg); color: var(--green); }
+    .bio-badge.normal    { background: var(--green-bg); color: var(--green); }
+    .bio-badge.below     { background: var(--amber-bg); color: var(--amber); }
+    .bio-badge.needs-imp { background: var(--amber-bg); color: var(--amber); }
+    @media (max-width: 480px) {
+      .bio-row { grid-template-columns: 1fr; gap: 8px; }
+      .bio-row-right { align-items: flex-start; text-align: left; }
+      .bio-row-valline { justify-content: flex-start; }
+    }
+
+    /* ─────────────────────── Focus section band ─────────────────────── */
+    /* Full-bleed: negative margins alone do not widen the border box (background),
+       so width must include both body-padding “bleeds” or the band clips on one side. */
+    .focus-section-band {
+      --focus-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
+      --focus-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      width: calc(100% + var(--focus-bleed-l) + var(--focus-bleed-r));
+      max-width: none;
+      margin-left: calc(-1 * var(--focus-bleed-l));
+      margin-right: calc(-1 * var(--focus-bleed-r));
+      background: #1a1b1f;
+      border-radius: 0;
+      padding: var(--space-5) 0 var(--space-6);
+      box-sizing: border-box;
+      position: relative;
+    }
+    .focus-section-band #focus-heading {
+      color: #ffffff;
+      font-size: clamp(18px, 4.8vw, 24px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      line-height: 1.2;
+      margin-bottom: 22px;
+    }
+    .focus-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─────────────────────── Focus cards ─────────────────────── */
+    .focus-card.card {
+      padding: 22px 24px;
+      background: #26262b;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      overflow: visible;
+      box-shadow: 0 6px 28px rgba(0,0,0,0.45);
+    }
+    .focus-card__inner {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+    .focus-card__header-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 10px 18px;
+      align-items: start;
+      min-width: 0;
+    }
+    .focus-area-label {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: #f59e0b;
+      margin: 0 0 10px;
+      letter-spacing: 0.01em;
+    }
+    .focus-card__intro { min-width: 0; }
+    .focus-card__title {
+      font-family: var(--font-ui);
+      font-size: clamp(17px, 4.2vw, 21px);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      margin: 0;
+      line-height: 1.25;
+      overflow-wrap: break-word;
+    }
+    .focus-card__chart {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      min-width: 0;
+    }
+    .focus-card__chart svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .focus-card__chart-cap {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      color: rgba(255,255,255,0.32);
+      text-align: right;
+      letter-spacing: 0.01em;
+    }
+    .focus-card__body {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.58);
+      line-height: 1.65;
+      letter-spacing: -0.01em;
+      margin: 0;
+      width: fit-content;
+      max-width: min(100%, 42ch);
+      background: rgba(255,255,255,0.055);
+      border-radius: 10px;
+      padding: 14px 16px;
+      box-sizing: border-box;
+    }
+    @media (max-width: 560px) {
+      .focus-card.card { padding: 18px 14px; }
+      .focus-card__header-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .focus-card__chart {
+        align-items: flex-start;
+      }
+      .focus-card__chart-cap {
+        text-align: left;
+        align-self: flex-start;
+      }
+      .focus-section-band #focus-heading {
+        font-size: clamp(17px, 4.5vw, 22px);
+        line-height: 1.3;
+      }
+    }
+
+    /* ─────────────────────── HR Zones ─────────────────────── */
+    .hrz-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 9px 0; border-bottom: 1px solid var(--sep);
+    }
+    .hrz-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .hrz-row:first-child { padding-top: 2px; }
+    .hrz-zone-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px; font-weight: 400; color: var(--ink-4);
+      width: 52px; flex-shrink: 0;
+      letter-spacing: var(--ls-10);
+      line-height: 1.35;
+    }
+    .hrz-track {
+      flex: 1; height: 5px; background: rgba(0,0,0,0.07);
+      border-radius: 3px; overflow: hidden; min-width: 0;
+    }
+    .hrz-bar {
+      height: 100%;
+      border-radius: 4px;
+      min-width: 2px;
+    }
+    .hrz-time {
+      font-family: var(--font-mono);
+      font-size: 11px; font-weight: 500; color: var(--ink);
+      width: 36px; flex-shrink: 0; text-align: right;
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+
+    /* ─────────────────────── Activity summary ─────────────────────── */
+    .act-summary-header { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--sep); }
+    .act-summary-hd-col { padding: var(--space-3) var(--space-3) var(--space-2); }
+    .act-summary-hd-col:last-child { text-align: right; }
+    .act-col-lbl {
+      font-family: var(--font-ui);
+      font-size: 10px; font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-4); margin-bottom: 8px;
+    }
+    .act-big {
+      font-family: var(--font-mono);
+      font-size: 30px; font-weight: 400;
+      letter-spacing: var(--ls-30);
+      color: var(--ink);
+      line-height: 1;
+    }
+    .act-summary-list {
+      padding: 0 0 var(--space-3) 0;
+    }
+    .act-summary-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px var(--space-3); border-bottom: 1px solid var(--sep);
+    }
+    .act-summary-row:last-child { border-bottom: none; }
+    .act-summary-count {
+      width: 32px; flex-shrink: 0;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 400; color: var(--ink-4);
+      letter-spacing: var(--ls-11);
+      line-height: 1.35;
+    }
+    .act-summary-name {
+      flex: 1; min-width: 0;
+      font-family: var(--font-ui); font-size: 13px; font-weight: 400; color: var(--ink);
+      letter-spacing: var(--ls-13);
+      line-height: 1.25;
+    }
+    .act-summary-dur {
+      flex-shrink: 0; margin-left: auto;
+      font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+      color: var(--ink); text-align: right; min-width: 3em;
+      letter-spacing: var(--ls-13);
+      line-height: 1.25;
+    }
+
+    .chart-stack-gap { margin-top: 10px; }
+
+    /* ─────────────────────────────────────────────────────────────
+       MOBILE — general (≤ 600px)
+       Tighten rhythm, fix tight grids, ensure breathable padding
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      /* Tighter space tokens */
+      :root {
+        --space-5: 32px;
+        --space-6: 44px;
+      }
+
+      /* Report header */
+      .report-header { padding: 24px 0 18px; }
+      .report-header-top { margin-bottom: 20px; }
+      .report-name { font-size: clamp(26px, 8vw, 34px); }
+
+      /* Section labels */
+      .page-section { padding: 36px 0 0; }
+
+      /* ── Metric health card ── */
+      /* Stack ring centered above text on small screens */
+      .metric-health-card { padding: 22px 20px 20px; }
+      .metric-health-top {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        text-align: center;
+      }
+      .score-ring-wrap svg { width: 88px; height: 88px; }
+      .metric-health-phase-row { justify-content: center; }
+      .score-headline { font-size: 20px; }
+      .score-context { font-size: 13px; }
+
+      /* Score footer — keep 3 cols but breathable */
+      .score-stat { padding: 13px 12px; gap: 4px; }
+      .score-stat-val { font-size: 16px; }
+      .score-stat-lbl { font-size: 9px; }
+
+      /* ── 30-day snapshot ── */
+      /* 2-column grid instead of 3 on mobile */
+      .snapshot-grid--3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      /* Full-width for the training intensity tile (3rd tile alone) */
+      .snapshot-grid--3 .snapshot-tile:last-child {
+        grid-column: 1 / -1;
+      }
+      .snap-val { font-size: 28px; }
+
+      /* ── Projection card ── */
+      .proj-hero { margin-bottom: 16px; }
+      .trend-card-title { font-size: 17px; }
+
+      /* Projection card — allow milestone strip to scroll horizontally */
+      .proj-card { overflow: visible; }
+
+      /* Milestones — horizontal scroll on mobile */
+      .proj-milestones-wrap { position: relative; }
+      .proj-milestones-wrap::after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        width: 40px; height: 100%;
+        background: linear-gradient(to right, transparent, var(--card));
+        pointer-events: none;
+        border-radius: 0 0 var(--radius-md) 0;
+      }
+      .proj-milestones {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+        margin: 0 calc(-1 * var(--space-3));
+        padding: 0 var(--space-3);
+        display: flex;
+        gap: 0;
+        border-top: 1px solid var(--sep);
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        background: var(--card);
+      }
+      .proj-milestones::-webkit-scrollbar { display: none; }
+      .proj-milestone {
+        min-width: 76px;
+        padding: 14px 8px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .proj-milestone + .proj-milestone { border-left: 1px solid var(--sep); }
+      .proj-val { font-size: 14px; }
+      .proj-lbl { font-size: 9px; }
+
+      /* ── Roadmap phase split ── */
+      .roadmap-phases { grid-template-columns: 1fr; }
+      .roadmap-phase + .roadmap-phase { border-left: none; border-top: 1px solid var(--sep); }
+
+      /* ── Bio panel rows ── */
+      .bio-row {
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto auto;
+        gap: 8px 12px;
+        padding: 14px 16px;
+      }
+      .bio-row-name,
+      .bio-row-name-row { grid-column: 1; grid-row: 1; }
+      .bio-row-right { grid-column: 2; grid-row: 1 / 3; align-items: flex-end; }
+      .bio-row-bar { grid-column: 1; grid-row: 2; }
+      .bio-value { font-size: 18px; }
+
+      /* ── Chart pair ── */
+      .chart-pair { grid-template-columns: 1fr; }
+
+      /* ── Focus cards (dark band) ── */
+      .focus-section-band { padding: 32px 0 36px; }
+      .focus-card.card { padding: 20px 18px; }
+      .focus-card__title { font-size: 18px; }
+      .focus-card__header-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .focus-card__chart { align-items: flex-start; }
+      .focus-card__chart svg { opacity: 0.9; }
+      .focus-card__body { font-size: 13px; padding: 12px 14px; }
+
+      /* ── CTA section ── */
+      .cta-card { padding: 32px 20px; }
+      .cta-headline { font-size: 24px; }
+      .cta-btn { font-size: 15px; padding: 17px 16px; }
+
+      /* ── Activity summary ── */
+      .act-summary-header { grid-template-columns: 1fr 1fr; }
+      .act-big { font-size: 26px; }
+      .act-summary-row { padding: 11px 16px; gap: 8px; }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       MOBILE — narrow (≤ 390px, e.g. iPhone SE)
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 390px) {
+      .report-name { font-size: 24px; }
+      .score-headline { font-size: 18px; }
+
+      /* On very narrow: go full single col for snapshot */
+      .snapshot-grid--3 { grid-template-columns: 1fr; }
+      .snapshot-grid--3 .snapshot-tile:last-child { grid-column: auto; }
+
+      /* Bio rows full stack */
+      .bio-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .bio-row-name,
+      .bio-row-name-row { grid-column: 1; grid-row: 1; }
+      .bio-row-bar  { grid-column: 1; grid-row: 2; }
+      .bio-row-right { grid-column: 1; grid-row: 3; align-items: flex-start; text-align: left; }
+      .bio-row-valline { justify-content: flex-start; }
+
+      /* Score footer 3-col still, but even tighter */
+      .score-stat { padding: 11px 8px; }
+      .score-stat-val { font-size: 15px; }
+
+      /* Focus card charts smaller */
+      .focus-card__chart svg { width: 80px; height: auto; }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .header-dot { animation: none; box-shadow: none; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     REPORT TOP
+═══════════════════════════════════════ -->
+<div class="inner">
+  <header class="report-header reveal">
+    <div class="report-header-top">
+      <span class="logo">Nutricode</span>
+      <div class="header-sync">
+        <span class="header-dot" aria-hidden="true"></span>
+        <span class="header-sync-text">14 days synced</span>
+      </div>
+    </div>
+    <h1 class="report-name">Mathieu's Report</h1>
+    <p class="report-meta-line">Apr 1–14, 2026 · WHOOP 4.0 · Men · 28–30</p>
+  </header>
+
+  <hr class="report-sep reveal" role="separator" aria-hidden="true" />
+
+  <div class="section-block section-block--wellness">
+  <p class="section-label reveal">Metric health</p>
+
+  <div class="card reveal d1">
+    <div class="metric-health-card">
+      <div class="metric-health-top">
+
+        <!-- Ring -->
+        <div class="score-ring-wrap" data-score="67" aria-label="Health score: 67 out of 100">
+          <svg width="116" height="116" viewBox="0 0 116 116" fill="none" aria-hidden="true">
+            <!-- Track -->
+            <circle cx="58" cy="58" r="50" stroke="rgba(0,0,0,0.08)" stroke-width="8"/>
+            <!-- Score arc: circumference=314.16, 67%=210.5 — stroke colour set by band in JS -->
+            <circle id="score-ring-arc" cx="58" cy="58" r="50"
+              stroke="#17FF00" stroke-width="8" stroke-linecap="round"
+              stroke-dasharray="210.5 314.16"
+              transform="rotate(-90 58 58)"
+              style="transition: stroke-dasharray 1s cubic-bezier(.22,1,.36,1), stroke .25s ease"/>
+            <g transform="translate(58,58) translate(0,10)" font-family="'JetBrains Mono',ui-monospace,monospace">
+              <text x="0" y="-6" text-anchor="middle"
+                font-size="28" font-weight="500" fill="#17171a">67</text>
+              <text x="0" y="11" text-anchor="middle"
+                font-size="9.5" font-weight="400" fill="#9ca3af">/100</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="metric-health-main">
+          <div class="metric-health-phase-row">
+            <span class="phase-badge">Phase 1</span>
+            <div class="phase-track" role="img" aria-label="Phase 1 of 2">
+              <span class="phase-seg phase-seg--on"></span>
+              <span class="phase-seg"></span>
+            </div>
+            <span class="phase-of">of 2</span>
+          </div>
+          <p class="score-headline">Strong foundation</p>
+          <p class="score-context">You’re already ahead of 62% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.</p>
+        </div>
+
+      </div>
+
+      <div class="metric-health-sep" aria-hidden="true"></div>
+
+      <div class="metric-health-limiting">
+        <p class="limiting-label">Limiting metrics</p>
+        <ul class="limiting-list" aria-label="Metrics needing attention">
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
+              <span class="limiting-name">HRV</span>
+            </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--red">27% below avg</span>
+            </div>
+          </li>
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
+              <span class="limiting-name">Deep sleep</span>
+            </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--red">33% below avg</span>
+            </div>
+          </li>
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--amber" aria-hidden="true"></span>
+              <span class="limiting-name">Stress</span>
+            </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--amber">40% above avg</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+
+<!-- ─── 30-day snapshot ─── -->
+  <div class="page-section">
+  <p class="section-label reveal">30-day snapshot</p>
+
+  <!-- 3 stat tiles -->
+  <div class="snapshot-grid snapshot-grid--3">
+    <div class="snapshot-tile reveal d1">
+      <div class="snap-tile-hd">
+        <p class="snap-name">Avg Recovery</p>
+      </div>
+      <div class="snap-tile-value">
+        <p class="snap-val">61<span class="snap-unit"> %</span></p>
+      </div>
+      <div class="snap-tile-sep" aria-hidden="true"></div>
+      <div class="snap-ft snap-ft--flat">
+        <span class="snap-ft-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7" cy="7" r="5.75" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M4.5 7h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span>Moderate range</span>
+      </div>
+    </div>
+    <div class="snapshot-tile reveal d2">
+      <div class="snap-tile-hd">
+        <p class="snap-name">Sleep Performance</p>
+      </div>
+      <div class="snap-tile-value">
+        <p class="snap-val">74<span class="snap-unit"> %</span></p>
+      </div>
+      <div class="snap-tile-sep" aria-hidden="true"></div>
+      <div class="snap-ft snap-ft--neg">
+        <span class="snap-ft-icon" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 2v7M2.75 6.25L6 9.5l3.25-3.25" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>11pts below optimal</span>
+      </div>
+    </div>
+    <div class="snapshot-tile reveal d3">
+      <div class="snap-tile-hd">
+        <div class="snap-name-row">
+          <p class="snap-name">Avg Training Intensity</p>
+          <button type="button" class="snap-info-btn" id="snap-trimp-open" aria-haspopup="dialog" aria-controls="snap-trimp-dialog" title="How TRIMP is calculated">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.25"/>
+              <path d="M8 11.2V7.9M8 5.2h.01" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="snap-tile-value snap-tile-value--row">
+        <p class="snap-val">2.1</p>
+        <span class="snap-tag snap-tag--hard">Hard</span>
+      </div>
+      <div class="snap-tile-sep" aria-hidden="true"></div>
+      <div class="snap-ft snap-ft--pos">
+        <span class="snap-ft-icon" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 10V3M2.75 5.75L6 2.5l3.25 3.25" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span>High training load</span>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="snap-trimp-dialog" class="snap-info-dialog" aria-labelledby="snap-trimp-dialog-title">
+    <div class="snap-info-dialog-panel">
+      <div class="snap-info-dialog-hd">
+        <p class="snap-info-dialog-title" id="snap-trimp-dialog-title">Training intensity (TRIMP)</p>
+        <button type="button" class="snap-info-dialog-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="snap-info-panel">
+        <p><strong>Training impulse (TRIMP)</strong> is based on heart-rate reserve—not raw average heart rate alone. Resting HR, max HR, and sex all influence the result.</p>
+        <p class="snap-formula">TRIMP = duration × relative heart-rate intensity × weighting factor</p>
+        <p><strong>Banister’s model:</strong> <span class="snap-formula" style="display:inline-block;margin:0;">TRIMP = t × ΔHR × y</span></p>
+        <p><em>t</em> = session duration (minutes). <em>ΔHR</em> = fractional heart-rate reserve. <em>y</em> = intensity weighting factor that increases as effort gets harder (stress rises faster than linearly at high intensity).</p>
+        <p><strong>Weighting factor</strong> (HRR = heart-rate reserve):</p>
+        <p class="snap-formula">Men: 0.64 × e<sup>(1.92 × HRR)</sup></p>
+        <p class="snap-formula">Women: 0.86 × e<sup>(1.67 × HRR)</sup></p>
+        <p class="snap-formula">ΔHR = (HR<sub>exercise</sub> − HR<sub>rest</sub>) / (HR<sub>max</sub> − HR<sub>rest</sub>)</p>
+        <p><strong>TRIMP/min scale</strong></p>
+        <ul class="snap-info-scale">
+          <li>~1.0 = easy</li>
+          <li>~1.5–2.0 = moderate</li>
+          <li>~2.0+ = hard</li>
+          <li>~2.5+ = very hard</li>
+        </ul>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="bio-vo2-dialog" class="snap-info-dialog" aria-labelledby="bio-vo2-dialog-title">
+    <div class="snap-info-dialog-panel">
+      <div class="snap-info-dialog-hd">
+        <p class="snap-info-dialog-title" id="bio-vo2-dialog-title">VO₂ max</p>
+        <button type="button" class="snap-info-dialog-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="snap-info-panel">
+        <p>VO₂ max estimates your aerobic capacity from wearable data — no lab test required. It combines your heart rate range with your autonomic fitness (via HRV) to produce a single number in ml/kg/min.</p>
+        <p class="bio-vo2-formula">VO₂max = 3.04 × (HR<sub>max</sub> / RHR) + 3.0 × ln(HRV) + 32.1</p>
+        <p class="snap-info-subhd">Variables</p>
+        <dl class="bio-vo2-vars">
+          <div>
+            <dt>HR<sub>max</sub></dt>
+            <dd>Highest heart rate recorded in a workout (bpm)</dd>
+          </div>
+          <div>
+            <dt>RHR</dt>
+            <dd>Resting heart rate, ideally a 7-day overnight average (bpm)</dd>
+          </div>
+          <div>
+            <dt>HRV</dt>
+            <dd>Heart rate variability (RMSSD in ms), 30-day average</dd>
+          </div>
+          <div>
+            <dt>ln(HRV)</dt>
+            <dd>Natural log of HRV — compresses the scale so large values don’t dominate</dd>
+          </div>
+        </dl>
+        <p class="snap-info-subhd">Scientific basis</p>
+        <div class="bio-vo2-sci-grid">
+          <div class="bio-vo2-sci-card">
+            <strong>HR ratio term</strong>
+            Based on <a href="https://link.springer.com/article/10.1007/s00421-003-0988-y" target="_blank" rel="noopener noreferrer">Uth-Sørensen (2004)</a>. The ratio HR<sub>max</sub>/RHR proxies cardiac output range and stroke volume efficiency.
+          </div>
+          <div class="bio-vo2-sci-card">
+            <strong>ln(HRV) term</strong>
+            Based on <a href="https://onlinelibrary.wiley.com/doi/10.1111/j.1540-8159.2010.02841.x" target="_blank" rel="noopener noreferrer">Nunan et al. (2010)</a>. Log-scaled RMSSD captures vagal tone and autonomic fitness independently of HR.
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Recovery + Sleep breakdown -->
+  <div class="chart-pair">
+
+    <!-- Recovery score donut -->
+    <!-- r=30, C≈188.5 — clockwise from 12: Yellow 16/30 → Green 9/30 → Red 5/30; flat caps -->
+    <div class="chart-card recovery-chart-card reveal d2">
+      <p class="chart-title">Recovery</p>
+      <div class="donut-legend-row">
+        <div class="donut-legend-left">
+          <span class="legend-swatch circle" style="background:#22c55e" aria-hidden="true"></span>
+          <span class="donut-legend-text">
+            <span class="donut-legend-name">High</span>
+            <span class="donut-legend-range">67%+</span>
+          </span>
+        </div>
+        <span class="donut-legend-val">
+          <span class="donut-legend-num">9</span>
+          <span class="donut-legend-unit">days</span>
+        </span>
+      </div>
+      <div class="donut-legend-row">
+        <div class="donut-legend-left">
+          <span class="legend-swatch circle" style="background:#f59e0b" aria-hidden="true"></span>
+          <span class="donut-legend-text">
+            <span class="donut-legend-name">Moderate</span>
+            <span class="donut-legend-range">34–66%</span>
+          </span>
+        </div>
+        <span class="donut-legend-val">
+          <span class="donut-legend-num">16</span>
+          <span class="donut-legend-unit">days</span>
+        </span>
+      </div>
+      <div class="donut-legend-row">
+        <div class="donut-legend-left">
+          <span class="legend-swatch circle" style="background:#ef4444" aria-hidden="true"></span>
+          <span class="donut-legend-text">
+            <span class="donut-legend-name">Low</span>
+            <span class="donut-legend-range">0–33%</span>
+          </span>
+        </div>
+        <span class="donut-legend-val">
+          <span class="donut-legend-num">5</span>
+          <span class="donut-legend-unit">days</span>
+        </span>
+      </div>
+      <div class="recovery-donut-sep" aria-hidden="true"></div>
+      <div class="recovery-donut-wrap">
+        <svg width="88" height="88" viewBox="0 0 76 76" fill="none" aria-label="Recovery: 9 high, 16 moderate, 5 low days out of 30">
+          <circle cx="38" cy="38" r="30" stroke="rgba(0,0,0,0.07)" stroke-width="9" fill="none"/>
+          <!-- Moderate first from 12 o'clock: 16/30 of C -->
+          <circle cx="38" cy="38" r="30" stroke="#f59e0b" stroke-width="9" fill="none" stroke-linecap="butt"
+            stroke-dasharray="100.53 188.5" stroke-dashoffset="0" transform="rotate(-90 38 38)"/>
+          <!-- High: 9/30 -->
+          <circle cx="38" cy="38" r="30" stroke="#22c55e" stroke-width="9" fill="none" stroke-linecap="butt"
+            stroke-dasharray="56.55 188.5" stroke-dashoffset="-100.53" transform="rotate(-90 38 38)"/>
+          <!-- Low: 5/30 -->
+          <circle cx="38" cy="38" r="30" stroke="#ef4444" stroke-width="9" fill="none" stroke-linecap="butt"
+            stroke-dasharray="31.42 188.5" stroke-dashoffset="-157.08" transform="rotate(-90 38 38)"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Sleep stage stacked bars (bottom→top: awake, light, deep, REM) -->
+    <div class="chart-card reveal d3">
+      <p class="chart-title">Sleep breakdown</p>
+      <p class="chart-sub">30-night avg</p>
+      <div class="sleep-chart-legend" aria-label="Sleep stage averages">
+        <span class="sleep-legend-item">
+          <span class="legend-swatch circle" style="background:#c084fc" aria-hidden="true"></span>
+          <span class="sleep-legend-name">REM</span>
+          <span class="sleep-legend-pct">19%</span>
+        </span>
+        <span class="sleep-legend-item">
+          <span class="legend-swatch circle" style="background:#a78bfa" aria-hidden="true"></span>
+          <span class="sleep-legend-name">Deep</span>
+          <span class="sleep-legend-pct">14%</span>
+        </span>
+        <span class="sleep-legend-item">
+          <span class="legend-swatch circle" style="background:#93c5fd" aria-hidden="true"></span>
+          <span class="sleep-legend-name">Light</span>
+          <span class="sleep-legend-pct">54%</span>
+        </span>
+        <span class="sleep-legend-item">
+          <span class="legend-swatch circle" style="background:#e5e7eb" aria-hidden="true"></span>
+          <span class="sleep-legend-name">Awake</span>
+          <span class="sleep-legend-pct">13%</span>
+        </span>
+      </div>
+      <div id="sleep-chart-wrap" class="sleep-chart-wrap" style="height:76px; width:100%;"></div>
+      <div class="sleep-chart-axis">
+        <span>Mar 6</span>
+        <span>Mar 30</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Training intensity vs duration (colour = next-day recovery) -->
+  <div class="chart-card reveal d1 chart-stack-gap">
+    <div class="chart-hd">
+      <p class="chart-title">Training intensity</p>
+      <p class="chart-meta">Per workout · 30 days</p>
+    </div>
+    <div class="trimp-legend" aria-label="Workouts by next-day recovery">
+      <span class="trimp-legend-item">
+        <span class="trimp-legend-dot" style="background:#22c55e" aria-hidden="true"></span>
+        Good recovery
+      </span>
+      <span class="trimp-legend-item">
+        <span class="trimp-legend-dot" style="background:#f59e0b" aria-hidden="true"></span>
+        Moderate recovery
+      </span>
+      <span class="trimp-legend-item">
+        <span class="trimp-legend-dot" style="background:#ef4444" aria-hidden="true"></span>
+        Poor recovery
+      </span>
+    </div>
+    <svg viewBox="0 0 480 260" fill="none" style="display:block;width:100%;" aria-label="Training intensity by workout duration; points coloured by next-day recovery">
+      <line x1="80" y1="10" x2="80" y2="231" stroke="#e9e8e3" stroke-width="1"/>
+      <g stroke="#eeece7" stroke-width="1">
+        <line x1="145" y1="10" x2="145" y2="231"/>
+        <line x1="210" y1="10" x2="210" y2="231"/>
+        <line x1="275" y1="10" x2="275" y2="231"/>
+        <line x1="340" y1="10" x2="340" y2="231"/>
+        <line x1="405" y1="10" x2="405" y2="231"/>
+        <line x1="80" y1="136" x2="470" y2="136"/>
+        <line x1="80" y1="83" x2="470" y2="83"/>
+        <line x1="80" y1="41" x2="470" y2="41"/>
+        <line x1="80" y1="10" x2="470" y2="10"/>
+      </g>
+      <line x1="80" y1="231" x2="470" y2="231" stroke="#e9e8e3" stroke-width="1"/>
+      <text x="76" y="188" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">EASY</text>
+      <text x="76" y="112" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">MODERATE</text>
+      <text x="76" y="64" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">HARD</text>
+      <text x="76" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">VERY HARD</text>
+      <text x="80" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">0:00</text>
+      <text x="145" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">1:00</text>
+      <text x="210" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">2:00</text>
+      <text x="275" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">3:00</text>
+      <text x="340" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">4:00</text>
+      <text x="405" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">5:00</text>
+      <text x="470" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">6:00</text>
+      <text x="275" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>
+      <!-- Good next day recovery -->
+      <circle cx="102" cy="198" r="4.5" fill="#22c55e"/>
+      <circle cx="112" cy="205" r="4.5" fill="#22c55e"/>
+      <circle cx="95" cy="192" r="4.5" fill="#22c55e"/>
+      <circle cx="118" cy="188" r="4.5" fill="#22c55e"/>
+      <circle cx="128" cy="198" r="4.5" fill="#22c55e"/>
+      <!-- Moderate next day recovery -->
+      <circle cx="168" cy="138" r="4.5" fill="#f59e0b"/>
+      <circle cx="198" cy="125" r="4.5" fill="#f59e0b"/>
+      <circle cx="218" cy="118" r="4.5" fill="#f59e0b"/>
+      <circle cx="248" cy="102" r="4.5" fill="#f59e0b"/>
+      <circle cx="278" cy="95" r="4.5" fill="#f59e0b"/>
+      <circle cx="228" cy="112" r="4.5" fill="#f59e0b"/>
+      <circle cx="308" cy="88" r="4.5" fill="#f59e0b"/>
+      <circle cx="268" cy="100" r="4.5" fill="#f59e0b"/>
+      <!-- Poor next day recovery -->
+      <circle cx="352" cy="48" r="4.5" fill="#ef4444"/>
+      <circle cx="388" cy="32" r="4.5" fill="#ef4444"/>
+      <circle cx="422" cy="20" r="4.5" fill="#ef4444"/>
+      <circle cx="402" cy="22" r="4.5" fill="#ef4444"/>
+      <circle cx="362" cy="38" r="4.5" fill="#ef4444"/>
+      <circle cx="458" cy="24" r="4.5" fill="#ef4444"/>
+    </svg>
+  </div>
+
+  <!-- Activity summary -->
+  <div class="card reveal d2 chart-stack-gap">
+    <div class="act-summary-header">
+      <div class="act-summary-hd-col">
+        <p class="act-col-lbl">Activities</p>
+        <p class="act-big">16</p>
+      </div>
+      <div class="act-summary-hd-col">
+        <p class="act-col-lbl">Total duration</p>
+        <p class="act-big">36:52</p>
+      </div>
+    </div>
+    <div class="act-summary-list" aria-label="Activity frequency and duration">
+      <div class="act-summary-row">
+        <span class="act-summary-count">11×</span>
+        <span class="act-summary-name">Training</span>
+        <span class="act-summary-dur">26:49</span>
+      </div>
+      <div class="act-summary-row">
+        <span class="act-summary-count">2×</span>
+        <span class="act-summary-name">Running</span>
+        <span class="act-summary-dur">8:10</span>
+      </div>
+      <div class="act-summary-row">
+        <span class="act-summary-count">1×</span>
+        <span class="act-summary-name">Skiing</span>
+        <span class="act-summary-dur">0:46</span>
+      </div>
+      <div class="act-summary-row">
+        <span class="act-summary-count">1×</span>
+        <span class="act-summary-name">Yoga</span>
+        <span class="act-summary-dur">0:43</span>
+      </div>
+      <div class="act-summary-row">
+        <span class="act-summary-count">1×</span>
+        <span class="act-summary-name">Walking</span>
+        <span class="act-summary-dur">0:22</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR Zones (bars vs max zone 50–59% = 21:39) -->
+  <div class="chart-card reveal d1 chart-stack-gap">
+    <div class="chart-hd">
+      <p class="chart-title">Heart rate zones</p>
+      <p class="chart-meta">30-day total</p>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">90–100%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:0.23%;min-width:2px;background:#ef4444;"></div></div>
+      <span class="hrz-time">0:03</span>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">80–89%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:3.1%;background:#f59e0b;"></div></div>
+      <span class="hrz-time">0:40</span>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">70–79%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:13.1%;background:#22c55e;"></div></div>
+      <span class="hrz-time">2:50</span>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">60–69%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:25.9%;background:#60a5fa;"></div></div>
+      <span class="hrz-time">5:36</span>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">50–59%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:100%;background:#93c5fd;"></div></div>
+      <span class="hrz-time">21:39</span>
+    </div>
+    <div class="hrz-row">
+      <span class="hrz-zone-lbl">0–49%</span>
+      <div class="hrz-track"><div class="hrz-bar" style="width:27.8%;background:#d1d5db;"></div></div>
+      <span class="hrz-time">6:01</span>
+    </div>
+  </div>
+
+  </div><!-- /page-section: 30-day snapshot -->
+
+</div><!-- /inner -->
+
+
+<!-- ═══════════════════════════════════════
+     BIOMETRIC HEALTH PANEL
+═══════════════════════════════════════ -->
+<div class="inner page-section">
+  <p class="section-label reveal section-label--caps section-label--bio">Biometric Health</p>
+  <p class="bio-panel-note reveal">Peer average and targets here are benchmarked to men aged 28–30 (WHOOP cohort), unless a row states otherwise. On each bar, the dashed vertical line is peer average; the solid line is your value.</p>
+
+  <div class="bio-stack">
+
+    <!-- Cardiovascular -->
+    <section class="reveal d1">
+      <h2 class="bio-panel-title">Cardiovascular</h2>
+      <div class="bio-panel-card">
+        <div class="bio-row">
+          <div class="bio-row-name-row">
+            <span class="bio-row-name">VO₂ Max</span>
+            <button type="button" class="snap-info-btn" id="bio-vo2-open" aria-haspopup="dialog" aria-controls="bio-vo2-dialog" title="How VO₂ max is estimated">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.25"/>
+                <path d="M8 11.2V7.9M8 5.2h.01" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--green" style="width:60%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:50%" title="Peer average VO₂ max (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:60%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>30</span><span>60</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">48</span><span class="bio-unit">ml/kg/min</span>
+            </div>
+            <span class="bio-badge normal">Normal</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">HRV</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:30%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:53.33%" title="Peer average HRV (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:30%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>20</span><span>80</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">38</span><span class="bio-unit">ms</span>
+            </div>
+            <span class="bio-badge below">Below target</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Resting HR</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--green" style="width:30%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:36.67%" title="Peer average resting HR (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:30%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>40</span><span>100</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">58</span><span class="bio-unit">bpm</span>
+            </div>
+            <span class="bio-badge optimal">Optimal</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sleep quality -->
+    <section class="reveal d2">
+      <h2 class="bio-panel-title">Sleep quality</h2>
+      <div class="bio-panel-card">
+        <div class="bio-row">
+          <span class="bio-row-name">Total sleep</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:45%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:55%" title="Peer average total sleep (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:45%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>5h</span><span>9h</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">6.8</span><span class="bio-unit">h</span>
+            </div>
+            <span class="bio-badge below">Below target</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Sleep efficiency</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--green" style="width:84%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:88%" title="Peer average sleep efficiency (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:84%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0%</span><span>100%</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">84</span><span class="bio-unit">%</span>
+            </div>
+            <span class="bio-badge normal">Normal</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Disruptions</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:64%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:40%" title="Peer average disruptions per night (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:64%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0</span><span>5</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">3.2</span><span class="bio-unit">/night</span>
+            </div>
+            <span class="bio-badge needs-imp" title="Versus peer average for your age and sex (WHOOP cohort)">Above peer avg</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sleep stages -->
+    <section class="reveal d3">
+      <h2 class="bio-panel-title">Sleep stages</h2>
+      <div class="bio-panel-card bio-panel-card--sleep-stages">
+        <div class="bio-row">
+          <span class="bio-row-name">REM</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:47.5%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:62.5%" title="Peer average REM % (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:47.5%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">19</span><span class="bio-unit">%</span>
+            </div>
+            <span class="bio-badge below">Below target</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Deep</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:35%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:45%" title="Peer average deep sleep % (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:35%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">14</span><span class="bio-unit">%</span>
+            </div>
+            <span class="bio-badge below">Below target</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Light</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--green" style="width:77.14%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:74.29%" title="Peer average light sleep % (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:77.14%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0%</span><span>70%</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">54</span><span class="bio-unit">%</span>
+            </div>
+            <span class="bio-badge normal">Normal</span>
+          </div>
+        </div>
+        <div class="bio-row">
+          <span class="bio-row-name">Awake</span>
+          <div class="bio-row-bar">
+            <div class="bio-bench">
+              <div class="bio-bench-track-wrap">
+                <div class="bio-bench-track">
+                  <div class="bio-bench-fill bio-bench-fill--green" style="width:52%"></div>
+                </div>
+                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--avg" style="left:44%" title="Peer average awake % (men 28–30)" aria-hidden="true"></span>
+                <span class="bio-bench-tick bio-bench-tick--val" style="left:52%" aria-hidden="true"></span>
+              </div>
+              <div class="bio-bench-scale"><span>0%</span><span>25%</span></div>
+            </div>
+          </div>
+          <div class="bio-row-right">
+            <div class="bio-row-valline">
+              <span class="bio-value">13</span><span class="bio-unit">%</span>
+            </div>
+            <span class="bio-badge normal">Normal</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     WHAT WE'RE FOCUSING ON
+═══════════════════════════════════════ -->
+<section class="focus-section-band">
+  <div class="inner page-section">
+    <h2 class="section-label reveal section-label--caps" id="focus-heading">What we're focusing on</h2>
+    <div class="focus-stack">
+      <article class="card focus-card reveal d1">
+        <div class="focus-card__inner">
+          <p class="focus-area-label">Focus area 1</p>
+          <div class="focus-card__header-row">
+            <div class="focus-card__intro">
+              <h3 class="focus-card__title">Training load exceeding recovery capacity</h3>
+            </div>
+            <div class="focus-card__chart" aria-label="Strain vs recovery bar chart, 30 days">
+              <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
+                <rect x="0"  y="22" width="8" height="40" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="11" y="10" width="8" height="52" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="22" y="24" width="8" height="38" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="33" y="4"  width="8" height="58" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="44" y="10" width="8" height="52" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="55" y="18" width="8" height="44" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="66" y="2"  width="8" height="60" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="77" y="14" width="8" height="48" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="88" y="12" width="8" height="50" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <rect x="99" y="7"  width="8" height="55" fill="#f59e0b" opacity="0.85" rx="1"/>
+                <polyline points="4,36 15,32 26,38 37,34 48,36 59,38 70,33 81,36 92,35 103,35"
+                  stroke="rgba(255,255,255,0.6)" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+              <span class="focus-card__chart-cap">strain vs recovery · 30 days</span>
+            </div>
+          </div>
+          <p class="focus-card__body">High-intensity sessions on under-recovered days are limiting adaptation and increasing injury risk. Your body needs more time to absorb the work.</p>
+        </div>
+      </article>
+
+      <article class="card focus-card reveal d2">
+        <div class="focus-card__inner">
+          <p class="focus-area-label">Focus area 2</p>
+          <div class="focus-card__header-row">
+            <div class="focus-card__intro">
+              <h3 class="focus-card__title">HRV is suppressing your Wellness Score</h3>
+            </div>
+            <div class="focus-card__chart" aria-label="HRV line chart, 30 days">
+              <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
+                <line x1="0" y1="14" x2="110" y2="14"
+                  stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3"/>
+                <text x="108" y="11" text-anchor="end" font-size="8"
+                  fill="rgba(255,255,255,0.42)" font-family="'JetBrains Mono',monospace">52ms</text>
+                <path d="M0,36 L11,31 L22,40 L33,34 L44,29 L55,38 L66,35 L77,33 L88,40 L99,36 L110,37 L110,58 L0,58 Z"
+                  fill="rgba(245,158,11,0.18)"/>
+                <polyline points="0,36 11,31 22,40 33,34 44,29 55,38 66,35 77,33 88,40 99,36 110,37"
+                  stroke="#f59e0b" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <text x="2" y="50" font-size="8"
+                  fill="rgba(255,255,255,0.42)" font-family="'JetBrains Mono',monospace">38ms</text>
+              </svg>
+              <span class="focus-card__chart-cap">HRV · 30 days</span>
+            </div>
+          </div>
+          <p class="focus-card__body">At 38ms you're 27% below the average for your age group. Low HRV is the earliest signal of accumulated fatigue or elevated stress — both are suppressing your score right now.</p>
+        </div>
+      </article>
+
+      <article class="card focus-card reveal d3">
+        <div class="focus-card__inner">
+          <p class="focus-area-label">Focus area 3</p>
+          <div class="focus-card__header-row">
+            <div class="focus-card__intro">
+              <h3 class="focus-card__title">Repair sleep stages falling short of target</h3>
+            </div>
+            <div class="focus-card__chart" aria-label="Sleep stages donut: 33% restorative">
+              <svg width="76" height="76" viewBox="0 0 76 76" fill="none">
+                <circle cx="38" cy="38" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="9" fill="none"/>
+                <circle cx="38" cy="38" r="30" stroke="#a78bfa" stroke-width="9" fill="none"
+                  stroke-dasharray="26.4 162.1" stroke-dashoffset="0"
+                  transform="rotate(-90 38 38)"/>
+                <circle cx="38" cy="38" r="30" stroke="#f59e0b" stroke-width="9" fill="none"
+                  stroke-dasharray="35.8 152.7" stroke-dashoffset="-26.4"
+                  transform="rotate(-90 38 38)"/>
+                <text x="38" y="43" text-anchor="middle" font-size="13" font-weight="600"
+                  fill="#ffffff" font-family="'JetBrains Mono',monospace">33%</text>
+              </svg>
+              <span class="focus-card__chart-cap">deep + REM</span>
+            </div>
+          </div>
+          <p class="focus-card__body">Deep (14%) and REM (19%) together fall 8 points short of target. These are the stages where physical repair and memory consolidation happen — improving them will directly accelerate your score.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+     THE PLAN
+═══════════════════════════════════════ -->
+<div class="inner page-section">
+  <p class="section-label reveal">The Plan</p>
+
+  <div class="card proj-card reveal d1">
+    <div class="proj-hero">
+      <p class="trend-card-title">Reach 90+. Then make it last.</p>
+      <p class="trend-card-sub">Each month, we review your metrics and adjust your stack if needed to keep your score moving up. Once you reach 90+, we shift from improving your current health to supporting long-term longevity.</p>
+    </div>
+
+    <div class="proj-chart-wrap">
+      <svg viewBox="0 0 536 180" fill="none" aria-label="Green through Month 2 and the climb to 90+ at Month 3; blue only from Month 3 to Month 4 at 90+">
+        <defs>
+          <linearGradient id="proj-area-green" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(52,199,89,0.14)"/>
+            <stop offset="100%" stop-color="rgba(52,199,89,0)"/>
+          </linearGradient>
+          <linearGradient id="proj-area-blue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(91,143,216,0.14)"/>
+            <stop offset="100%" stop-color="rgba(91,143,216,0)"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(0, 36)">
+          <!-- Grid — subtle (60 bottom, 90 top) -->
+          <line x1="28" y1="104" x2="528" y2="104" stroke="#eeece7" stroke-width="1"/>
+          <line x1="28" y1="72" x2="528" y2="72" stroke="#eeece7" stroke-width="1"/>
+          <line x1="28" y1="36" x2="528" y2="36" stroke="#eeece7" stroke-width="1"/>
+          <!-- Y labels -->
+          <text x="28" y="118" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">60</text>
+          <text x="28" y="76" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">72</text>
+          <text x="28" y="40" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">90</text>
+          <!-- Fill: green through first 90+ at Month 3; blue only under Month 3→4 plateau -->
+          <path d="M28,88 C80,92 110,82 148,70 C190,60 230,56 268,52 C300,48 340,40 388,36 L388,132 L28,132 Z" fill="url(#proj-area-green)"/>
+          <path d="M388,36 L508,36 L508,132 L388,132 Z" fill="url(#proj-area-blue)"/>
+          <!-- Line: green through Month 3 (first 90+); blue only Month 3→4 -->
+          <path d="M28,88 C80,92 110,82 148,70 C190,60 230,56 268,52 C300,48 340,40 388,36" stroke="#34c759" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M388,36 L508,36" stroke="#5b8fd8" stroke-width="2.25" stroke-linecap="round" fill="none"/>
+          <circle cx="28" cy="88" r="4" fill="rgba(52,199,89,0.35)"/>
+          <circle cx="148" cy="70" r="4" fill="#fff" stroke="#34c759" stroke-width="1.75"/>
+          <circle cx="268" cy="52" r="4" fill="#fff" stroke="#34c759" stroke-width="1.75"/>
+          <circle cx="388" cy="36" r="4" fill="#fff" stroke="#5b8fd8" stroke-width="1.75"/>
+          <circle cx="508" cy="36" r="5" fill="#5b8fd8"/>
+          <circle cx="508" cy="36" r="9" fill="rgba(91,143,216,0.14)"/>
+        </g>
+        <!-- Metric review annotations above each data point -->
+        <g aria-hidden="true" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="7.5" font-weight="400">
+          <!-- Now -->
+          <line x1="28" y1="118" x2="28" y2="123" stroke="#d1d5db" stroke-width="1"/>
+          <text x="28" y="104" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
+          <!-- Month 1 -->
+          <line x1="148" y1="100" x2="148" y2="105" stroke="#d1d5db" stroke-width="1"/>
+          <text x="148" y="86" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
+          <!-- Month 2 -->
+          <line x1="268" y1="82" x2="268" y2="87" stroke="#d1d5db" stroke-width="1"/>
+          <text x="268" y="68" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
+          <!-- Month 3 -->
+          <line x1="388" y1="66" x2="388" y2="71" stroke="#d1d5db" stroke-width="1"/>
+          <text x="388" y="52" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
+          <!-- Month 4 -->
+          <line x1="508" y1="64" x2="508" y2="69" stroke="#d1d5db" stroke-width="1"/>
+          <text x="508" y="50" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="proj-milestones-wrap">
+      <div class="proj-milestones" role="list">
+        <div class="proj-milestone" role="listitem">
+          <p class="proj-val">67</p>
+          <p class="proj-lbl">Now</p>
+        </div>
+        <div class="proj-milestone" role="listitem">
+          <p class="proj-val">75</p>
+          <p class="proj-lbl">Month 1</p>
+        </div>
+        <div class="proj-milestone" role="listitem">
+          <p class="proj-val">83</p>
+          <p class="proj-lbl">Month 2</p>
+        </div>
+        <div class="proj-milestone" role="listitem">
+          <p class="proj-val">90+</p>
+          <p class="proj-lbl">Month 3</p>
+        </div>
+        <div class="proj-milestone" role="listitem">
+          <p class="proj-val">90+</p>
+          <p class="proj-lbl">Month 4</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-phases">
+      <div class="roadmap-phase">
+        <p class="phase-num">Phase 1</p>
+        <p class="phase-name">Optimise</p>
+        <p class="phase-desc">Reach 90+</p>
+        <p class="phase-duration">~90 days</p>
+      </div>
+      <div class="roadmap-phase">
+        <p class="phase-num">Phase 2</p>
+        <p class="phase-name">Longevity</p>
+        <p class="phase-desc">Make it last</p>
+        <p class="phase-duration">Ongoing</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ═══════════════════════════════════════
+     CTA
+═══════════════════════════════════════ -->
+<div class="inner cta-section">
+  <div class="card cta-card reveal d1">
+    <p class="cta-eyebrow">Analysis complete</p>
+    <h2 class="cta-headline">Your recommendation is ready</h2>
+    <p class="cta-body">Based on your metric analysis, we've built your initial supplement stack. See exactly what's recommended and why.</p>
+    <a href="#" class="cta-btn">Continue to Recommendation</a>
+    <p class="cta-note">Personalised to Mathieu · April 2026</p>
+  </div>
+</div>
+
+
+<script>
+  /* ── Sleep stacked bar chart (rounded column caps via clip-path) ── */
+  (function buildSleepChart() {
+    const wrap = document.getElementById('sleep-chart-wrap');
+    if (!wrap) return;
+    // 25 nights of [awake%, light%, deep%, rem%] — sums to 100; stack draws bottom→top
+    const nights = [
+      [12,54,15,19],[14,52,12,22],[11,56,14,19],[13,55,16,16],[15,53,13,19],
+      [12,58,11,19],[14,51,15,20],[11,57,14,18],[16,52,12,20],[13,54,14,19],
+      [12,55,15,18],[14,53,13,20],[11,56,14,19],[13,54,16,17],[15,52,12,21],
+      [12,55,14,19],[14,53,13,20],[11,57,15,17],[13,54,14,19],[12,56,13,19],
+      [14,52,15,19],[11,55,14,20],[13,54,16,17],[15,53,12,20],[12,55,14,19]
+    ];
+    const colors = ['#e5e7eb', '#93c5fd', '#a78bfa', '#c084fc']; // awake, light, deep, REM
+    const W = wrap.clientWidth || 200;
+    const H = 76;
+    const n = nights.length;
+    const bw = Math.max(2, Math.floor(W / n) - 1);
+    const rx = 2.5;
+    let defs = '';
+    let groups = '';
+    nights.forEach((night, i) => {
+      const x = Math.round(i * (W / n));
+      const id = 'sleep-clip-' + i;
+      defs += `<clipPath id="${id}"><rect x="${x}" y="0" width="${bw}" height="${H}" rx="${rx}" ry="${rx}"/></clipPath>`;
+      groups += `<g clip-path="url(#${id})">`;
+      let y = H;
+      night.forEach((pct, j) => {
+        const h = Math.round((pct / 100) * H);
+        y -= h;
+        groups += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${colors[j]}"/>`;
+      });
+      groups += '</g>';
+    });
+    wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${groups}</svg>`;
+  })();
+
+  /* ── Score ring arc colour by score band (0–30 / 31–60 / 61–90 / 91+) ── */
+  (function () {
+    const wrap = document.querySelector('.score-ring-wrap[data-score]');
+    const arc = document.getElementById('score-ring-arc');
+    if (!wrap || !arc) return;
+    const s = parseInt(wrap.getAttribute('data-score'), 10);
+    if (Number.isNaN(s)) return;
+    let c = '#ef4444';
+    if (s > 90) c = '#22c55e';
+    else if (s > 60) c = '#22c55e';
+    else if (s > 30) c = '#f59e0b';
+    arc.setAttribute('stroke', c);
+  })();
+
+  /* ── Period picker (visual only) ── */
+  document.querySelectorAll('.period-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.period-picker').querySelectorAll('.period-btn')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  /* ── Scroll reveal ── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ── TRIMP info dialog ── */
+  (function () {
+    const dialog = document.getElementById('snap-trimp-dialog');
+    const openBtn = document.getElementById('snap-trimp-open');
+    if (!dialog || !openBtn) return;
+    const closeBtn = dialog.querySelector('.snap-info-dialog-close');
+    openBtn.addEventListener('click', () => dialog.showModal());
+    if (closeBtn) closeBtn.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  })();
+
+  /* ── VO₂ max info dialog ── */
+  (function () {
+    const dialog = document.getElementById('bio-vo2-dialog');
+    const openBtn = document.getElementById('bio-vo2-open');
+    if (!dialog || !openBtn) return;
+    const closeBtn = dialog.querySelector('.snap-info-dialog-close');
+    openBtn.addEventListener('click', () => dialog.showModal());
+    if (closeBtn) closeBtn.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  })();
+</script>
+</body>
+</html>
