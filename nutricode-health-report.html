@@ -999,7 +999,11 @@
       margin-right: calc(-1 * var(--focus-bleed-r));
       background: #1a1b1f;
       border-radius: 0;
-      padding: var(--space-5) 0 var(--space-6);
+      /* Match body horizontal inset so inner content lines up with other .inner sections */
+      padding-top: var(--space-5);
+      padding-bottom: var(--space-6);
+      padding-left: var(--focus-bleed-l);
+      padding-right: var(--focus-bleed-r);
       box-sizing: border-box;
       position: relative;
     }
@@ -1306,8 +1310,11 @@
       /* ── Chart pair ── */
       .chart-pair { grid-template-columns: 1fr; }
 
-      /* ── Focus cards (dark band) ── */
-      .focus-section-band { padding: 32px 0 36px; }
+      /* ── Focus cards (dark band) — vertical only; keep side padding matching body (--focus-bleed-*) */
+      .focus-section-band {
+        padding-top: 32px;
+        padding-bottom: 36px;
+      }
       .focus-card.card { padding: 20px 18px; }
       .focus-card__title { font-size: 18px; }
       .focus-card__header-row {
