@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nutricode — HTML prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --ink: #17171a;
+      --ink-3: #6b7280;
+      --sep: rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: 'Urbanist', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: clamp(24px, 5vw, 48px);
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    p.lead {
+      font-size: 15px;
+      color: var(--ink-3);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      border-bottom: 1px solid var(--sep);
+    }
+    li:first-child { border-top: 1px solid var(--sep); }
+    a {
+      display: block;
+      padding: 14px 4px;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: color .15s ease;
+    }
+    a:hover { color: #1a4ea0; }
+    a span {
+      display: block;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ink-3);
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Nutricode prototypes</h1>
+    <p class="lead">Static HTML previews in this repo. Open a page below.</p>
+    <ul>
+      <li>
+        <a href="nutricode-health-report.html">Health report <span>Full report layout</span></a>
+      </li>
+      <li>
+        <a href="nutricode-app-redesign.html">App redesign</a>
+      </li>
+      <li>
+        <a href="nutricode-features.html">Features</a>
+      </li>
+      <li>
+        <a href="nutricode-order-details.html">Order details</a>
+      </li>
+      <li>
+        <a href="nutricode-refined-section.html">Refined section</a>
+      </li>
+      <li>
+        <a href="nutricode-rhr-card.html">RHR card</a>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>
