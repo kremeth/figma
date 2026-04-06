@@ -848,14 +848,16 @@
     .recovery-chart-card { padding-bottom: var(--space-3); }
 
     /* ─────────────────────── Phase split (Figma 23602:6529) ─────────────────────── */
+    /* Align with milestone columns: Phase 1 = Now + Month 1–2 (3 cols); Phase 2 = Month 3–4 (2 cols) */
     .roadmap-phases {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 3fr 2fr;
       border-top: 1px solid rgba(0, 0, 0, 0.055);
       margin: 0;
       padding: 0 0 24px;
     }
     .roadmap-phase {
+      min-width: 0;
       padding: 23px 24px 24px 24px;
       text-align: center;
     }
@@ -1274,7 +1276,8 @@
         gap: 20px;
         text-align: center;
       }
-      .score-ring-wrap svg { width: 88px; height: 88px; }
+      /* Keep ring at desktop size; center with stacked copy (base has align-self: flex-start) */
+      .score-ring-wrap { align-self: center; }
       .metric-health-phase-row { justify-content: center; }
       .score-headline { font-size: 20px; }
       .score-context { font-size: 13px; }
@@ -1332,13 +1335,12 @@
         hyphens: auto;
       }
 
-      /* ── Roadmap phase split ── */
-      .roadmap-phases { grid-template-columns: 1fr; }
-      .roadmap-phase { padding: 20px 24px; }
+      /* ── Roadmap phase split — keep 3:2 with milestones; tighter horizontal padding ── */
+      .roadmap-phase { padding: 20px 10px; }
       .roadmap-phase + .roadmap-phase {
-        border-left: none;
-        border-top: 1px solid rgba(0, 0, 0, 0.055);
-        padding-left: 24px;
+        border-left: 1px solid rgba(0, 0, 0, 0.055);
+        border-top: none;
+        padding-left: 10px;
       }
 
       /* ── Bio panel rows ── */
