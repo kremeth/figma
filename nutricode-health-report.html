@@ -805,6 +805,16 @@
       letter-spacing: var(--ls-10);
       line-height: 1.35;
     }
+    .sleep-chart-wrap {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .sleep-chart-wrap svg {
+      display: block;
+      width: 100%;
+      height: 76px;
+    }
     .sleep-chart-axis {
       display: flex; justify-content: space-between; margin-top: 5px;
       font-family: var(--font-ui); font-size: 9px; color: var(--ink-5);
@@ -1088,10 +1098,11 @@
       gap: 16px;
       min-width: 0;
     }
-    .focus-card__header-row {
+    .focus-card__content-row {
       display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      gap: 10px 18px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      gap: 16px 22px;
       align-items: start;
       min-width: 0;
     }
@@ -1103,7 +1114,11 @@
       margin: 0 0 10px;
       letter-spacing: 0.01em;
     }
-    .focus-card__intro { min-width: 0; }
+    .focus-card__intro {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+    }
     .focus-card__title {
       font-family: var(--font-ui);
       font-size: clamp(17px, 4.2vw, 21px);
@@ -1115,10 +1130,14 @@
       overflow-wrap: break-word;
     }
     .focus-card__chart {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      align-items: flex-end;
+      align-items: center;
+      justify-content: center;
       gap: 6px;
       min-width: 0;
     }
@@ -1131,10 +1150,12 @@
       font-family: var(--font-ui);
       font-size: 10px;
       color: rgba(255,255,255,0.32);
-      text-align: right;
+      text-align: center;
       letter-spacing: 0.01em;
     }
     .focus-card__body {
+      grid-column: 1;
+      grid-row: 2;
       font-family: var(--font-ui);
       font-size: 14px;
       font-weight: 400;
@@ -1142,25 +1163,41 @@
       line-height: 1.65;
       letter-spacing: -0.01em;
       margin: 0;
-      width: fit-content;
-      max-width: min(100%, 42ch);
+      width: 100%;
+      max-width: 48ch;
       background: rgba(255,255,255,0.055);
       border-radius: 10px;
       padding: 14px 16px;
       box-sizing: border-box;
     }
-    @media (max-width: 560px) {
-      .focus-card.card { padding: 18px 14px; }
-      .focus-card__header-row {
+    @media (max-width: 550px) {
+      .focus-card.card { padding: 20px 18px; }
+      .focus-card__title { font-size: 18px; }
+      .focus-card__content-row {
         grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
         gap: 14px;
       }
-      .focus-card__chart {
-        align-items: flex-start;
+      .focus-card__intro {
+        grid-column: 1;
+        grid-row: 1;
       }
+      .focus-card__chart {
+        grid-column: 1;
+        grid-row: 2;
+        align-items: center;
+        align-self: center;
+      }
+      .focus-card__body {
+        grid-column: 1;
+        grid-row: 3;
+        font-size: 13px;
+        padding: 12px 14px;
+      }
+      .focus-card__chart svg { opacity: 0.9; }
       .focus-card__chart-cap {
-        text-align: left;
-        align-self: flex-start;
+        text-align: center;
+        align-self: center;
       }
       .focus-section-band #focus-heading {
         font-size: clamp(17px, 4.5vw, 22px);
@@ -1267,21 +1304,6 @@
       /* Section labels */
       .page-section { padding: 36px 0 0; }
 
-      /* ── Metric health card ── */
-      /* Stack ring centered above text on small screens */
-      .metric-health-card { padding: 22px 20px 20px; }
-      .metric-health-top {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        text-align: center;
-      }
-      /* Keep ring at desktop size; center with stacked copy (base has align-self: flex-start) */
-      .score-ring-wrap { align-self: center; }
-      .metric-health-phase-row { justify-content: center; }
-      .score-headline { font-size: 20px; }
-      .score-context { font-size: 13px; }
-
       /* Score footer — keep 3 cols but breathable */
       .score-stat { padding: 13px 12px; gap: 4px; }
       .score-stat-val { font-size: 16px; }
@@ -1359,20 +1381,11 @@
       /* ── Chart pair ── */
       .chart-pair { grid-template-columns: 1fr; }
 
-      /* ── Focus cards (dark band) — vertical only; keep side padding matching body (--focus-bleed-*) */
+      /* ── Focus band spacing (two-column focus cards from 551–600px) ── */
       .focus-section-band {
         padding-top: 32px;
         padding-bottom: 36px;
       }
-      .focus-card.card { padding: 20px 18px; }
-      .focus-card__title { font-size: 18px; }
-      .focus-card__header-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .focus-card__chart { align-items: flex-start; }
-      .focus-card__chart svg { opacity: 0.9; }
-      .focus-card__body { font-size: 13px; padding: 12px 14px; }
 
       /* ── CTA section ── */
       .cta-card { padding: 32px 20px; }
@@ -1383,6 +1396,27 @@
       .act-summary-header { grid-template-columns: 1fr 1fr; }
       .act-big { font-size: 26px; }
       .act-summary-row { padding: 11px 16px; gap: 8px; }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       METRIC HEALTH — stack ring above copy (≤ 550px); ring centered, text left
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 550px) {
+      .metric-health-card { padding: 22px 20px 20px; }
+      .metric-health-top {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .score-ring-wrap { align-self: center; }
+      .metric-health-main {
+        width: 100%;
+        align-self: stretch;
+        text-align: left;
+      }
+      .metric-health-phase-row { justify-content: flex-start; }
+      .score-headline { font-size: 20px; }
+      .score-context { font-size: 13px; }
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -1751,7 +1785,7 @@
           <span class="sleep-legend-pct">13%</span>
         </span>
       </div>
-      <div id="sleep-chart-wrap" class="sleep-chart-wrap" style="height:76px; width:100%;"></div>
+      <div id="sleep-chart-wrap" class="sleep-chart-wrap" style="height:76px"></div>
       <div class="sleep-chart-axis">
         <span>Mar 6</span>
         <span>Mar 30</span>
@@ -2187,10 +2221,11 @@
       <article class="card focus-card reveal d1">
         <div class="focus-card__inner">
           <p class="focus-area-label">Focus area 1</p>
-          <div class="focus-card__header-row">
+          <div class="focus-card__content-row">
             <div class="focus-card__intro">
               <h3 class="focus-card__title">Training load exceeding recovery capacity</h3>
             </div>
+            <p class="focus-card__body">High-intensity sessions on under-recovered days are limiting adaptation and increasing injury risk. Your body needs more time to absorb the work.</p>
             <div class="focus-card__chart" aria-label="Strain vs recovery bar chart, 30 days">
               <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
                 <rect x="0"  y="22" width="8" height="40" fill="#f59e0b" opacity="0.85" rx="1"/>
@@ -2210,17 +2245,17 @@
               <span class="focus-card__chart-cap">strain vs recovery · 30 days</span>
             </div>
           </div>
-          <p class="focus-card__body">High-intensity sessions on under-recovered days are limiting adaptation and increasing injury risk. Your body needs more time to absorb the work.</p>
         </div>
       </article>
 
       <article class="card focus-card reveal d2">
         <div class="focus-card__inner">
           <p class="focus-area-label">Focus area 2</p>
-          <div class="focus-card__header-row">
+          <div class="focus-card__content-row">
             <div class="focus-card__intro">
               <h3 class="focus-card__title">HRV is suppressing your Wellness Score</h3>
             </div>
+            <p class="focus-card__body">At 38ms you're 27% below the average for your age group. Low HRV is the earliest signal of accumulated fatigue or elevated stress — both are suppressing your score right now.</p>
             <div class="focus-card__chart" aria-label="HRV line chart, 30 days">
               <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
                 <line x1="0" y1="14" x2="110" y2="14"
@@ -2238,17 +2273,17 @@
               <span class="focus-card__chart-cap">HRV · 30 days</span>
             </div>
           </div>
-          <p class="focus-card__body">At 38ms you're 27% below the average for your age group. Low HRV is the earliest signal of accumulated fatigue or elevated stress — both are suppressing your score right now.</p>
         </div>
       </article>
 
       <article class="card focus-card reveal d3">
         <div class="focus-card__inner">
           <p class="focus-area-label">Focus area 3</p>
-          <div class="focus-card__header-row">
+          <div class="focus-card__content-row">
             <div class="focus-card__intro">
               <h3 class="focus-card__title">Repair sleep stages falling short of target</h3>
             </div>
+            <p class="focus-card__body">Deep (14%) and REM (19%) together fall 8 points short of target. These are the stages where physical repair and memory consolidation happen — improving them will directly accelerate your score.</p>
             <div class="focus-card__chart" aria-label="Sleep stages donut: 33% restorative">
               <svg width="76" height="76" viewBox="0 0 76 76" fill="none">
                 <circle cx="38" cy="38" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="9" fill="none"/>
@@ -2264,7 +2299,6 @@
               <span class="focus-card__chart-cap">deep + REM</span>
             </div>
           </div>
-          <p class="focus-card__body">Deep (14%) and REM (19%) together fall 8 points short of target. These are the stages where physical repair and memory consolidation happen — improving them will directly accelerate your score.</p>
         </div>
       </article>
     </div>
@@ -2403,36 +2437,58 @@
   (function buildSleepChart() {
     const wrap = document.getElementById('sleep-chart-wrap');
     if (!wrap) return;
-    // 25 nights of [awake%, light%, deep%, rem%] — sums to 100; stack draws bottom→top
+    // 30 nights of [awake%, light%, deep%, rem%] — sums to 100; stack draws bottom→top
     const nights = [
       [12,54,15,19],[14,52,12,22],[11,56,14,19],[13,55,16,16],[15,53,13,19],
       [12,58,11,19],[14,51,15,20],[11,57,14,18],[16,52,12,20],[13,54,14,19],
       [12,55,15,18],[14,53,13,20],[11,56,14,19],[13,54,16,17],[15,52,12,21],
       [12,55,14,19],[14,53,13,20],[11,57,15,17],[13,54,14,19],[12,56,13,19],
-      [14,52,15,19],[11,55,14,20],[13,54,16,17],[15,53,12,20],[12,55,14,19]
+      [14,52,15,19],[11,55,14,20],[13,54,16,17],[15,53,12,20],[12,55,14,19],
+      [13,54,14,19],[12,53,15,20],[14,54,13,19],[11,56,14,19],[13,55,14,18]
     ];
     const colors = ['#e5e7eb', '#93c5fd', '#a78bfa', '#c084fc']; // awake, light, deep, REM
-    const W = wrap.clientWidth || 200;
     const H = 76;
     const n = nights.length;
-    const bw = Math.max(2, Math.floor(W / n) - 1);
     const rx = 2.5;
-    let defs = '';
-    let groups = '';
-    nights.forEach((night, i) => {
-      const x = Math.round(i * (W / n));
-      const id = 'sleep-clip-' + i;
-      defs += `<clipPath id="${id}"><rect x="${x}" y="0" width="${bw}" height="${H}" rx="${rx}" ry="${rx}"/></clipPath>`;
-      groups += `<g clip-path="url(#${id})">`;
-      let y = H;
-      night.forEach((pct, j) => {
-        const h = Math.round((pct / 100) * H);
-        y -= h;
-        groups += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${colors[j]}"/>`;
+    let layoutTries = 0;
+
+    function render() {
+      const W = Math.round(wrap.getBoundingClientRect().width);
+      if (W < 24) {
+        if (layoutTries++ < 48) requestAnimationFrame(render);
+        return;
+      }
+      const bw = Math.max(2, Math.floor(W / n) - 1);
+      let defs = '';
+      let groups = '';
+      nights.forEach((night, i) => {
+        const x = Math.round(i * (W / n));
+        const id = 'sleep-clip-' + i;
+        defs += `<clipPath id="${id}"><rect x="${x}" y="0" width="${bw}" height="${H}" rx="${rx}" ry="${rx}"/></clipPath>`;
+        groups += `<g clip-path="url(#${id})">`;
+        let y = H;
+        night.forEach((pct, j) => {
+          const h = Math.round((pct / 100) * H);
+          y -= h;
+          groups += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${colors[j]}"/>`;
+        });
+        groups += '</g>';
       });
-      groups += '</g>';
-    });
-    wrap.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" fill="none" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${groups}</svg>`;
+      wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${groups}</svg>`;
+    }
+
+    function scheduleRender() {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(render);
+      });
+    }
+    scheduleRender();
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => render());
+      ro.observe(wrap);
+    } else {
+      window.addEventListener('resize', render);
+    }
   })();
 
   /* ── Score ring arc colour by score band (0–30 / 31–60 / 61–90 / 91+) ── */
