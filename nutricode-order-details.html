@@ -41,11 +41,59 @@
       min-height: 100vh;
     }
 
-    /* ─── Layout ─────────────────────────────────────────────────── */
+    /* ─── Layout (mobile-first; desktop matches Figma 1316w: 960 main, 484 + 380 cols) ─── */
     .page {
-      max-width: 420px;
+      max-width: 960px;
       margin: 0 auto;
-      padding: 64px 20px 80px;
+      padding: 48px 20px 80px;
+    }
+    @media (max-width: 899px) {
+      .page {
+        max-width: 420px;
+      }
+    }
+    .page-heading {
+      text-align: center;
+      padding-bottom: 4px;
+    }
+    .page-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .col-left,
+    .col-right {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .col-right .guarantee-strip {
+      margin-top: 12px;
+    }
+    .cta-caption {
+      text-align: center;
+    }
+    .page-heading { margin-bottom: 0; }
+    .page-grid { margin-top: 32px; }
+    @media (min-width: 900px) {
+      .page {
+        padding: 72px 32px 96px;
+      }
+      .page-heading {
+        text-align: left;
+        margin-bottom: 28px;
+      }
+      .page-grid {
+        margin-top: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 484px) minmax(0, 380px);
+        gap: 32px;
+        align-items: start;
+      }
+      .cta-caption {
+        text-align: left;
+      }
     }
 
     /* ─── Typography utilities ───────────────────────────────────── */
@@ -135,11 +183,6 @@
     .mt-40 { margin-top: 40px; }
     .mt-48 { margin-top: 48px; }
 
-    /* ─── Header ─────────────────────────────────────────────────── */
-    .header {
-      text-align: center;
-      padding-bottom: 4px;
-    }
 
     /* ─── Product row ────────────────────────────────────────────── */
     .product-row {
@@ -229,6 +272,74 @@
     }
     .check svg {
       display: block;
+    }
+
+    /* ─── Your stack (Figma: Section — left column) ───────────────── */
+    .stack-section {
+      padding: 0 0 8px;
+    }
+    .stack-heading {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--tertiary);
+      padding: 20px 20px 0;
+    }
+    .stack-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 20px 20px;
+      border-top: 1px solid var(--separator);
+    }
+    .stack-row:first-of-type {
+      border-top: none;
+      padding-top: 16px;
+    }
+    .stack-thumb {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--fill);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .stack-thumb img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      display: block;
+    }
+    .stack-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .stack-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      line-height: 1.25;
+    }
+    .stack-pill {
+      display: inline-flex;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.05px;
+      color: var(--secondary);
+    }
+    .stack-dose {
+      font-size: 13px;
+      color: var(--secondary);
+      margin-top: 6px;
+      line-height: 1.35;
     }
 
     /* ─── Pricing breakdown ──────────────────────────────────────── */
@@ -414,16 +525,20 @@
 <body>
 <main class="page">
 
-  <!-- ① Header -->
-  <header class="header fade-in d1">
+  <!-- ① Header (full width) -->
+  <header class="page-heading fade-in d1">
     <h1 class="t-display">Order Details</h1>
     <p class="t-body c-secondary mt-8">
       30-day cycle &nbsp;·&nbsp; Adjust or cancel anytime
     </p>
   </header>
 
+  <div class="page-grid">
+
+  <div class="col-left">
+
   <!-- ② Product + Features (single grouped card) -->
-  <div class="card mt-32 fade-in d2">
+  <div class="card fade-in d2">
 
     <!-- Product row -->
     <div class="product-row">
@@ -502,8 +617,57 @@
 
   </div>
 
+  <!-- Your stack -->
+  <div class="card stack-section fade-in d3">
+    <div class="stack-heading">Your stack</div>
+    <div class="stack-row">
+      <div class="stack-thumb">
+        <img src="https://www.figma.com/api/mcp/asset/d077c8b1-a059-4b1c-8100-1d182601da02" alt="" />
+      </div>
+      <div class="stack-body">
+        <div class="stack-title">Resveratrol</div>
+        <div class="stack-pill">HRV</div>
+        <div class="stack-dose">250mg · 1 capsule · Morning</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-thumb">
+        <img src="https://www.figma.com/api/mcp/asset/0af49460-90d8-49d7-a1f0-12a6f0176daa" alt="" />
+      </div>
+      <div class="stack-body">
+        <div class="stack-title">Inositol</div>
+        <div class="stack-pill">RHR</div>
+        <div class="stack-dose">2g · 1 scoop · With meals</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-thumb">
+        <img src="https://www.figma.com/api/mcp/asset/b20822f3-d0d4-4e0e-b148-e780c5e951f3" alt="" />
+      </div>
+      <div class="stack-body">
+        <div class="stack-title">NMN</div>
+        <div class="stack-pill">NAD+</div>
+        <div class="stack-dose">300mg · 1 capsule · Midday</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-thumb">
+        <img src="https://www.figma.com/api/mcp/asset/a55859cc-8bf8-4ffa-9b8e-64146824495f" alt="" />
+      </div>
+      <div class="stack-body">
+        <div class="stack-title">Vitamin D3</div>
+        <div class="stack-pill">25-OH</div>
+        <div class="stack-dose">5000 IU · 1 softgel · Evening</div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /.col-left -->
+
+  <div class="col-right">
+
   <!-- ③ Pricing breakdown card -->
-  <div class="card mt-12 fade-in d3">
+  <div class="card fade-in d4">
 
     <div class="price-row">
       <span class="price-row__label c-secondary">Subtotal</span>
@@ -536,8 +700,18 @@
 
   </div>
 
-  <!-- ④ Founding member callout -->
-  <div class="founding-card mt-12 fade-in d4">
+  <!-- ④ CTA -->
+  <div class="fade-in d5">
+    <button type="button" class="cta-button">
+      Start My Monthly Protocol — $99/mo
+    </button>
+    <p class="t-caption c-secondary mt-12 cta-caption">
+      $99/mo &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; First box ships within 3 business days
+    </p>
+  </div>
+
+  <!-- ⑤ Founding member callout -->
+  <div class="founding-card fade-in d6">
     <div class="founding-inner">
       <div class="founding-pill">
         <span class="founding-dot"></span>
@@ -559,18 +733,8 @@
     </div>
   </div>
 
-  <!-- ⑤ CTA -->
-  <div class="mt-32 fade-in d5">
-    <button type="button" class="cta-button">
-      Start My Monthly Protocol — $99/mo
-    </button>
-    <p class="t-caption c-secondary align-center mt-12">
-      Cancel anytime &nbsp;·&nbsp; First box ships within 3 business days
-    </p>
-  </div>
-
   <!-- ⑥ Guarantee strip -->
-  <div class="guarantee-strip mt-24 fade-in d6">
+  <div class="guarantee-strip fade-in d7">
     <div class="shield-icon" aria-hidden="true">
       <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
         <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
@@ -578,12 +742,16 @@
       </svg>
     </div>
     <div>
-      <div class="t-body-med">No Results? <span class="c-blue">100% Refund.</span></div>
+      <div class="t-body-med">No results? <span class="c-blue">100% refund.</span></div>
       <p class="t-caption c-secondary mt-4">
         No measurable progress after 2 months? We'll refund every cent — no questions asked.
       </p>
     </div>
   </div>
+
+  </div><!-- /.col-right -->
+
+  </div><!-- /.page-grid -->
 
 </main>
 </body>

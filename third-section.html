@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nutricode — Your supplements. Continuously refined.</title>
+  <style>
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      --ink:   #1d1d1f;
+      --ink-2: #3a3a3c;
+      --ink-3: #6e6e73;
+      --green: #30c057;
+      --bg:    #f5f5f7;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      padding: 60px clamp(20px, 5vw, 53px);
+    }
+
+    /* ── Section (Figma: 1080 desktop / 460 mobile content) ── */
+    .third-section {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+    }
+    @keyframes rise {
+      to { opacity: 1; transform: none; }
+    }
+
+    .third-section__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 76px;
+      align-items: center;
+    }
+
+    @media (max-width: 899px) {
+      .third-section__inner {
+        grid-template-columns: 1fr;
+        gap: 52px;
+        max-width: 460px;
+        margin: 0 auto;
+      }
+    }
+
+    /* ── Figure: sachet (square, rounded) ── */
+    .third-section__figure {
+      margin: 0;
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      background: #e8e8ed;
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .third-section__figure img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Decorative sparkle (Figma: bottom-right on photo) */
+    .third-section__sparkle {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      pointer-events: none;
+    }
+    .third-section__sparkle svg {
+      display: block;
+      opacity: 0.85;
+    }
+
+    /* ── Editorial column ── */
+    .third-section__content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: 0;
+    }
+
+    .content-headline {
+      font-size: clamp(32px, 4.2vw, 54px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -1.6px;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 899px) {
+      .content-headline {
+        letter-spacing: -1.2px;
+        margin-bottom: 18px;
+      }
+    }
+
+    .content-body {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--ink-3);
+      letter-spacing: -0.1px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 899px) {
+      .content-body {
+        margin-bottom: 32px;
+      }
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ink-2);
+      line-height: 1.45;
+      letter-spacing: -0.1px;
+    }
+
+    .feature-check {
+      flex-shrink: 0;
+      margin-top: 1px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-check svg {
+      display: block;
+      color: #fff;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 26px;
+      min-height: 46px;
+      border-radius: 980px;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.15px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.14s ease, box-shadow 0.18s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .cta-btn:hover {
+      background: #2c2c2e;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .cta-btn:active {
+      transform: translateY(0);
+      background: var(--ink);
+    }
+
+    .cta-arrow {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cta-btn:hover .cta-arrow {
+      transform: translateX(3px);
+    }
+  </style>
+</head>
+<body>
+
+<section class="third-section" aria-labelledby="third-heading">
+  <div class="third-section__inner">
+    <figure class="third-section__figure">
+      <img
+        src="https://www.figma.com/api/mcp/asset/43c0b3e0-4a85-45d0-8ed0-e1e1d02951a4"
+        alt="Nutricode daily sachet pouch being filled with a clear capsule; label lists supplement ingredients."
+        width="502"
+        height="502"
+        loading="eager"
+        decoding="async"
+      />
+      <span class="third-section__sparkle" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M7 0l1.2 4.8L13 7l-4.8 1.2L7 13 5.8 8.2 1 7l4.8-1.2L7 0z" fill="#1d1d1f"/>
+        </svg>
+      </span>
+    </figure>
+
+    <div class="third-section__content">
+      <h2 class="content-headline" id="third-heading">
+        Your supplements.<br />Continuously refined.
+      </h2>
+      <p class="content-body">
+        From day one, Nutricode monitors how your body responds, tracks the metrics that matter, and keeps your stack aligned with your latest data and the newest evidence.
+      </p>
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-check" aria-hidden="true">
+            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+              <path d="M1 3.5L3.4 6 8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Your metrics reviewed every month
+        </li>
+        <li class="feature-item">
+          <span class="feature-check" aria-hidden="true">
+            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+              <path d="M1 3.5L3.4 6 8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Your stack updated before every box
+        </li>
+        <li class="feature-item">
+          <span class="feature-check" aria-hidden="true">
+            <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+              <path d="M1 3.5L3.4 6 8 1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          Your protocol kept current with the latest research
+        </li>
+      </ul>
+      <a href="#" class="cta-btn">
+        Start my protocol
+        <svg class="cta-arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+          <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

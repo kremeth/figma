@@ -25,7 +25,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
@@ -39,7 +38,7 @@
     /* ── Card shell ── */
     .card {
       width: 100%;
-      max-width: 400px;
+      max-width: 390px;
       background: var(--white);
       border-radius: 24px;
       box-shadow:
@@ -58,7 +57,7 @@
       flex-direction: column;
     }
 
-    @media (min-width: 780px) {
+    @media (min-width: 900px) {
       .card { max-width: 960px; }
       .card-inner { flex-direction: row; align-items: stretch; }
     }
@@ -69,24 +68,23 @@
       flex-shrink: 0;
       border-bottom: 0.5px solid var(--sep);
     }
-    @media (min-width: 780px) {
+    @media (min-width: 900px) {
       .card-stage {
         flex: 0 0 36%;
         max-width: 36%;
         border-bottom: none;
         border-right: 0.5px solid var(--sep);
-        /* Stage fills full card height; inner wrapper is sticky */
       }
     }
 
     .stage-inner {
-      padding: 44px 28px 36px;
+      padding: 56px 28px 36px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 32px;
     }
-    @media (min-width: 780px) {
+    @media (min-width: 900px) {
       .stage-inner {
         padding: 48px 24px 40px;
         gap: 28px;
@@ -95,11 +93,11 @@
       }
     }
 
-    /* Hero image */
+    /* Hero image — mobile 192² (Figma 695w); desktop 168² container, taller bottle */
     .stage-hero {
       position: relative;
-      width: 168px;
-      height: 168px;
+      width: 192px;
+      height: 192px;
     }
     .stage-hero img {
       width: 100%;
@@ -107,6 +105,17 @@
       object-fit: contain;
       display: block;
       animation: float 6s ease-in-out infinite;
+    }
+    @media (min-width: 900px) {
+      .stage-hero {
+        width: 168px;
+        height: 168px;
+      }
+      .stage-hero img {
+        width: 120px;
+        height: 168px;
+        margin: 0 auto;
+      }
     }
     .stage-hero::after {
       content: "";
@@ -148,6 +157,12 @@
       color: var(--ink);
       line-height: 1.1;
     }
+    @media (min-width: 900px) {
+      .stage-name {
+        font-size: 22px;
+        letter-spacing: -0.45px;
+      }
+    }
     .stage-badge {
       display: inline-flex;
       align-items: center;
@@ -155,9 +170,9 @@
       margin-top: 6px;
       padding: 5px 12px;
       border-radius: 999px;
-      background: #ffffff;
-      border: 0.5px solid rgba(0,0,0,0.06);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      background: rgba(52, 199, 89, 0.12);
+      border: 0.5px solid rgba(52, 199, 89, 0.28);
+      box-shadow: none;
       font-size: 11px;
       font-weight: 500;
       color: var(--ink);
@@ -167,11 +182,27 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: #c7c7cc;
+      background: var(--green);
       flex-shrink: 0;
     }
-    .stage-badge--no-dot .stage-badge-dot {
+    .stage-badge--emerging {
+      background: #ffffff;
+      border: 0.5px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .stage-badge--emerging .stage-badge-dot {
       display: none;
+    }
+    /* Desktop artboard: neutral pill; mobile: green emphasis */
+    @media (min-width: 900px) {
+      .stage-badge:not(.stage-badge--emerging) {
+        background: rgba(0, 0, 0, 0.05);
+        border: 0.5px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .stage-badge:not(.stage-badge--emerging) .stage-badge-dot {
+        background: var(--ink-4);
+      }
     }
 
     /* Variant: only the round thumbnail is the control; label is decorative */
@@ -196,8 +227,8 @@
 
     .v-btn {
       flex-shrink: 0;
-      width: 52px;
-      height: 52px;
+      width: 60px;
+      height: 60px;
       padding: 0;
       border-radius: 50%;
       background: #e5e5ea;
@@ -238,8 +269,18 @@
     .v-ring img {
       display: block;
       object-fit: contain;
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
+    }
+    @media (min-width: 900px) {
+      .v-btn {
+        width: 52px;
+        height: 52px;
+      }
+      .v-ring img {
+        width: 34px;
+        height: 34px;
+      }
     }
     .v-btn:not(.active) .v-ring img { opacity: .85; }
 
@@ -293,6 +334,30 @@
       color: var(--ink);
       letter-spacing: -0.16px;
     }
+    /* First section: product name + dose (Figma mobile/desktop) */
+    .acc-hd--product {
+      align-items: center;
+    }
+    .acc-hd-product-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      min-width: 0;
+      text-align: left;
+    }
+    .acc-hd-product-name {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.16px;
+      color: var(--ink);
+    }
+    .acc-hd-product-dose {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: -0.1px;
+      color: var(--ink-3);
+    }
 
     .acc-chevron {
       flex-shrink: 0;
@@ -327,7 +392,7 @@
     }
     .acc:last-child .acc-bd-pad { padding-bottom: 36px; }
 
-    @media (max-width: 779px) {
+    @media (max-width: 899px) {
       .acc-hd { padding-left: 22px; padding-right: 22px; }
       .acc-bd-pad { padding-left: 22px; padding-right: 22px; }
     }
@@ -398,7 +463,7 @@
       color: var(--ink-4);
       line-height: 1.2;
     }
-    @media (max-width: 779px) {
+    @media (max-width: 899px) {
       .key-facts {
         grid-template-columns: 1fr;
       }
@@ -484,6 +549,19 @@
     .facts-cert-line1 { font-size: 11px; font-weight: 600; letter-spacing: -0.1px; color: var(--ink); line-height: 1.2; }
     .facts-cert-line2 { font-size: 10px; font-weight: 400; color: var(--ink-4); margin-top: 1px; }
     .facts-cert-vbar  { display: none; }
+    @media (min-width: 900px) {
+      :root {
+        --detail-content-max: 100%;
+      }
+      .facts-cert-vbar {
+        display: block;
+        width: 1px;
+        align-self: stretch;
+        min-height: 42px;
+        background: var(--sep);
+        flex-shrink: 0;
+      }
+    }
 
     /* ── Research ── */
     .research-wrap {
@@ -495,11 +573,47 @@
       margin-inline: auto;
       box-sizing: border-box;
     }
+    .research-carousel {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+    }
+    .research-nav {
+      display: none;
+      flex-shrink: 0;
+      align-self: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(120, 120, 128, 0.12);
+      color: var(--ink-3);
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.15s ease, opacity 0.15s ease;
+    }
+    .research-nav:hover { background: rgba(120, 120, 128, 0.18); }
+    .research-nav:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+    .research-nav svg { display: block; }
+    @media (min-width: 900px) {
+      .research-nav { display: flex; }
+    }
     .research-top  { display: flex; align-items: center; justify-content: space-between; }
     .research-count {
       font-size: 11px;
       font-weight: 500;
       color: var(--ink-4);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
     .research-dots { display: flex; align-items: center; gap: 5px; }
     .research-dot  {
@@ -514,6 +628,8 @@
 
     .research-scroll {
       display: flex;
+      flex: 1;
+      min-width: 0;
       gap: 10px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
@@ -732,15 +848,18 @@
 
         <!-- Overview -->
         <div class="acc">
-          <button type="button" class="acc-hd" aria-expanded="true" data-acc="overview" aria-controls="accOverview">
-            <span class="acc-hd-title">Overview</span>
+          <button type="button" class="acc-hd acc-hd--product" aria-expanded="false" data-acc="overview" aria-controls="accOverview">
+            <span class="acc-hd-product-main">
+              <span class="acc-hd-product-name" id="accOverviewName">Resveratrol</span>
+              <span class="acc-hd-product-dose" id="accOverviewDose">250mg · 1 capsule</span>
+            </span>
             <span class="acc-chevron" aria-hidden="true">
               <svg width="6" height="11" viewBox="0 0 6 11" fill="none">
                 <path d="M1 1l4 4.5L1 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
           </button>
-          <div class="acc-bd open" id="accOverview" data-bd="overview">
+          <div class="acc-bd" id="accOverview" data-bd="overview">
             <div class="acc-bd-inner">
               <div class="acc-bd-pad">
                 <p class="detail-intro" id="pDesc"></p>
@@ -840,7 +959,19 @@
                     <span class="research-count" id="researchCountLabel">Paper 1 of 1</span>
                     <div class="research-dots" id="researchDots" role="tablist" aria-label="Research papers"></div>
                   </div>
-                  <div class="research-scroll" id="researchScroll"></div>
+                  <div class="research-carousel">
+                    <button type="button" class="research-nav research-nav--prev" id="researchPrev" aria-label="Previous paper">
+                      <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true">
+                        <path d="M6 1L1 6l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <div class="research-scroll" id="researchScroll"></div>
+                    <button type="button" class="research-nav research-nav--next" id="researchNext" aria-label="Next paper">
+                      <svg width="7" height="12" viewBox="0 0 7 12" fill="none" aria-hidden="true">
+                        <path d="M1 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1042,9 +1173,17 @@
     const scrollEl = q("#researchScroll");
     const labelEl  = q("#researchCountLabel");
     const dotsEl   = q("#researchDots");
+    const prevBtn  = q("#researchPrev");
+    const nextBtn  = q("#researchNext");
     const cards    = scrollEl.querySelectorAll(".research-card");
     const n        = cards.length;
-    if (!n) { labelEl.textContent = "Paper 0 of 0"; dotsEl.innerHTML = ""; return; }
+    if (!n) {
+      labelEl.textContent = "Paper 0 of 0";
+      dotsEl.innerHTML = "";
+      if (prevBtn) prevBtn.disabled = true;
+      if (nextBtn) nextBtn.disabled = true;
+      return;
+    }
 
     const gap = 10;
     function stepSize() {
@@ -1062,11 +1201,20 @@
       cards.forEach((c, j) => c.classList.toggle("research-card--active", j === i));
     }
 
+    function updateNavArrows() {
+      if (!prevBtn || !nextBtn) return;
+      const maxScroll = Math.max(0, scrollEl.scrollWidth - scrollEl.clientWidth);
+      const x = scrollEl.scrollLeft;
+      prevBtn.disabled = x <= 2;
+      nextBtn.disabled = x >= maxScroll - 2;
+    }
+
     function syncFromScroll() {
       const step = stepSize();
       if (step <= gap) return;
       const idx = Math.round(scrollEl.scrollLeft / step);
       setIndex(Math.max(0, Math.min(n - 1, idx)));
+      updateNavArrows();
     }
 
     dotsEl.innerHTML = Array.from({ length: n }, (_, i) =>
@@ -1079,14 +1227,28 @@
       });
     });
 
+    function stepPrev() {
+      scrollEl.scrollBy({ left: -stepSize(), behavior: "smooth" });
+    }
+    function stepNext() {
+      scrollEl.scrollBy({ left: stepSize(), behavior: "smooth" });
+    }
+    if (prevBtn) prevBtn.addEventListener("click", stepPrev);
+    if (nextBtn) nextBtn.addEventListener("click", stepNext);
+
     const onScroll = () => requestAnimationFrame(syncFromScroll);
     const onResize = () => requestAnimationFrame(syncFromScroll);
     scrollEl.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
-    requestAnimationFrame(() => requestAnimationFrame(syncFromScroll));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      syncFromScroll();
+      updateNavArrows();
+    }));
     researchScrollCleanup = () => {
       scrollEl.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      if (prevBtn) prevBtn.removeEventListener("click", stepPrev);
+      if (nextBtn) nextBtn.removeEventListener("click", stepNext);
     };
     setIndex(0);
   }
@@ -1099,7 +1261,9 @@
     q("#heroImg").alt = v.name;
     q("#cName").textContent  = v.name;
     q("#cBadge").textContent = v.badge;
-    q(".stage-badge").classList.toggle("stage-badge--no-dot", v.tier === "emerging");
+    q(".stage-badge").classList.toggle("stage-badge--emerging", v.tier === "emerging");
+    q("#accOverviewName").textContent = v.name;
+    q("#accOverviewDose").textContent = `${v.dose.amt} · ${v.dose.unit}`;
     q("#pDesc").textContent         = v.desc;
     q("#recommendBody").textContent = v.recommend;
 
@@ -1142,23 +1306,6 @@
 
   qa(".v-btn").forEach(b => b.addEventListener("click", () => render(b.dataset.v)));
 
-  /** Lock card height to the taller variant so switching Resveratrol / Inositol does not jump. */
-  function updateCardMinHeight() {
-    const cardEl = q(".card");
-    if (!cardEl) return;
-    const activeBtn = document.querySelector(".v-btn.active");
-    const restoreId = activeBtn && activeBtn.dataset.v ? activeBtn.dataset.v : "resveratrol";
-    let maxH = 0;
-    for (const vid of ["resveratrol", "inositol"]) {
-      render(vid);
-      void cardEl.offsetHeight;
-      const h = cardEl.getBoundingClientRect().height;
-      if (h > maxH) maxH = h;
-    }
-    cardEl.style.minHeight = Math.ceil(maxH) + "px";
-    render(restoreId);
-  }
-
   function setAccordionOpen(activeKey) {
     qa(".acc-hd").forEach(b => {
       const k = b.dataset.acc;
@@ -1177,7 +1324,6 @@
   });
 
   render("resveratrol");
-  requestAnimationFrame(() => requestAnimationFrame(updateCardMinHeight));
 </script>
 </body>
 </html>
