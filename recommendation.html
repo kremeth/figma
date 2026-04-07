@@ -471,8 +471,8 @@
     }
     @media (min-width: 680px) {
       .card-stage {
-        flex: 0 0 272px;
-        width: 272px;
+        flex: 0 0 256px;
+        width: 256px;
         border-bottom: none;
         border-right: 1px solid var(--sep-dark);
       }
@@ -482,41 +482,63 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      padding: 28px 26px 26px;
+      padding: 20px 18px 18px;
       gap: 0;
       height: 100%;
     }
     @media (min-width: 680px) {
       .stage-inner {
-        padding: 32px 26px 28px;
+        padding: 22px 18px 20px;
         position: sticky;
         top: 24px;
       }
     }
 
-    /* Category tag — mono, amber */
+    /* Category tag — pill (light red chip → dark-mode: tinted surface + rose text) */
     .stage-category {
-      font-family: var(--font-mono);
-      font-size: 10px;
+      margin: 0 0 14px;
+      line-height: 1.35;
+      max-width: 100%;
+    }
+    .stage-category-tag {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      letter-spacing: var(--ls-11);
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.32);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .stage-category-tag__focus,
+    .stage-category-tag__stat {
+      font-weight: 500;
+      color: #fecaca;
+    }
+    .stage-category-tag__sep {
+      color: #fca5a5;
       font-weight: 600;
-      letter-spacing: var(--ls-10-caps);
-      text-transform: uppercase;
-      color: var(--amber-accent);
-      margin: 0 0 22px;
+      font-size: 12px;
+      line-height: 1;
+      user-select: none;
     }
 
     /* Hero image */
     .stage-hero {
       width: 100%;
-      height: 156px;
+      height: 136px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 22px;
+      margin-bottom: 14px;
       position: relative;
     }
     @media (min-width: 680px) {
-      .stage-hero { height: 172px; }
+      .stage-hero { height: 152px; }
     }
     .stage-hero img {
       height: 100%;
@@ -545,56 +567,37 @@
     .stage-identity {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 22px;
+      gap: 0;
+      margin-bottom: 12px;
     }
     .stage-name {
       font-family: var(--font);
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.04em;
       color: #ffffff;
       line-height: 1.1;
     }
-    .stage-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      font-family: var(--font);
-      font-size: 11px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 0.01em;
-      width: fit-content;
-    }
-    .stage-badge-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--green-accent);
-      flex-shrink: 0;
-    }
-    .stage-badge--emerging {
-      background: rgba(255,255,255,0.05);
-      border-color: rgba(255,255,255,0.09);
-    }
-    .stage-badge--emerging .stage-badge-dot { display: none; }
 
     /* Variant selector — minimal text tabs */
     .stage-selector {
       width: 100%;
       margin-top: auto;
-      padding-top: 18px;
-      border-top: 1px solid var(--sep-dark);
+      padding-top: 12px;
+    }
+    .stage-picker-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: var(--ls-11);
+      color: rgba(255, 255, 255, 0.45);
+      margin: 0 0 8px;
+      line-height: 1.35;
     }
     .seg-picker {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .v-option { width: 100%; }
     .v-btn {
@@ -602,7 +605,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 9px 12px;
+      padding: 8px 10px;
       border-radius: var(--r-sm);
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
@@ -613,6 +616,45 @@
       cursor: pointer;
       text-align: left;
       transition: background .15s, border-color .15s, color .15s;
+    }
+    .v-btn-body {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 8px;
+      min-width: 0;
+      flex: 1;
+    }
+    .v-btn-name {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: inherit;
+    }
+    .v-btn-tier {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .v-btn-tier--emerging {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.09);
+    }
+    .v-btn.active .v-btn-tier {
+      color: rgba(255, 255, 255, 0.58);
+    }
+    .v-btn:not(.active) .v-btn-tier {
+      opacity: 0.82;
     }
     .v-btn:hover {
       background: rgba(255,255,255,0.1);
@@ -682,11 +724,11 @@
     .acc-hd:active { background: rgba(0,0,0,0.028); }
 
     .acc-hd-title {
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 600;
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 700;
       color: var(--ink);
-      letter-spacing: -0.01em;
+      letter-spacing: var(--ls-15);
     }
 
     /* Product accordion header */
@@ -717,39 +759,45 @@
       letter-spacing: 0;
     }
 
-    /* Chevron */
+    /* Chevron — default (Facts / Research): light outline circle */
     .acc-chevron {
       flex-shrink: 0;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: rgba(0,0,0,0.07);
+      background: transparent;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      box-sizing: border-box;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background .18s;
+      transition: background .18s, border-color .18s;
     }
     .acc-chevron svg {
       display: block;
       color: var(--ink-4);
       transition: transform .28s cubic-bezier(.34,1.56,.64,1);
     }
-    .acc-hd[aria-expanded="true"] .acc-chevron { background: rgba(0,0,0,0.11); }
     .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(90deg); }
 
-    /* Mobile chevron */
+    /* Overview header: black circle, white chevron — down collapsed, up expanded */
+    .acc-hd--product .acc-chevron {
+      background: var(--ink);
+      border: none;
+    }
+    .acc-hd--product .acc-chevron svg {
+      color: #fff;
+      transform: rotate(90deg);
+    }
+    .acc-hd--product[aria-expanded="true"] {
+      border-bottom: 1px solid var(--sep);
+    }
+    .acc-hd--product[aria-expanded="true"] .acc-chevron svg {
+      transform: rotate(-90deg);
+    }
+
     @media (max-width: 679px) {
       .acc-hd { padding-left: 20px; padding-right: 20px; }
-      .acc-hd .acc-chevron {
-        width: 22px; height: 22px;
-        background: var(--ink);
-      }
-      .acc-hd .acc-chevron svg {
-        color: #fff;
-        transform: rotate(90deg);
-      }
-      .acc-hd[aria-expanded="true"] .acc-chevron { background: var(--ink); }
-      .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(-90deg); }
 
       .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(2),
       .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(3) {
@@ -771,49 +819,45 @@
       .acc-bd-pad { padding-left: 20px; padding-right: 20px; }
     }
 
-    /* ── Overview content ──────────────────────────────────────── */
+    /* ── Overview content (opened panel — clean light layout) ─── */
     .detail-intro {
-      font-family: var(--font);
-      font-size: 13px;
+      font-family: var(--font-ui);
+      font-size: 15px;
       font-weight: 400;
-      line-height: 1.7;
+      line-height: 1.65;
       color: var(--ink-3);
-      letter-spacing: -0.01em;
-      margin-bottom: 18px;
+      letter-spacing: var(--ls-15);
+      margin-bottom: var(--space-3);
     }
 
     .recommend-block {
-      margin-bottom: 20px;
-      padding: 15px 17px;
-      background: var(--surface-2);
-      border-radius: var(--r-md);
+      margin-bottom: 0;
+      padding: var(--space-3);
+      background: #f5f5f7;
+      border-radius: var(--radius-md);
       border: 1px solid var(--sep);
     }
     .section-micro {
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--ink-4);
-      margin-bottom: 7px;
+      margin-bottom: 8px;
     }
     .recommend-headline {
-      font-family: var(--font);
-      font-size: clamp(14px, 1.8vw, 17px);
+      font-family: var(--font-ui);
+      font-size: 16px;
       font-weight: 600;
       line-height: 1.45;
-      letter-spacing: -0.03em;
+      letter-spacing: var(--ls-16);
       color: var(--ink);
     }
 
-    /* Key facts */
+    /* Key facts — hidden to match opened Overview reference (no Dose/Daily/When row) */
     .key-facts {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
-      padding-top: 18px;
-      border-top: 1px solid var(--sep);
+      display: none !important;
     }
     .key-fact {
       display: flex;
@@ -1711,9 +1755,9 @@
         0 24px 56px rgba(0, 0, 0, 0.08);
     }
 
-    /* Detail panel — lighter glass layer */
+    /* Detail panel — solid light surface (Overview reference) */
     .card-detail {
-      background: rgba(255, 255, 255, 0.58);
+      background: #ffffff;
     }
 
     /* Stage (dark panel) — deep glass with subtle edge highlight */
@@ -1731,18 +1775,7 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
-    /* Inner accordion surfaces — layered glass depth */
-    .recommend-block {
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-
-    .key-fact {
-      background: rgba(255, 255, 255, 0.54);
-      border: 1px solid rgba(255, 255, 255, 0.76);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
-    }
+    /* recommend-block kept flat via base rules above */
 
     .facts-card {
       background: rgba(255, 255, 255, 0.5);
@@ -1778,7 +1811,7 @@
             <span class="nc-hero__eyebrow-dot" aria-hidden="true"></span>
             <span class="section-label">Protocol · April 2026</span>
           </p>
-          <h1 class="report-name">Your personalised stack,<br />built from your data.</h1>
+          <h1 class="report-name">Your personalised stack, built from your data.</h1>
           <p class="report-meta-line">Based on your latest biomarkers, three priority focus areas, and 30 days of biometric patterns.</p>
         </div>
         <div class="nc-hero__snapgrid snapshot-grid" aria-label="Key biomarkers">
@@ -1833,7 +1866,13 @@
             <div class="card-stage">
               <div class="stage-inner">
 
-                <p class="stage-category" id="stageCategory0">HRV</p>
+                <p class="stage-category" id="stageCategory0">
+                  <span class="stage-category-tag">
+                    <span class="stage-category-tag__focus">HRV</span>
+                    <span class="stage-category-tag__sep" aria-hidden="true">·</span>
+                    <span class="stage-category-tag__stat">33% below average</span>
+                  </span>
+                </p>
 
                 <div class="stage-hero">
                   <img id="heroImg0" src="https://www.figma.com/api/mcp/asset/d077c8b1-a059-4b1c-8100-1d182601da02" alt="" />
@@ -1841,25 +1880,28 @@
 
                 <div class="stage-identity">
                   <h2 class="stage-name" id="cName0">Resveratrol</h2>
-                  <span class="stage-badge">
-                    <span class="stage-badge-dot"></span>
-                    <span id="cBadge0">Most researched</span>
-                  </span>
                 </div>
 
                 <div class="stage-selector">
+                  <p class="stage-picker-label">Pick your HRV support</p>
                   <div class="seg-picker" role="radiogroup" aria-label="Choose supplement">
                     <div class="v-option">
                       <button type="button" class="v-btn active" data-v="resveratrol" role="radio" aria-checked="true" aria-labelledby="vLabelResveratrol0">
                         <span class="v-ring"><img src="https://www.figma.com/api/mcp/asset/d077c8b1-a059-4b1c-8100-1d182601da02" alt="" /></span>
-                        Resveratrol
+                        <span class="v-btn-body">
+                          <span class="v-btn-name">Resveratrol</span>
+                          <span class="v-btn-tier">Most researched</span>
+                        </span>
                       </button>
                       <span class="v-label" id="vLabelResveratrol0">Resveratrol</span>
                     </div>
                     <div class="v-option">
                       <button type="button" class="v-btn" data-v="inositol" role="radio" aria-checked="false" aria-labelledby="vLabelInositol0">
                         <span class="v-ring"><img src="https://www.figma.com/api/mcp/asset/0af49460-90d8-49d7-a1f0-12a6f0176daa" alt="" /></span>
-                        Inositol
+                        <span class="v-btn-body">
+                          <span class="v-btn-name">Inositol</span>
+                          <span class="v-btn-tier v-btn-tier--emerging">Emerging research</span>
+                        </span>
                       </button>
                       <span class="v-label" id="vLabelInositol0">Inositol</span>
                     </div>
@@ -2524,8 +2566,6 @@
       el("heroImg").src = v.img;
       el("heroImg").alt = v.name;
       el("cName").textContent  = v.name;
-      el("cBadge").textContent = v.badge;
-      root.querySelector(".stage-badge").classList.toggle("stage-badge--emerging", v.tier === "emerging");
       el("accOverviewName").textContent = v.name;
       el("accOverviewDose").textContent = v.dose.amt + " · " + v.dose.unit;
       el("pDesc").textContent         = v.desc;
