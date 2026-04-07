@@ -1686,6 +1686,82 @@
     .nc-editorial-arrow { transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
     .nc-editorial-cta:hover .nc-editorial-arrow { transform: translateX(3px); }
 
+    /* ═══════════════════════════════════════════════════════════════
+       GLASSMORPHIC SUPPLEMENT CARDS
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* Section: subtle tonal gradient gives the blur surface texture */
+    .nc-protocol-section {
+      background:
+        radial-gradient(ellipse 72% 80% at 14% 42%, rgba(222,220,216,0.52) 0%, transparent 64%),
+        radial-gradient(ellipse 58% 72% at 84% 22%, rgba(228,226,222,0.4) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    /* Main card — primary glass surface */
+    .rhr-card {
+      background: rgba(255, 255, 255, 0.76);
+      backdrop-filter: blur(28px) saturate(1.55);
+      -webkit-backdrop-filter: blur(28px) saturate(1.55);
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.88),
+        0 1px 1px rgba(0, 0, 0, 0.03),
+        0 6px 20px rgba(0, 0, 0, 0.06),
+        0 24px 56px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Detail panel — lighter glass layer */
+    .card-detail {
+      background: rgba(255, 255, 255, 0.58);
+    }
+
+    /* Stage (dark panel) — deep glass with subtle edge highlight */
+    .card-stage {
+      background: rgba(20, 20, 24, 0.91);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* Variant tab buttons — add micro-blur to dark glass tabs */
+    .v-btn {
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .v-btn.active {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Inner accordion surfaces — layered glass depth */
+    .recommend-block {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .key-fact {
+      background: rgba(255, 255, 255, 0.54);
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    }
+
+    .facts-card {
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+
+    /* Research card — glass body with dark glass head */
+    .research-card {
+      background: rgba(255, 255, 255, 0.54);
+      border: 1px solid rgba(255, 255, 255, 0.68);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    }
+
+    .research-card__head {
+      background: rgba(18, 18, 22, 0.92);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+
   </style>
 </head>
 <body>
@@ -1719,7 +1795,7 @@
           <div class="snapshot-tile nc-hero__metric">
             <span class="snap-val nc-hero__metric-val">33%</span>
             <span class="nc-hero__metric-name">REM Sleep</span>
-            <span class="status-pill pill-green">15% above average</span>
+            <span class="status-pill pill-amber">15% above average</span>
           </div>
           <div class="snapshot-tile nc-hero__metric">
             <span class="snap-val nc-hero__metric-val">4</span>
