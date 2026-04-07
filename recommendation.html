@@ -344,7 +344,7 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       PROTOCOL BAND (dark full-bleed — health report focus band)
+       PROTOCOL BAND (light grey full-bleed, white supplement cards)
     ═══════════════════════════════════════════════════════════════ */
     .nc-protocol-band {
       --protocol-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
@@ -355,7 +355,7 @@
       max-width: none;
       margin-left: calc(-1 * var(--protocol-bleed-l));
       margin-right: calc(-1 * var(--protocol-bleed-r));
-      background: #1a1b1f;
+      background: #eceef2;
       padding-top: var(--space-5);
       padding-bottom: var(--space-6);
       padding-left: var(--protocol-bleed-l);
@@ -363,7 +363,7 @@
     }
 
     .nc-protocol-band__label {
-      color: rgba(255, 255, 255, 0.42);
+      color: var(--ink-4);
       margin-bottom: 0;
     }
 
@@ -382,30 +382,30 @@
       gap: 10px;
     }
 
-    /* Pagination count — on dark */
+    /* Pagination count */
     .nc-protocol-band #recRhrCount {
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 500;
-      color: rgba(255, 255, 255, 0.45);
+      color: var(--ink-4);
       letter-spacing: var(--ls-10-caps);
       text-transform: uppercase;
     }
 
-    /* Pagination dots — period-picker style */
+    /* Pagination dots */
     .nc-protocol-band .rec-rhr-dots {
       display: flex;
       align-items: center;
       gap: 4px;
       padding: 3px 5px;
       border-radius: 7px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.06);
     }
     .nc-protocol-band .rec-rhr-dot {
       padding: 0;
       border: none;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.22);
+      background: rgba(0, 0, 0, 0.18);
       border-radius: 999px;
       width: 5px;
       height: 5px;
@@ -413,7 +413,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     .nc-protocol-band .rec-rhr-dot.active {
-      background: #ffffff;
+      background: var(--ink);
       width: 18px;
     }
     .nc-protocol-band .rec-rhr-dot:focus-visible {
@@ -693,6 +693,79 @@
     }
     .v-btn:not(.active) .v-ring img { opacity: .55; }
     .v-label { display: none; } /* label text is inline in button */
+
+    /* Protocol band: full white card (stage + detail) */
+    .nc-protocol-band .card-stage {
+      background: #ffffff;
+      border-bottom-color: var(--sep);
+      box-shadow: none;
+    }
+    @media (min-width: 680px) {
+      .nc-protocol-band .card-stage {
+        border-right-color: var(--sep);
+      }
+    }
+    .nc-protocol-band .stage-name {
+      color: var(--ink);
+    }
+    .nc-protocol-band .stage-picker-label {
+      color: var(--ink-4);
+    }
+    .nc-protocol-band .stage-category-tag {
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.32);
+      color: #14532d;
+      box-shadow: none;
+    }
+    .nc-protocol-band .stage-category-tag__chart {
+      color: #16a34a;
+    }
+    .nc-protocol-band .stage-category-tag__focus {
+      color: #166534;
+    }
+    .nc-protocol-band .stage-hero::after {
+      background: radial-gradient(ellipse, rgba(0, 0, 0, 0.12) 0%, transparent 72%);
+    }
+    /* Default (not selected) — Figma: grey fill ~9%, stroke 0% */
+    .nc-protocol-band .v-btn {
+      background: rgba(0, 0, 0, 0.09);
+      border: 1px solid transparent;
+      color: var(--ink-3);
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+    }
+    .nc-protocol-band .v-btn:hover:not(.active) {
+      background: rgba(0, 0, 0, 0.12);
+      border-color: transparent;
+      color: var(--ink);
+    }
+    /* Selected — Figma: stroke black 32% inside; shadows 0/2/6 @ 7% + 0/10/28 @ 6% */
+    .nc-protocol-band .v-btn.active,
+    .nc-protocol-band .v-btn.active:hover {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.32);
+      color: var(--ink);
+      box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.07),
+        0 10px 28px rgba(0, 0, 0, 0.06);
+    }
+    .nc-protocol-band .v-btn-tier {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.08);
+      color: var(--ink-3);
+    }
+    .nc-protocol-band .v-btn-tier--emerging {
+      background: rgba(0, 0, 0, 0.03);
+      border-color: rgba(0, 0, 0, 0.07);
+    }
+    .nc-protocol-band .v-btn.active .v-btn-tier {
+      color: var(--ink-3);
+    }
+    .nc-protocol-band .v-ring {
+      background: rgba(0, 0, 0, 0.05);
+    }
 
     /* ── Detail (right / bottom panel) ───────────────────────── */
     .card-detail {
@@ -1755,10 +1828,9 @@
     .nc-editorial-cta:hover .nc-editorial-arrow { transform: translateX(3px); }
 
     /* ═══════════════════════════════════════════════════════════════
-       GLASSMORPHIC SUPPLEMENT CARDS
+       SUPPLEMENT CARDS (white on protocol grey band)
     ═══════════════════════════════════════════════════════════════ */
 
-    /* Section: subtle tonal gradient gives the blur surface texture */
     .nc-protocol-section {
       background:
         radial-gradient(ellipse 72% 80% at 14% 42%, rgba(222,220,216,0.52) 0%, transparent 64%),
@@ -1766,52 +1838,32 @@
         var(--bg);
     }
 
-    /* Main card — primary glass surface */
-    .rhr-card {
-      background: rgba(255, 255, 255, 0.76);
-      backdrop-filter: blur(28px) saturate(1.55);
-      -webkit-backdrop-filter: blur(28px) saturate(1.55);
-      border: 1px solid rgba(255, 255, 255, 0.62);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.88),
-        0 1px 1px rgba(0, 0, 0, 0.03),
-        0 6px 20px rgba(0, 0, 0, 0.06),
-        0 24px 56px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Detail panel — solid light surface (Overview reference) */
-    .card-detail {
+    .nc-protocol-band .rhr-card {
       background: #ffffff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: 1px solid var(--card-border);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 8px 24px rgba(0, 0, 0, 0.06);
     }
 
-    /* Stage (dark panel) — deep glass with subtle edge highlight */
-    .card-stage {
-      background: rgba(20, 20, 24, 0.91);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    }
-
-    /* Variant tab buttons — add micro-blur to dark glass tabs */
-    .v-btn {
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
-    .v-btn.active {
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    .nc-protocol-band .card-detail {
+      background: #ffffff;
     }
 
     /* recommend-block kept flat via base rules above */
 
-    .facts-card {
-      background: rgba(255, 255, 255, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.72);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    .nc-protocol-band .facts-card {
+      background: #ffffff;
+      border: 1px solid var(--sep);
+      box-shadow: none;
     }
 
-    /* Research card — glass body with dark glass head */
-    .research-card {
-      background: rgba(255, 255, 255, 0.54);
-      border: 1px solid rgba(255, 255, 255, 0.68);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    .nc-protocol-band .research-card {
+      background: #ffffff;
+      border: 1px solid var(--sep);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .research-card__head {
