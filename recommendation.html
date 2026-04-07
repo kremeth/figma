@@ -369,15 +369,53 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background .2s;
+      transition: background .2s, transform .2s;
     }
     .acc-chevron svg {
       display: block;
       color: var(--ink-3);
       transition: transform .3s cubic-bezier(.34,1.56,.64,1);
     }
-    .acc-hd[aria-expanded="true"] .acc-chevron { background: rgba(0,0,0,0.07); }
-    .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(90deg); }
+    @media (min-width: 900px) {
+      .acc-hd[aria-expanded="true"] .acc-chevron { background: rgba(0,0,0,0.07); }
+      .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(90deg); }
+    }
+    /* Mobile: black circle, white chevron — down collapsed, up expanded */
+    @media (max-width: 899px) {
+      .acc-hd .acc-chevron {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #000;
+      }
+      .acc-hd .acc-chevron svg {
+        color: #fff;
+        transform: rotate(90deg);
+      }
+      .acc-hd[aria-expanded="true"] .acc-chevron {
+        background: #000;
+      }
+      .acc-hd[aria-expanded="true"] .acc-chevron svg {
+        transform: rotate(-90deg);
+      }
+      .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(2),
+      .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(3) {
+        display: none;
+      }
+      .rhr-card .stage-badge:not(.stage-badge--emerging) {
+        background: rgba(0, 0, 0, 0.05);
+        border: 0.5px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .rhr-card .stage-badge:not(.stage-badge--emerging) .stage-badge-dot {
+        background: var(--green);
+      }
+      .acc-hd--product {
+        min-height: 44px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+    }
 
     /* Smooth accordion with max-height transition */
     .acc-bd {
@@ -1669,7 +1707,7 @@
 
         <!-- Overview -->
         <div class="acc">
-          <button type="button" class="acc-hd acc-hd--product" aria-expanded="false" data-acc="overview" aria-controls="accOverview">
+          <button type="button" class="acc-hd acc-hd--product" aria-expanded="false" data-acc="overview" aria-controls="accOverview0">
             <span class="acc-hd-product-main">
               <span class="acc-hd-product-name" id="accOverviewName0">Resveratrol</span>
               <span class="acc-hd-product-dose" id="accOverviewDose0">250mg · 1 capsule</span>
@@ -1709,7 +1747,7 @@
 
         <!-- Supplement Facts -->
         <div class="acc">
-          <button type="button" class="acc-hd" aria-expanded="false" data-acc="facts" aria-controls="accFacts">
+          <button type="button" class="acc-hd" aria-expanded="false" data-acc="facts" aria-controls="accFacts0">
             <span class="acc-hd-title">Supplement Facts</span>
             <span class="acc-chevron" aria-hidden="true">
               <svg width="6" height="11" viewBox="0 0 6 11" fill="none">
@@ -1764,7 +1802,7 @@
 
         <!-- Research -->
         <div class="acc">
-          <button type="button" class="acc-hd" aria-expanded="false" data-acc="research" aria-controls="accResearch">
+          <button type="button" class="acc-hd" aria-expanded="false" data-acc="research" aria-controls="accResearch0">
             <span class="acc-hd-title">Research</span>
             <span class="acc-chevron" aria-hidden="true">
               <svg width="6" height="11" viewBox="0 0 6 11" fill="none">
@@ -2451,17 +2489,60 @@ const V = {
         b.setAttribute("aria-expanded", on ? "true" : "false");
         root.querySelector('[data-bd="' + k + '"]').classList.toggle("open", on);
       });
+      updateMobileCollapsedClass();
     }
 
     qa(".acc-hd").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        const key    = btn.dataset.acc;
+        const key = btn.dataset.acc;
         const isOpen = btn.getAttribute("aria-expanded") === "true";
-        setAccordionOpen(isOpen ? null : key);
+        if (accordionIsExclusive()) {
+          setAccordionOpen(isOpen ? null : key);
+        } else {
+          const next = !isOpen;
+          btn.setAttribute("aria-expanded", next ? "true" : "false");
+          root.querySelector('[data-bd="' + key + '"]').classList.toggle("open", next);
+          updateMobileCollapsedClass();
+        }
       });
     });
 
     render("resveratrol");
+    updateMobileCollapsedClass();
+  }
+
+  function accordionIsExclusive() {
+    return window.matchMedia("(min-width: 900px)").matches;
+  }
+
+  function updateMobileCollapsedClass() {
+    document.querySelectorAll(".rhr-card").forEach(function (card) {
+      const mobile = window.matchMedia("(max-width: 899px)").matches;
+      const allClosed = [].every.call(card.querySelectorAll(".acc-hd"), function (b) {
+        return b.getAttribute("aria-expanded") === "false";
+      });
+      card.classList.toggle("rhr-card--mobile-collapsed", mobile && allClosed);
+    });
+  }
+
+  function normalizeAccordionForViewport() {
+    document.querySelectorAll(".rhr-card").forEach(function (root) {
+      if (accordionIsExclusive()) {
+        const expanded = [].filter.call(root.querySelectorAll(".acc-hd"), function (b) {
+          return b.getAttribute("aria-expanded") === "true";
+        });
+        if (expanded.length > 1) {
+          const keep = expanded[0].dataset.acc;
+          root.querySelectorAll(".acc-hd").forEach(function (b) {
+            const k = b.dataset.acc;
+            const on = k === keep;
+            b.setAttribute("aria-expanded", on ? "true" : "false");
+            root.querySelector('[data-bd="' + k + '"]').classList.toggle("open", on);
+          });
+        }
+      }
+    });
+    updateMobileCollapsedClass();
   }
 
   function bindRhrStripPagination() {
@@ -2530,6 +2611,9 @@ const V = {
     cloneRhrCards();
     [0, 1, 2, 3].forEach(initRhrCard);
     bindRhrStripPagination();
+    window.addEventListener("resize", function () {
+      requestAnimationFrame(normalizeAccordionForViewport);
+    });
   });
 
 </script>

@@ -368,15 +368,55 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background .2s;
+      transition: background .2s, transform .2s;
     }
     .acc-chevron svg {
       display: block;
       color: var(--ink-3);
       transition: transform .3s cubic-bezier(.34,1.56,.64,1);
     }
-    .acc-hd[aria-expanded="true"] .acc-chevron { background: rgba(0,0,0,0.07); }
-    .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(90deg); }
+    @media (min-width: 900px) {
+      .acc-hd[aria-expanded="true"] .acc-chevron { background: rgba(0,0,0,0.07); }
+      .acc-hd[aria-expanded="true"] .acc-chevron svg { transform: rotate(90deg); }
+    }
+    /* Mobile (Figma 695w): black circle, white chevron — down collapsed, up expanded */
+    @media (max-width: 899px) {
+      .acc-hd .acc-chevron {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #000;
+      }
+      .acc-hd .acc-chevron svg {
+        color: #fff;
+        transform: rotate(90deg);
+      }
+      .acc-hd[aria-expanded="true"] .acc-chevron {
+        background: #000;
+      }
+      .acc-hd[aria-expanded="true"] .acc-chevron svg {
+        transform: rotate(-90deg);
+      }
+      /* Collapsed “summary” card: only Overview row; hide other section headers */
+      .card--mobile-collapsed .detail-depth > .acc:nth-child(2),
+      .card--mobile-collapsed .detail-depth > .acc:nth-child(3) {
+        display: none;
+      }
+      /* Closed state: neutral badge + green dot (Figma compact) */
+      .stage-badge:not(.stage-badge--emerging) {
+        background: rgba(0, 0, 0, 0.05);
+        border: 0.5px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
+      .stage-badge:not(.stage-badge--emerging) .stage-badge-dot {
+        background: var(--green);
+      }
+      .acc-hd--product {
+        min-height: 44px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+    }
 
     /* Smooth accordion with max-height transition */
     .acc-bd {
@@ -1306,6 +1346,33 @@
 
   qa(".v-btn").forEach(b => b.addEventListener("click", () => render(b.dataset.v)));
 
+  function accordionIsExclusive() {
+    return window.matchMedia("(min-width: 900px)").matches;
+  }
+
+  function updateMobileCollapsedClass() {
+    const card = document.querySelector(".card");
+    if (!card) return;
+    const mobile = window.matchMedia("(max-width: 899px)").matches;
+    const allClosed = qa(".acc-hd").every(
+      b => b.getAttribute("aria-expanded") === "false"
+    );
+    card.classList.toggle("card--mobile-collapsed", mobile && allClosed);
+  }
+
+  function normalizeAccordionForViewport() {
+    if (accordionIsExclusive()) {
+      const expanded = qa(".acc-hd").filter(
+        b => b.getAttribute("aria-expanded") === "true"
+      );
+      if (expanded.length > 1) {
+        setAccordionOpen(expanded[0].dataset.acc);
+        return;
+      }
+    }
+    updateMobileCollapsedClass();
+  }
+
   function setAccordionOpen(activeKey) {
     qa(".acc-hd").forEach(b => {
       const k = b.dataset.acc;
@@ -1313,17 +1380,30 @@
       b.setAttribute("aria-expanded", on ? "true" : "false");
       q(`[data-bd="${k}"]`).classList.toggle("open", on);
     });
+    updateMobileCollapsedClass();
   }
 
   qa(".acc-hd").forEach(btn => {
     btn.addEventListener("click", () => {
-      const key    = btn.dataset.acc;
+      const key = btn.dataset.acc;
       const isOpen = btn.getAttribute("aria-expanded") === "true";
-      setAccordionOpen(isOpen ? null : key);
+      if (accordionIsExclusive()) {
+        setAccordionOpen(isOpen ? null : key);
+      } else {
+        const next = !isOpen;
+        btn.setAttribute("aria-expanded", next ? "true" : "false");
+        q(`[data-bd="${key}"]`).classList.toggle("open", next);
+        updateMobileCollapsedClass();
+      }
     });
   });
 
+  window.addEventListener("resize", () => {
+    requestAnimationFrame(normalizeAccordionForViewport);
+  });
+
   render("resveratrol");
+  updateMobileCollapsedClass();
 </script>
 </body>
 </html>
