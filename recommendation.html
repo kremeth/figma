@@ -40,6 +40,9 @@
       --amber-bg: rgba(153,80,0,0.08);
       --green-bg: rgba(26,107,55,0.08);
       --blue-bg:  rgba(26,78,160,0.07);
+      /* Blue wash @ 5% over white (brighter than tinting the page grey) */
+      --blue-tint-bg: linear-gradient(rgba(0, 122, 255, 0.05), rgba(0, 122, 255, 0.05)), #ffffff;
+      --blue-tint-border: rgba(0, 122, 255, 0.2);
 
       --space-1: 8px;
       --space-2: 16px;
@@ -1464,11 +1467,11 @@
     ═══════════════════════════════════════════════════════════════ */
     .nc-order-section {
       border-top: 1px solid var(--sep);
-      padding: var(--space-6) 0 100px;
+      padding: var(--space-6) 0 112px;
     }
 
     .nc-order-heading {
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--space-5);
     }
     .nc-order-heading .section-label {
       margin-bottom: var(--space-4);
@@ -1481,7 +1484,7 @@
       font-size: 14px;
       font-weight: 400;
       color: var(--ink-3);
-      margin-top: 8px;
+      margin-top: 12px;
       letter-spacing: var(--ls-14);
       line-height: 1.5;
     }
@@ -1489,14 +1492,21 @@
     .nc-order-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 48px;
+      gap: 56px;
       align-items: start;
     }
     @media (min-width: 820px) {
       .nc-order-grid {
         grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-        gap: 40px;
+        gap: 52px;
       }
+    }
+
+    /* Vertical rhythm between stacked cards in each column */
+    .nc-order-grid > div {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
     }
 
     /* Product + features card */
@@ -1506,7 +1516,6 @@
       border: 1px solid var(--card-border);
       box-shadow: var(--card-shadow);
       overflow: hidden;
-      margin-bottom: 12px;
     }
     .nc-product-row {
       display: flex;
@@ -1641,20 +1650,29 @@
       color: var(--ink);
       line-height: 1.2;
     }
-    .nc-stack-tag {
-      display: inline-flex;
-      align-items: center;
+    /* Match protocol-band green metric pills (light card), compact */
+    .nc-stack-card .stage-category-tag {
       margin-top: 4px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-family: var(--font-ui);
-      font-size: 10px;
+      gap: 3px;
+      padding: 2px 7px 2px 5px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      background: rgba(34, 197, 94, 0.12);
+      border-color: rgba(34, 197, 94, 0.32);
+      color: #14532d;
+      box-shadow: none;
+    }
+    .nc-stack-card .stage-category-tag__chart {
+      width: 10px;
+      height: 10px;
+      color: #16a34a;
+    }
+    .nc-stack-card .stage-category-tag__focus {
       font-weight: 600;
-      letter-spacing: var(--ls-10);
-      line-height: 1.25;
-      text-transform: uppercase;
-      background: rgba(0,0,0,0.05);
-      color: var(--ink-3);
+      font-size: 9px;
+      color: #166534;
     }
     .nc-stack-dose {
       font-family: var(--mono);
@@ -1669,9 +1687,9 @@
       background: var(--card);
       border-radius: var(--radius-md);
       border: 1px solid var(--card-border);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.14);
       box-shadow: var(--card-shadow);
       overflow: hidden;
-      margin-bottom: 12px;
     }
     .nc-price-row {
       display: flex;
@@ -1729,44 +1747,52 @@
 
     /* CTA button */
     .nc-cta-btn {
-      display: block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
       padding: 16px 24px;
       border: none;
-      border-radius: 999px;
+      border-radius: var(--radius-md);
       background: var(--ink);
       color: #ffffff;
       font-family: var(--font-ui);
       font-size: 14px;
       font-weight: 600;
       letter-spacing: var(--ls-14);
-      text-align: center;
       cursor: pointer;
       transition: opacity .14s, transform .1s;
       -webkit-tap-highlight-color: transparent;
       margin-bottom: 10px;
     }
+    .nc-cta-btn__arrow {
+      flex-shrink: 0;
+      display: block;
+      transition: transform .2s cubic-bezier(.34, 1.56, .64, 1);
+    }
     .nc-cta-btn:hover  { opacity: 0.88; }
+    .nc-cta-btn:hover .nc-cta-btn__arrow { transform: translateX(3px); }
     .nc-cta-btn:active { transform: scale(0.985); opacity: 0.82; }
+    .nc-editorial-content .nc-cta-btn { margin-bottom: 0; }
 
     .nc-cta-caption {
-      font-family: var(--mono);
+      font-family: var(--font-ui);
       font-size: 10px;
-      font-weight: 400;
+      font-weight: 500;
       color: var(--ink-4);
       text-align: center;
-      letter-spacing: 0.04em;
-      margin-bottom: 14px;
+      letter-spacing: var(--ls-10);
+      margin-bottom: 0;
     }
 
     /* Founding card */
     .nc-founding-card {
-      background: var(--card);
+      background: var(--blue-tint-bg);
       border-radius: var(--radius-md);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--blue-tint-border);
       box-shadow: var(--card-shadow);
       overflow: hidden;
-      margin-bottom: 12px;
     }
     .nc-founding-inner { padding: 18px 20px; }
     .nc-founding-pill {
@@ -1775,19 +1801,20 @@
       gap: 6px;
       padding: 3px 10px;
       border-radius: 999px;
-      background: rgba(217,119,6,0.1);
-      border: 1px solid rgba(217,119,6,0.2);
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.28);
       font-family: var(--mono);
       font-size: 9px;
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--amber);
+      line-height: 1.45;
+      color: var(--green-accent);
     }
     .nc-founding-dot {
       width: 5px; height: 5px;
       border-radius: 50%;
-      background: var(--amber);
+      background: var(--green-accent);
       animation: nc-pulse 2s infinite;
     }
     .nc-founding-heading {
@@ -1795,7 +1822,7 @@
       font-size: 17px;
       font-weight: 700;
       letter-spacing: -0.04em;
-      line-height: 1.2;
+      line-height: 1.38;
       color: var(--ink);
       margin-top: 11px;
     }
@@ -1803,11 +1830,52 @@
       font-family: var(--font);
       font-size: 13px;
       font-weight: 400;
-      line-height: 1.6;
+      line-height: 1.72;
       color: var(--ink-3);
       margin-top: 7px;
     }
     .nc-founding-body strong { font-weight: 600; color: var(--ink); }
+
+    .nc-founding-details {
+      margin-top: 14px;
+    }
+    .nc-founding-summary {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: var(--ls-12);
+      color: var(--ink-4);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nc-founding-summary:focus-visible {
+      outline: 2px solid var(--blue-accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+    .nc-founding-summary::-webkit-details-marker { display: none; }
+    .nc-founding-summary__icon {
+      flex-shrink: 0;
+      display: block;
+      color: var(--ink-4);
+    }
+    .nc-founding-summary__plus-v {
+      transform-origin: center;
+      transition: opacity .15s ease, transform .15s ease;
+    }
+    .nc-founding-details[open] .nc-founding-summary__plus-v {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+    .nc-founding-details .nc-founding-body {
+      margin-top: 8px;
+    }
+
     .nc-spots-bar {
       margin-top: 14px;
       background: rgba(34, 197, 94, 0.12);
@@ -1826,8 +1894,8 @@
       justify-content: space-between;
       margin-top: 6px;
     }
-    .nc-spots-text      { font-family: var(--mono); font-size: 10px; color: var(--ink-4); }
-    .nc-spots-remaining { font-family: var(--mono); font-size: 10px; color: var(--amber); font-weight: 600; }
+    .nc-spots-text      { font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--ink-4); }
+    .nc-spots-remaining { font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--green-accent); font-weight: 600; }
 
     /* Guarantee */
     .nc-guarantee {
@@ -1835,9 +1903,9 @@
       align-items: flex-start;
       gap: 13px;
       padding: 16px 20px;
-      background: var(--blue-bg);
+      background: var(--blue-tint-bg);
       border-radius: var(--radius-md);
-      border: 1px solid rgba(59, 130, 246, 0.12);
+      border: 1px solid var(--blue-tint-border);
     }
     .nc-guarantee-icon {
       flex-shrink: 0;
@@ -1885,7 +1953,12 @@
     ═══════════════════════════════════════════════════════════════ */
     .nc-editorial-section {
       border-top: 1px solid var(--sep);
-      padding: var(--space-6) 0 108px;
+      padding: 0;
+    }
+
+    /* Same full-bleed band as Your compounds (#eceef2); extra bottom air for copy + CTA */
+    .nc-editorial-section .nc-protocol-band__bleed {
+      padding-bottom: 108px;
     }
 
     .nc-editorial-inner {
@@ -1901,6 +1974,15 @@
         grid-template-columns: minmax(0,1fr) minmax(0,1fr);
         gap: var(--space-6);
       }
+    }
+
+    .nc-editorial-media {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+      width: 100%;
+      min-width: 0;
     }
 
     .nc-editorial-figure {
@@ -1925,8 +2007,8 @@
       align-items: flex-start;
     }
 
-    .nc-editorial-eyebrow.section-label {
-      margin-bottom: var(--space-3);
+    .nc-editorial-media .nc-editorial-eyebrow.section-label {
+      margin-bottom: 0;
     }
 
     .nc-editorial-title {
@@ -1978,34 +2060,6 @@
       justify-content: center;
     }
     .nc-editorial-check svg { display: block; color: #fff; }
-
-    .nc-editorial-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 12px 24px;
-      min-height: 42px;
-      border-radius: 999px;
-      background: var(--ink);
-      color: #fff;
-      font-family: var(--font-ui);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: var(--ls-14);
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: background .18s, transform .14s, box-shadow .18s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .nc-editorial-cta:hover {
-      background: #2c2c2e;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-    .nc-editorial-cta:active { transform: translateY(0); }
-    .nc-editorial-arrow { transition: transform .2s cubic-bezier(.34,1.56,.64,1); }
-    .nc-editorial-cta:hover .nc-editorial-arrow { transform: translateX(3px); }
 
     /* ═══════════════════════════════════════════════════════════════
        SUPPLEMENT CARDS (white on protocol grey band)
@@ -2349,32 +2403,32 @@
               <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/d077c8b1-a059-4b1c-8100-1d182601da02" alt="" /></div>
               <div class="nc-stack-body">
                 <div class="nc-stack-name">Resveratrol</div>
-                <span class="nc-stack-tag">HRV</span>
-                <div class="nc-stack-dose">250mg · 1 capsule · Morning</div>
+                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg><span class="stage-category-tag__focus">HRV</span></span>
+                <div class="nc-stack-dose">250mg · 1 capsule</div>
               </div>
             </div>
             <div class="nc-stack-row">
               <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/0af49460-90d8-49d7-a1f0-12a6f0176daa" alt="" /></div>
               <div class="nc-stack-body">
                 <div class="nc-stack-name">Inositol</div>
-                <span class="nc-stack-tag">RHR</span>
-                <div class="nc-stack-dose">2g · 1 scoop · With meals</div>
+                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg><span class="stage-category-tag__focus">Deep Sleep</span></span>
+                <div class="nc-stack-dose">2g · 1 scoop</div>
               </div>
             </div>
-            <div class="nc-stack-row">
-              <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/b20822f3-d0d4-4e0e-b148-e780c5e951f3" alt="" /></div>
+              <div class="nc-stack-row">
+              <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/d077c8b1-a059-4b1c-8100-1d182601da02" alt="" /></div>
               <div class="nc-stack-body">
                 <div class="nc-stack-name">NMN</div>
-                <span class="nc-stack-tag">NAD+</span>
-                <div class="nc-stack-dose">300mg · 1 capsule · Midday</div>
+                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg><span class="stage-category-tag__focus">REM Sleep</span></span>
+                <div class="nc-stack-dose">300mg · 1 capsule</div>
               </div>
             </div>
-            <div class="nc-stack-row">
-              <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/a55859cc-8bf8-4ffa-9b8e-64146824495f" alt="" /></div>
+              <div class="nc-stack-row">
+              <div class="nc-stack-thumb"><img src="https://www.figma.com/api/mcp/asset/0af49460-90d8-49d7-a1f0-12a6f0176daa" alt="" /></div>
               <div class="nc-stack-body">
                 <div class="nc-stack-name">Vitamin D3</div>
-                <span class="nc-stack-tag">25-OH</span>
-                <div class="nc-stack-dose">5000 IU · 1 softgel · Evening</div>
+                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg><span class="stage-category-tag__focus">RHR</span></span>
+                <div class="nc-stack-dose">5000 IU · 1 softgel</div>
               </div>
             </div>
           </div>
@@ -2405,8 +2459,13 @@
           </div>
 
           <div class="nc-fade d5">
-            <button type="button" class="nc-cta-btn">Start My Monthly Protocol — $99/mo</button>
-            <p class="nc-cta-caption">$99/mo &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; Ships within 3 business days</p>
+            <button type="button" class="nc-cta-btn">
+              Start My Monthly Protocol
+              <svg class="nc-cta-btn__arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+                <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <p class="nc-cta-caption">Cancel anytime &nbsp;·&nbsp; Ships within 3 business days</p>
           </div>
 
           <div class="nc-founding-card nc-fade d6">
@@ -2416,7 +2475,6 @@
                 Now live in Australia
               </div>
               <h3 class="nc-founding-heading">Lock in $99/mo, forever.</h3>
-              <p class="nc-founding-body">We've just launched in Australia. The <strong>first 500 members</strong> get <strong>$99/month for life</strong> — for as long as they stay subscribed. Once those spots are gone, the price returns to <strong>$149/month</strong>.</p>
               <div class="nc-spots-bar" role="meter" aria-valuenow="370" aria-valuemin="0" aria-valuemax="500" aria-label="Spots claimed">
                 <div class="nc-spots-fill"></div>
               </div>
@@ -2424,6 +2482,16 @@
                 <span class="nc-spots-text">370 of 500 spots claimed</span>
                 <span class="nc-spots-remaining">130 left</span>
               </div>
+              <details class="nc-founding-details">
+                <summary class="nc-founding-summary">
+                  How does it work?
+                  <svg class="nc-founding-summary__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path class="nc-founding-summary__plus-h" d="M2 6h8" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                    <path class="nc-founding-summary__plus-v" d="M6 2v8" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
+                  </svg>
+                </summary>
+                <p class="nc-founding-body">We've just launched in Australia. The <strong>first 500 members</strong> get <strong>$99/month for life</strong> — for as long as they stay subscribed. Once those spots are gone, the price returns to <strong>$149/month</strong>.</p>
+              </details>
             </div>
           </div>
 
@@ -2450,19 +2518,22 @@
   <!-- ═══════════════════════════════════════════════════════════════
        EDITORIAL
   ═══════════════════════════════════════════════════════════════ -->
-  <section class="nc-editorial-section">
+  <section class="nc-editorial-section nc-protocol-band" aria-label="The future of health">
+    <div class="nc-protocol-band__bleed">
     <div class="nc-wrap--wide">
     <div class="nc-editorial-inner">
-      <figure class="nc-editorial-figure">
-        <img
-          src="https://www.figma.com/api/mcp/asset/43c0b3e0-4a85-45d0-8ed0-e1e1d02951a4"
-          alt="Nutricode daily sachet pouch being filled with a clear capsule."
-          width="502" height="502"
-          loading="eager" decoding="async"
-        />
-      </figure>
+      <div class="nc-editorial-media">
+        <p class="section-label nc-editorial-eyebrow">The future of health</p>
+        <figure class="nc-editorial-figure">
+          <img
+            src="https://www.figma.com/api/mcp/asset/43c0b3e0-4a85-45d0-8ed0-e1e1d02951a4"
+            alt="Nutricode daily sachet pouch being filled with a clear capsule."
+            width="502" height="502"
+            loading="eager" decoding="async"
+          />
+        </figure>
+      </div>
       <div class="nc-editorial-content">
-        <p class="section-label nc-editorial-eyebrow">How it works</p>
         <h2 class="nc-editorial-title">Your supplements.<br>Continuously refined.</h2>
         <p class="nc-editorial-body">From day one, Nutricode monitors how your body responds, tracks the metrics that matter, and keeps your stack aligned with your latest data and the newest evidence.</p>
         <ul class="nc-editorial-list">
@@ -2485,13 +2556,14 @@
             Your protocol kept current with the latest research
           </li>
         </ul>
-        <a href="#" class="nc-editorial-cta">
-          Start my protocol
-          <svg class="nc-editorial-arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
-            <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <button type="button" class="nc-cta-btn">
+          Start My Monthly Protocol
+          <svg class="nc-cta-btn__arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+            <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
-        </a>
+        </button>
       </div>
+    </div>
     </div>
     </div>
   </section>
