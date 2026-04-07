@@ -8,177 +8,331 @@
   <style>
 
     /* ═══════════════════════════════════════════════════════════════
-       DESIGN TOKENS
+       DESIGN TOKENS (aligned with nutricode-health-report.html)
     ═══════════════════════════════════════════════════════════════ */
     :root {
-      --font:  'Urbanist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-      --mono:  'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+      --font-ui:   'Urbanist', -apple-system, "Helvetica Neue", sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --font: var(--font-ui);
+      --mono: var(--font-mono);
 
-      /* Surfaces */
-      --bg:        #f6f5f3;
-      --surface:   #ffffff;
-      --surface-2: #f9f8f7;
-      --stage:     #18181b;
-      --stage-2:   #1f1f23;
+      --ink:   #17171a;
+      --ink-2: #2c2c30;
+      --ink-3: #6b7280;
+      --ink-4: #9ca3af;
+      --ink-5: #d1d5db;
 
-      /* Ink */
-      --ink:   #18181b;
-      --ink-2: #3f3f46;
-      --ink-3: #71717a;
-      --ink-4: #a1a1aa;
+      --bg:   #f5f5f7;
+      --card: #ffffff;
+      --sep:  rgba(0,0,0,0.055);
 
-      /* Separators */
-      --sep:      rgba(0,0,0,0.07);
-      --sep-dark: rgba(255,255,255,0.08);
+      --green:  #1a6b37;
+      --amber:  #995000;
+      --red:    #b51c1c;
+      --blue:   #1a4ea0;
 
-      /* Accent colours — restrained, clinical */
-      --green:     #16a34a;
-      --green-dim: rgba(22,163,74,0.1);
-      --blue:      #2563eb;
-      --blue-dim:  rgba(37,99,235,0.08);
-      --amber:     #d97706;
-      --amber-dim: rgba(217,119,6,0.1);
-      --amber-bg:  #fefbf3;
+      --green-accent: #22c55e;
+      --amber-accent: #f59e0b;
+      --red-accent:   #ef4444;
+      --blue-accent:  #3b82f6;
 
-      /* Geometry */
-      --r-xs:  4px;
-      --r-sm:  8px;
-      --r-md:  12px;
-      --r-lg:  18px;
-      --r-xl:  22px;
+      --red-bg:   rgba(181,28,28,0.07);
+      --amber-bg: rgba(153,80,0,0.08);
+      --green-bg: rgba(26,107,55,0.08);
+      --blue-bg:  rgba(26,78,160,0.07);
 
-      /* Shadow */
-      --shadow:      0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06);
-      --shadow-lift: 0 2px 6px rgba(0,0,0,0.05), 0 12px 40px rgba(0,0,0,0.09);
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 40px;
+      --space-6: 56px;
+
+      --radius-sm:  6px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      --card-border: rgba(0,0,0,0.07);
+      --card-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.025);
+
+      --ls-9: calc(9px * 0.011);
+      --ls-9-caps: calc(9px * 0.28);
+      --ls-10: calc(10px * 0.01);
+      --ls-10-caps: calc(10px * 0.28);
+      --ls-11: calc(11px * 0.011);
+      --ls-11-caps: calc(11px * 0.28);
+      --ls-12: calc(12px * 0.008);
+      --ls-13: calc(13px * 0.011);
+      --ls-14: calc(14px * 0.013);
+      --ls-15: calc(15px * 0.021);
+      --ls-16: calc(16px * 0.018);
+      --ls-18: calc(18px * 0.02);
+      --ls-20: calc(20px * 0.02);
+      --ls-21: calc(21px * 0.02);
+      --ls-22: calc(22px * 0.02);
+      --ls-28: calc(28px * 0.02);
+      --ls-30: calc(30px * 0.02);
+      --ls-34: calc(34px * 0.02);
+
+      --page-edge: clamp(16px, 4.5vw, 24px);
+
+      /* Legacy aliases (supplement / order UI) */
+      --surface:   var(--card);
+      --surface-2: #ececf0;
+      --stage:     #1f2328;
+      --stage-2:   #2a2d35;
+      --sep-dark:  rgba(255,255,255,0.08);
+      --shadow:    var(--card-shadow);
+      --shadow-lift: 0 2px 8px rgba(0,0,0,0.06), 0 8px 28px rgba(0,0,0,0.04);
+      --r-xs: var(--radius-sm);
+      --r-sm: 8px;
+      --r-md: var(--radius-md);
+      --r-lg: var(--radius-lg);
+      --r-xl: var(--radius-lg);
+      --green-dim: var(--green-bg);
+      --amber-dim: var(--amber-bg);
+      --blue-dim:  var(--blue-bg);
+      --amber-bg:  #fffbf0;
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --space-5: 32px;
+        --space-6: 44px;
+      }
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { font-size: 16px; }
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
     body {
-      font-family: var(--font);
+      font-family: var(--font-ui);
       background: var(--bg);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      font-optical-sizing: auto;
+      font-size: 15px;
+      line-height: 1.4;
+      letter-spacing: var(--ls-15);
+      overflow-x: hidden;
+      padding-left: max(var(--page-edge), env(safe-area-inset-left, 0px));
+      padding-right: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* Shared surfaces (health report) */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .card-sep {
+      height: 1px;
+      background: var(--sep);
+      margin: 0 var(--space-3);
+    }
+    .section-label {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: 22px;
+      line-height: 1.35;
+    }
+    .page-section { padding: var(--space-6) 0 0; }
+    .page-section:first-of-type { padding-top: var(--space-5); }
+
+    .report-name {
+      font-family: var(--font-ui);
+      font-size: 34px;
+      font-weight: 600;
+      letter-spacing: var(--ls-34);
+      color: var(--ink);
+      line-height: 1.1;
+    }
+    .report-meta-line {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--ink-4);
+      margin-top: 8px;
+      letter-spacing: var(--ls-14);
+      line-height: 1.5;
+      max-width: 28em;
+    }
+
+    .status-pill {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.25;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      align-self: flex-start;
+    }
+    .pill-red   { background: var(--red-bg);   color: var(--red); }
+    .pill-amber { background: var(--amber-bg); color: var(--amber); }
+    .pill-green { background: var(--green-bg); color: var(--green); }
+    .pill-gray  { background: rgba(0,0,0,0.05); color: var(--ink-3); }
+
+    /* Hero metric tags: sentence case (health-report pills are all-caps) */
+    .nc-hero__snapgrid .status-pill {
+      text-transform: none;
+      font-weight: 500;
+      font-size: 11px;
+      letter-spacing: var(--ls-11);
+    }
+
+    .score-headline {
+      font-family: var(--font-ui);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: var(--ls-22);
+      color: var(--ink);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .cta-headline {
+      font-family: var(--font-ui);
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 600;
+      letter-spacing: var(--ls-28);
+      color: var(--ink);
+      line-height: 1.15;
+    }
+    .score-context {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--ink-3);
+      letter-spacing: var(--ls-13);
+      line-height: 1.45;
     }
 
     /* ═══════════════════════════════════════════════════════════════
        LAYOUT UTILITIES
     ═══════════════════════════════════════════════════════════════ */
     .nc-wrap {
-      max-width: 960px;
+      width: 100%;
+      max-width: 640px;
       margin: 0 auto;
-      padding: 0 clamp(20px, 4vw, 48px);
+      padding-left: 0;
+      padding-right: 0;
+      box-sizing: border-box;
     }
     .nc-wrap--wide {
-      max-width: 1200px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 0 clamp(20px, 4vw, 48px);
+      padding-left: 0;
+      padding-right: 0;
+      box-sizing: border-box;
     }
 
     /* ═══════════════════════════════════════════════════════════════
        HERO
     ═══════════════════════════════════════════════════════════════ */
     .nc-hero {
-      padding: 80px 0 60px;
-    }
-    @media (max-width: 680px) {
-      .nc-hero { padding: 52px 0 44px; }
+      padding: var(--space-5) 0 var(--space-4);
     }
 
     .nc-hero__inner {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 48px;
-      align-items: center;
+      gap: var(--space-4);
+      align-items: start;
     }
-    @media (max-width: 680px) {
-      .nc-hero__inner { grid-template-columns: 1fr; gap: 36px; }
+    @media (max-width: 900px) {
+      .nc-hero__inner { grid-template-columns: 1fr; gap: var(--space-4); }
     }
 
     .nc-hero__eyebrow {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-4);
-      margin-bottom: 18px;
+      gap: 10px;
+      margin-bottom: var(--space-3);
+    }
+    .nc-hero__eyebrow .section-label {
+      margin-bottom: 0;
     }
     .nc-hero__eyebrow-dot {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--green-accent);
       flex-shrink: 0;
-      animation: nc-pulse 2.4s ease-in-out infinite;
+      animation: nc-hero-dot-pulse 2.2s ease-in-out infinite;
     }
-    @keyframes nc-pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.35; }
-    }
-
-    .nc-hero__title {
-      font-family: var(--font);
-      font-size: clamp(36px, 5.5vw, 54px);
-      font-weight: 700;
-      line-height: 1.04;
-      letter-spacing: -0.04em;
-      color: var(--ink);
-      margin-bottom: 16px;
+    @keyframes nc-hero-dot-pulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
+      }
     }
 
-    .nc-hero__sub {
-      font-family: var(--font);
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 1.65;
-      color: var(--ink-3);
-      letter-spacing: -0.01em;
-      max-width: 440px;
-    }
+    .nc-hero__inner .report-name { margin-bottom: 0; }
 
-    .nc-hero__metrics {
+    /* Snapshot grid (health report snapshot-tile pattern) */
+    .nc-hero__snapgrid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      border: 1px solid var(--sep);
-      border-radius: var(--r-xl);
-      background: var(--surface);
-      overflow: hidden;
-      box-shadow: var(--shadow);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
       flex-shrink: 0;
+      min-width: 0;
+      max-width: 340px;
     }
+    @media (max-width: 900px) {
+      .nc-hero__snapgrid { max-width: none; width: 100%; }
+    }
+    /* Always 2 columns × 2 rows (never stack to single column) */
 
-    .nc-hero__metric {
+    .snapshot-tile {
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+      padding: var(--space-3);
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      padding: 20px 24px;
-      border-right: 1px solid var(--sep);
-      border-bottom: 1px solid var(--sep);
+      gap: 8px;
+      height: 100%;
     }
-    .nc-hero__metric:nth-child(2n) { border-right: none; }
-    .nc-hero__metric:nth-last-child(-n+2) { border-bottom: none; }
 
-    .nc-hero__metric-val {
-      font-family: var(--mono);
+    .nc-hero__metric-val,
+    .snap-val {
+      font-family: var(--font-mono);
       font-size: 24px;
       font-weight: 600;
       color: var(--ink);
-      letter-spacing: -0.04em;
+      letter-spacing: var(--ls-20);
       line-height: 1;
     }
-    .nc-hero__metric-lbl {
-      font-family: var(--font);
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--ink-4);
-      letter-spacing: 0.01em;
-      white-space: nowrap;
+    .nc-hero__metric-name {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-2);
+      letter-spacing: var(--ls-12);
+      line-height: 1.25;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -190,26 +344,36 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       PROTOCOL SECTION (supplement cards)
+       PROTOCOL BAND (dark full-bleed — health report focus band)
     ═══════════════════════════════════════════════════════════════ */
-    .nc-protocol-section {
-      padding: 64px 0 80px;
+    .nc-protocol-band {
+      --protocol-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
+      --protocol-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
+    }
+    .nc-protocol-band__bleed {
+      width: calc(100% + var(--protocol-bleed-l) + var(--protocol-bleed-r));
+      max-width: none;
+      margin-left: calc(-1 * var(--protocol-bleed-l));
+      margin-right: calc(-1 * var(--protocol-bleed-r));
+      background: #1a1b1f;
+      padding-top: var(--space-5);
+      padding-bottom: var(--space-6);
+      padding-left: var(--protocol-bleed-l);
+      padding-right: var(--protocol-bleed-r);
+    }
+
+    .nc-protocol-band__label {
+      color: rgba(255, 255, 255, 0.42);
+      margin-bottom: 0;
     }
 
     .nc-protocol-header {
       display: flex;
-      align-items: baseline;
+      align-items: flex-end;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .nc-protocol-title {
-      font-family: var(--font);
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.03em;
-      color: var(--ink);
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
     }
 
     .nc-protocol-nav {
@@ -218,39 +382,42 @@
       gap: 10px;
     }
 
-    /* Pagination count */
-    #recRhrCount {
-      font-family: var(--mono);
+    /* Pagination count — on dark */
+    .nc-protocol-band #recRhrCount {
+      font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 500;
-      color: var(--ink-4);
-      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: var(--ls-10-caps);
       text-transform: uppercase;
     }
 
-    /* Pagination dots */
-    .rec-rhr-dots {
+    /* Pagination dots — period-picker style */
+    .nc-protocol-band .rec-rhr-dots {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      padding: 3px 5px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.08);
     }
-    .rec-rhr-dot {
+    .nc-protocol-band .rec-rhr-dot {
       padding: 0;
       border: none;
       cursor: pointer;
-      background: rgba(0,0,0,0.14);
+      background: rgba(255, 255, 255, 0.22);
       border-radius: 999px;
       width: 5px;
       height: 5px;
       transition: background .2s, width .22s cubic-bezier(.22,1,.36,1);
       -webkit-tap-highlight-color: transparent;
     }
-    .rec-rhr-dot.active {
-      background: var(--ink);
-      width: 16px;
+    .nc-protocol-band .rec-rhr-dot.active {
+      background: #ffffff;
+      width: 18px;
     }
-    .rec-rhr-dot:focus-visible {
-      outline: 2px solid var(--blue);
+    .nc-protocol-band .rec-rhr-dot:focus-visible {
+      outline: 2px solid var(--blue-accent);
       outline-offset: 2px;
     }
 
@@ -277,9 +444,10 @@
       width: min(880px, calc(100vw - 40px));
       max-width: 880px;
       scroll-snap-align: start;
-      border-radius: var(--r-xl);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
       background: var(--surface);
-      box-shadow: var(--shadow);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
       opacity: 0;
       transform: translateY(14px);
@@ -328,12 +496,12 @@
 
     /* Category tag — mono, amber */
     .stage-category {
-      font-family: var(--mono);
+      font-family: var(--font-mono);
       font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
       text-transform: uppercase;
-      color: var(--amber);
+      color: var(--amber-accent);
       margin: 0 0 22px;
     }
 
@@ -407,7 +575,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--green-accent);
       flex-shrink: 0;
     }
     .stage-badge--emerging {
@@ -796,7 +964,7 @@
       transition: background .2s, width .22s cubic-bezier(.22,1,.36,1);
     }
     .research-dot.active { background: var(--ink); width: 14px; }
-    .research-dot:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .research-dot:focus-visible { outline: 2px solid var(--blue-accent); outline-offset: 2px; }
 
     .research-scroll {
       display: flex;
@@ -975,36 +1143,26 @@
     ═══════════════════════════════════════════════════════════════ */
     .nc-order-section {
       border-top: 1px solid var(--sep);
-      padding: 80px 0 100px;
+      padding: var(--space-6) 0 100px;
     }
 
     .nc-order-heading {
-      margin-bottom: 48px;
+      margin-bottom: var(--space-4);
     }
-    .nc-order-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-4);
-      margin-bottom: 10px;
+    .nc-order-heading .section-label {
+      margin-bottom: var(--space-4);
     }
-    .nc-order-title {
-      font-family: var(--font);
-      font-size: clamp(28px, 4vw, 40px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.05;
-      color: var(--ink);
+    .nc-order-heading .cta-headline {
+      margin-bottom: 0;
     }
     .nc-order-sub {
-      font-family: var(--font);
+      font-family: var(--font-ui);
       font-size: 14px;
       font-weight: 400;
       color: var(--ink-3);
       margin-top: 8px;
-      letter-spacing: -0.01em;
+      letter-spacing: var(--ls-14);
+      line-height: 1.5;
     }
 
     .nc-order-grid {
@@ -1022,9 +1180,10 @@
 
     /* Product + features card */
     .nc-product-card {
-      background: var(--surface);
-      border-radius: var(--r-xl);
-      box-shadow: var(--shadow);
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
       margin-bottom: 12px;
     }
@@ -1105,7 +1264,7 @@
       flex-shrink: 0;
       width: 18px; height: 18px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--green-accent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1114,9 +1273,10 @@
 
     /* Stack card */
     .nc-stack-card {
-      background: var(--surface);
-      border-radius: var(--r-xl);
-      box-shadow: var(--shadow);
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
     }
     .nc-stack-header {
@@ -1164,15 +1324,16 @@
       display: inline-flex;
       align-items: center;
       margin-top: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10);
+      line-height: 1.25;
+      text-transform: uppercase;
       background: rgba(0,0,0,0.05);
-      border: 1px solid var(--sep);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 500;
       color: var(--ink-3);
-      letter-spacing: 0.04em;
     }
     .nc-stack-dose {
       font-family: var(--mono);
@@ -1184,9 +1345,10 @@
 
     /* Pricing card */
     .nc-price-card {
-      background: var(--surface);
-      border-radius: var(--r-xl);
-      box-shadow: var(--shadow);
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
       margin-bottom: 12px;
     }
@@ -1211,7 +1373,7 @@
       color: var(--ink-3);
       letter-spacing: -0.02em;
     }
-    .nc-price-val--green  { color: var(--green); font-weight: 600; }
+    .nc-price-val--green  { color: var(--green-accent); font-weight: 600; }
     .nc-price-val--strike { text-decoration: line-through; color: var(--ink-4); }
 
     .nc-total-row {
@@ -1250,13 +1412,13 @@
       width: 100%;
       padding: 16px 24px;
       border: none;
-      border-radius: var(--r-lg);
+      border-radius: 999px;
       background: var(--ink);
       color: #ffffff;
-      font-family: var(--font);
-      font-size: 15px;
+      font-family: var(--font-ui);
+      font-size: 14px;
       font-weight: 600;
-      letter-spacing: -0.02em;
+      letter-spacing: var(--ls-14);
       text-align: center;
       cursor: pointer;
       transition: opacity .14s, transform .1s;
@@ -1278,9 +1440,10 @@
 
     /* Founding card */
     .nc-founding-card {
-      background: var(--amber-bg);
-      border-radius: var(--r-xl);
-      border: 1px solid rgba(217,119,6,0.14);
+      background: var(--card);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
       overflow: hidden;
       margin-bottom: 12px;
     }
@@ -1326,7 +1489,7 @@
     .nc-founding-body strong { font-weight: 600; color: var(--ink); }
     .nc-spots-bar {
       margin-top: 14px;
-      background: rgba(217,119,6,0.1);
+      background: rgba(34, 197, 94, 0.12);
       border-radius: 999px;
       height: 3px;
       overflow: hidden;
@@ -1334,7 +1497,7 @@
     .nc-spots-fill {
       height: 100%;
       width: 74%;
-      background: var(--amber);
+      background: var(--green-accent);
       border-radius: 999px;
     }
     .nc-spots-label {
@@ -1351,15 +1514,15 @@
       align-items: flex-start;
       gap: 13px;
       padding: 16px 20px;
-      background: var(--blue-dim, rgba(37,99,235,0.06));
-      border-radius: var(--r-xl);
-      border: 1px solid rgba(37,99,235,0.1);
+      background: var(--blue-bg);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(59, 130, 246, 0.12);
     }
     .nc-guarantee-icon {
       flex-shrink: 0;
       width: 34px; height: 34px;
       border-radius: 9px;
-      background: var(--blue);
+      background: var(--blue-accent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1372,13 +1535,14 @@
       letter-spacing: -0.02em;
     }
     .nc-guarantee-body {
-      font-family: var(--font);
-      font-size: 12px;
+      font-family: var(--font-ui);
+      font-size: 13px;
       color: var(--ink-3);
       margin-top: 3px;
-      line-height: 1.55;
+      line-height: 1.45;
+      letter-spacing: var(--ls-13);
     }
-    .nc-guarantee-blue { color: var(--blue); }
+    .nc-guarantee-blue { color: var(--blue-accent); }
 
     /* Entrance animations */
     .nc-fade {
@@ -1400,7 +1564,7 @@
     ═══════════════════════════════════════════════════════════════ */
     .nc-editorial-section {
       border-top: 1px solid var(--sep);
-      padding: 88px clamp(20px, 5vw, 60px) 108px;
+      padding: var(--space-6) 0 108px;
     }
 
     .nc-editorial-inner {
@@ -1408,24 +1572,25 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 56px;
+      gap: var(--space-5);
       align-items: center;
     }
     @media (min-width: 760px) {
       .nc-editorial-inner {
         grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-        gap: 88px;
+        gap: var(--space-6);
       }
     }
 
     .nc-editorial-figure {
       margin: 0;
       position: relative;
-      border-radius: 24px;
+      border-radius: var(--radius-lg);
       overflow: hidden;
       aspect-ratio: 1 / 1;
-      background: #e5e5ea;
-      box-shadow: var(--shadow-lift);
+      background: var(--surface-2);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
     }
     .nc-editorial-figure img {
       width: 100%; height: 100%;
@@ -1439,33 +1604,28 @@
       align-items: flex-start;
     }
 
-    .nc-editorial-eyebrow {
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-4);
-      margin-bottom: 16px;
+    .nc-editorial-eyebrow.section-label {
+      margin-bottom: var(--space-3);
     }
 
     .nc-editorial-title {
-      font-family: var(--font);
-      font-size: clamp(30px, 4.5vw, 48px);
-      font-weight: 700;
-      line-height: 1.06;
-      letter-spacing: -0.04em;
+      font-family: var(--font-ui);
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: var(--ls-28);
       color: var(--ink);
-      margin-bottom: 18px;
+      margin-bottom: var(--space-3);
     }
 
     .nc-editorial-body {
-      font-family: var(--font);
+      font-family: var(--font-ui);
       font-size: 15px;
-      line-height: 1.7;
+      line-height: 1.6;
       color: var(--ink-3);
-      letter-spacing: -0.01em;
-      margin-bottom: 30px;
+      letter-spacing: var(--ls-15);
+      margin-bottom: var(--space-4);
+      max-width: 32em;
     }
 
     .nc-editorial-list {
@@ -1479,19 +1639,19 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      font-family: var(--font);
+      font-family: var(--font-ui);
       font-size: 14px;
       font-weight: 400;
       color: var(--ink-2);
       line-height: 1.5;
-      letter-spacing: -0.01em;
+      letter-spacing: var(--ls-14);
     }
     .nc-editorial-check {
       flex-shrink: 0;
       margin-top: 2px;
       width: 16px; height: 16px;
       border-radius: 50%;
-      background: var(--green);
+      background: var(--green-accent);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1507,10 +1667,10 @@
       border-radius: 999px;
       background: var(--ink);
       color: #fff;
-      font-family: var(--font);
+      font-family: var(--font-ui);
       font-size: 14px;
       font-weight: 600;
-      letter-spacing: -0.02em;
+      letter-spacing: var(--ls-14);
       text-decoration: none;
       border: none;
       cursor: pointer;
@@ -1539,28 +1699,32 @@
       <div class="nc-hero__inner">
         <div>
           <p class="nc-hero__eyebrow">
-            <span class="nc-hero__eyebrow-dot"></span>
-            Protocol · April 2026
+            <span class="nc-hero__eyebrow-dot" aria-hidden="true"></span>
+            <span class="section-label">Protocol · April 2026</span>
           </p>
-          <h1 class="nc-hero__title">Your personalised stack,<br>built from your data.</h1>
-          <p class="nc-hero__sub">Based on your Wellness Score of 67, three priority focus areas, and 30 days of biometric patterns.</p>
+          <h1 class="report-name">Your personalised stack,<br />built from your data.</h1>
+          <p class="report-meta-line">Based on your latest biomarkers, three priority focus areas, and 30 days of biometric patterns.</p>
         </div>
-        <div class="nc-hero__metrics">
-          <div class="nc-hero__metric">
-            <span class="nc-hero__metric-val">67</span>
-            <span class="nc-hero__metric-lbl">Wellness Score</span>
+        <div class="nc-hero__snapgrid snapshot-grid" aria-label="Key biomarkers">
+          <div class="snapshot-tile nc-hero__metric">
+            <span class="snap-val nc-hero__metric-val">67</span>
+            <span class="nc-hero__metric-name">HRV</span>
+            <span class="status-pill pill-red">33% below average</span>
           </div>
-          <div class="nc-hero__metric">
-            <span class="nc-hero__metric-val">38ms</span>
-            <span class="nc-hero__metric-lbl">HRV avg</span>
+          <div class="snapshot-tile nc-hero__metric">
+            <span class="snap-val nc-hero__metric-val">38ms</span>
+            <span class="nc-hero__metric-name">Deep Sleep</span>
+            <span class="status-pill pill-amber">13% below average</span>
           </div>
-          <div class="nc-hero__metric">
-            <span class="nc-hero__metric-val">33%</span>
-            <span class="nc-hero__metric-lbl">Repair sleep</span>
+          <div class="snapshot-tile nc-hero__metric">
+            <span class="snap-val nc-hero__metric-val">33%</span>
+            <span class="nc-hero__metric-name">REM Sleep</span>
+            <span class="status-pill pill-green">15% above average</span>
           </div>
-          <div class="nc-hero__metric">
-            <span class="nc-hero__metric-val">4</span>
-            <span class="nc-hero__metric-lbl">Compounds</span>
+          <div class="snapshot-tile nc-hero__metric">
+            <span class="snap-val nc-hero__metric-val">4</span>
+            <span class="nc-hero__metric-name">RHR</span>
+            <span class="status-pill pill-gray">high variance</span>
           </div>
         </div>
       </div>
@@ -1572,11 +1736,12 @@
   <!-- ═══════════════════════════════════════════════════════════════
        SUPPLEMENT CARDS
   ═══════════════════════════════════════════════════════════════ -->
-  <section class="nc-protocol-section" aria-label="Your supplement protocol">
+  <section class="nc-protocol-band" aria-label="Your supplement protocol">
+    <div class="nc-protocol-band__bleed">
     <div class="nc-wrap--wide">
 
       <div class="nc-protocol-header">
-        <h2 class="nc-protocol-title">Your compounds</h2>
+        <p class="section-label nc-protocol-band__label">Your compounds</p>
         <div class="nc-protocol-nav">
           <span id="recRhrCount"></span>
           <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose supplement card"></div>
@@ -1772,6 +1937,7 @@
 
       </div><!-- /rhrGrid -->
     </div>
+    </div>
   </section>
 
   <div class="nc-divider"></div>
@@ -1783,8 +1949,8 @@
     <div class="nc-wrap">
 
       <div class="nc-order-heading nc-fade d1">
-        <p class="nc-order-label">Your order</p>
-        <h2 class="nc-order-title">Start your protocol.</h2>
+        <p class="section-label">Your order</p>
+        <h2 class="cta-headline">Start your protocol.</h2>
         <p class="nc-order-sub">30-day cycle · Adjust or cancel anytime</p>
       </div>
 
@@ -1922,7 +2088,7 @@
             <div class="nc-guarantee-icon" aria-hidden="true">
               <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
                 <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
-                <path d="M6 10l2 2 4-4" stroke="rgba(37,99,235,1)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 10l2 2 4-4" stroke="#3b82f6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div>
@@ -1942,6 +2108,7 @@
        EDITORIAL
   ═══════════════════════════════════════════════════════════════ -->
   <section class="nc-editorial-section">
+    <div class="nc-wrap--wide">
     <div class="nc-editorial-inner">
       <figure class="nc-editorial-figure">
         <img
@@ -1952,7 +2119,7 @@
         />
       </figure>
       <div class="nc-editorial-content">
-        <p class="nc-editorial-eyebrow">How it works</p>
+        <p class="section-label nc-editorial-eyebrow">How it works</p>
         <h2 class="nc-editorial-title">Your supplements.<br>Continuously refined.</h2>
         <p class="nc-editorial-body">From day one, Nutricode monitors how your body responds, tracks the metrics that matter, and keeps your stack aligned with your latest data and the newest evidence.</p>
         <ul class="nc-editorial-list">
@@ -1982,6 +2149,7 @@
           </svg>
         </a>
       </div>
+    </div>
     </div>
   </section>
 
