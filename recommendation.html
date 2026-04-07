@@ -364,6 +364,10 @@
       padding-left: var(--protocol-bleed-l);
       padding-right: var(--protocol-bleed-r);
     }
+    /* Your compounds band only — extra 24px air above header (editorial redefines bleed) */
+    .nc-protocol-band:not(.nc-editorial-section) .nc-protocol-band__bleed {
+      padding-top: calc(var(--space-5) + 24px);
+    }
 
     .nc-protocol-band__label {
       color: var(--ink-4);
@@ -1682,67 +1686,119 @@
       letter-spacing: 0.01em;
     }
 
-    /* Pricing card */
+    /* ── Price card (Apple-style) ── */
     .nc-price-card {
-      background: var(--card);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--card-border);
-      border-bottom: 1px solid rgba(0, 0, 0, 0.14);
-      box-shadow: var(--card-shadow);
+      background: #ffffff;
+      border-radius: 18px;
+      border: none;
+      box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.09),
+        0 2px 6px rgba(0, 0, 0, 0.05),
+        0 8px 28px rgba(0, 0, 0, 0.07);
       overflow: hidden;
     }
     .nc-price-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 13px 20px;
+      gap: 16px;
+      padding: 14px 22px;
     }
-    .nc-price-row + .nc-price-row { border-top: 1px solid var(--sep); }
+    .nc-price-row + .nc-price-row {
+      border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+    }
     .nc-price-label {
-      font-family: var(--font);
-      font-size: 14px;
+      font-family: var(--font-ui);
+      font-size: 15px;
       font-weight: 400;
-      color: var(--ink-3);
+      color: var(--ink-2);
+      letter-spacing: var(--ls-15);
     }
     .nc-price-val {
-      font-family: var(--mono);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--ink-3);
-      letter-spacing: -0.02em;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ink-2);
+      letter-spacing: -0.025em;
+      font-variant-numeric: tabular-nums;
     }
-    .nc-price-val--green  { color: var(--green-accent); font-weight: 600; }
-    .nc-price-val--strike { text-decoration: line-through; color: var(--ink-4); }
+    .nc-price-val--green  { color: var(--green-accent); font-weight: 500; }
+    .nc-price-val--strike { text-decoration: line-through; color: var(--ink-5); font-weight: 400; }
 
+    /* Promo discount row — subtle green wash */
+    .nc-price-row-promo {
+      align-items: center;
+      background: rgba(34, 197, 94, 0.05);
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+    .nc-price-row-promo .nc-price-val {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--green-accent);
+    }
+    .nc-price-promo-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: flex-start;
+      min-width: 0;
+    }
+    .nc-price-promo-kicker {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: var(--ink-3);
+      line-height: 1.3;
+    }
+    .nc-price-promo-sub {
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .nc-price-promo-spots {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: var(--ls-11);
+      color: var(--ink-4);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+    .nc-price-promo-spots .nc-price-spots-sep {
+      margin: 0 0.3em;
+    }
+
+    /* Total row */
     .nc-total-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 17px 20px;
-      border-top: 1px solid var(--sep);
-      background: var(--surface-2);
+      gap: 16px;
+      padding: 18px 22px;
+      border-top: 0.5px solid rgba(0, 0, 0, 0.1);
+      background: transparent;
     }
     .nc-total-label {
-      font-family: var(--font);
-      font-size: 14px;
+      font-family: var(--font-ui);
+      font-size: 17px;
       font-weight: 600;
       color: var(--ink);
-      letter-spacing: -0.02em;
-    }
-    .nc-total-sub {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--ink-4);
-      margin-top: 3px;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.025em;
     }
     .nc-total-amount {
-      font-family: var(--mono);
-      font-size: 32px;
+      font-family: var(--font-mono);
+      font-size: 40px;
       font-weight: 600;
       color: var(--ink);
-      letter-spacing: -0.05em;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
     }
 
     /* CTA button */
@@ -1785,117 +1841,6 @@
       letter-spacing: var(--ls-10);
       margin-bottom: 0;
     }
-
-    /* Founding card */
-    .nc-founding-card {
-      background: var(--blue-tint-bg);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--blue-tint-border);
-      box-shadow: var(--card-shadow);
-      overflow: hidden;
-    }
-    .nc-founding-inner { padding: 18px 20px; }
-    .nc-founding-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 10px;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.28);
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      line-height: 1.45;
-      color: var(--green-accent);
-    }
-    .nc-founding-dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: var(--green-accent);
-      animation: nc-pulse 2s infinite;
-    }
-    .nc-founding-heading {
-      font-family: var(--font);
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1.38;
-      color: var(--ink);
-      margin-top: 11px;
-    }
-    .nc-founding-body {
-      font-family: var(--font);
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 1.72;
-      color: var(--ink-3);
-      margin-top: 7px;
-    }
-    .nc-founding-body strong { font-weight: 600; color: var(--ink); }
-
-    .nc-founding-details {
-      margin-top: 14px;
-    }
-    .nc-founding-summary {
-      list-style: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-family: var(--font-ui);
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: var(--ls-12);
-      color: var(--ink-4);
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nc-founding-summary:focus-visible {
-      outline: 2px solid var(--blue-accent);
-      outline-offset: 3px;
-      border-radius: 4px;
-    }
-    .nc-founding-summary::-webkit-details-marker { display: none; }
-    .nc-founding-summary__icon {
-      flex-shrink: 0;
-      display: block;
-      color: var(--ink-4);
-    }
-    .nc-founding-summary__plus-v {
-      transform-origin: center;
-      transition: opacity .15s ease, transform .15s ease;
-    }
-    .nc-founding-details[open] .nc-founding-summary__plus-v {
-      opacity: 0;
-      transform: scaleY(0);
-    }
-    .nc-founding-details .nc-founding-body {
-      margin-top: 8px;
-    }
-
-    .nc-spots-bar {
-      margin-top: 14px;
-      background: rgba(34, 197, 94, 0.12);
-      border-radius: 999px;
-      height: 3px;
-      overflow: hidden;
-    }
-    .nc-spots-fill {
-      height: 100%;
-      width: 74%;
-      background: var(--green-accent);
-      border-radius: 999px;
-    }
-    .nc-spots-label {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-    .nc-spots-text      { font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--ink-4); }
-    .nc-spots-remaining { font-family: var(--mono); font-size: 10px; line-height: 1.5; color: var(--green-accent); font-weight: 600; }
 
     /* Guarantee */
     .nc-guarantee {
@@ -2009,6 +1954,7 @@
 
     .nc-editorial-media .nc-editorial-eyebrow.section-label {
       margin-bottom: 0;
+      padding-top: 24px;
     }
 
     .nc-editorial-title {
@@ -2445,15 +2391,16 @@
               <span class="nc-price-label">Shipping</span>
               <span class="nc-price-val nc-price-val--green">Free</span>
             </div>
-            <div class="nc-price-row">
-              <span class="nc-price-label">Founding Member — Australia</span>
+            <div class="nc-price-row nc-price-row-promo">
+              <div class="nc-price-promo-copy">
+                <span class="nc-price-promo-kicker">Founding member · Australia</span>
+                <span class="nc-price-promo-sub">Lock in $99/mo for life</span>
+                <span class="nc-price-promo-spots">370 of 500 spots claimed <span class="nc-price-spots-sep" aria-hidden="true">·</span> 130 left</span>
+              </div>
               <span class="nc-price-val nc-price-val--green">−$50</span>
             </div>
             <div class="nc-total-row">
-              <div>
-                <div class="nc-total-label">Today's total</div>
-                <div class="nc-total-sub">then $99 / month</div>
-              </div>
+              <div class="nc-total-label">Today's total</div>
               <div class="nc-total-amount">$99</div>
             </div>
           </div>
@@ -2468,34 +2415,7 @@
             <p class="nc-cta-caption">Cancel anytime &nbsp;·&nbsp; Ships within 3 business days</p>
           </div>
 
-          <div class="nc-founding-card nc-fade d6">
-            <div class="nc-founding-inner">
-              <div class="nc-founding-pill">
-                <span class="nc-founding-dot"></span>
-                Now live in Australia
-              </div>
-              <h3 class="nc-founding-heading">Lock in $99/mo, forever.</h3>
-              <div class="nc-spots-bar" role="meter" aria-valuenow="370" aria-valuemin="0" aria-valuemax="500" aria-label="Spots claimed">
-                <div class="nc-spots-fill"></div>
-              </div>
-              <div class="nc-spots-label">
-                <span class="nc-spots-text">370 of 500 spots claimed</span>
-                <span class="nc-spots-remaining">130 left</span>
-              </div>
-              <details class="nc-founding-details">
-                <summary class="nc-founding-summary">
-                  How does it work?
-                  <svg class="nc-founding-summary__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <path class="nc-founding-summary__plus-h" d="M2 6h8" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
-                    <path class="nc-founding-summary__plus-v" d="M6 2v8" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/>
-                  </svg>
-                </summary>
-                <p class="nc-founding-body">We've just launched in Australia. The <strong>first 500 members</strong> get <strong>$99/month for life</strong> — for as long as they stay subscribed. Once those spots are gone, the price returns to <strong>$149/month</strong>.</p>
-              </details>
-            </div>
-          </div>
-
-          <div class="nc-guarantee nc-fade d7">
+          <div class="nc-guarantee nc-fade d6">
             <div class="nc-guarantee-icon" aria-hidden="true">
               <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
                 <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
