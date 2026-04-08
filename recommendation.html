@@ -2220,12 +2220,16 @@
     }
     .nc-guarantee-icon {
       flex-shrink: 0;
-      width: 34px; height: 34px;
-      border-radius: 9px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       background: var(--blue-accent);
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .nc-guarantee-icon svg {
+      display: block;
     }
     .nc-guarantee-title {
       font-family: var(--font);
@@ -2367,11 +2371,6 @@
         gap: 13px;
         padding: 13px clamp(15px, 3.4vw, 20px);
       }
-      .nc-guarantee-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-      }
       .nc-guarantee-title {
         font-size: 14.5px;
       }
@@ -2408,19 +2407,19 @@
       padding-bottom: 108px;
     }
 
+    /* Stack gap matches `.nc-order-grid` single-column `gap` */
     .nc-editorial-inner {
       width: 100%;
       margin: 0 auto;
       display: grid;
       grid-template-columns: 1fr;
-      gap: var(--space-5);
+      gap: clamp(32px, 7vw, 52px);
       align-items: center;
     }
-    /* Two columns from 700px — same breakpoint as `.nc-order-grid` */
+    /* Two columns from 700px — `column-gap` is set next to `.nc-order-grid` so it tracks every breakpoint */
     @media (min-width: 700px) {
       .nc-editorial-inner {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: var(--space-6);
         row-gap: var(--space-3);
         align-items: start;
       }
@@ -2583,8 +2582,9 @@
       .nc-editorial-section .nc-protocol-band__bleed {
         padding-bottom: 80px;
       }
+      /* Only tighten row rhythm; keep `column-gap` in sync with order (700–764px two-column) */
       .nc-editorial-inner {
-        gap: 24px;
+        row-gap: 24px;
       }
       .nc-editorial-media {
         gap: 14px;
@@ -2621,23 +2621,37 @@
       }
     }
 
-    /* Tablet / mid widths (two columns from 700px; 900px+ gets desktop editorial polish in the block below) */
+    /*
+      Tablet two-column band (765–899px): keep the same editorial type scale as ≤764px.
+      Desktop editorial typography starts at 900px with the main desktop block.
+    */
     @media (min-width: 765px) and (max-width: 899px) {
-      .nc-editorial-inner {
-        column-gap: 36px;
-        row-gap: var(--space-3);
-      }
       .nc-editorial-section .nc-protocol-band__bleed {
         padding-bottom: 96px;
       }
       .nc-editorial-media .nc-editorial-eyebrow.section-label {
-        padding-top: 12px;
+        padding-top: 4px;
       }
       .nc-editorial-title {
-        font-size: clamp(30px, 4.2vw, 34px);
+        font-size: clamp(26px, 8vw, 32px);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        margin-bottom: 14px;
       }
       .nc-editorial-body {
-        max-width: 36em;
+        max-width: none;
+        margin-bottom: 22px;
+        font-size: 15px;
+        line-height: 1.58;
+      }
+      .nc-editorial-list {
+        margin-bottom: 26px;
+        gap: 9px;
+      }
+      .nc-editorial-item {
+        font-size: 14px;
+        line-height: 1.45;
+        gap: 9px;
       }
     }
 
@@ -2754,7 +2768,15 @@
       .cta-headline,
       .nc-editorial-title {
         font-size: 38px;
+      }
+
+      .cta-headline {
         letter-spacing: -0.02em;
+      }
+
+      /* Match tablet: keep base token (tablet does not override letter-spacing) */
+      .nc-editorial-title {
+        letter-spacing: var(--ls-28);
       }
 
       /* ── 2. Hero ────────────────────────────────────────────── */
@@ -2867,20 +2889,12 @@
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
       }
 
-      .nc-guarantee-icon {
-        background: rgba(59, 130, 246, 0.08);
-      }
-      .nc-guarantee-icon svg path:first-child {
-        fill: rgba(59, 130, 246, 0.14);
-      }
-
       /* ── 5. Editorial section ───────────────────────────────── */
       .nc-editorial-section .nc-protocol-band__bleed {
         padding-bottom: 120px;
       }
 
       .nc-editorial-inner {
-        column-gap: 72px;
         row-gap: var(--space-3);
       }
 
@@ -2964,9 +2978,12 @@
       .nc-order-heading {
         margin-bottom: 0;
       }
+      .nc-order-grid,
+      .nc-editorial-inner {
+        column-gap: 52px;
+      }
       .nc-order-grid {
         grid-template-columns: minmax(0, 1.28fr) minmax(0, 1fr);
-        column-gap: 52px;
         /* Left column: heading → product → stack (`.nc-order-rail` spans rows 2–3 on the right) */
         row-gap: 28px;
       }
@@ -3011,17 +3028,15 @@
       .nc-guarantee-title {
         font-size: 15px;
       }
-      .nc-guarantee-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
-      }
     }
 
     /* 700–1099px — checkout rail still needs care: promo stacks, total compact */
     @media (min-width: 700px) and (max-width: 1099px) {
-      .nc-order-grid {
+      .nc-order-grid,
+      .nc-editorial-inner {
         column-gap: 38px;
+      }
+      .nc-order-grid {
         row-gap: 22px;
         grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
       }
@@ -3046,9 +3061,12 @@
       .nc-order-heading {
         margin-bottom: 0;
       }
+      .nc-order-grid,
+      .nc-editorial-inner {
+        column-gap: 72px;
+      }
       .nc-order-grid {
         grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
-        column-gap: 72px;
         row-gap: 32px;
       }
       .nc-order-section .nc-order-rail {
@@ -3084,11 +3102,6 @@
       .nc-guarantee {
         padding: 16px 20px;
         gap: 14px;
-      }
-      .nc-guarantee-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
       }
       .nc-cta-btn {
         padding: 18px 28px;
@@ -3484,7 +3497,7 @@
             <div class="nc-guarantee nc-fade d6">
               <div class="nc-guarantee-icon" aria-hidden="true">
                 <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-                  <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
+                  <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="1"/>
                   <path d="M6 10l2 2 4-4" stroke="#3b82f6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
@@ -3511,9 +3524,9 @@
         <p class="section-label nc-editorial-eyebrow">The future of health</p>
         <figure class="nc-editorial-figure">
           <img
-            src="https://www.figma.com/api/mcp/asset/43c0b3e0-4a85-45d0-8ed0-e1e1d02951a4"
-            alt="Nutricode daily sachet pouch being filled with a clear capsule."
-            width="502" height="502"
+            src="assets/nutricode-editorial-sachet.jpg"
+            alt="A person in blue gloves using tweezers to place a yellow capsule into a silver Nutricode sachet labeled with personalized supplement dosages."
+            width="1024" height="1024"
             loading="eager" decoding="async"
           />
         </figure>
