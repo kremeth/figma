@@ -248,6 +248,9 @@
       .nc-protocol-band:not(.nc-editorial-section) > .nc-protocol-band__bleed > .nc-wrap--wide {
         max-width: 500px;
       }
+      .nc-protocol-band:not(.nc-editorial-section) {
+        --carousel-rail-max: 500px;
+      }
     }
 
     /* Desktop overrides for layout + hero live in the consolidated block at the end of the stylesheet. */
@@ -356,6 +359,14 @@
     .nc-protocol-band {
       --protocol-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
       --protocol-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      /* Match `.nc-wrap--wide` max-width so carousel slides line up with `.nc-protocol-header` */
+      --carousel-rail-max: 640px;
+      --carousel-inset-extra: max(
+        0px,
+        calc(
+          (100vw - var(--protocol-bleed-l) - var(--protocol-bleed-r) - var(--carousel-rail-max)) / 2
+        )
+      );
     }
     .nc-protocol-band__bleed {
       width: calc(100% + var(--protocol-bleed-l) + var(--protocol-bleed-r));
@@ -461,6 +472,8 @@
       animation: nc-rise .65s cubic-bezier(.22,1,.36,1) .06s forwards;
     }
     @keyframes nc-rise { to { opacity: 1; transform: none; } }
+    /* Protocol band: rise without animating opacity so inactive slides can use opacity: 0.2 */
+    @keyframes nc-rise-band { to { transform: none; } }
 
     .rhr-card-inner {
       display: flex;
@@ -2697,17 +2710,8 @@
         var(--bg);
     }
 
-    /* Match `.nc-wrap` column width: cards fill the section content, not 100vw / 880px. */
-    .nc-protocol-band .rec-rhr-grid {
-      width: 100%;
-      box-sizing: border-box;
-    }
+    /* Visual overrides for protocol band cards — layout handled by breakpoint blocks below */
     .nc-protocol-band .rhr-card {
-      width: 100%;
-      max-width: 100%;
-      flex: 0 0 100%;
-      min-width: 0;
-      box-sizing: border-box;
       background: #ffffff;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
@@ -2715,9 +2719,47 @@
       box-shadow:
         0 1px 2px rgba(0, 0, 0, 0.04),
         0 8px 24px rgba(0, 0, 0, 0.06);
-      /* Fill JS `min-height` so `.rhr-card-inner` + grid row span full card (stage bg + border to bottom) */
       display: flex;
       flex-direction: column;
+      opacity: 1;
+      transform: translateY(14px);
+      animation: nc-rise-band 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.06s forwards;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Tablet / desktop (700px+): same full-bleed single-card carousel as mobile.
+       Card has a max-width cap; once the viewport exceeds card+gap, the next card
+       peeks from the right edge at reduced brightness. */
+    @media (min-width: 700px) {
+      .nc-protocol-band .rec-rhr-grid {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: calc(var(--protocol-bleed-l) + var(--carousel-inset-extra));
+        padding-right: calc(var(--protocol-bleed-r) + var(--carousel-inset-extra));
+        gap: calc(2 * var(--page-edge));
+        scroll-padding-left: calc(var(--protocol-bleed-l) + var(--carousel-inset-extra));
+        scroll-padding-right: calc(var(--protocol-bleed-r) + var(--carousel-inset-extra));
+        padding-top: 8px;
+        padding-bottom: 36px;
+        box-sizing: border-box;
+      }
+      .nc-protocol-band .rhr-card {
+        /* card fills viewport until it hits 820px, then next card peeks */
+        flex: 0 0 min(820px, calc(100vw - 2 * var(--page-edge)));
+        width: min(820px, calc(100vw - 2 * var(--page-edge)));
+        max-width: none;
+        min-width: 0;
+        box-sizing: border-box;
+        scroll-snap-stop: always;
+      }
+      .nc-protocol-band .rhr-card.is-active {
+        opacity: 1;
+      }
+      .nc-protocol-band .rhr-card:not(.is-active) {
+        opacity: 0.2;
+      }
     }
 
     .nc-protocol-band .rhr-card-inner {
@@ -2765,10 +2807,11 @@
         max-width: 100vw;
         margin-left: calc(50% - 50vw);
         margin-right: calc(50% - 50vw);
-        padding-left: var(--page-edge);
-        padding-right: var(--page-edge);
+        padding-left: calc(var(--protocol-bleed-l) + var(--carousel-inset-extra));
+        padding-right: calc(var(--protocol-bleed-r) + var(--carousel-inset-extra));
         gap: calc(2 * var(--page-edge));
-        scroll-padding-left: var(--page-edge);
+        scroll-padding-left: calc(var(--protocol-bleed-l) + var(--carousel-inset-extra));
+        scroll-padding-right: calc(var(--protocol-bleed-r) + var(--carousel-inset-extra));
         /* Room for box-shadow (overflow-y:hidden clips); base padding-bottom:2px is not enough */
         padding-top: 8px;
         padding-bottom: 36px;
@@ -2811,6 +2854,10 @@
       .nc-wrap,
       .nc-wrap--wide {
         max-width: min(980px, calc(100vw - 2 * var(--page-edge)));
+      }
+
+      .nc-protocol-band {
+        --carousel-rail-max: min(980px, calc(100vw - 2 * var(--page-edge)));
       }
 
       .section-label {
@@ -4224,7 +4271,7 @@
     function stepSize() {
       const c0 = cards[0];
       const c1 = cards[1];
-      // Prefer distance between card origins so gap (0 on mobile, 20px on desktop) is implicit.
+      // Distance between slide starts (includes flex gap + card width; matches mobile + desktop carousel).
       if (c0 && c1) {
         const d = c1.offsetLeft - c0.offsetLeft;
         if (d > 0) return d;
@@ -4238,6 +4285,9 @@
       dotsEl.querySelectorAll(".rec-rhr-dot").forEach(function (d, j) {
         d.classList.toggle("active", j === idx);
         d.setAttribute("aria-selected", j === idx ? "true" : "false");
+      });
+      cards.forEach(function (card, j) {
+        card.classList.toggle("is-active", j === idx);
       });
     }
 
