@@ -378,7 +378,7 @@
       align-items: flex-end;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: var(--space-3);
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
 
@@ -2749,6 +2749,43 @@
       }
     }
 
+    /*
+      Mobile only: cards keep their inset width but scroll across the full screen.
+
+      Key insight: if the scrollport is 100vw wide with padding P on each side and gap = 2P,
+      then card-width = 100vw - 2P, and card-width + gap = 100vw — so the next card's left
+      edge lands exactly at the right viewport edge and is invisible at rest.
+
+      step = card-width + gap = (100vw - 2P) + 2P = 100vw = window.innerWidth.
+      The offsetLeft delta in stepSize() reads this naturally.
+    */
+    @media (max-width: 699px) {
+      .nc-protocol-band .rec-rhr-grid {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: var(--page-edge);
+        padding-right: var(--page-edge);
+        gap: calc(2 * var(--page-edge));
+        scroll-padding-left: var(--page-edge);
+        /* Room for box-shadow (overflow-y:hidden clips); base padding-bottom:2px is not enough */
+        padding-top: 8px;
+        padding-bottom: 36px;
+      }
+      .nc-protocol-band .rhr-card {
+        flex: 0 0 calc(100vw - 2 * var(--page-edge));
+        width: calc(100vw - 2 * var(--page-edge));
+        min-width: 0;
+        max-width: none;
+        scroll-snap-stop: always;
+        /* Softer lift reads cleaner on mobile strip; fits the padded vertical air */
+        box-shadow:
+          0 1px 2px rgba(0, 0, 0, 0.04),
+          0 6px 20px rgba(0, 0, 0, 0.07);
+      }
+    }
+
     /* Overview stack + key facts: one row of three cells (Figma 23644:3504) */
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2844,7 +2881,7 @@
       }
 
       .nc-protocol-header {
-        margin-bottom: 32px;
+        margin-bottom: 20px;
       }
 
       .nc-protocol-band #recRhrCount {
@@ -4183,11 +4220,16 @@
 
     const cards = grid.querySelectorAll(".rhr-card");
     const n     = cards.length;
-    const gap   = 20;
 
     function stepSize() {
       const c0 = cards[0];
-      return c0 ? c0.offsetWidth + gap : grid.clientWidth + gap;
+      const c1 = cards[1];
+      // Prefer distance between card origins so gap (0 on mobile, 20px on desktop) is implicit.
+      if (c0 && c1) {
+        const d = c1.offsetLeft - c0.offsetLeft;
+        if (d > 0) return d;
+      }
+      return c0 ? c0.offsetWidth : grid.clientWidth;
     }
 
     function setIndex(i) {
@@ -4201,7 +4243,7 @@
 
     function syncFromScroll() {
       const step = stepSize();
-      if (step <= gap || n === 0) return;
+      if (!(step > 0) || n === 0) return;
       const idx = Math.round(grid.scrollLeft / step);
       setIndex(idx);
     }
@@ -4222,6 +4264,7 @@
     var onResize = function () { requestAnimationFrame(syncFromScroll); };
     grid.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    setIndex(0);
     requestAnimationFrame(function () { requestAnimationFrame(syncFromScroll); });
   }
 
