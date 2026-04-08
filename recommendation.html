@@ -96,6 +96,9 @@
       --amber-dim: var(--amber-bg);
       --blue-dim:  var(--blue-bg);
       --amber-bg:  #fffbf0;
+
+      /* RHR: supplement facts + research card share max width (arrows need +84px: 2×32px nav + 2×10px gap) */
+      --rhr-facts-max: 420px;
     }
 
     @media (max-width: 600px) {
@@ -239,6 +242,14 @@
       box-sizing: border-box;
     }
 
+    /* Same 500px rail as order cards until `.nc-order-grid` is two columns (700px). */
+    @media (max-width: 699px) {
+      .nc-hero > .nc-wrap,
+      .nc-protocol-band:not(.nc-editorial-section) > .nc-protocol-band__bleed > .nc-wrap--wide {
+        max-width: 500px;
+      }
+    }
+
     /* Desktop overrides for layout + hero live in the consolidated block at the end of the stylesheet. */
 
     /* ═══════════════════════════════════════════════════════════════
@@ -254,7 +265,11 @@
       gap: var(--space-4);
       align-items: start;
     }
-    @media (max-width: 900px) {
+    .nc-hero__inner > div:first-child {
+      min-width: 0;
+    }
+    /* Stack below 700px; from 700px up use desktop row (copy | biomarkers) */
+    @media (max-width: 699px) {
       .nc-hero__inner { grid-template-columns: 1fr; gap: var(--space-4); }
     }
 
@@ -297,7 +312,7 @@
       min-width: 0;
       max-width: 340px;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 699px) {
       .nc-hero__snapgrid { max-width: none; width: 100%; }
     }
     /* Always 2 columns × 2 rows (never stack to single column) */
@@ -1124,11 +1139,24 @@
     .rhr-card .acc-bd[data-bd="research"] .acc-bd-pad {
       padding-bottom: 36px;
     }
+    /* Supplement Facts: match vertical padding top/bottom (base column uses asymmetric .acc-bd-pad) */
+    .rhr-card .acc-bd[data-bd="facts"] .acc-bd-pad {
+      padding-top: 28px;
+      padding-bottom: 28px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
     @media (max-width: 679px) {
       .acc-bd-pad {
         padding-left: 20px;
         padding-right: 20px;
         padding-top: 24px;
+      }
+      .rhr-card .acc-bd[data-bd="facts"] .acc-bd-pad {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        padding-left: 20px;
+        padding-right: 20px;
       }
     }
 
@@ -1196,9 +1224,9 @@
       box-sizing: border-box;
     }
     .key-fact {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: start;
       gap: 6px;
       flex: 1 1 0;
       min-width: 0;
@@ -1210,13 +1238,18 @@
       box-sizing: border-box;
     }
     .key-fact-val {
+      display: block;
       font-family: var(--mono);
       font-size: 16.9px;
       font-weight: 700;
-      line-height: 19.55px;
+      line-height: 1.2;
       letter-spacing: -0.34px;
       color: #1d1d1f;
       margin: 0;
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
     .key-fact-lbl {
       font-family: var(--mono);
@@ -1227,6 +1260,27 @@
       line-height: 12px;
       color: #8e8e93;
       margin: 0;
+    }
+
+    /* Tablet / small desktop: detail column is narrow — 2+1 grid + room for long values */
+    @media (min-width: 680px) and (max-width: 899px) {
+      .rhr-card .key-facts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        align-items: stretch;
+      }
+      .rhr-card .key-fact {
+        flex: none;
+        min-width: 0;
+      }
+      .rhr-card .key-fact:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+      .rhr-card .key-fact-val {
+        font-size: 15.5px;
+        letter-spacing: -0.28px;
+      }
     }
 
     @media (max-width: 679px) {
@@ -1243,7 +1297,7 @@
     /* ── Supplement Facts (aligned to Figma 23517:16894) ─────── */
     .facts-card {
       width: 100%;
-      max-width: 420px;
+      max-width: var(--rhr-facts-max);
       margin-left: auto;
       margin-right: auto;
       box-sizing: border-box;
@@ -1425,6 +1479,8 @@
       align-items: flex-start;
       gap: 10px;
       width: 100%;
+      container-type: inline-size;
+      container-name: research-carousel;
     }
     .research-nav {
       display: none;
@@ -1445,7 +1501,16 @@
     .research-nav:hover { background: #fafafa; border-color: #e5e5ea; }
     .research-nav:disabled { opacity: .35; cursor: default; pointer-events: none; }
     .research-nav svg { display: block; }
-    @media (min-width: 680px) { .research-nav { display: flex; } }
+    /* Tablet / nested narrow rail: show arrows only when the carousel strip itself fits card + buttons */
+    @container research-carousel (min-width: calc(var(--rhr-facts-max) + 84px)) {
+      .research-nav { display: flex; }
+    }
+    /* Desktop (900px+): always show arrows — container query can fail when the strip is still narrow inside the card column */
+    @media (min-width: 900px) {
+      .research-nav {
+        display: flex;
+      }
+    }
 
     .research-top  { display: flex; align-items: center; justify-content: space-between; }
     .research-count {
@@ -1482,7 +1547,7 @@
     }
     .research-scroll::-webkit-scrollbar { display: none; }
 
-    /* One full-width slide per viewport; card stays max 420px and centered */
+    /* One full-width slide per viewport; card matches .facts-card max width and centers */
     .research-slide {
       flex: 0 0 100%;
       width: 100%;
@@ -1499,7 +1564,7 @@
     /* Research card — scroll-linked focus (crossfade + subtle scale, Apple-like) */
     .research-card {
       width: 100%;
-      max-width: 420px;
+      max-width: var(--rhr-facts-max);
       flex-shrink: 0;
       background: rgba(0, 0, 0, 0.01);
       border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1719,27 +1784,28 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       ORDER SECTION
+       ORDER SECTION — fluid, art-directed at every width
     ═══════════════════════════════════════════════════════════════ */
     .nc-order-section {
-      padding: var(--space-6) 0 112px;
+      padding: clamp(36px, 8vw, 56px) 0 clamp(64px, 14vw, 112px);
     }
 
     .nc-order-heading {
-      margin-bottom: var(--space-5);
+      /* margin-bottom + column flex gap ≈ previous space before grid */
+      margin-bottom: clamp(20px, 4.5vw, 28px);
     }
     .nc-order-heading .section-label {
-      margin-bottom: var(--space-4);
+      margin-bottom: clamp(12px, 3vw, 24px);
     }
     .nc-order-heading .cta-headline {
       margin-bottom: 0;
     }
     .nc-order-sub {
       font-family: var(--font-ui);
-      font-size: 14px;
+      font-size: clamp(13px, 2vw, 15px);
       font-weight: 400;
       color: var(--ink-3);
-      margin-top: 12px;
+      margin-top: 10px;
       letter-spacing: var(--ls-14);
       line-height: 1.5;
     }
@@ -1747,21 +1813,50 @@
     .nc-order-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 56px;
+      gap: clamp(32px, 7vw, 52px);
       align-items: start;
     }
-    @media (min-width: 820px) {
-      .nc-order-grid {
-        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-        gap: 52px;
-      }
-    }
 
-    /* Vertical rhythm between stacked cards in each column */
+    /* Vertical rhythm between stacked cards (mobile: two grid rows) */
     .nc-order-grid > div {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: clamp(16px, 3.5vw, 24px);
+    }
+
+    .nc-order-rail {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: clamp(16px, 3.5vw, 24px);
+    }
+
+    .nc-order-section .nc-order-heading,
+    .nc-order-section .nc-product-card,
+    .nc-order-section .nc-stack-card,
+    .nc-order-section .nc-order-rail {
+      max-width: 500px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+
+    /* Price / CTA / guarantee sit inside rail; full width of rail */
+    .nc-order-section .nc-order-rail > .nc-price-card,
+    .nc-order-section .nc-order-rail .nc-guarantee {
+      max-width: none;
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    /* CTA block fills aside rail */
+    .nc-order-aside {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: clamp(16px, 3.5vw, 24px);
     }
 
     /* Product + features card */
@@ -1775,8 +1870,8 @@
     .nc-product-row {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 18px 20px;
+      gap: 14px;
+      padding: 16px clamp(16px, 3.5vw, 22px);
     }
     .nc-product-thumb {
       flex-shrink: 0;
@@ -1819,12 +1914,12 @@
       letter-spacing: -0.05em;
       display: block;
     }
-    .nc-feature-sep { height: 1px; background: var(--sep); margin: 0 20px; }
+    .nc-feature-sep { height: 1px; background: var(--sep); margin: 0 clamp(16px, 3.5vw, 22px); }
     .nc-feature-row {
       display: flex;
       align-items: center;
-      gap: 13px;
-      padding: 12px 20px;
+      gap: 12px;
+      padding: 11px clamp(16px, 3.5vw, 22px);
     }
     .nc-feature-icon {
       flex-shrink: 0;
@@ -1865,7 +1960,7 @@
       overflow: hidden;
     }
     .nc-stack-header {
-      padding: 13px 20px 10px;
+      padding: 12px clamp(16px, 3.5vw, 22px) 9px;
       border-bottom: 1px solid var(--sep);
     }
     .nc-stack-label {
@@ -1879,8 +1974,8 @@
     .nc-stack-row {
       display: flex;
       align-items: flex-start;
-      gap: 13px;
-      padding: 14px 20px;
+      gap: 12px;
+      padding: 12px clamp(16px, 3.5vw, 22px);
       border-bottom: 1px solid var(--sep);
     }
     .nc-stack-row:last-child { border-bottom: none; }
@@ -1952,8 +2047,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 14px 22px;
+      gap: 14px;
+      padding: 13px clamp(16px, 3.5vw, 22px);
     }
     .nc-price-row + .nc-price-row {
       border-top: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -1976,12 +2071,14 @@
     .nc-price-val--green  { color: var(--green-accent); font-weight: 500; }
     .nc-price-val--strike { text-decoration: line-through; color: var(--ink-5); font-weight: 400; }
 
-    /* Promo discount row — subtle green wash */
+    /* Promo discount row — subtle green wash; copy max 300px, 2-col when row > 300px (container) */
     .nc-price-row-promo {
       align-items: center;
       background: rgba(34, 197, 94, 0.05);
       padding-top: 14px;
       padding-bottom: 14px;
+      container-type: inline-size;
+      container-name: nc-price-promo;
     }
     .nc-price-row-promo .nc-price-val {
       flex-shrink: 0;
@@ -1995,6 +2092,18 @@
       gap: 3px;
       align-items: flex-start;
       min-width: 0;
+      flex: 1 1 0;
+      max-width: min(300px, 100%);
+    }
+    @container nc-price-promo (max-width: 300px) {
+      .nc-price-row-promo {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .nc-price-row-promo .nc-price-val {
+        align-self: flex-end;
+      }
     }
     .nc-price-promo-kicker {
       font-family: var(--font-ui);
@@ -2020,6 +2129,8 @@
       color: var(--ink-4);
       line-height: 1.35;
       margin-top: 2px;
+      max-width: 100%;
+      overflow-wrap: break-word;
     }
     .nc-price-promo-spots .nc-price-spots-sep {
       margin: 0 0.3em;
@@ -2030,21 +2141,21 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      padding: 18px 22px;
+      gap: 12px;
+      padding: 16px clamp(16px, 3.5vw, 22px);
       border-top: 0.5px solid rgba(0, 0, 0, 0.1);
       background: transparent;
     }
     .nc-total-label {
       font-family: var(--font-ui);
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--ink);
       letter-spacing: -0.025em;
     }
     .nc-total-amount {
       font-family: var(--font-mono);
-      font-size: 40px;
+      font-size: clamp(30px, 6vw, 40px);
       font-weight: 600;
       color: var(--ink);
       letter-spacing: -0.04em;
@@ -2097,11 +2208,15 @@
     .nc-guarantee {
       display: flex;
       align-items: flex-start;
-      gap: 13px;
-      padding: 16px 20px;
+      gap: 12px;
+      padding: 14px clamp(14px, 3.2vw, 20px);
       background: var(--blue-tint-bg);
       border-radius: var(--radius-md);
       border: 1px solid var(--blue-tint-border);
+    }
+    .nc-guarantee > div:not(.nc-guarantee-icon) {
+      min-width: 0;
+      flex: 1;
     }
     .nc-guarantee-icon {
       flex-shrink: 0;
@@ -2128,6 +2243,143 @@
       letter-spacing: var(--ls-13);
     }
     .nc-guarantee-blue { color: var(--blue-accent); }
+
+    /* Order checkout cards: 500px+ — modest scale-up + tighter vertical rhythm (less hollow band) */
+    @media (min-width: 500px) {
+      .nc-product-row {
+        gap: 15px;
+        padding: 15px clamp(17px, 3.8vw, 22px);
+      }
+      .nc-product-thumb {
+        width: 64px;
+        height: 64px;
+      }
+      .nc-product-name {
+        font-size: 15.5px;
+      }
+      .nc-product-sub {
+        font-size: 12.5px;
+      }
+      .nc-price-was {
+        font-size: 12.5px;
+      }
+      .nc-price-now {
+        font-size: 23px;
+      }
+      .nc-feature-sep {
+        margin: 0 clamp(17px, 3.8vw, 22px);
+      }
+      .nc-feature-row {
+        gap: 13px;
+        padding: 10px clamp(17px, 3.8vw, 22px);
+      }
+      .nc-feature-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+      }
+      .nc-feature-icon img {
+        width: 14px;
+        height: 14px;
+      }
+      .nc-feature-text {
+        font-size: 14.5px;
+      }
+      .nc-check {
+        width: 19px;
+        height: 19px;
+      }
+
+      .nc-stack-header {
+        padding: 11px clamp(17px, 3.8vw, 22px) 8px;
+      }
+      .nc-stack-label {
+        font-size: 9.5px;
+      }
+      .nc-stack-row {
+        gap: 13px;
+        padding: 11px clamp(17px, 3.8vw, 22px);
+      }
+      .nc-stack-thumb {
+        width: 44px;
+        height: 44px;
+      }
+      .nc-stack-thumb img {
+        width: 27px;
+        height: 27px;
+      }
+      .nc-stack-name {
+        font-size: 14.5px;
+      }
+      .nc-stack-card .stage-category-tag {
+        padding: 2px 8px 2px 6px;
+        font-size: 9.5px;
+      }
+      .nc-stack-card .stage-category-tag__chart {
+        width: 11px;
+        height: 11px;
+      }
+      .nc-stack-card .stage-category-tag__focus {
+        font-size: 9.5px;
+      }
+      .nc-stack-dose {
+        font-size: 10.5px;
+      }
+
+      .nc-price-row {
+        gap: 15px;
+        padding: 12px clamp(17px, 3.8vw, 22px);
+      }
+      .nc-price-label {
+        font-size: 15.5px;
+      }
+      .nc-price-val {
+        font-size: 15.5px;
+      }
+      .nc-price-row-promo {
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+      .nc-price-row-promo .nc-price-val {
+        font-size: 17px;
+      }
+      .nc-price-promo-kicker {
+        font-size: 11.5px;
+      }
+      .nc-price-promo-sub {
+        font-size: 15.5px;
+      }
+      .nc-price-promo-spots {
+        font-size: 11.5px;
+      }
+      .nc-total-row {
+        gap: 13px;
+        padding: 15px clamp(17px, 3.8vw, 22px);
+      }
+      .nc-total-label {
+        font-size: 16.5px;
+      }
+      .nc-total-amount {
+        font-size: clamp(31px, 6.2vw, 40px);
+      }
+
+      .nc-guarantee {
+        gap: 13px;
+        padding: 13px clamp(15px, 3.4vw, 20px);
+      }
+      .nc-guarantee-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+      .nc-guarantee-title {
+        font-size: 14.5px;
+      }
+      .nc-guarantee-body {
+        font-size: 13.5px;
+        line-height: 1.42;
+      }
+    }
 
     /* Entrance animations */
     .nc-fade {
@@ -2164,10 +2416,56 @@
       gap: var(--space-5);
       align-items: center;
     }
-    @media (min-width: 760px) {
+    /* Two columns from 700px — same breakpoint as `.nc-order-grid` */
+    @media (min-width: 700px) {
       .nc-editorial-inner {
-        grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-        gap: var(--space-6);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: var(--space-6);
+        row-gap: var(--space-3);
+        align-items: start;
+      }
+
+      /*
+        Flatten only the media column. Keep `.nc-editorial-content` as one grid cell in row 2
+        so title → body → list → CTA stack with normal spacing (not row 3 below a tall figure).
+      */
+      .nc-editorial-section .nc-editorial-media {
+        display: contents;
+        max-width: none;
+        width: auto;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .nc-editorial-section .nc-editorial-media .nc-editorial-eyebrow.section-label {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: center;
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .nc-editorial-section .nc-editorial-figure {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+        justify-self: center;
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .nc-editorial-section .nc-editorial-content {
+        grid-column: 2;
+        grid-row: 2;
+        align-self: start;
+        justify-self: center;
+        max-width: 500px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-left: 0;
+        margin-right: 0;
       }
     }
 
@@ -2200,6 +2498,22 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    /* 500px rail: wrappers below 700px; 700+ uses flattened grid (see min-width 700px) */
+    @media (max-width: 699px) {
+      .nc-editorial-section .nc-editorial-media,
+      .nc-editorial-section .nc-editorial-content {
+        max-width: 500px;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+      }
+    }
+
+    .nc-editorial-section .nc-editorial-media {
+      align-items: stretch;
     }
 
     .nc-editorial-media .nc-editorial-eyebrow.section-label {
@@ -2262,6 +2576,69 @@
     }
     .nc-editorial-check svg path {
       stroke: #fff;
+    }
+
+    /* Phones / small viewports: tighter rhythm, full-width copy, less dead air */
+    @media (max-width: 764px) {
+      .nc-editorial-section .nc-protocol-band__bleed {
+        padding-bottom: 80px;
+      }
+      .nc-editorial-inner {
+        gap: 24px;
+      }
+      .nc-editorial-media {
+        gap: 14px;
+      }
+      .nc-editorial-media .nc-editorial-eyebrow.section-label {
+        padding-top: 4px;
+      }
+      .nc-editorial-title {
+        font-size: clamp(26px, 8vw, 32px);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        margin-bottom: 14px;
+      }
+      .nc-editorial-body {
+        max-width: none;
+        margin-bottom: 22px;
+        font-size: 15px;
+        line-height: 1.58;
+      }
+      .nc-editorial-list {
+        margin-bottom: 26px;
+        gap: 9px;
+      }
+      .nc-editorial-item {
+        font-size: 14px;
+        line-height: 1.45;
+        gap: 9px;
+      }
+      .nc-editorial-content {
+        width: 100%;
+      }
+      .nc-editorial-figure {
+        border-radius: 14px;
+      }
+    }
+
+    /* Tablet / mid widths (two columns from 700px; 900px+ gets desktop editorial polish in the block below) */
+    @media (min-width: 765px) and (max-width: 899px) {
+      .nc-editorial-inner {
+        column-gap: 36px;
+        row-gap: var(--space-3);
+      }
+      .nc-editorial-section .nc-protocol-band__bleed {
+        padding-bottom: 96px;
+      }
+      .nc-editorial-media .nc-editorial-eyebrow.section-label {
+        padding-top: 12px;
+      }
+      .nc-editorial-title {
+        font-size: clamp(30px, 4.2vw, 34px);
+      }
+      .nc-editorial-body {
+        max-width: 36em;
+      }
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2330,10 +2707,10 @@
     /* Overview stack + key facts: one row of three cells (Figma 23644:3504) */
 
     /* ═══════════════════════════════════════════════════════════════
-       DESKTOP REFINEMENT (Apple-level polish, 901px+)
+       DESKTOP REFINEMENT (Apple-level polish, 900px+)
        Mobile / tablet stays pixel-identical.
     ═══════════════════════════════════════════════════════════════ */
-    @media (min-width: 901px) {
+    @media (min-width: 900px) {
 
       /* ── 1. Foundation: tokens & globals ─────────────────────── */
       :root {
@@ -2480,85 +2857,21 @@
         min-width: 0;
       }
 
-      /* ── 4. Order section ───────────────────────────────────── */
-      .nc-order-section {
-        padding-bottom: calc(var(--space-6) + var(--space-5));
-      }
-
-      .nc-order-heading {
-        margin-bottom: 48px;
-      }
-
-      .nc-order-sub {
-        font-size: 15px;
-        color: var(--ink-3);
-        margin-top: 14px;
-      }
-
-      .nc-order-grid {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-        gap: 64px;
-      }
-
-      .nc-order-grid > div {
-        gap: 32px;
-      }
-
-      .nc-product-row {
-        padding: 22px 24px;
-      }
-
-      .nc-product-thumb {
-        width: 68px;
-        height: 68px;
-        border-radius: 14px;
-      }
-
-      .nc-feature-text {
-        font-size: 14px;
-        font-weight: 500;
-      }
-
-      .nc-stack-label {
-        font-size: 10px;
-      }
-
-      .nc-stack-row {
-        padding: 14px 20px;
-      }
-
-      .nc-stack-name {
-        font-size: 15px;
-        font-weight: 600;
-      }
-
-      .nc-total-amount {
-        font-size: 36px;
-      }
-
+      /* ── 4. Order section — visual refinements only (layout handled by dedicated blocks) ── */
       .nc-price-row-promo {
-        background: rgba(34,197,94,0.035);
+        background: rgba(34, 197, 94, 0.035);
       }
 
       .nc-cta-btn {
-        font-size: 15px;
-        padding: 18px 28px;
         border-radius: 14px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
       }
 
       .nc-guarantee-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: rgba(59,130,246,0.08);
+        background: rgba(59, 130, 246, 0.08);
       }
       .nc-guarantee-icon svg path:first-child {
-        fill: rgba(59,130,246,0.14);
-      }
-
-      .nc-guarantee-title {
-        font-size: 15px;
+        fill: rgba(59, 130, 246, 0.14);
       }
 
       /* ── 5. Editorial section ───────────────────────────────── */
@@ -2567,7 +2880,8 @@
       }
 
       .nc-editorial-inner {
-        gap: 72px;
+        column-gap: 72px;
+        row-gap: var(--space-3);
       }
 
       .nc-editorial-figure {
@@ -2616,6 +2930,169 @@
       .rhr-card {
         animation-duration: 0.7s;
         animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+      }
+    }
+
+    /* ──────────────────────────────────────────────────────────────
+       ORDER SECTION: progressive layout across the full width range
+    ────────────────────────────────────────────────────────────── */
+
+    /* 600px+ — section breathes; subtitle scale */
+    @media (min-width: 600px) {
+      .nc-order-sub {
+        font-size: 15px;
+        margin-top: 12px;
+      }
+    }
+
+    /* 760px+ — CTA / total polish (grid layout starts at 700px) */
+    @media (min-width: 760px) {
+      .nc-total-label {
+        font-size: 17px;
+      }
+      .nc-cta-btn {
+        padding: 17px 26px;
+        font-size: 15px;
+      }
+    }
+
+    /* 700px+ — two-column checkout (desktop layout for this section) */
+    @media (min-width: 700px) {
+      .nc-order-section {
+        padding-bottom: clamp(96px, 16vw, calc(var(--space-6) + var(--space-5)));
+      }
+      .nc-order-heading {
+        margin-bottom: 0;
+      }
+      .nc-order-grid {
+        grid-template-columns: minmax(0, 1.28fr) minmax(0, 1fr);
+        column-gap: 52px;
+        /* Left column: heading → product → stack (`.nc-order-rail` spans rows 2–3 on the right) */
+        row-gap: 28px;
+      }
+      /* Flatten left column only; right stays `.nc-order-rail` spanning product+stack rows */
+      .nc-order-grid > div:first-child {
+        display: contents;
+      }
+      .nc-order-section .nc-order-heading {
+        grid-column: 1;
+        grid-row: 1;
+      }
+      .nc-order-section .nc-product-card {
+        grid-column: 1;
+        grid-row: 2;
+        align-self: start;
+      }
+      .nc-order-section .nc-stack-card {
+        grid-column: 1;
+        grid-row: 3;
+      }
+      .nc-order-section .nc-order-rail {
+        grid-column: 2;
+        grid-row: 2 / span 2;
+        align-self: start;
+        justify-self: center;
+        margin-left: 0;
+        margin-right: 0;
+        gap: 28px;
+      }
+      .nc-product-thumb {
+        width: 68px;
+        height: 68px;
+        border-radius: 14px;
+      }
+      .nc-stack-name {
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .nc-stack-label {
+        font-size: 10px;
+      }
+      .nc-guarantee-title {
+        font-size: 15px;
+      }
+      .nc-guarantee-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+      }
+    }
+
+    /* 700–1099px — checkout rail still needs care: promo stacks, total compact */
+    @media (min-width: 700px) and (max-width: 1099px) {
+      .nc-order-grid {
+        column-gap: 38px;
+        row-gap: 22px;
+        grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+      }
+      .nc-order-section .nc-order-rail {
+        gap: 22px;
+      }
+      .nc-total-amount {
+        font-size: 32px;
+      }
+      .nc-cta-btn {
+        font-size: 14px;
+        padding: 15px 22px;
+      }
+      .nc-guarantee {
+        padding: 13px 15px;
+        gap: 11px;
+      }
+    }
+
+    /* 1100px+ — comfortable desktop: wide gap, promo side-by-side, assertive total */
+    @media (min-width: 1100px) {
+      .nc-order-heading {
+        margin-bottom: 0;
+      }
+      .nc-order-grid {
+        grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+        column-gap: 72px;
+        row-gap: 32px;
+      }
+      .nc-order-section .nc-order-rail {
+        gap: 32px;
+      }
+      .nc-product-row {
+        padding: 22px 26px;
+        gap: 18px;
+      }
+      .nc-feature-sep {
+        margin: 0 26px;
+      }
+      .nc-feature-row {
+        padding: 13px 26px;
+        gap: 14px;
+      }
+      .nc-stack-header {
+        padding: 14px 24px 10px;
+      }
+      .nc-stack-row {
+        padding: 14px 24px;
+        gap: 14px;
+      }
+      .nc-price-row {
+        padding: 15px 24px;
+      }
+      .nc-total-row {
+        padding: 20px 24px;
+      }
+      .nc-total-amount {
+        font-size: 40px;
+      }
+      .nc-guarantee {
+        padding: 16px 20px;
+        gap: 14px;
+      }
+      .nc-guarantee-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+      .nc-cta-btn {
+        padding: 18px 28px;
+        font-size: 15px;
       }
     }
 
@@ -2879,16 +3356,16 @@
   <section class="nc-order-section">
     <div class="nc-wrap">
 
-      <div class="nc-order-heading nc-fade d1">
-        <p class="section-label">Your order</p>
-        <h2 class="cta-headline">Start your protocol.</h2>
-        <p class="nc-order-sub">30-day cycle · Adjust or cancel anytime</p>
-      </div>
-
       <div class="nc-order-grid">
 
-        <!-- Left -->
+        <!-- Left: heading shares column + 500px rail with product/stack -->
         <div>
+          <div class="nc-order-heading nc-fade d1">
+            <p class="section-label">Your order</p>
+            <h2 class="cta-headline">Start your protocol.</h2>
+            <p class="nc-order-sub">30-day cycle · Adjust or cancel anytime</p>
+          </div>
+
           <div class="nc-product-card nc-fade d2">
             <div class="nc-product-row">
               <div class="nc-product-thumb">
@@ -2968,8 +3445,8 @@
           </div>
         </div>
 
-        <!-- Right -->
-        <div>
+        <!-- Right: single rail aligns with product+stack column (700px+ spans rows 2–3) -->
+        <div class="nc-order-rail">
           <div class="nc-price-card nc-fade d4">
             <div class="nc-price-row">
               <span class="nc-price-label">Subtotal</span>
@@ -2993,26 +3470,28 @@
             </div>
           </div>
 
-          <div class="nc-fade d5">
-            <button type="button" class="nc-cta-btn">
-              Start My Monthly Protocol
-              <svg class="nc-cta-btn__arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
-                <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <p class="nc-cta-caption">Cancel anytime &nbsp;·&nbsp; Ships within 3 business days</p>
-          </div>
-
-          <div class="nc-guarantee nc-fade d6">
-            <div class="nc-guarantee-icon" aria-hidden="true">
-              <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-                <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
-                <path d="M6 10l2 2 4-4" stroke="#3b82f6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+          <div class="nc-order-aside">
+            <div class="nc-fade d5">
+              <button type="button" class="nc-cta-btn">
+                Start My Monthly Protocol
+                <svg class="nc-cta-btn__arrow" width="13" height="12" viewBox="0 0 13 12" fill="none" aria-hidden="true">
+                  <path d="M1 6h11M7 1l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <p class="nc-cta-caption">Cancel anytime &nbsp;·&nbsp; Ships within 3 business days</p>
             </div>
-            <div>
-              <div class="nc-guarantee-title">No results? <span class="nc-guarantee-blue">100% refund.</span></div>
-              <p class="nc-guarantee-body">No measurable progress after 2 months? We'll refund every cent — no questions asked.</p>
+
+            <div class="nc-guarantee nc-fade d6">
+              <div class="nc-guarantee-icon" aria-hidden="true">
+                <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+                  <path d="M9 1L1.5 4.5V10C1.5 14.14 4.74 18.01 9 19C13.26 18.01 16.5 14.14 16.5 10V4.5L9 1Z" fill="white" fill-opacity="0.9"/>
+                  <path d="M6 10l2 2 4-4" stroke="#3b82f6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div>
+                <div class="nc-guarantee-title">No results? <span class="nc-guarantee-blue">100% refund.</span></div>
+                <p class="nc-guarantee-body">No measurable progress after 2 months? We'll refund every cent — no questions asked.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -3578,7 +4057,7 @@
   }
 
   function compoundsLayoutIsDesktop() {
-    return window.matchMedia("(min-width: 901px)").matches;
+    return window.matchMedia("(min-width: 900px)").matches;
   }
 
   function scrollRhrGridToStartIfDesktop() {
