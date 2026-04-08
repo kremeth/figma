@@ -2621,6 +2621,37 @@
       }
     }
 
+    /* Single-column phones: calmer vertical rhythm (image → headline gap, list → CTA air) */
+    @media (max-width: 699px) {
+      .nc-editorial-section .nc-protocol-band__bleed {
+        padding-top: 40px;
+        padding-bottom: 96px;
+      }
+      .nc-editorial-inner {
+        row-gap: 40px;
+      }
+      .nc-editorial-section .nc-editorial-media {
+        gap: 18px;
+      }
+      .nc-editorial-section .nc-editorial-media .nc-editorial-eyebrow.section-label {
+        padding-top: 2px;
+      }
+      .nc-editorial-section .nc-editorial-title {
+        margin-bottom: 12px;
+      }
+      .nc-editorial-section .nc-editorial-body {
+        margin-bottom: 24px;
+        line-height: 1.62;
+      }
+      .nc-editorial-section .nc-editorial-list {
+        gap: 12px;
+        margin-bottom: 36px;
+      }
+      .nc-editorial-section .nc-editorial-item {
+        gap: 10px;
+      }
+    }
+
     /*
       Tablet two-column band (765–899px): keep the same editorial type scale as ≤764px.
       Desktop editorial typography starts at 900px with the main desktop block.
