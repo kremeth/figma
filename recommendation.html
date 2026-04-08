@@ -1491,11 +1491,12 @@
       align-items: flex-start;
       justify-content: center;
       box-sizing: border-box;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
+      scroll-snap-align: center;
+      scroll-snap-stop: normal;
+      --slide-vis: 0;
     }
 
-    /* Research card — aligned to Figma 23517:17175 */
+    /* Research card — scroll-linked focus (crossfade + subtle scale, Apple-like) */
     .research-card {
       width: 100%;
       max-width: 420px;
@@ -1504,10 +1505,19 @@
       border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: 14px;
       overflow: hidden;
-      opacity: 0.32;
-      transition: opacity .28s;
+      opacity: calc(0.34 + 0.66 * var(--slide-vis, 0));
+      transform: scale(calc(0.986 + 0.014 * var(--slide-vis, 0)));
+      transform-origin: center top;
+      will-change: opacity, transform;
     }
-    .research-card.research-card--active { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .research-scroll { scroll-behavior: auto; }
+      .research-card {
+        transition: opacity 0.18s ease;
+        transform: none;
+        will-change: auto;
+      }
+    }
 
     .research-card__head {
       display: flex;
@@ -3358,6 +3368,10 @@
         cards.forEach(function (c, j) { c.classList.toggle("research-card--active", j === i); });
       }
 
+      function researchPrefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
       function updateNavArrows() {
         if (!prevBtn || !nextBtn) return;
         const maxScroll = Math.max(0, scrollEl.scrollWidth - scrollEl.clientWidth);
@@ -3367,16 +3381,54 @@
       }
 
       function syncFromScroll() {
-        const step = stepSize();
-        if (step <= 0) return;
-        const i2 = Math.round(scrollEl.scrollLeft / step);
-        setIndex(Math.max(0, Math.min(n - 1, i2)));
         updateNavArrows();
+        /* Hidden / not laid out yet (accordion closed): do not overwrite --slide-vis or all cards read as 0 overlap. */
+        if (scrollEl.clientWidth < 2 || scrollEl.clientHeight < 2) {
+          return;
+        }
+
+        const slides = scrollEl.querySelectorAll(".research-slide");
+        const step = stepSize();
+        var activeI = 0;
+
+        if (researchPrefersReducedMotion()) {
+          if (step <= 0) {
+            activeI = 0;
+          } else {
+            activeI = Math.round(scrollEl.scrollLeft / step);
+            activeI = Math.max(0, Math.min(n - 1, activeI));
+          }
+          slides.forEach(function (slide, j) {
+            slide.style.setProperty("--slide-vis", j === activeI ? "1" : "0");
+          });
+        } else {
+          const cr = scrollEl.getBoundingClientRect();
+          var bestRaw = -1;
+          slides.forEach(function (slide, j) {
+            const sr = slide.getBoundingClientRect();
+            const overlap = Math.max(0, Math.min(sr.right, cr.right) - Math.max(sr.left, cr.left));
+            const denom = Math.min(sr.width, cr.width) || 1;
+            const raw = Math.max(0, Math.min(1, overlap / denom));
+            var vis = raw * raw * (3 - 2 * raw);
+            slide.style.setProperty("--slide-vis", String(vis));
+            if (raw > bestRaw) {
+              bestRaw = raw;
+              activeI = j;
+            }
+          });
+        }
+
+        setIndex(activeI);
       }
 
       dotsEl.innerHTML = Array.from({ length: n }, function (_, i) {
         return '<button type="button" class="research-dot' + (i === 0 ? " active" : "") + '" aria-label="Paper ' + (i + 1) + '" role="tab" aria-selected="' + (i === 0 ? "true" : "false") + '"></button>';
       }).join("");
+
+      scrollEl.querySelectorAll(".research-slide").forEach(function (slide, j) {
+        slide.style.setProperty("--slide-vis", j === 0 ? "1" : "0");
+      });
+      setIndex(0);
 
       dotsEl.querySelectorAll(".research-dot").forEach(function (btn, i) {
         btn.addEventListener("click", function () {
@@ -3393,19 +3445,25 @@
       const onResize = function () { requestAnimationFrame(syncFromScroll); };
       scrollEl.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
+      var ro = null;
+      if (typeof ResizeObserver !== "undefined") {
+        ro = new ResizeObserver(function () {
+          requestAnimationFrame(syncFromScroll);
+        });
+        ro.observe(scrollEl);
+      }
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
           syncFromScroll();
-          updateNavArrows();
         });
       });
       researchScrollCleanup = function () {
+        if (ro) ro.disconnect();
         scrollEl.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", onResize);
         if (prevBtn) prevBtn.removeEventListener("click", stepPrev);
         if (nextBtn) nextBtn.removeEventListener("click", stepNext);
       };
-      setIndex(0);
     }
 
     function render(id) {
@@ -3483,6 +3541,17 @@
           const next = !isOpen;
           btn.setAttribute("aria-expanded", next ? "true" : "false");
           root.querySelector('[data-bd="' + key + '"]').classList.toggle("open", next);
+          /* Mobile: closing Overview collapses Facts + Research too (single hierarchy). */
+          if (key === "overview" && !next) {
+            ["facts", "research"].forEach(function (childKey) {
+              var hb = root.querySelector('.acc-hd[data-acc="' + childKey + '"]');
+              var hbd = root.querySelector('[data-bd="' + childKey + '"]');
+              if (hb && hbd) {
+                hb.setAttribute("aria-expanded", "false");
+                hbd.classList.remove("open");
+              }
+            });
+          }
           updateMobileCollapsedClass();
         }
         setTimeout(function () {
