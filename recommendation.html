@@ -480,7 +480,7 @@
       flex-direction: column;
       align-items: stretch;
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       /* Grid: stage + detail share one row height so #fafafa + border-right reach card bottom */
       .rhr-card-inner {
         display: grid;
@@ -495,7 +495,7 @@
       flex-shrink: 0;
       border-bottom: 1px solid var(--sep-dark);
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .card-stage {
         width: 100%;
         min-width: 0;
@@ -512,7 +512,7 @@
       gap: 0;
       height: 100%;
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .stage-inner {
         height: auto;
         align-items: center;
@@ -578,7 +578,7 @@
       display: block;
       animation: nc-float 7s ease-in-out infinite;
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .stage-hero {
         flex: 0 0 auto;
         min-height: 140px;
@@ -621,7 +621,7 @@
       line-height: 1.1;
       margin: 0;
     }
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .stage-name {
         font-family: var(--font);
         font-size: 22px;
@@ -654,7 +654,7 @@
       margin: 0 0 10px;
       line-height: 1.35;
     }
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .stage-picker-label {
         font-family: var(--font-ui);
         font-size: 10px;
@@ -775,7 +775,7 @@
       opacity: 0.78;
     }
 
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .seg-picker {
         gap: 9px;
       }
@@ -785,7 +785,7 @@
       }
     }
 
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .seg-picker {
         flex-direction: row;
         flex-wrap: wrap;
@@ -870,7 +870,7 @@
       border-bottom-color: var(--sep);
       box-shadow: none;
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .nc-protocol-band .card-stage {
         border-right-color: var(--sep);
       }
@@ -937,7 +937,7 @@
     .nc-protocol-band .v-ring {
       background: rgba(0, 0, 0, 0.05);
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .nc-protocol-band .v-btn {
         background: transparent;
         border: none;
@@ -1087,7 +1087,7 @@
       border-bottom: 1px solid var(--sep);
     }
 
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .acc-hd { padding-left: 20px; padding-right: 20px; }
 
       .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(2),
@@ -1159,7 +1159,7 @@
       padding-left: 24px;
       padding-right: 24px;
     }
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .acc-bd-pad {
         padding-left: 20px;
         padding-right: 20px;
@@ -1276,7 +1276,7 @@
     }
 
     /* Tablet / small desktop: detail column is narrow — 2+1 grid + room for long values */
-    @media (min-width: 680px) and (max-width: 899px) {
+    @media (min-width: 700px) and (max-width: 899px) {
       .rhr-card .key-facts {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1296,7 +1296,7 @@
       }
     }
 
-    @media (max-width: 679px) {
+    @media (max-width: 699px) {
       .rhr-card .key-facts {
         display: none;
       }
@@ -2726,6 +2726,12 @@
       animation: nc-rise-band 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.06s forwards;
       transition: opacity 0.3s ease;
     }
+    .nc-protocol-band .rhr-card.is-active {
+      opacity: 1;
+    }
+    .nc-protocol-band .rhr-card:not(.is-active) {
+      opacity: 0.2;
+    }
 
     /* Tablet / desktop (700px+): same full-bleed single-card carousel as mobile.
        Card has a max-width cap; once the viewport exceeds card+gap, the next card
@@ -2746,19 +2752,13 @@
         box-sizing: border-box;
       }
       .nc-protocol-band .rhr-card {
-        /* card fills viewport until it hits 820px, then next card peeks */
-        flex: 0 0 min(820px, calc(100vw - 2 * var(--page-edge)));
-        width: min(820px, calc(100vw - 2 * var(--page-edge)));
+        /* Same max width as `.nc-wrap--wide` via `--carousel-rail-max` (640 / 500 / min(980, …) at 900px+) */
+        flex: 0 0 min(var(--carousel-rail-max), calc(100vw - 2 * var(--page-edge)));
+        width: min(var(--carousel-rail-max), calc(100vw - 2 * var(--page-edge)));
         max-width: none;
         min-width: 0;
         box-sizing: border-box;
         scroll-snap-stop: always;
-      }
-      .nc-protocol-band .rhr-card.is-active {
-        opacity: 1;
-      }
-      .nc-protocol-band .rhr-card:not(.is-active) {
-        opacity: 0.2;
       }
     }
 
@@ -2767,7 +2767,7 @@
       min-height: 0;
     }
 
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .nc-protocol-band .rhr-card-inner {
         grid-template-rows: minmax(0, 1fr);
       }
@@ -2785,7 +2785,7 @@
       width: 100%;
       min-width: 0;
     }
-    @media (min-width: 680px) {
+    @media (min-width: 700px) {
       .nc-protocol-band .rhr-card .card-detail {
         align-self: start;
       }
@@ -2816,9 +2816,13 @@
         padding-top: 8px;
         padding-bottom: 36px;
       }
+      /*
+        Cap width with `--carousel-rail-max` (500px here) so cards match `.nc-wrap--wide`.
+        Plain 100vw-2P was wider than the 500px header rail ~560–699px.
+      */
       .nc-protocol-band .rhr-card {
-        flex: 0 0 calc(100vw - 2 * var(--page-edge));
-        width: calc(100vw - 2 * var(--page-edge));
+        flex: 0 0 min(var(--carousel-rail-max), calc(100vw - 2 * var(--page-edge)));
+        width: min(var(--carousel-rail-max), calc(100vw - 2 * var(--page-edge)));
         min-width: 0;
         max-width: none;
         scroll-snap-stop: always;
@@ -4116,15 +4120,69 @@
       });
     }
 
-    /** Drop fixed min-height so card height follows the active supplement only (not max vs other variants). */
-    function stabilizeVariantCardHeight() {
-      root.style.minHeight = "";
+    function getActiveVariantId() {
+      var activeBtn = root.querySelector(".v-btn.active");
+      if (activeBtn && activeBtn.dataset && activeBtn.dataset.v) return activeBtn.dataset.v;
+      var firstBtn = root.querySelector(".v-btn[data-v]");
+      return firstBtn ? firstBtn.dataset.v : "resveratrol";
+    }
+
+    function getAccordionState() {
+      var state = {};
+      qa(".acc-hd").forEach(function (b) {
+        state[b.dataset.acc] = b.getAttribute("aria-expanded") === "true";
+      });
+      return state;
+    }
+
+    function applyAccordionState(state) {
+      qa(".acc-hd").forEach(function (b) {
+        var key = b.dataset.acc;
+        var on = !!state[key];
+        b.setAttribute("aria-expanded", on ? "true" : "false");
+        var bd = root.querySelector('[data-bd="' + key + '"]');
+        if (bd) bd.classList.toggle("open", on);
+      });
+      updateMobileCollapsedClass();
+    }
+
+    /** Keep card min-height equal to tallest supplement variant under current accordion state. */
+    function stabilizeVariantCardHeight(preferredId) {
+      var targetId = preferredId || getActiveVariantId();
+      var accordionState = getAccordionState();
+      var variantIds = Object.keys(V || {});
+      var overviewStack = root.querySelector('[data-bd="overview"] .overview-stack');
+      if (!variantIds.length) {
+        root.style.minHeight = "";
+        if (overviewStack) overviewStack.style.minHeight = "";
+        return;
+      }
+
+      var maxHeight = 0;
+      var maxOverviewHeight = 0;
+      variantIds.forEach(function (id) {
+        render(id);
+        applyAccordionState(accordionState);
+        maxHeight = Math.max(maxHeight, Math.ceil(root.getBoundingClientRect().height));
+        var stack = root.querySelector('[data-bd="overview"] .overview-stack');
+        if (stack) {
+          maxOverviewHeight = Math.max(maxOverviewHeight, Math.ceil(stack.getBoundingClientRect().height));
+        }
+      });
+
+      render(targetId);
+      applyAccordionState(accordionState);
+      root.style.minHeight = maxHeight > 0 ? (maxHeight + "px") : "";
+      overviewStack = root.querySelector('[data-bd="overview"] .overview-stack');
+      if (overviewStack) {
+        overviewStack.style.minHeight = maxOverviewHeight > 0 ? (maxOverviewHeight + "px") : "";
+      }
     }
 
     qa(".v-btn").forEach(function (b) {
       b.addEventListener("click", function () {
-        root.style.minHeight = "";
         render(b.dataset.v);
+        stabilizeVariantCardHeight(b.dataset.v);
       });
     });
 
@@ -4162,7 +4220,7 @@
           updateMobileCollapsedClass();
         }
         setTimeout(function () {
-          stabilizeVariantCardHeight();
+          stabilizeVariantCardHeight(getActiveVariantId());
         }, 340);
       });
     });
@@ -4214,12 +4272,12 @@
   }
 
   function accordionIsExclusive() {
-    return window.matchMedia("(min-width: 680px)").matches;
+    return window.matchMedia("(min-width: 700px)").matches;
   }
 
   function updateMobileCollapsedClass() {
     document.querySelectorAll(".rhr-card").forEach(function (card) {
-      const mobile = window.matchMedia("(max-width: 679px)").matches;
+      const mobile = window.matchMedia("(max-width: 699px)").matches;
       const allClosed = [].every.call(card.querySelectorAll(".acc-hd"), function (b) {
         return b.getAttribute("aria-expanded") === "false";
       });
