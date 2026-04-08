@@ -747,6 +747,16 @@
       opacity: 0.78;
     }
 
+    @media (max-width: 679px) {
+      .seg-picker {
+        gap: 9px;
+      }
+      .v-btn {
+        min-height: 48px;
+        padding: 10px 14px;
+      }
+    }
+
     @media (min-width: 680px) {
       .seg-picker {
         flex-direction: row;
@@ -1115,7 +1125,11 @@
       padding-bottom: 36px;
     }
     @media (max-width: 679px) {
-      .acc-bd-pad { padding-left: 20px; padding-right: 20px; }
+      .acc-bd-pad {
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 24px;
+      }
     }
 
     /* ── Overview content (Figma 23644:3504) ─── */
@@ -3437,34 +3451,16 @@
       });
     }
 
+    /** Drop fixed min-height so card height follows the active supplement only (not max vs other variants). */
     function stabilizeVariantCardHeight() {
-      var pick = root.querySelector(".seg-picker");
-      if (!pick) return;
-      var btns = pick.querySelectorAll(".v-btn[data-v]");
-      if (btns.length < 2) return;
-      var ids = [];
-      btns.forEach(function (b) {
-        var id = b.dataset.v;
-        if (id && V[id] && ids.indexOf(id) === -1) ids.push(id);
-      });
-      if (ids.length < 2) return;
-
-      var activeBtn = root.querySelector(".seg-picker .v-btn.active");
-      var cur = (activeBtn && activeBtn.dataset.v) || ids[0];
-      if (!V[cur]) cur = ids[0];
-
       root.style.minHeight = "";
-      var maxH = 0;
-      ids.forEach(function (id) {
-        render(id);
-        maxH = Math.max(maxH, root.offsetHeight);
-      });
-      render(cur);
-      root.style.minHeight = Math.ceil(maxH) + "px";
     }
 
     qa(".v-btn").forEach(function (b) {
-      b.addEventListener("click", function () { render(b.dataset.v); });
+      b.addEventListener("click", function () {
+        root.style.minHeight = "";
+        render(b.dataset.v);
+      });
     });
 
     function setAccordionOpen(activeKey) {
