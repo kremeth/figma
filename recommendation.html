@@ -544,7 +544,7 @@
       position: relative;
     }
     .stage-hero img {
-      max-height: 148px;
+      max-height: 160px;
       width: auto;
       object-fit: contain;
       display: block;
@@ -556,7 +556,6 @@
         min-height: 140px;
       }
       .stage-hero img {
-        max-height: 160px;
         margin-top: 26px;
       }
     }
@@ -594,6 +593,21 @@
       line-height: 1.1;
       margin: 0;
     }
+    @media (max-width: 679px) {
+      .stage-name {
+        font-family: var(--font);
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        text-align: left;
+        color: #ffffff;
+        line-height: 1.1;
+        margin: 0;
+      }
+      .nc-protocol-band .stage-name {
+        color: var(--ink);
+      }
+    }
 
     /* Selector — pinned to bottom, separated by air not border */
     .stage-selector {
@@ -611,6 +625,19 @@
       color: rgba(255, 255, 255, 0.38);
       margin: 0 0 10px;
       line-height: 1.35;
+    }
+    @media (max-width: 679px) {
+      .stage-picker-label {
+        font-family: var(--font-ui);
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-align: left;
+        color: rgba(255, 255, 255, 0.38);
+        margin: 0 0 10px;
+        line-height: 1.35;
+      }
     }
     /* Supplement picker — mobile: full-width rows + tier tags; 680+: Figma thumb + name */
     .seg-picker {
@@ -1083,9 +1110,9 @@
       padding-top: 16px;
     }
     .acc:last-child .acc-bd-pad { padding-bottom: 36px; }
-    /* Supplement card: research is last — trim bottom so longest paper + footer breathe without a gap */
-    .rhr-card .acc:last-child .acc-bd-pad {
-      padding-bottom: 20px;
+    /* Supplement card: research — fixed 36px under content (longest paper + footer) */
+    .rhr-card .acc-bd[data-bd="research"] .acc-bd-pad {
+      padding-bottom: 36px;
     }
     @media (max-width: 679px) {
       .acc-bd-pad { padding-left: 20px; padding-right: 20px; }
@@ -2262,6 +2289,20 @@
       background: #ffffff;
     }
 
+    /* Don't stretch detail to fill JS min-height / grid row — removes huge empty band under Research */
+    .nc-protocol-band .rhr-card .card-detail {
+      flex-grow: 0;
+      flex-shrink: 1;
+      flex-basis: auto;
+      width: 100%;
+      min-width: 0;
+    }
+    @media (min-width: 680px) {
+      .nc-protocol-band .rhr-card .card-detail {
+        align-self: start;
+      }
+    }
+
     /* Overview stack + key facts: one row of three cells (Figma 23644:3504) */
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2400,8 +2441,8 @@
         padding: 24px 28px;
       }
 
-      .rhr-card .acc:last-child .acc-bd-pad {
-        padding-bottom: 22px;
+      .rhr-card .acc-bd[data-bd="research"] .acc-bd-pad {
+        padding-bottom: 36px;
       }
 
       .key-facts {
