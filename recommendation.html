@@ -1029,6 +1029,43 @@
       .rhr-card--mobile-collapsed .detail-depth > .acc:nth-child(3) {
         display: none;
       }
+
+      /* Overview: same chevron-in-circle as desktop */
+      .rhr-card .acc-hd--product .acc-chevron {
+        width: 26px;
+        height: 26px;
+        background: var(--ink);
+        border: none;
+        box-shadow: none;
+      }
+      .rhr-card .acc-hd--product .acc-chevron svg {
+        display: block;
+        color: #ffffff;
+      }
+
+      /* Facts + Research: ring indicator — slightly smaller than 26px, calm Apple-like treatment */
+      .rhr-card .acc-hd:not(.acc-hd--product) .acc-chevron {
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.22);
+        box-shadow:
+          0 1px 2px rgba(0, 0, 0, 0.04),
+          0 0 0 0.5px rgba(0, 0, 0, 0.03);
+        transition:
+          background .22s cubic-bezier(0.25, 0.1, 0.25, 1),
+          border-color .22s cubic-bezier(0.25, 0.1, 0.25, 1),
+          box-shadow .22s cubic-bezier(0.25, 0.1, 0.25, 1);
+      }
+      .rhr-card .acc-hd:not(.acc-hd--product) .acc-chevron svg {
+        display: none;
+      }
+      .rhr-card .acc-hd:not(.acc-hd--product)[aria-expanded="true"] .acc-chevron {
+        background: #1d1d1f;
+        border-color: #1d1d1f;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
     }
 
     /* Smooth accordion */
@@ -1046,6 +1083,10 @@
       padding-top: 16px;
     }
     .acc:last-child .acc-bd-pad { padding-bottom: 36px; }
+    /* Supplement card: research is last — trim bottom so longest paper + footer breathe without a gap */
+    .rhr-card .acc:last-child .acc-bd-pad {
+      padding-bottom: 20px;
+    }
     @media (max-width: 679px) {
       .acc-bd-pad { padding-left: 20px; padding-right: 20px; }
     }
@@ -1145,6 +1186,17 @@
       line-height: 12px;
       color: #8e8e93;
       margin: 0;
+    }
+
+    @media (max-width: 679px) {
+      .rhr-card .key-facts {
+        display: none;
+      }
+      .rhr-card .recommend-headline {
+        font-size: 17px;
+        line-height: 24px;
+        letter-spacing: -0.28px;
+      }
     }
 
     /* ── Supplement Facts (aligned to Figma 23517:16894) ─────── */
@@ -2348,6 +2400,10 @@
         padding: 24px 28px;
       }
 
+      .rhr-card .acc:last-child .acc-bd-pad {
+        padding-bottom: 22px;
+      }
+
       .key-facts {
         flex-direction: row;
         align-items: stretch;
@@ -2609,7 +2665,7 @@
 
                 <!-- Overview -->
                 <div class="acc">
-                  <button type="button" class="acc-hd acc-hd--product" aria-expanded="true" data-acc="overview" aria-controls="accOverview0">
+                  <button type="button" class="acc-hd acc-hd--product" aria-expanded="false" data-acc="overview" aria-controls="accOverview0">
                     <span class="acc-hd-product-main">
                       <span class="acc-hd-product-name" id="accOverviewName0">Resveratrol</span>
                       <span class="acc-hd-product-dose" id="accOverviewDose0">250mg · 1 capsule</span>
@@ -2620,7 +2676,7 @@
                       </svg>
                     </span>
                   </button>
-                  <div class="acc-bd open" id="accOverview0" data-bd="overview">
+                  <div class="acc-bd" id="accOverview0" data-bd="overview">
                     <div class="acc-bd-inner">
                       <div class="acc-bd-pad">
                         <div class="overview-stack">
@@ -3400,7 +3456,11 @@
 
     render("resveratrol");
     updateMobileCollapsedClass();
-    setAccordionOpen("overview");
+    if (accordionIsExclusive()) {
+      setAccordionOpen("overview");
+    } else {
+      setAccordionOpen(null);
+    }
 
     rhrVariantHeightStabilizers.push(stabilizeVariantCardHeight);
     requestAnimationFrame(function () {
@@ -3452,6 +3512,18 @@
       });
       card.classList.toggle("rhr-card--mobile-collapsed", mobile && allClosed);
     });
+  }
+
+  function closeAllRhrAccordions() {
+    document.querySelectorAll(".rhr-card").forEach(function (root) {
+      root.querySelectorAll(".acc-hd").forEach(function (b) {
+        b.setAttribute("aria-expanded", "false");
+        var k = b.dataset.acc;
+        var bd = root.querySelector('[data-bd="' + k + '"]');
+        if (bd) bd.classList.remove("open");
+      });
+    });
+    updateMobileCollapsedClass();
   }
 
   function normalizeAccordionForViewport() {
@@ -3531,15 +3603,21 @@
     [0, 1, 2, 3].forEach(initRhrCard);
     bindRhrStripPagination();
     var wasCompoundsDesktop = compoundsLayoutIsDesktop();
+    var wasAccordionExclusive = accordionIsExclusive();
     window.addEventListener("resize", function () {
       requestAnimationFrame(function () {
         var now = compoundsLayoutIsDesktop();
+        var nowExclusive = accordionIsExclusive();
         scrollRhrGridToStartIfDesktop();
         normalizeAccordionForViewport();
         if (now && !wasCompoundsDesktop) {
           openOverviewOnAllCardsIfDesktop();
         }
+        if (wasAccordionExclusive && !nowExclusive) {
+          closeAllRhrAccordions();
+        }
         wasCompoundsDesktop = now;
+        wasAccordionExclusive = nowExclusive;
         stabilizeRhrHeightsDebounced();
       });
     });
