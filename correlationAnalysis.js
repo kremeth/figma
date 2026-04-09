@@ -726,6 +726,246 @@ function buildOutcomeVsWindowAverageHtml(row, rawData) {
   return `, which is ${pct}% ${dir} your ${nDay}-day average`;
 }
 
+function ageBand(age) {
+  if (age < 26) return "18-25";
+  if (age < 36) return "26-35";
+  if (age < 46) return "36-45";
+  if (age < 56) return "46-55";
+  if (age < 66) return "56-65";
+  return "66+";
+}
+
+function meanFromSeriesDict(seriesDict) {
+  const vals = Object.values(seriesDict || {}).filter(
+    (v) => v !== null && v !== undefined && !Number.isNaN(Number(v))
+  );
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + Number(b), 0) / vals.length;
+}
+
+function meanSleepStagePercent(metrics, key) {
+  let acc = 0;
+  let n = 0;
+  const rem = metrics?.rem_sleep || {};
+  const deep = metrics?.deep_sleep || {};
+  const light = metrics?.light_sleep || {};
+  const awake = metrics?.awake_time || {};
+  const days = new Set([
+    ...Object.keys(rem),
+    ...Object.keys(deep),
+    ...Object.keys(light),
+    ...Object.keys(awake),
+  ]);
+  for (const d of days) {
+    const r = rem[d];
+    const dp = deep[d];
+    const l = light[d];
+    const a = awake[d];
+    if ([r, dp, l, a].some((v) => v === null || v === undefined || Number.isNaN(Number(v)))) continue;
+    const total = Number(r) + Number(dp) + Number(l) + Number(a);
+    if (!(total > 0)) continue;
+    const num =
+      key === "rem_sleep" ? Number(r)
+      : key === "deep_sleep" ? Number(dp)
+      : key === "light_sleep" ? Number(l)
+      : Number(a);
+    acc += (num / total) * 100;
+    n++;
+  }
+  return n ? acc / n : null;
+}
+
+function computeMetricPriorityRows(rawData, normative) {
+  const viz = rawData?.connect_device_recommendation?.metric_analysis?.visualization;
+  if (!viz) return [];
+  const metrics = viz.metrics || {};
+  const meta = viz.meta || {};
+  const gender = meta.gender === "female" ? "female" : "male";
+  const band = ageBand(Number(meta.age) || 30);
+  const norm = (k) => normative?.[k]?.[gender]?.[band];
+
+  const totalSleepSecAvg = meanFromSeriesDict(metrics.sleep_time || {});
+  const totalSleepHours = totalSleepSecAvg == null ? null : totalSleepSecAvg / 3600;
+  const disruptionsAvg = meanFromSeriesDict(metrics.disturbances || {});
+  const disruptionsPerHour =
+    disruptionsAvg != null && totalSleepHours != null && totalSleepHours > 0
+      ? disruptionsAvg / totalSleepHours
+      : null;
+
+  const userByMetric = {
+    REM: meanSleepStagePercent(metrics, "rem_sleep"),
+    LightSleep: meanSleepStagePercent(metrics, "light_sleep"),
+    DeepSleep: meanSleepStagePercent(metrics, "deep_sleep"),
+    Awake: meanSleepStagePercent(metrics, "awake_time"),
+    SleepEfficiency: meanFromSeriesDict(metrics.sleep_efficiency || {}) != null
+      ? meanFromSeriesDict(metrics.sleep_efficiency || {}) * 100
+      : null,
+    HRV: meanFromSeriesDict(metrics.HRV || {}),
+    RHR: meanFromSeriesDict(metrics.RHR || {}),
+    Disruptions: disruptionsPerHour,
+  };
+
+  const avgByMetric = {
+    REM: norm("rem_sleep"),
+    LightSleep: norm("light_sleep"),
+    DeepSleep: norm("deep_sleep"),
+    Awake: norm("awake"),
+    SleepEfficiency: norm("sleep_efficiency"),
+    HRV: norm("hrv"),
+    RHR: norm("rhr"),
+    Disruptions: norm("sleep_disruptions"),
+  };
+
+  const lowerIsBetter = new Set(["RHR", "Disruptions", "Awake", "LightSleep"]);
+  const metricLabel = {
+    REM: "REM Sleep",
+    LightSleep: "Light Sleep",
+    DeepSleep: "Deep Sleep",
+    Awake: "Awake",
+    SleepEfficiency: "Sleep Efficiency",
+    HRV: "HRV",
+    RHR: "Resting HR",
+    Disruptions: "Sleep Disruptions",
+  };
+  const skipPriorityMetrics = new Set(["VO2Max", "TotalSleep"]);
+
+  const out = [];
+  for (const key of Object.keys(userByMetric)) {
+    if (skipPriorityMetrics.has(key)) continue;
+    const user = userByMetric[key];
+    const avg = avgByMetric[key];
+    if (
+      user == null || avg == null ||
+      Number.isNaN(Number(user)) || Number.isNaN(Number(avg)) ||
+      Number(avg) === 0
+    ) continue;
+
+    const rel = lowerIsBetter.has(key)
+      ? (Number(avg) - Number(user)) / Math.abs(Number(avg))
+      : (Number(user) - Number(avg)) / Math.abs(Number(avg));
+    out.push({
+      targetMetric: key,
+      metricDisplay: metricLabel[key] || key,
+      user,
+      avg,
+      relDeficit: rel,
+      severity: Math.abs(rel),
+      isNegativeDeficit: rel < 0,
+      lowerIsBetter: lowerIsBetter.has(key),
+    });
+  }
+  out.sort((a, b) => {
+    // Primary: all negative deficits first, furthest negative first.
+    if (a.isNegativeDeficit !== b.isNegativeDeficit) return a.isNegativeDeficit ? -1 : 1;
+    if (a.isNegativeDeficit && b.isNegativeDeficit) return b.severity - a.severity;
+    // Then positive-side metrics (closest to avg first) as backfill candidates.
+    return a.relDeficit - b.relDeficit;
+  });
+  return out;
+}
+
+function formatMetricValueForFallback(metric, v) {
+  if (v == null || Number.isNaN(Number(v))) return "—";
+  const x = Number(v);
+  if (metric === "TotalSleep") return `${x.toFixed(1)}h`;
+  if (metric === "Disruptions") return `${x.toFixed(1)}/h`;
+  if (metric === "SleepEfficiency") return `${Math.round(x)}%`;
+  if (["REM", "LightSleep", "DeepSleep", "Awake"].includes(metric)) return `${Math.round(x)}%`;
+  if (metric === "HRV") return `${Math.round(x)} ms`;
+  if (metric === "RHR") return `${Math.round(x)} bpm`;
+  return `${Math.round(x * 10) / 10}`;
+}
+
+function buildPriorityFallbackRow(priority, rank) {
+  const fallbackInterventionByMetric = {
+    HRV: "hrv",
+    RHR: "rhr",
+    SleepEfficiency: "sleep_quality",
+    Disruptions: "sleep_disruptions",
+    REM: "rem_sleep",
+    DeepSleep: "deep_sleep",
+    LightSleep: "sleep_quality",
+    Awake: "sleep_quality",
+  };
+  const fallbackIntervention = fallbackInterventionByMetric[priority.targetMetric] || null;
+  const pct = Math.round(priority.severity * 100);
+  const dirWord = Number(priority.user) >= Number(priority.avg) ? "above" : "below";
+  let title = `Priority ${rank + 1}: ${priority.metricDisplay}`;
+  let howText = "No significant correlation met the threshold for a unique intervention in this priority area.";
+  if (priority.targetMetric === "REM") {
+    title = "Boost your REM Sleep";
+    howText = "REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.";
+  } else if (priority.targetMetric === "LightSleep") {
+    title = "Lower Light Sleep Duration";
+    howText = "Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.";
+  }
+  return {
+    label: `${priority.targetMetric} fallback`,
+    targetMetric: priority.targetMetric,
+    r: null,
+    n: null,
+    nBracket: null,
+    direction: null,
+    threshold: null,
+    supplements: fallbackIntervention ? [fallbackIntervention] : [],
+    significant: false,
+    marginScore: -1e9 + rank,
+    title,
+    body: `Your ${priority.metricDisplay} is ${pct}% ${dirWord} your demographic average (${formatMetricValueForFallback(priority.targetMetric, priority.user)} vs ${formatMetricValueForFallback(priority.targetMetric, priority.avg)}).`,
+    how_it_works: howText,
+    xRaw: null,
+    yRaw: null,
+    xStr: "—",
+    yStr: "—",
+    csvKey: null,
+  };
+}
+
+function pickFocusCardsByPriorityDeficit(rawData, resolvedRows, normative, limit = 4) {
+  const priority = computeMetricPriorityRows(rawData, normative);
+  const significant = resolvedRows.filter((r) => r.significant);
+  const usedInterventions = new Set();
+  const picks = [];
+  let pickedSevenDay = false;
+
+  for (let i = 0; i < priority.length; i++) {
+    if (picks.length >= limit) break;
+    const p = priority[i];
+    const candidates = significant
+      .filter((r) => r.targetMetric === p.targetMetric)
+      .filter((r) => {
+        const iv = interventionKeyFromRow(r);
+        return !!iv && !usedInterventions.has(iv);
+      })
+      .filter((r) => !(rowUsesSevenDayRolling(r) && pickedSevenDay))
+      .sort((a, b) => {
+        const ma = Number(a.marginScore) || 0;
+        const mb = Number(b.marginScore) || 0;
+        if (mb !== ma) return mb - ma;
+        const ra = Math.abs(Number(a.r) || 0);
+        const rb = Math.abs(Number(b.r) || 0);
+        return rb - ra;
+      });
+
+    if (candidates.length) {
+      const best = candidates[0];
+      const iv = interventionKeyFromRow(best);
+      if (iv) usedInterventions.add(iv);
+      if (rowUsesSevenDayRolling(best)) pickedSevenDay = true;
+      picks.push(best);
+    } else {
+      const fb = buildPriorityFallbackRow(p, i);
+      const iv = interventionKeyFromRow(fb);
+      // If fallback intervention already used, skip this metric and move to next priority.
+      if (!iv || usedInterventions.has(iv)) continue;
+      usedInterventions.add(iv);
+      picks.push(fb);
+    }
+  }
+
+  return picks.slice(0, limit);
+}
+
 /** sleep_disruptions, deep_sleep, rem_sleep may appear together; sleep_quality is subordinate. */
 const SLEEP_PREMIUM_INTERVENTIONS = new Set(["sleep_disruptions", "deep_sleep", "rem_sleep"]);
 const SLEEP_QUALITY_INTERVENTION = "sleep_quality";
@@ -1158,16 +1398,14 @@ function buildHighlightedLead(body, xStr, yStr, csvKey, analysisLabel) {
 
 /** Label + 5-segment patterned bar + |r| as percent (matches design reference). */
 function buildCorrelationStrengthHtml(r) {
+  if (r === null || r === undefined || Number.isNaN(Number(r))) {
+    return "";
+  }
   const pct =
-    r === null || r === undefined || Number.isNaN(Number(r))
-      ? null
-      : Math.round(Math.abs(Number(r)) * 100);
-  const w = pct === null ? 0 : Math.min(100, Math.max(0, pct));
-  const pctLabel = pct === null ? "—" : `${pct}%`;
-  const aria =
-    pct === null
-      ? "Correlation strength, not available"
-      : `Correlation strength, ${pct} percent`;
+    Math.round(Math.abs(Number(r)) * 100);
+  const w = Math.min(100, Math.max(0, pct));
+  const pctLabel = `${pct}%`;
+  const aria = `Correlation strength, ${pct} percent`;
   const lineLabel = `Correlation strength: ${pctLabel}`;
   return `<div class="focus-card__correlation-strength" role="group" aria-label="${escapeHtml(aria)}">
                 <span class="focus-card__correlation-strength-label">${escapeHtml(lineLabel)}</span>
@@ -1216,7 +1454,7 @@ function buildFocusStackHtml(topThree, rawData) {
           <div class="focus-card__intro">
             <h3 class="focus-card__title">${escapeHtml(row.title)}</h3>
             <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Intervention</span>
+              <span class="focus-card__intervention-kicker">Supplement Focus</span>
               <span class="focus-card__intervention-value">${escapeHtml(interventionDisplay)}</span>
             </p>
           </div>
@@ -1274,6 +1512,7 @@ if (typeof module !== "undefined" && require.main === module) {
   const baseDir = path.dirname(resolvedRaw);
   const csvPath = process.argv[3] || path.join(baseDir, "correlation_cards - correlation_cards-2.csv");
   const htmlPath = process.argv[4] || path.join(baseDir, "nutricode-health-report.html");
+  const normativePath = path.join(baseDir, "normative_metrics.json");
 
   const rawData = JSON.parse(fs.readFileSync(resolvedRaw, "utf8"));
   const results = runCorrelationAnalysis(rawData);
@@ -1302,8 +1541,10 @@ if (typeof module !== "undefined" && require.main === module) {
     fs.writeFileSync(rankedPath, JSON.stringify(resolved, null, 2), "utf8");
     console.log(`Resolved cards (ranked): ${rankedPath}`);
 
-    const significantResolved = resolved.filter(r => r.significant);
-    const focusPicks = pickFocusCardsHopcroftKarp(significantResolved);
+    const normative = fs.existsSync(normativePath)
+      ? JSON.parse(fs.readFileSync(normativePath, "utf8"))
+      : null;
+    const focusPicks = pickFocusCardsByPriorityDeficit(rawData, resolved, normative, 4);
     for (let i = 0; i < focusPicks.length; i++) {
       const row = focusPicks[i];
       const iv = interventionKeyFromRow(row) || "—";
@@ -1313,7 +1554,7 @@ if (typeof module !== "undefined" && require.main === module) {
     const frag = buildFocusStackHtml(focusPicks, rawData);
     if (fs.existsSync(htmlPath)) {
       injectFocusStackHtml(htmlPath, frag);
-      console.log(`Injected ${focusPicks.length} focus card(s) (Hopcroft–Karp max matching, ≤1 seven-day, intervention×METRIC_A) into: ${htmlPath}`);
+      console.log(`Injected ${focusPicks.length} focus card(s) (priority deficits vs demographic avg; correlation-first + fallback; unique interventions) into: ${htmlPath}`);
     } else {
       console.warn(`HTML not found: ${htmlPath}`);
     }
@@ -1342,6 +1583,7 @@ if (typeof module !== "undefined") {
     pickTopByUniqueIntervention,
     finalizeFocusPicksWithSleepHierarchy,
     pickFocusCardsHopcroftKarp,
+    pickFocusCardsByPriorityDeficit,
     hopcroftKarpMatching,
     buildInterventionTargetMetricEdges,
     rowUsesSevenDayRolling,
