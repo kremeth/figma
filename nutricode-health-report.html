@@ -107,7 +107,6 @@
     .donut-legend-num,
     .phase-num,
     .phase-duration,
-    .bio-bench-scale,
     .bio-value,
     .focus-card__statval-num,
     .hrz-zone-lbl,
@@ -1119,10 +1118,11 @@
       z-index: 4;
       pointer-events: none;
     }
-    /* Labels: three-column in-flow grid, no overlap */
+    /* Align cohort numbers with ticks (10% / 50% / 90%) — same % as .bio-bench-tick--p10|avg|p90 */
     .bio-bench-mark-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      position: relative;
+      width: 100%;
+      min-height: calc(1.25em + 2px);
       font-family: var(--font-mono);
       font-size: 9px;
       font-weight: 500;
@@ -1130,22 +1130,21 @@
       line-height: 1.25;
       color: #8e8e93;
     }
+    .bio-bench-mark-row > span {
+      position: absolute;
+      top: 0;
+      transform: translateX(-50%);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .bio-bench-mark-row > span:nth-child(1) { left: 10%; }
+    .bio-bench-mark-row > span:nth-child(2) { left: 50%; }
+    .bio-bench-mark-row > span:nth-child(3) { left: 90%; }
     .bio-bench-mark-row .bio-bench-mark-suffix {
       font-family: -apple-system, BlinkMacSystemFont, var(--font-ui);
       font-size: 8px;
       font-weight: 400;
       opacity: 0.85;
-    }
-    .bio-bench-mark-row > span:nth-child(1) { text-align: left; }
-    .bio-bench-mark-row > span:nth-child(2) { text-align: center; }
-    .bio-bench-mark-row > span:nth-child(3) { text-align: right; }
-    .bio-bench-scale {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 2px;
-      font-family: var(--font-mono); font-size: 9px; color: var(--ink-5);
-      letter-spacing: var(--ls-9);
-      line-height: 1.35;
     }
     .bio-row-right {
       display: flex; flex-direction: column; align-items: flex-end;
@@ -2549,7 +2548,6 @@
                   <span title="Top 10%">57</span>
                 </div>
     </div>
-              <div class="bio-bench-scale"><span>30</span><span>60</span></div>
       </div>
         </div>
           </div><!-- /bio-row-left -->
@@ -2581,7 +2579,6 @@
                   <span title="Top 10%">100</span>
                 </div>
       </div>
-              <div class="bio-bench-scale"><span>20</span><span>80</span></div>
     </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2613,7 +2610,6 @@
                   <span title="Top 10%">49</span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>100</span><span>40</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2654,7 +2650,6 @@
                   <span title="Top 10%">8.5<span class="bio-bench-mark-suffix">h</span></span>
                 </div>
         </div>
-              <div class="bio-bench-scale"><span>5h</span><span>9h</span></div>
       </div>
     </div>
           </div><!-- /bio-row-left -->
@@ -2686,7 +2681,6 @@
                   <span title="Top 10%">96<span class="bio-bench-mark-suffix">%</span></span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>0%</span><span>100%</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2718,7 +2712,6 @@
                   <span title="Top 10%">0.3</span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>5</span><span>0</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2759,7 +2752,6 @@
                   <span title="Top 10%">27.5<span class="bio-bench-mark-suffix">%</span></span>
                 </div>
         </div>
-              <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
       </div>
     </div>
           </div><!-- /bio-row-left -->
@@ -2791,7 +2783,6 @@
                   <span title="Top 10%">24<span class="bio-bench-mark-suffix">%</span></span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2823,7 +2814,6 @@
                   <span title="Top 10%">45<span class="bio-bench-mark-suffix">%</span></span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>70%</span><span>0%</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
@@ -2855,7 +2845,6 @@
                   <span title="Top 10%">3<span class="bio-bench-mark-suffix">%</span></span>
                 </div>
               </div>
-              <div class="bio-bench-scale"><span>25%</span><span>0%</span></div>
             </div>
           </div>
           </div><!-- /bio-row-left -->
