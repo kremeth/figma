@@ -943,7 +943,30 @@
       color: var(--ink-4);
       letter-spacing: var(--ls-12);
       line-height: 1.45;
-      margin: 0 0 22px;
+      margin: 0 0 10px;
+    }
+    .bio-ref-key {
+      display: flex; flex-wrap: wrap; gap: 12px 18px;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--ink-4);
+      letter-spacing: var(--ls-10);
+      margin: 0 0 18px;
+      line-height: 1.3;
+    }
+    .bio-ref-key__i { display: inline-flex; align-items: center; gap: 6px; }
+    .bio-ref-key__swatch {
+      display: inline-block; width: 10px; height: 10px; border-radius: 1px; flex-shrink: 0;
+    }
+    .bio-ref-key__swatch--cohort { background: rgba(0,0,0,0.32); width: 2px; height: 10px; border-radius: 0; }
+    .bio-ref-key__swatch--avg {
+      width: 0; height: 12px; border-left: 2px dashed var(--ink-3); opacity: 0.75; background: none;
+    }
+    .bio-ref-key__swatch--you {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.15);
     }
     h2.bio-panel-title {
       font-family: var(--font-ui);
@@ -960,13 +983,44 @@
       min-width: 0;
       box-sizing: border-box;
     }
-    .bio-row {
+    /* 2-col parent grid: [label+bar (1fr)] | [value+badge (auto-sized to widest across all rows)].
+       Label stacks above bar in col1 — bar gets max possible equal width = card − value_col − gap. */
+    .bio-rows-grid {
       display: grid;
-      grid-template-columns: minmax(0,1fr) minmax(90px,1.2fr) minmax(90px,auto);
-      gap: 10px 12px; align-items: center; padding: 13px 16px;
+      grid-template-columns: 1fr auto;
+      column-gap: 12px;
+      align-items: stretch;
+      padding: 0 16px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .bio-rows-grid .bio-row { display: contents; }
+    .bio-rows-grid .bio-row > * {
+      padding: 13px 0;
       border-bottom: 1px solid var(--sep);
     }
-    .bio-panel-card .bio-row:last-child { border-bottom: none; }
+    .bio-rows-grid .bio-row:last-child > * { border-bottom: none; }
+    .bio-row-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      justify-content: center;
+      min-width: 0;
+    }
+    /* Fallback: display:contents not supported */
+    @supports not (display: contents) {
+      .bio-rows-grid .bio-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--sep);
+      }
+      .bio-rows-grid .bio-row > * { padding: 0; border-bottom: none; }
+      .bio-rows-grid .bio-row:last-child { border-bottom: none; }
+      .bio-row-left { flex: 1 1 0; min-width: 0; }
+    }
     .bio-row-name {
       font-family: var(--font-ui);
       font-size: 13px; font-weight: 400; color: var(--ink);
@@ -982,40 +1036,121 @@
       max-width: 100%;
     }
     .bio-row-name-row .bio-row-name { flex: 0 1 auto; min-width: 0; }
-    .bio-row-bar { min-width: 0; }
-    .bio-bench { position: relative; padding: 2px 0 0; }
-    .bio-bench-track-wrap { position: relative; height: 5px; }
+    .bio-row-bar { min-width: 0; width: 100%; }
+    .bio-bench { position: relative; padding: 4px 0 0; width: 100%; box-sizing: border-box; }
+    .bio-bench-track-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+    }
+    /* Track row: taller to give room for the value dot */
+    .bio-bench-track-row {
+      position: relative;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-width: 0;
+    }
     .bio-bench-track {
-      height: 100%; background: rgba(0,0,0,0.07);
-      border-radius: 3px; overflow: hidden; position: relative;
+      position: absolute;
+      left: 0; right: 0;
+      height: 6px;
+      background: rgba(0,0,0,0.065);
+      border-radius: 100px;
+      overflow: hidden;
     }
-    .bio-bench-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 3px; }
-    .bio-bench-fill--green { background: var(--green-accent); }
-    .bio-bench-fill--amber { background: var(--amber-accent); }
+    .bio-bench-fill {
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%;
+      border-radius: 100px;
+    }
+    .bio-bench-fill--green { background: linear-gradient(90deg, #2ecc69 0%, #34c759 100%); }
+    .bio-bench-fill--amber { background: linear-gradient(90deg, #f0920a 0%, #ff9f0a 100%); }
+    /* Thin reference notches */
     .bio-bench-tick {
-      position: absolute; top: 50%; width: 1px; height: 10px; margin-top: -5px;
-      background: rgba(0,0,0,0.22); transform: translateX(-50%); pointer-events: none;
+      position: absolute;
+      top: 50%;
+      width: 1px;
+      height: 14px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border-radius: 1px;
     }
-    .bio-bench-tick--start { left: 0; }
-    .bio-bench-tick--val { z-index: 1; }
-    /* Peer average (men 28–30, WHOOP) — dashed, distinct from your-value tick */
+    .bio-bench-tick--p10,
+    .bio-bench-tick--p90 {
+      background: rgba(0,0,0,0.16);
+      z-index: 1;
+    }
+    /* Reference ticks: always worse → better left → right (same for every metric) */
+    .bio-bench-tick--p10 { left: 10%; }
+    .bio-bench-tick--p90 { left: 90%; }
+    /* Average: short dashed notch, slightly more prominent */
     .bio-bench-tick--avg {
-      width: 0;
-      height: 12px;
-      margin-top: -6px;
-      background: none;
-      border-left: 1.5px dashed var(--ink-3);
-      opacity: 0.7;
+      left: 50%;
+      width: 1.5px;
+      height: 16px;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.35) 0px,
+        rgba(0,0,0,0.35) 3px,
+        transparent 3px,
+        transparent 5.5px
+      );
+      z-index: 2;
+      border-radius: 0;
     }
+    /* Value indicator — circular thumb, Apple-style */
+    .bio-bench-dot {
+      position: absolute;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 1px 4px rgba(0,0,0,0.18),
+        0 3px 8px rgba(0,0,0,0.10);
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      pointer-events: none;
+    }
+    /* Labels: three-column in-flow grid, no overlap */
+    .bio-bench-mark-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: #8e8e93;
+    }
+    .bio-bench-mark-row .bio-bench-mark-suffix {
+      font-family: -apple-system, BlinkMacSystemFont, var(--font-ui);
+      font-size: 8px;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+    .bio-bench-mark-row > span:nth-child(1) { text-align: left; }
+    .bio-bench-mark-row > span:nth-child(2) { text-align: center; }
+    .bio-bench-mark-row > span:nth-child(3) { text-align: right; }
     .bio-bench-scale {
-      display: flex; justify-content: space-between; margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
       font-family: var(--font-mono); font-size: 9px; color: var(--ink-5);
       letter-spacing: var(--ls-9);
       line-height: 1.35;
     }
     .bio-row-right {
       display: flex; flex-direction: column; align-items: flex-end;
-      gap: 5px; text-align: right; min-width: 0;
+      justify-content: center;
+      gap: 5px; text-align: right; min-width: 0; flex-shrink: 0;
     }
     .bio-row-valline {
       display: flex; align-items: baseline; justify-content: flex-end; flex-wrap: wrap; gap: 0 3px;
@@ -1044,9 +1179,7 @@
     .bio-badge.below     { background: var(--amber-bg); color: var(--amber); }
     .bio-badge.needs-imp { background: var(--amber-bg); color: var(--amber); }
     @media (max-width: 480px) {
-      .bio-row { grid-template-columns: 1fr; gap: 8px; }
-      .bio-row-right { align-items: flex-start; text-align: left; }
-      .bio-row-valline { justify-content: flex-start; }
+      .bio-rows-grid { padding: 0 12px; }
     }
 
     /* ─────────────────────── Focus section band ─────────────────────── */
@@ -1143,6 +1276,30 @@
       white-space: normal;
       overflow: visible;
       text-overflow: unset;
+    }
+    .focus-card__intervention {
+      margin: 10px 0 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 10px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .focus-card__intervention-kicker {
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.38);
+    }
+    .focus-card__intervention-value {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.78);
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
     @media (min-width: 551px) {
       .focus-card .focus-card__title {
@@ -1243,6 +1400,10 @@
       font-weight: 600;
       color: #ffffff;
     }
+    .focus-card__metric-em {
+      font-weight: 600;
+      color: #ffffff;
+    }
     .focus-card__plain-sub {
       font-family: var(--font-ui);
       margin: 0;
@@ -1251,6 +1412,40 @@
       line-height: 1.6;
       letter-spacing: -0.01em;
       color: rgba(255, 255, 255, 0.38);
+    }
+    .focus-card__correlation-strength {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin: 0;
+    }
+    .focus-card__correlation-strength-label {
+      display: block;
+      font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.36);
+      white-space: nowrap;
+    }
+    .focus-card__correlation-strength-track {
+      position: relative;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.09);
+      overflow: visible;
+    }
+    .focus-card__correlation-strength-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      min-width: 10px;
+      max-width: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.35) 100%);
+      /* box-shadow: 0 0 10px 1px rgba(255, 255, 255, 0.20); */
     }
     .focus-card__plain-more {
       margin: 0;
@@ -1506,6 +1701,9 @@
       .focus-card__body--plain .focus-card__plain-more-toggle {
         font-size: 11px;
       }
+      .focus-card__body--plain .focus-card__correlation-strength {
+        gap: 6px;
+      }
       .focus-card__chart-cap {
         text-align: center;
         align-self: center;
@@ -1721,17 +1919,8 @@
         padding-left: 10px;
       }
 
-      /* ── Bio panel rows ── */
-      .bio-row {
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto auto;
-        gap: 8px 12px;
-        padding: 14px 16px;
-      }
-      .bio-row-name,
-      .bio-row-name-row { grid-column: 1; grid-row: 1; }
-      .bio-row-right { grid-column: 2; grid-row: 1 / 3; align-items: flex-end; }
-      .bio-row-bar { grid-column: 1; grid-row: 2; }
+      /* ── Bio panel rows: tighter horizontal padding on tablet/mobile ── */
+      .bio-rows-grid { padding: 0 14px; }
       .bio-value { font-size: 18px; }
 
       /* ── Chart pair ── */
@@ -1798,15 +1987,9 @@
       .snapshot-grid--3 { grid-template-columns: 1fr; }
       .snapshot-grid--3 .snapshot-tile:last-child { grid-column: auto; }
 
-      /* Bio rows full stack */
-      .bio-row {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-      }
-      .bio-row-name,
-      .bio-row-name-row { grid-column: 1; grid-row: 1; }
-      .bio-row-bar  { grid-column: 1; grid-row: 2; }
-      .bio-row-right { grid-column: 1; grid-row: 3; align-items: flex-start; text-align: left; }
+      /* Bio rows: narrow — collapse to single column, value below bar */
+      .bio-rows-grid { grid-template-columns: 1fr; padding: 0 12px; }
+      .bio-row-right { align-items: flex-start; text-align: left; padding-top: 0; }
       .bio-row-valline { justify-content: flex-start; }
 
       /* Score footer 3-col still, but even tighter */
@@ -1922,7 +2105,6 @@
 
   </div>
   </div>
-
 
 <!-- ─── 30-day snapshot ─── -->
   <div class="page-section">
@@ -2324,7 +2506,12 @@
 ═══════════════════════════════════════ -->
 <div class="inner page-section">
   <p class="section-label reveal section-label--caps section-label--bio">Biometric Health</p>
-  <p class="bio-panel-note reveal">Peer average and targets here are benchmarked to men aged 28–30 (WHOOP cohort), unless a row states otherwise. On each bar, the dashed vertical line is peer average; the solid line is your value.</p>
+  <p class="bio-panel-note reveal">Reference numbers under each bar are cohort benchmarks for <strong>men aged 26–35</strong> (aligned to 28–30): left = <strong>bottom 10%</strong> (worse), center = <strong>average</strong>, right = <strong>top 10%</strong> (better). Every bar reads <strong>left = worse, right = better</strong>; the scale endpoints match that. The <strong>dot</strong> is your value on that same worse→better axis.</p>
+  <p class="bio-ref-key reveal" aria-hidden="true">
+    <span class="bio-ref-key__i"><span class="bio-ref-key__swatch bio-ref-key__swatch--cohort"></span> Bottom 10% &amp; top 10% marks</span>
+    <span class="bio-ref-key__i"><span class="bio-ref-key__swatch bio-ref-key__swatch--avg"></span> Average</span>
+    <span class="bio-ref-key__i"><span class="bio-ref-key__swatch bio-ref-key__swatch--you"></span> Your value</span>
+  </p>
 
   <div class="bio-stack">
 
@@ -2332,7 +2519,9 @@
     <section class="reveal d1">
       <h2 class="bio-panel-title">Cardiovascular</h2>
       <div class="bio-panel-card">
+        <div class="bio-rows-grid">
         <div class="bio-row">
+          <div class="bio-row-left">
           <div class="bio-row-name-row">
             <span class="bio-row-name">VO₂ Max</span>
             <button type="button" class="snap-info-btn" id="bio-vo2-open" aria-haspopup="dialog" aria-controls="bio-vo2-dialog" title="How VO₂ max is estimated">
@@ -2344,17 +2533,26 @@
         </div>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--green" style="width:60%"></div>
-      </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:50%" title="Peer average VO₂ max (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:60%" aria-hidden="true"></span>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:60%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:60%" title="Your value"></span>
+                </div>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">26.5</span>
+                  <span title="Average">42</span>
+                  <span title="Top 10%">57</span>
+                </div>
     </div>
               <div class="bio-bench-scale"><span>30</span><span>60</span></div>
       </div>
         </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">48</span><span class="bio-unit">ml/kg/min</span>
@@ -2363,20 +2561,30 @@
     </div>
       </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">HRV</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:30%"></div>
-        </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:53.33%" title="Peer average HRV (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:30%" aria-hidden="true"></span>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:30%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:30%" title="Your value"></span>
+                </div>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">23</span>
+                  <span title="Average">65</span>
+                  <span title="Top 10%">100</span>
+                </div>
       </div>
               <div class="bio-bench-scale"><span>20</span><span>80</span></div>
     </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">38</span><span class="bio-unit">ms</span>
@@ -2385,26 +2593,37 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Resting HR</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--green" style="width:30%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--lower">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:70%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:70%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:36.67%" title="Peer average resting HR (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:30%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">88</span>
+                  <span title="Average">65</span>
+                  <span title="Top 10%">49</span>
+                </div>
               </div>
-              <div class="bio-bench-scale"><span>40</span><span>100</span></div>
+              <div class="bio-bench-scale"><span>100</span><span>40</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">58</span><span class="bio-unit">bpm</span>
             </div>
             <span class="bio-badge optimal">Optimal</span>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -2413,21 +2632,32 @@
     <section class="reveal d2">
       <h2 class="bio-panel-title">Sleep quality</h2>
       <div class="bio-panel-card">
+        <div class="bio-rows-grid">
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Total sleep</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:45%"></div>
-      </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:55%" title="Peer average total sleep (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:45%" aria-hidden="true"></span>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:45%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:45%" title="Your value"></span>
+                </div>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">5.4<span class="bio-bench-mark-suffix">h</span></span>
+                  <span title="Average">7.1<span class="bio-bench-mark-suffix">h</span></span>
+                  <span title="Top 10%">8.5<span class="bio-bench-mark-suffix">h</span></span>
+                </div>
         </div>
               <div class="bio-bench-scale"><span>5h</span><span>9h</span></div>
       </div>
     </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">6.8</span><span class="bio-unit">h</span>
@@ -2436,20 +2666,30 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Sleep efficiency</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--green" style="width:84%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:84%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:84%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:88%" title="Peer average sleep efficiency (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:84%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">72<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Average">90<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Top 10%">96<span class="bio-bench-mark-suffix">%</span></span>
+                </div>
               </div>
               <div class="bio-bench-scale"><span>0%</span><span>100%</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">84</span><span class="bio-unit">%</span>
@@ -2458,26 +2698,37 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Disruptions</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:64%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--lower">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:36%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:36%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:40%" title="Peer average disruptions per night (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:64%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">3.0</span>
+                  <span title="Average">1.1</span>
+                  <span title="Top 10%">0.3</span>
+                </div>
               </div>
-              <div class="bio-bench-scale"><span>0</span><span>5</span></div>
+              <div class="bio-bench-scale"><span>5</span><span>0</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">3.2</span><span class="bio-unit">/night</span>
             </div>
             <span class="bio-badge needs-imp" title="Versus peer average for your age and sex (WHOOP cohort)">Above peer avg</span>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -2486,21 +2737,32 @@
     <section class="reveal d3">
       <h2 class="bio-panel-title">Sleep stages</h2>
       <div class="bio-panel-card">
+        <div class="bio-rows-grid">
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">REM</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:47.5%"></div>
-      </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:62.5%" title="Peer average REM % (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:47.5%" aria-hidden="true"></span>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:47.5%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:47.5%" title="Your value"></span>
+                </div>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">13.5<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Average">21<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Top 10%">27.5<span class="bio-bench-mark-suffix">%</span></span>
+                </div>
         </div>
               <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
       </div>
     </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">19</span><span class="bio-unit">%</span>
@@ -2509,20 +2771,30 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Deep</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--amber" style="width:35%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:35%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:35%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:45%" title="Peer average deep sleep % (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:35%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">7<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Average">16.5<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Top 10%">24<span class="bio-bench-mark-suffix">%</span></span>
+                </div>
               </div>
               <div class="bio-bench-scale"><span>0%</span><span>40%</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">14</span><span class="bio-unit">%</span>
@@ -2531,20 +2803,30 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Light</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--green" style="width:77.14%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--lower">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:22.86%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:22.86%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:74.29%" title="Peer average light sleep % (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:77.14%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">74<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Average">57<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Top 10%">45<span class="bio-bench-mark-suffix">%</span></span>
+                </div>
               </div>
-              <div class="bio-bench-scale"><span>0%</span><span>70%</span></div>
+              <div class="bio-bench-scale"><span>70%</span><span>0%</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">54</span><span class="bio-unit">%</span>
@@ -2553,26 +2835,37 @@
           </div>
         </div>
         <div class="bio-row">
+          <div class="bio-row-left">
           <span class="bio-row-name">Awake</span>
           <div class="bio-row-bar">
             <div class="bio-bench">
-              <div class="bio-bench-track-wrap">
-                <div class="bio-bench-track">
-                  <div class="bio-bench-fill bio-bench-fill--green" style="width:52%"></div>
+              <div class="bio-bench-track-wrap bio-bench-track-wrap--lower">
+                <div class="bio-bench-track-row" aria-hidden="true">
+                  <div class="bio-bench-track">
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:48%"></div>
+                  </div>
+                  <span class="bio-bench-tick bio-bench-tick--p10"></span>
+                  <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
+                  <span class="bio-bench-tick bio-bench-tick--p90"></span>
+                  <span class="bio-bench-dot" style="left:48%" title="Your value"></span>
                 </div>
-                <span class="bio-bench-tick bio-bench-tick--start" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--avg" style="left:44%" title="Peer average awake % (men 28–30)" aria-hidden="true"></span>
-                <span class="bio-bench-tick bio-bench-tick--val" style="left:52%" aria-hidden="true"></span>
+                <div class="bio-bench-mark-row">
+                  <span title="Bottom 10%, men 26–35">14<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Average">7<span class="bio-bench-mark-suffix">%</span></span>
+                  <span title="Top 10%">3<span class="bio-bench-mark-suffix">%</span></span>
+                </div>
               </div>
-              <div class="bio-bench-scale"><span>0%</span><span>25%</span></div>
+              <div class="bio-bench-scale"><span>25%</span><span>0%</span></div>
             </div>
           </div>
+          </div><!-- /bio-row-left -->
           <div class="bio-row-right">
             <div class="bio-row-valline">
               <span class="bio-value">13</span><span class="bio-unit">%</span>
             </div>
             <span class="bio-badge normal">Normal</span>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -2588,43 +2881,42 @@
   <div class="inner page-section">
     <h2 class="section-label reveal section-label--caps" id="focus-heading">Your priority areas</h2>
     <div class="focus-stack">
+<!-- FOCUS_STACK_CORRELATION_START -->
+
       <div class="focus-item reveal d1">
         <p class="focus-area-label">Priority 1</p>
         <article class="card focus-card">
         <div class="focus-card__inner">
           <div class="focus-card__intro">
-            <h3 class="focus-card__title">Training load exceeding recovery capacity</h3>
+            <h3 class="focus-card__title">Keep Light Sleep low as training load increases</h3>
+            <p class="focus-card__intervention">
+              <span class="focus-card__intervention-kicker">Intervention</span>
+              <span class="focus-card__intervention-value">Sleep Quality</span>
+            </p>
           </div>
           <div class="focus-card__content-row">
             <div class="focus-card__col focus-card__col--text">
               <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">High-intensity sessions on under-recovered days are <strong class="focus-card__plain-em">limiting adaptation</strong> and increasing injury risk.</p>
+                <p class="focus-card__plain-lead">When your <span class="focus-card__metric-em">7-day average training intensity</span> stayed above <span class="focus-card__metric-em">1.84</span>, your <span class="focus-card__metric-em">7-day average Light Sleep</span> tended to remain above <span class="focus-card__metric-em">5.4 hours</span>, which is 13% above your 30-day average.</p>
+                <div class="focus-card__correlation-strength" role="group" aria-label="Correlation strength, 76 percent">
+                <span class="focus-card__correlation-strength-label">Correlation strength: 76%</span>
+                <div class="focus-card__correlation-strength-track" aria-hidden="true">
+                  <div class="focus-card__correlation-strength-fill" style="width:76%"></div>
+                </div>
+              </div>
                 <details class="focus-card__plain-more">
                   <summary class="focus-card__plain-more-toggle">
                     <span class="focus-card__plain-more-text focus-card__plain-more-text--more">More</span>
                     <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Less</span>
                   </summary>
-                  <p class="focus-card__plain-sub">Your body needs more time to absorb the work.</p>
+                  <p class="focus-card__plain-sub">Your Light Sleep is rising during harder training weeks, reducing recovery time when your body needs it most.</p>
                 </details>
               </div>
             </div>
-            <div class="focus-card__chart" aria-label="Strain vs recovery bar chart">
-              <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
-                <rect x="0"  y="22" width="8" height="40" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="11" y="10" width="8" height="52" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="22" y="24" width="8" height="38" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="33" y="4"  width="8" height="58" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="44" y="10" width="8" height="52" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="55" y="18" width="8" height="44" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="66" y="2"  width="8" height="60" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="77" y="14" width="8" height="48" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="88" y="12" width="8" height="50" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <rect x="99" y="7"  width="8" height="55" fill="#f59e0b" opacity="0.85" rx="1"/>
-                <polyline points="4,36 15,32 26,38 37,34 48,36 59,38 70,33 81,36 92,35 103,35"
-                  stroke="rgba(255,255,255,0.6)" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-              </svg>
-              <span class="focus-card__chart-cap">strain vs recovery</span>
+            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
+              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="16" width="7" height="46" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="27" width="7" height="35" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="38" width="7" height="24" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="40" width="7" height="22" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="32" width="7" height="30" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="19" width="7" height="43" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="12" width="7" height="50" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="16" width="7" height="46" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="27" width="7" height="35" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="38" width="7" height="24" fill="#f59e0b" opacity="0.85" rx="1"/>
+<polyline points="4,25 15,29 26,33 37,25 48,29 59,33 70,25 81,29 92,33" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              <span class="focus-card__chart-cap">LightSleep · n=8</span>
             </div>
           </div>
         </div>
@@ -2636,84 +2928,41 @@
         <article class="card focus-card">
         <div class="focus-card__inner">
           <div class="focus-card__intro">
-            <h3 class="focus-card__title">HRV is suppressing your Wellness Score</h3>
+            <h3 class="focus-card__title">Recover better after hard training for higher next-day HRV</h3>
+            <p class="focus-card__intervention">
+              <span class="focus-card__intervention-kicker">Intervention</span>
+              <span class="focus-card__intervention-value">Recovery</span>
+            </p>
           </div>
           <div class="focus-card__content-row">
             <div class="focus-card__col focus-card__col--text">
               <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">At 38ms you're <strong class="focus-card__plain-em">27% below the average</strong> for your age group.</p>
+                <p class="focus-card__plain-lead">On days when your <span class="focus-card__metric-em">training intensity</span> reached <span class="focus-card__metric-em">2.01</span>, your <span class="focus-card__metric-em">next-day HRV</span> tended to drop below <span class="focus-card__metric-em">114 ms</span>, which is 10% below your 30-day average.</p>
+                <div class="focus-card__correlation-strength" role="group" aria-label="Correlation strength, 66 percent">
+                <span class="focus-card__correlation-strength-label">Correlation strength: 66%</span>
+                <div class="focus-card__correlation-strength-track" aria-hidden="true">
+                  <div class="focus-card__correlation-strength-fill" style="width:66%"></div>
+                </div>
+              </div>
                 <details class="focus-card__plain-more">
                   <summary class="focus-card__plain-more-toggle">
                     <span class="focus-card__plain-more-text focus-card__plain-more-text--more">More</span>
                     <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Less</span>
                   </summary>
-                  <p class="focus-card__plain-sub">Low HRV is the earliest signal of accumulated fatigue or elevated stress — both are suppressing your score right now.</p>
+                  <p class="focus-card__plain-sub">This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day HRV.</p>
                 </details>
               </div>
             </div>
-            <div class="focus-card__chart" aria-label="HRV line chart">
-              <svg width="110" height="62" viewBox="0 0 110 62" fill="none">
-                <line x1="0" y1="14" x2="110" y2="14"
-                  stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3"/>
-                <text x="108" y="11" text-anchor="end" font-size="8"
-                  fill="rgba(255,255,255,0.42)" font-family="'JetBrains Mono',monospace">52ms</text>
-                <path d="M0,36 L11,31 L22,40 L33,34 L44,29 L55,38 L66,35 L77,33 L88,40 L99,36 L110,37 L110,58 L0,58 Z"
-                  fill="rgba(245,158,11,0.18)"/>
-                <polyline points="0,36 11,31 22,40 33,34 44,29 55,38 66,35 77,33 88,40 99,36 110,37"
-                  stroke="#f59e0b" stroke-width="1.5"
-                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                <text x="2" y="50" font-size="8"
-                  fill="rgba(255,255,255,0.42)" font-family="'JetBrains Mono',monospace">38ms</text>
-              </svg>
-              <span class="focus-card__chart-cap">HRV</span>
+            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
+              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="17" width="7" height="45" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="25" width="7" height="37" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="36" width="7" height="26" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="41" width="7" height="21" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="37" width="7" height="25" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="27" width="7" height="35" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="18" width="7" height="44" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="17" width="7" height="45" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="26" width="7" height="36" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="36" width="7" height="26" fill="#f59e0b" opacity="0.85" rx="1"/>
+<polyline points="4,28 15,32 26,36 37,28 48,32 59,36 70,28 81,32 92,36" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+              <span class="focus-card__chart-cap">HRV · n=10</span>
             </div>
           </div>
         </div>
       </article>
       </div>
-
-      <div class="focus-item reveal d3">
-        <p class="focus-area-label">Priority 3</p>
-        <article class="card focus-card">
-        <div class="focus-card__inner">
-          <div class="focus-card__intro">
-            <h3 class="focus-card__title">Repair sleep stages falling short of target</h3>
-          </div>
-          <div class="focus-card__content-row">
-            <div class="focus-card__col focus-card__col--text">
-              <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">Deep (14%) and REM (19%) together fall <strong class="focus-card__plain-em">8 points short of target</strong>.</p>
-                <details class="focus-card__plain-more">
-                  <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">More</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Less</span>
-                  </summary>
-                  <p class="focus-card__plain-sub">These are the stages where physical repair and memory consolidation happen — improving them will directly accelerate your score.</p>
-                </details>
-              </div>
-            </div>
-            <div class="focus-card__chart" aria-label="Sleep stages donut: 33% combined deep and REM; light grey arc shows gap to 41% target">
-              <svg class="focus-card__chart-svg--sleep" width="88" height="88" viewBox="0 0 76 76" fill="none">
-                <circle cx="38" cy="38" r="30" stroke="rgba(255,255,255,0.1)" stroke-width="9" fill="none"/>
-                <circle cx="38" cy="38" r="30" stroke="#a78bfa" stroke-width="9" fill="none"
-                  stroke-dasharray="26.4 162.1" stroke-dashoffset="0"
-                  transform="rotate(-90 38 38)"/>
-                <circle cx="38" cy="38" r="30" stroke="#f59e0b" stroke-width="9" fill="none"
-                  stroke-dasharray="35.8 152.7" stroke-dashoffset="-26.4"
-                  transform="rotate(-90 38 38)"/>
-                <!-- 8% arc (33%→41%): gap to combined target; C=2πr≈188.5 -->
-                <circle cx="38" cy="38" r="30" stroke="rgba(255,255,255,0.32)" stroke-width="9" fill="none"
-                  stroke-dasharray="15.08 173.42" stroke-dashoffset="-62.2"
-                  transform="rotate(-90 38 38)"/>
-                <text x="38" y="43" text-anchor="middle" font-size="14" font-weight="600"
-                  fill="#ffffff" font-family="'JetBrains Mono',monospace">33%</text>
-              </svg>
-              <span class="focus-card__chart-cap">deep + REM</span>
-            </div>
-          </div>
-        </div>
-      </article>
-      </div>
+<!-- FOCUS_STACK_CORRELATION_END -->
   </div>
 </div>
 </section>

@@ -7,9 +7,7 @@
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "strain"
+        "recovery"
       ],
       "significant": true
     },
@@ -20,9 +18,7 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -33,9 +29,7 @@
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
-        "deep_sleep",
-        "sleep_quality",
-        "recovery"
+        "deep_sleep"
       ],
       "significant": false
     },
@@ -46,22 +40,7 @@
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
-        "rem_sleep",
-        "stress",
-        "sleep_quality"
-      ],
-      "significant": false
-    },
-    {
-      "label": "HRV ~ TotalSleep",
-      "r": -0.028,
-      "n": 15,
-      "direction": "positive",
-      "threshold": 0.4,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "deep_sleep"
+        "rem_sleep"
       ],
       "significant": false
     },
@@ -72,22 +51,7 @@
       "direction": "negative",
       "threshold": -0.5,
       "supplements": [
-        "training_load",
-        "strain",
         "recovery"
-      ],
-      "significant": false
-    },
-    {
-      "label": "HRV ~ SleepEfficiency",
-      "r": 0.075,
-      "n": 15,
-      "direction": "positive",
-      "threshold": 0.35,
-      "supplements": [
-        "sleep_quality",
-        "sleep_disruptions",
-        "sleep_latency"
       ],
       "significant": false
     },
@@ -98,8 +62,6 @@
       "direction": "negative",
       "threshold": -0.3,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -111,9 +73,7 @@
       "direction": "positive",
       "threshold": 0.6,
       "supplements": [
-        "hrv",
-        "recovery",
-        "stress"
+        "hrv"
       ],
       "significant": false
     }
@@ -126,9 +86,7 @@
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "strain"
+        "recovery"
       ],
       "significant": true
     },
@@ -139,9 +97,7 @@
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -152,9 +108,7 @@
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
-        "deep_sleep",
-        "sleep_quality",
-        "recovery"
+        "deep_sleep"
       ],
       "significant": false
     },
@@ -165,22 +119,7 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "rem_sleep",
-        "stress",
-        "sleep_quality"
-      ],
-      "significant": false
-    },
-    {
-      "label": "RHR ~ TotalSleep",
-      "r": -0.031,
-      "n": 16,
-      "direction": "negative",
-      "threshold": -0.4,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "deep_sleep"
+        "rem_sleep"
       ],
       "significant": false
     },
@@ -191,24 +130,9 @@
       "direction": "positive",
       "threshold": 0.5,
       "supplements": [
-        "training_load",
-        "strain",
         "recovery"
       ],
       "significant": true
-    },
-    {
-      "label": "RHR ~ SleepEfficiency",
-      "r": 0.067,
-      "n": 16,
-      "direction": "negative",
-      "threshold": -0.35,
-      "supplements": [
-        "sleep_quality",
-        "sleep_disruptions",
-        "sleep_latency"
-      ],
-      "significant": false
     },
     {
       "label": "RHR ~ AwakePhase",
@@ -217,8 +141,6 @@
       "direction": "positive",
       "threshold": 0.3,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -230,9 +152,7 @@
       "direction": "positive",
       "threshold": 0.6,
       "supplements": [
-        "rhr",
-        "recovery",
-        "stress"
+        "rhr"
       ],
       "significant": false
     }
@@ -245,8 +165,6 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "workout_effort",
-        "training_load",
         "sleep_quality"
       ],
       "significant": false
@@ -258,24 +176,9 @@
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
-      ],
-      "significant": false
-    },
-    {
-      "label": "TotalSleep ~ SleepEfficiency",
-      "r": 0.471,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.35,
-      "supplements": [
-        "sleep_quality",
-        "sleep_latency",
         "sleep_disruptions"
       ],
-      "significant": true
+      "significant": false
     },
     {
       "label": "TotalSleep ~ AwakePhase",
@@ -284,8 +187,6 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -297,89 +198,7 @@
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
-      ],
-      "significant": false
-    },
-    {
-      "label": "TotalSleep ~ TotalSleep(t-1)",
-      "r": 0.218,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "stress"
-      ],
-      "significant": false
-    }
-  ],
-  "SleepEfficiency": [
-    {
-      "label": "SleepEfficiency ~ Training Intensity(t-1)",
-      "r": -0.025,
-      "n": 13,
-      "direction": "negative",
-      "threshold": -0.35,
-      "supplements": [
-        "workout_effort",
-        "training_load",
         "sleep_quality"
-      ],
-      "significant": false
-    },
-    {
-      "label": "SleepEfficiency ~ Disruptions",
-      "r": -0.005,
-      "n": 19,
-      "direction": "negative",
-      "threshold": -0.5,
-      "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
-      ],
-      "significant": false
-    },
-    {
-      "label": "SleepEfficiency ~ AwakePhase",
-      "r": -0.674,
-      "n": 19,
-      "direction": "negative",
-      "threshold": -0.45,
-      "supplements": [
-        "sleep_latency",
-        "stress",
-        "sleep_quality"
-      ],
-      "significant": true
-    },
-    {
-      "label": "SleepEfficiency rolling mean ~ Training Intensity rolling mean",
-      "r": 0.825,
-      "n": 8,
-      "direction": "negative",
-      "threshold": -0.45,
-      "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
-      ],
-      "significant": false
-    },
-    {
-      "label": "SleepEfficiency ~ SleepEfficiency(t-1)",
-      "r": 0.425,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "stress"
       ],
       "significant": false
     }
@@ -392,22 +211,7 @@
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "sleep_quality"
-      ],
-      "significant": false
-    },
-    {
-      "label": "Disruptions ~ AwakePhase",
-      "r": 0.275,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.3,
-      "supplements": [
-        "sleep_latency",
-        "stress",
-        "sleep_quality"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -418,22 +222,7 @@
       "direction": "positive",
       "threshold": 0.45,
       "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
-      ],
-      "significant": false
-    },
-    {
-      "label": "Disruptions ~ Disruptions(t-1)",
-      "r": 0.495,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "sleep_disruptions",
-        "recovery",
-        "stress"
+        "sleep_disruptions"
       ],
       "significant": false
     }
@@ -446,9 +235,7 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "stress"
+        "recovery"
       ],
       "significant": false
     },
@@ -459,35 +246,7 @@
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "stress"
-      ],
-      "significant": false
-    },
-    {
-      "label": "REM ~ TotalSleep",
-      "r": 0.661,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.45,
-      "supplements": [
-        "sleep_quality",
-        "rem_sleep",
-        "recovery"
-      ],
-      "significant": true
-    },
-    {
-      "label": "REM ~ SleepEfficiency",
-      "r": 0.196,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.35,
-      "supplements": [
-        "sleep_quality",
-        "sleep_disruptions",
-        "rem_sleep"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -498,8 +257,6 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -511,22 +268,7 @@
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
-        "training_load",
-        "recovery",
-        "stress"
-      ],
-      "significant": false
-    },
-    {
-      "label": "REM ~ REM(t-1)",
-      "r": -0.443,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "rem_sleep",
-        "recovery",
-        "stress"
+        "rem_sleep"
       ],
       "significant": false
     }
@@ -539,8 +281,6 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "workout_effort",
-        "training_load",
         "recovery"
       ],
       "significant": true
@@ -552,35 +292,7 @@
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
-      ],
-      "significant": false
-    },
-    {
-      "label": "DeepSleep ~ TotalSleep",
-      "r": 0.212,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.4,
-      "supplements": [
-        "sleep_quality",
-        "deep_sleep",
-        "recovery"
-      ],
-      "significant": false
-    },
-    {
-      "label": "DeepSleep ~ SleepEfficiency",
-      "r": 0.118,
-      "n": 19,
-      "direction": "positive",
-      "threshold": 0.4,
-      "supplements": [
-        "sleep_quality",
-        "sleep_disruptions",
-        "deep_sleep"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -591,8 +303,6 @@
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -604,24 +314,9 @@
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
+        "deep_sleep"
       ],
       "significant": true
-    },
-    {
-      "label": "DeepSleep ~ DeepSleep(t-1)",
-      "r": -0.556,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "deep_sleep",
-        "recovery",
-        "stress"
-      ],
-      "significant": false
     }
   ],
   "LightSleep": [
@@ -632,9 +327,7 @@
       "direction": "positive",
       "threshold": 0.3,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "sleep_quality"
+        "recovery"
       ],
       "significant": false
     },
@@ -645,22 +338,7 @@
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
-      ],
-      "significant": false
-    },
-    {
-      "label": "LightSleep ~ SleepEfficiency",
-      "r": 0.465,
-      "n": 19,
-      "direction": "negative",
-      "threshold": -0.4,
-      "supplements": [
-        "sleep_quality",
-        "sleep_disruptions",
-        "sleep_latency"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -671,8 +349,6 @@
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
-        "sleep_latency",
-        "stress",
         "sleep_quality"
       ],
       "significant": false
@@ -684,24 +360,9 @@
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
+        "sleep_quality"
       ],
       "significant": true
-    },
-    {
-      "label": "LightSleep ~ LightSleep(t-1)",
-      "r": 0.376,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "stress"
-      ],
-      "significant": false
     }
   ],
   "Awake": [
@@ -712,9 +373,7 @@
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
-        "workout_effort",
-        "training_load",
-        "sleep_quality"
+        "recovery"
       ],
       "significant": false
     },
@@ -725,9 +384,7 @@
       "direction": "positive",
       "threshold": 0.5,
       "supplements": [
-        "sleep_disruptions",
-        "sleep_quality",
-        "deep_sleep"
+        "sleep_disruptions"
       ],
       "significant": false
     },
@@ -738,22 +395,7 @@
       "direction": "positive",
       "threshold": 0.45,
       "supplements": [
-        "training_load",
-        "recovery",
-        "strain"
-      ],
-      "significant": false
-    },
-    {
-      "label": "Awake ~ Awake(t-1)",
-      "r": 0.206,
-      "n": 9,
-      "direction": "positive",
-      "threshold": 0.6,
-      "supplements": [
-        "sleep_quality",
-        "recovery",
-        "stress"
+        "sleep_quality"
       ],
       "significant": false
     }
