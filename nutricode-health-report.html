@@ -1262,11 +1262,11 @@
     .focus-section-band #focus-heading {
       font-family: var(--font-ui);
       color: #ffffff;
-      font-size: clamp(38px, 8vw, 48px);
+      font-size: 34px;
       font-weight: 600;
-      letter-spacing: -0.04em;
+      letter-spacing: var(--ls-34);
       text-transform: none;
-      line-height: 1.02;
+      line-height: 1.1;
       margin-bottom: 12px;
       text-wrap: balance;
     }
@@ -1771,8 +1771,8 @@
         width: 96px;
       }
       .focus-section-band #focus-heading {
-        font-size: clamp(32px, 10vw, 42px);
-        margin-bottom: 10px;
+        font-size: 24px;
+        margin-bottom: 26px;
       }
       .focus-section-intro {
         font-size: 15px;
@@ -1951,6 +1951,7 @@
       .report-header { padding: 24px 0 18px; }
       .report-header-top { margin-bottom: 20px; }
       .report-name { font-size: clamp(26px, 8vw, 34px); }
+      .focus-section-band #focus-heading { font-size: clamp(26px, 8vw, 34px); }
 
       /* Section labels */
       .page-section { padding: 36px 0 0; }
@@ -2078,6 +2079,7 @@
     ───────────────────────────────────────────────────────────── */
     @media (max-width: 390px) {
       .report-name { font-size: 24px; }
+      .focus-section-band #focus-heading { font-size: 24px; }
       .score-headline { font-size: 18px; }
 
       /* On very narrow: go full single col for snapshot */
