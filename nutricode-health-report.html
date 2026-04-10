@@ -88,6 +88,8 @@
       --focus-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
       --focus-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
       --focus-accent-rgb: 245, 158, 11;
+      --focus-card-accent-rgb: 255, 0, 0;
+      --focus-card-text-color: #b51c1c;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1235,7 +1237,7 @@
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 22px;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 0;
     }
     .focus-section-header::after {
       content: none;
@@ -1244,24 +1246,23 @@
       max-width: 640px;
     }
     .focus-section-band #focus-heading {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      box-sizing: border-box;
+      padding: 0;
       font-family: var(--font-ui);
-      color: var(--ink);
-      font-size: clamp(30px, 4.6vw, 40px);
+      font-size: 32px;
       font-weight: 600;
+      color: #1d1d1f;
       letter-spacing: -0.02em;
+      line-height: 115%;
+      margin: 0 0 18px 0;
+      max-width: none;
       text-transform: none;
-      line-height: 1.02;
-      margin-bottom: 10px;
+      -webkit-font-smoothing: antialiased;
+      font-optical-sizing: auto;
+      font-style: normal;
       text-wrap: balance;
-    }
-    .focus-section-intro {
-      font-family: var(--font-ui);
-      max-width: 52ch;
-      font-size: 16px;
-      font-weight: 400;
-      letter-spacing: var(--ls-15);
-      line-height: 1.6;
-      color: var(--ink-3);
     }
     .nc-protocol-header {
       box-sizing: border-box;
@@ -1387,10 +1388,10 @@
       text-align: center;
       white-space: nowrap;
       text-overflow: clip;
-      transition:
-        max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
-        opacity 0.18s ease,
-        transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1);
+    }
+    /* Snap label closed when leaving active so old text never lingers during pill shrink */
+    .rec-rhr-dot:not(.active) .rec-rhr-dot__label {
+      transition: none;
     }
     .rec-rhr-dot.active {
       width: var(--rec-rhr-pill-w);
@@ -1417,6 +1418,10 @@
       padding: 0;
       color: #45464d;
       text-overflow: clip;
+      transition:
+        max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+        opacity 0.18s ease,
+        transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1);
     }
     .rec-rhr-dot:not(.active):hover {
       transform: scale(1.08);
@@ -1438,11 +1443,52 @@
     .rec-rhr-dot.active:active {
       transform: scale(0.985);
     }
+    /* Handoff: old pill collapses fast, then new pill expands after a short delay */
+    .rec-rhr-dot.rec-rhr-dot--collapsing {
+      transition:
+        width 0.14s cubic-bezier(0.32, 0, 0.67, 1),
+        height 0.12s cubic-bezier(0.32, 0, 0.67, 1),
+        border-radius 0.12s cubic-bezier(0.32, 0, 0.67, 1),
+        background-color 0.12s ease,
+        box-shadow 0.14s ease,
+        opacity 0.12s ease,
+        transform 0.12s ease;
+    }
+    .rec-rhr-dot.rec-rhr-dot--collapsing::before {
+      transition: opacity 0.1s ease;
+    }
+    .rec-rhr-dot.active.rec-rhr-dot--entering {
+      transition:
+        width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+        height 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+        border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+        background-color 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),
+        box-shadow 0.28s ease var(--rec-rhr-handoff-delay, 0.12s),
+        opacity 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),
+        transform 0.22s ease var(--rec-rhr-handoff-delay, 0.12s);
+    }
+    .rec-rhr-dot.active.rec-rhr-dot--entering::before {
+      transition: opacity 0.22s ease var(--rec-rhr-handoff-delay, 0.12s);
+    }
+    .rec-rhr-dot.active.rec-rhr-dot--entering .rec-rhr-dot__label {
+      transition:
+        max-width 0.36s cubic-bezier(0.2, 0.9, 0.2, 1) calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.06s),
+        opacity 0.2s ease calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.04s),
+        transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1) calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.04s);
+    }
     @media (prefers-reduced-motion: reduce) {
       .rec-rhr-dot,
       .rec-rhr-dot__label,
+      .rec-rhr-dot.active .rec-rhr-dot__label,
       .rec-rhr-dot::before {
         transition-duration: 0.01ms !important;
+      }
+      .rec-rhr-dot.rec-rhr-dot--collapsing,
+      .rec-rhr-dot.active.rec-rhr-dot--entering,
+      .rec-rhr-dot.active.rec-rhr-dot--entering::before,
+      .rec-rhr-dot.active.rec-rhr-dot--entering .rec-rhr-dot__label {
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
       }
     }
     /* Plan section — same scale as focus heading, dark text on light page */
@@ -1650,42 +1696,20 @@
       min-width: 0;
       background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
     }
-    #focus-card-2 .fc2-tag {
-      display: inline-flex;
-      align-self: flex-start;
-      align-items: center;
-      min-height: 31px;
-      padding: 7px 14px;
-      margin-bottom: 34px;
-      border-radius: 999px;
-      background: rgba(10,132,255,0.08);
-      border: 1px solid rgba(10,132,255,0.16);
-      box-shadow:
-        0 1px 2px -1px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.1);
-      font-family: var(--font-ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #0a69d1;
-      white-space: nowrap;
-    }
     #focus-card-2 .fc2-title {
       font-family: var(--font-ui);
       max-width: 11ch;
-      font-size: clamp(32px, 4vw, 38px);
+      font-size: 20px;
       font-weight: 600;
       color: #1d1d1f;
       letter-spacing: -0.02em;
       line-height: 1.04;
       margin: 0 0 24px 0;
-      text-wrap: balance;
     }
     #focus-card-2 .fc2-summary {
       font-family: var(--font-ui);
       max-width: 33ch;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 400;
       color: #6e6e73;
       line-height: 1.56;
@@ -1866,8 +1890,7 @@
     @media (max-width: 760px) {
       #focus-card-2.focus-card__shell { border-radius: 24px; }
       #focus-card-2 .fc2-body { padding: 34px 26px 28px; }
-      #focus-card-2 .fc2-tag { margin-bottom: 28px; }
-      #focus-card-2 .fc2-title { font-size: 28px; max-width: none; margin-bottom: 18px; }
+      #focus-card-2 .fc2-title { font-size: 20px; max-width: none; margin-bottom: 18px; }
       #focus-card-2 .fc2-summary { max-width: none; }
       #focus-card-2 .fc2-legend { gap: 18px; padding: 16px 0 18px; }
       #focus-card-2 .fc2-chart-panel { margin-top: 12px; padding: 12px 10px 10px; border-radius: 24px; }
@@ -2242,7 +2265,7 @@
       .report-header { padding: 24px 0 18px; }
       .report-header-top { margin-bottom: 20px; }
       .report-name { font-size: clamp(26px, 8vw, 34px); }
-      .focus-section-band #focus-heading { font-size: clamp(26px, 8vw, 34px); }
+      .focus-section-band #focus-heading { font-size: clamp(22px, 5.5vw, 32px); }
 
       /* Section labels */
       .page-section { padding: 36px 0 0; }
@@ -2369,7 +2392,7 @@
     ───────────────────────────────────────────────────────────── */
     @media (max-width: 390px) {
       .report-name { font-size: 24px; }
-      .focus-section-band #focus-heading { font-size: 24px; }
+      .focus-section-band #focus-heading { font-size: 32px; }
       .score-headline { font-size: 18px; }
 
       /* On very narrow: go full single col for snapshot */
@@ -3245,8 +3268,7 @@
     <div class="focus-band-shell">
       <div class="focus-section-header reveal">
         <div class="focus-section-header__copy">
-          <h2 class="section-label section-label--caps" id="focus-heading">How you move from 74 to 90+</h2>
-          <p class="focus-section-intro">Four ranked priorities with the clearest path to improving your score.</p>
+          <h2 class="section-label section-label--caps" id="focus-heading">How you move from<br />74 to 90+</h2>
         </div>
         <div class="nc-protocol-header">
           <div class="nc-protocol-nav">
@@ -3328,7 +3350,6 @@
             <div class="focus-card__stage">
               <div class="fc2-accent" aria-hidden="true"></div>
               <div class="fc2-body">
-                <span class="fc2-tag">Deep Sleep</span>
                 <h3 class="fc2-title">Protect Deep Sleep as training load rises</h3>
                 <p class="fc2-summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
 
@@ -3647,6 +3668,7 @@
     if (!cards.length || cards.length !== dots.length) return;
 
     let activeIndex = 0;
+    let handoffGen = 0;
     let measurer = dotsWrap.querySelector('.rec-rhr-dots__measure');
     if (!measurer) {
       measurer = document.createElement('span');
@@ -3686,6 +3708,28 @@
     function setActive(index) {
       const idx = Math.max(0, Math.min(cards.length - 1, index));
       if (idx === activeIndex && cards[idx].classList.contains('is-active')) return;
+      const prevIdx = activeIndex;
+      const isHandoff = prevIdx !== idx;
+
+      if (isHandoff) {
+        handoffGen++;
+        const gen = handoffGen;
+        dots.forEach((d) => d.classList.remove('rec-rhr-dot--collapsing', 'rec-rhr-dot--entering'));
+        if (dots[prevIdx]) dots[prevIdx].classList.add('rec-rhr-dot--collapsing');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const collapseMs = reduceMotion ? 40 : 200;
+        const handoffDelayMs = reduceMotion ? 0 : 120;
+        const enterMs = handoffDelayMs + (reduceMotion ? 60 : 440);
+        setTimeout(() => {
+          if (gen !== handoffGen) return;
+          dots[prevIdx]?.classList.remove('rec-rhr-dot--collapsing');
+        }, collapseMs);
+        setTimeout(() => {
+          if (gen !== handoffGen) return;
+          dots[idx]?.classList.remove('rec-rhr-dot--entering');
+        }, enterMs);
+      }
+
       activeIndex = idx;
       count.textContent = `Priority ${idx + 1} of ${cards.length}`;
       cards.forEach((card, i) => card.classList.toggle('is-active', i === idx));
@@ -3694,6 +3738,8 @@
         dot.setAttribute('aria-selected', i === idx ? 'true' : 'false');
         dot.setAttribute('tabindex', i === idx ? '0' : '-1');
       });
+
+      if (isHandoff && dots[idx]) dots[idx].classList.add('rec-rhr-dot--entering');
     }
 
     function stepSize() {
