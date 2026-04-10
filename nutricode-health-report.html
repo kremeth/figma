@@ -1305,12 +1305,14 @@
     }
     .rec-rhr-dots {
       --rec-rhr-pill-w: 120px;
+      --rec-rhr-strip-w: 230px;
       position: relative;
       margin-left: auto;
       flex: 0 0 auto;
       display: inline-flex;
       align-items: center;
       justify-content: flex-end;
+      width: var(--rec-rhr-strip-w);
       gap: 12px;
       min-height: 32px;
       padding: 0;
@@ -1351,9 +1353,7 @@
       background: rgba(60, 60, 67, 0.14);
       overflow: hidden;
       transition:
-        width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
-        min-width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
-        max-width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
+        width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1),
         height 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
         border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
         background-color 0.22s ease,
@@ -1362,7 +1362,6 @@
         transform 0.22s ease;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      will-change: width, min-width, max-width, transform;
     }
     .rec-rhr-dot::before {
       content: "";
@@ -3679,6 +3678,9 @@
       });
       const pillW = Math.max(maxW + PILL_H_PAD + PILL_SLACK, 96);
       dotsWrap.style.setProperty('--rec-rhr-pill-w', `${pillW}px`);
+      /* (n-1) inactive dots × 8px + (n-1) gaps × 12px + one pill width */
+      const stripW = (dots.length - 1) * 8 + (dots.length - 1) * 12 + pillW;
+      dotsWrap.style.setProperty('--rec-rhr-strip-w', `${stripW}px`);
     }
 
     function setActive(index) {
@@ -3700,10 +3702,47 @@
       return d > 0 ? d : cards[0].offsetWidth;
     }
 
-    function syncFromScroll() {
+    /**
+     * Map scrollLeft to card index. With hysteresis, avoid rapid setActive toggles
+     * when scroll position oscillates around the boundary between two snaps.
+     */
+    function indexFromScroll(scrollLeft, step, useHysteresis) {
+      const n = cards.length;
+      const f = scrollLeft / step;
+      let idx = Math.round(f);
+      idx = Math.max(0, Math.min(n - 1, idx));
+      if (!useHysteresis) return idx;
+      const prev = activeIndex;
+      if (idx > prev && f < prev + 0.5) return prev;
+      if (idx < prev && f > prev - 0.5) return prev;
+      return idx;
+    }
+
+    function syncFromScrollCommitted() {
       const step = stepSize();
       if (!(step > 0)) return;
-      setActive(Math.round(carousel.scrollLeft / step));
+      setActive(indexFromScroll(carousel.scrollLeft, step, false));
+    }
+
+    let scrollRaf = 0;
+    let scrollSettleTimer = null;
+    const SCROLL_DEBOUNCE_MS = 120;
+
+    function onScrollRaf() {
+      scrollRaf = 0;
+      const step = stepSize();
+      if (!(step > 0)) return;
+      setActive(indexFromScroll(carousel.scrollLeft, step, true));
+    }
+
+    function onCarouselScroll() {
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
+      scrollRaf = requestAnimationFrame(onScrollRaf);
+      clearTimeout(scrollSettleTimer);
+      scrollSettleTimer = setTimeout(() => {
+        scrollSettleTimer = null;
+        syncFromScrollCommitted();
+      }, SCROLL_DEBOUNCE_MS);
     }
 
     function scrollToCard(index) {
@@ -3717,11 +3756,21 @@
       });
     });
 
-    carousel.addEventListener('scroll', () => requestAnimationFrame(syncFromScroll), { passive: true });
+    carousel.addEventListener('scroll', onCarouselScroll, { passive: true });
+    carousel.addEventListener(
+      'scrollend',
+      () => {
+        clearTimeout(scrollSettleTimer);
+        scrollSettleTimer = null;
+        syncFromScrollCommitted();
+      },
+      { passive: true },
+    );
+
     window.addEventListener('resize', () => {
       requestAnimationFrame(() => {
         measurePillWidths();
-        syncFromScroll();
+        syncFromScrollCommitted();
       });
     });
 
@@ -3742,7 +3791,7 @@
     });
 
     setActive(0);
-    requestAnimationFrame(() => requestAnimationFrame(syncFromScroll));
+    requestAnimationFrame(() => requestAnimationFrame(syncFromScrollCommitted));
   })();
 
   /* ── Scroll reveal ── */
