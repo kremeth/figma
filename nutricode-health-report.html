@@ -90,7 +90,7 @@
       --focus-accent-rgb: 245, 158, 11;
       --focus-card-accent-rgb: 255, 0, 0;
       --focus-card-text-color: #b51c1c;
-      --rec-rhr-handoff-delay: 0.12s;
+      --rec-rhr-handoff-delay: 0s;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1378,8 +1378,8 @@
     }
     .rec-rhr-dot__label {
       display: block;
-      max-width: 0;
-      overflow: hidden;
+      /*max-width: 0;
+      overflow: hidden;*/
       opacity: 0;
       transform: translateX(-2px);
       font-family: var(--font-ui);
@@ -1391,7 +1391,7 @@
       text-align: center;
       white-space: nowrap;
       text-overflow: clip;
-    }
+    };
     /* Snap label closed when leaving active so old text never lingers during pill shrink */
     .rec-rhr-dot:not(.active) .rec-rhr-dot__label {
       transition: none;
@@ -1418,7 +1418,7 @@
     }
     /* Inner width = pill width minus horizontal padding (15px + 15px on .rec-rhr-dot.active) */
     .rec-rhr-dot.active .rec-rhr-dot__label {
-      max-width: calc(var(--rec-rhr-pill-w) - 30px);
+      /*max-width: calc(var(--rec-rhr-pill-w) - 30px);*/
       opacity: 1;
       transform: translateX(0);
       padding: 0;
@@ -1426,7 +1426,7 @@
       text-overflow: clip;
       transition:
         max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
-        opacity 0.18s ease,
+        opacity 0.3s ease,
         transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1);
     }
     .rec-rhr-dot:not(.active):hover {
@@ -1480,7 +1480,8 @@
     .rec-rhr-dot.active.rec-rhr-dot--entering .rec-rhr-dot__label {
       transition:
         max-width 0.36s cubic-bezier(0.2, 0.9, 0.2, 1) calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.06s),
-        opacity 0.2s ease calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.04s),
+        /*opacity 0.2s ease calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.04s),*/
+        opacity 0.6s ease calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.0s),
         transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1) calc(var(--rec-rhr-handoff-delay, 0.12s) + 0.04s);
     }
     @media (prefers-reduced-motion: reduce) {
