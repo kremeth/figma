@@ -1279,7 +1279,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       width: 100%;
       font-family: var(--font-ui);
       color: var(--ink);
@@ -1290,90 +1290,159 @@
       letter-spacing: var(--ls-15);
     }
     #recRhrCount {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin-right: auto;
       font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: var(--ls-10-caps);
       line-height: 1.25;
       text-transform: uppercase;
+      text-align: left;
       color: var(--ink-3);
       white-space: nowrap;
     }
     .rec-rhr-dots {
+      --rec-rhr-pill-w: 120px;
+      position: relative;
+      margin-left: auto;
+      flex: 0 0 auto;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      background: #ffffff;
+      justify-content: flex-end;
+      gap: 12px;
+      min-height: 32px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .rec-rhr-dots__measure {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      visibility: hidden;
+      white-space: nowrap;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      line-height: 1;
+      pointer-events: none;
     }
     .rec-rhr-dot {
       appearance: none;
-      border: 0;
+      box-sizing: border-box;
       position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      box-sizing: border-box;
-      flex-shrink: 0;
-      max-width: 10px;
-      height: 10px;
       padding: 0;
       margin: 0;
-      border-radius: 999px;
-      background: #d8d8dc;
+      border: none;
       cursor: pointer;
+      flex-shrink: 0;
+      width: 8px;
+      min-width: 8px;
+      max-width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(60, 60, 67, 0.14);
       overflow: hidden;
       transition:
-        max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        background-color 0.25s ease,
-        transform 0.2s ease;
+        width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
+        min-width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
+        max-width 0.46s cubic-bezier(0.2, 0.9, 0.2, 1),
+        height 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
+        border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
+        background-color 0.22s ease,
+        box-shadow 0.28s ease,
+        opacity 0.22s ease,
+        transform 0.22s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      will-change: width, min-width, max-width, transform;
+    }
+    .rec-rhr-dot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+      opacity: 0;
+      transition: opacity 0.22s ease;
     }
     .rec-rhr-dot__label {
       display: block;
       max-width: 0;
-      opacity: 0;
       overflow: hidden;
+      opacity: 0;
+      transform: translateX(-2px);
       font-family: var(--font-ui);
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.01em;
       line-height: 1;
-      color: #5c5c62;
+      color: #5b5c63;
+      text-align: center;
       white-space: nowrap;
-      pointer-events: none;
+      text-overflow: ellipsis;
       transition:
-        max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.2s ease;
+        max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+        opacity 0.18s ease,
+        transform 0.32s cubic-bezier(0.2, 0.9, 0.2, 1);
     }
     .rec-rhr-dot.active {
-      max-width: 160px;
-      height: 28px;
-      padding: 0 14px;
-      background: #ececee;
+      width: var(--rec-rhr-pill-w);
+      min-width: var(--rec-rhr-pill-w);
+      max-width: var(--rec-rhr-pill-w);
+      height: 32px;
+      padding: 0 15px;
+      border-radius: 999px;
+      background: #f2f2f4;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.96),
+        0 1px 2px rgba(15,23,42,0.05),
+        0 8px 20px rgba(15,23,42,0.04);
       transform: none;
     }
-    .rec-rhr-dot.active .rec-rhr-dot__label {
-      max-width: 120px;
+    .rec-rhr-dot.active::before {
       opacity: 1;
-      transition-delay: 0.04s, 0.08s;
+    }
+    .rec-rhr-dot.active .rec-rhr-dot__label {
+      max-width: calc(var(--rec-rhr-pill-w) - 36px);
+      opacity: 1;
+      transform: translateX(0);
+      padding: 0 1px;
+      color: #45464d;
     }
     .rec-rhr-dot:not(.active):hover {
-      transform: scale(1.12);
-      background: #c8c8cc;
+      transform: scale(1.08);
+      background: rgba(60, 60, 67, 0.2);
     }
     .rec-rhr-dot:focus-visible {
-      outline: 2px solid rgba(0, 113, 227, 0.45);
-      outline-offset: 2px;
-    }
-    .rec-rhr-dot.active:hover {
-      background: #e2e2e6;
+      outline: 2px solid rgba(0, 113, 227, 0.28);
+      outline-offset: 4px;
     }
     .rec-rhr-dot.active:focus-visible {
       transform: none;
+    }
+    .rec-rhr-dot.active:hover {
+      background: #ededf0;
+    }
+    .rec-rhr-dot:active {
+      transform: scale(0.94);
+    }
+    .rec-rhr-dot.active:active {
+      transform: scale(0.985);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rec-rhr-dot,
+      .rec-rhr-dot__label,
+      .rec-rhr-dot::before {
+        transition-duration: 0.01ms !important;
+      }
     }
     /* Plan section — same scale as focus heading, dark text on light page */
     #plan-heading {
@@ -2042,7 +2111,8 @@
         align-items: start;
       }
       .nc-protocol-nav {
-        justify-content: flex-start;
+        justify-content: space-between;
+        flex-wrap: nowrap;
       }
       .focus-card__stage {
         padding: 22px;
@@ -3179,12 +3249,12 @@
         </div>
         <div class="nc-protocol-header">
           <div class="nc-protocol-nav">
-            <span id="recRhrCount" aria-live="polite">Priority 1 of 4</span>
+            <span id="recRhrCount" aria-live="polite">REM Sleep · 1 of 4</span>
             <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">
-              <button type="button" class="rec-rhr-dot active" aria-label="Priority 1" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 1</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 2" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 2</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 3" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 3</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 4" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 4</span></button>
+              <button type="button" class="rec-rhr-dot active" aria-label="REM Sleep" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">REM Sleep</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Deep Sleep" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Deep Sleep</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Light Sleep" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Light Sleep</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Recovery" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Recovery</span></button>
             </div>
           </div>
         </div>
@@ -3576,12 +3646,39 @@
     if (!cards.length || cards.length !== dots.length) return;
 
     let activeIndex = 0;
+    let measurer = dotsWrap.querySelector('.rec-rhr-dots__measure');
+    if (!measurer) {
+      measurer = document.createElement('span');
+      measurer.className = 'rec-rhr-dots__measure';
+      measurer.setAttribute('aria-hidden', 'true');
+      dotsWrap.appendChild(measurer);
+    }
+
+    const PILL_PAD_X = 36;
+
+    function dotLabel(dot, index) {
+      return (
+        dot?.getAttribute('aria-label') ||
+        dot?.querySelector('.rec-rhr-dot__label')?.textContent?.trim() ||
+        `Priority ${index + 1}`
+      );
+    }
+
+    function measurePillWidths() {
+      let maxW = 0;
+      dots.forEach((dot, index) => {
+        measurer.textContent = dotLabel(dot, index);
+        maxW = Math.max(maxW, Math.ceil(measurer.getBoundingClientRect().width));
+      });
+      const pillW = Math.max(maxW + PILL_PAD_X, 74);
+      dotsWrap.style.setProperty('--rec-rhr-pill-w', `${pillW}px`);
+    }
 
     function setActive(index) {
       const idx = Math.max(0, Math.min(cards.length - 1, index));
       if (idx === activeIndex && cards[idx].classList.contains('is-active')) return;
       activeIndex = idx;
-      count.textContent = `Priority ${idx + 1} of ${cards.length}`;
+      count.textContent = `${dotLabel(dots[idx], idx)} · ${idx + 1} of ${cards.length}`;
       cards.forEach((card, i) => card.classList.toggle('is-active', i === idx));
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === idx);
@@ -3607,11 +3704,19 @@
     }
 
     dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => scrollToCard(index));
+      dot.addEventListener('click', () => {
+        setActive(index);
+        scrollToCard(index);
+      });
     });
 
     carousel.addEventListener('scroll', () => requestAnimationFrame(syncFromScroll), { passive: true });
-    window.addEventListener('resize', () => requestAnimationFrame(syncFromScroll));
+    window.addEventListener('resize', () => {
+      requestAnimationFrame(() => {
+        measurePillWidths();
+        syncFromScroll();
+      });
+    });
 
     carousel.addEventListener('keydown', (event) => {
       if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
@@ -3619,7 +3724,14 @@
       const nextIndex = event.key === 'ArrowRight'
         ? Math.min(activeIndex + 1, cards.length - 1)
         : Math.max(activeIndex - 1, 0);
+      setActive(nextIndex);
       scrollToCard(nextIndex);
+    });
+
+    measurePillWidths();
+    const fontsReady = document.fonts?.ready?.catch(() => {}) ?? Promise.resolve();
+    fontsReady.then(() => {
+      measurePillWidths();
     });
 
     setActive(0);
