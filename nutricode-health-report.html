@@ -1248,7 +1248,7 @@
       color: var(--ink);
       font-size: clamp(30px, 4.6vw, 40px);
       font-weight: 600;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       text-transform: none;
       line-height: 1.02;
       margin-bottom: 10px;
@@ -1515,7 +1515,7 @@
       overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.06);
       background: #ffffff;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 28px rgba(15, 23, 42, 0.05);
+      box-shadow: none;
     }
     #focus-card-2 .focus-card__stage {
       padding: 0;
@@ -1531,7 +1531,7 @@
       padding: 38px 34px 32px;
       display: flex;
       flex-direction: column;
-      background: #ffffff;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
     }
     #focus-card-2 .fc2-tag {
       display: inline-flex;
@@ -1544,8 +1544,8 @@
       background: rgba(10,132,255,0.08);
       border: 1px solid rgba(10,132,255,0.16);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.88),
-        0 4px 10px rgba(10,132,255,0.1);
+        0 1px 2px -1px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.1);
       font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 700;
@@ -1560,7 +1560,7 @@
       font-size: clamp(32px, 4vw, 38px);
       font-weight: 600;
       color: #1d1d1f;
-      letter-spacing: -0.045em;
+      letter-spacing: -0.02em;
       line-height: 1.04;
       margin: 0 0 24px 0;
       text-wrap: balance;
@@ -1578,7 +1578,11 @@
     #focus-card-2 .fc2-sep {
       display: block;
       height: 1px;
-      background: rgba(15,23,42,0.06);
+      min-height: 1px;
+      flex-shrink: 0;
+      background: rgba(15,23,42,0.08);
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
     #focus-card-2 .fc2-legend {
       display: flex;
@@ -1606,7 +1610,9 @@
       height: 3px;
       border-radius: 999px;
       flex-shrink: 0;
-      box-shadow: none;
+      box-shadow:
+        0 1px 2px -1px rgba(0, 0, 0, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.1);
     }
     #focus-card-2 .fc2-legend__swatch--deep {
       background: #0a84ff;
@@ -1626,12 +1632,14 @@
       position: relative;
       margin-top: 14px;
       padding: 16px 16px 14px;
-      border: 1px solid rgba(15,23,42,0.05);
+      border: 1px solid rgba(15,23,42,0.06);
       border-radius: 26px;
-      background: #fafafa;
+      background: #ffffff;
+      /* Figma drop shadows on graph card only: Y1 blur3 + Y8 blur16, #000 @ 4% */
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.88),
-        0 8px 24px rgba(15,23,42,0.04);
+        inset 0 1px 0 rgba(255,255,255,0.92),
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.04);
       overflow: hidden;
     }
     #focus-card-2 .fc2-chart-panel-bg {
@@ -1640,12 +1648,33 @@
     #focus-card-2 .fc2-chart-panel svg {
       display: block;
       width: 100%;
+      max-width: 100%;
       height: auto;
+      aspect-ratio: 340 / 210;
       position: relative;
+      overflow: visible;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    /* Crisp grid + stable stroke width on narrow / high-DPR screens */
+    #focus-card-2 .fc2-chart-panel svg .fc2-hgrid {
+      vector-effect: non-scaling-stroke;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
+    #focus-card-2 .fc2-chart-panel svg .fc2-series {
+      vector-effect: non-scaling-stroke;
+      stroke-width: 2.25px;
+      stroke-opacity: 0.5;
+      shape-rendering: geometricPrecision;
+    }
+    #focus-card-2 .fc2-chart-panel svg text {
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
     }
     #focus-card-2 .fc2-cap {
       align-self: center;
-      margin: 20px 0 0;
+      margin: 24px 0 0;
       font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 600;
@@ -1722,7 +1751,7 @@
       #focus-card-2 .fc2-summary { max-width: none; }
       #focus-card-2 .fc2-legend { gap: 18px; padding: 16px 0 18px; }
       #focus-card-2 .fc2-chart-panel { margin-top: 12px; padding: 14px 14px 12px; border-radius: 24px; }
-      #focus-card-2 .fc2-cap { margin-top: 18px; }
+      #focus-card-2 .fc2-cap { margin-top: 24px; }
       #focus-card-2 .fc2-footer { margin-top: 24px; padding-top: 18px; }
       #focus-card-2 .fc2-why-label { font-size: 11px; }
     }
@@ -3671,30 +3700,9 @@
       return d;
     };
 
-    const smoothPath = (vals, scaleY) => {
-      const pts = [];
-      for (let i = 0; i < 30; i += 1) {
-        const v = vals[i];
-        if (v != null && Number.isFinite(v)) pts.push({ x: scaleX(i), y: scaleY(v) });
-      }
-      if (pts.length < 2) return '';
-      if (pts.length === 2) {
-        return `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)} L${pts[1].x.toFixed(2)},${pts[1].y.toFixed(2)}`;
-      }
-      let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
-      for (let i = 1; i < pts.length - 1; i += 1) {
-        const midX = (pts[i].x + pts[i + 1].x) / 2;
-        const midY = (pts[i].y + pts[i + 1].y) / 2;
-        d += ` Q${pts[i].x.toFixed(2)},${pts[i].y.toFixed(2)} ${midX.toFixed(2)},${midY.toFixed(2)}`;
-      }
-      const penultimate = pts[pts.length - 2];
-      const last = pts[pts.length - 1];
-      d += ` Q${penultimate.x.toFixed(2)},${penultimate.y.toFixed(2)} ${last.x.toFixed(2)},${last.y.toFixed(2)}`;
-      return d;
-    };
-
-    const pathDeep = smoothPath(deepDaily, scaleYd);
-    const pathInt = smoothPath(intensityDaily, scaleYi);
+    /* Straight segments + round joins: predictable on mobile (no spline overshoot). */
+    const pathDeep = pathForSeries(deepDaily, scaleYd);
+    const pathInt = pathForSeries(intensityDaily, scaleYi);
 
     const nLeftTicks = 5;
     const nRightTicks = 8;
@@ -3703,14 +3711,14 @@
 
     const hLines = leftTicks
       .map(v => {
-        const y = scaleYd(v);
-        return `<line x1="${padL}" y1="${y.toFixed(2)}" x2="${(padL + pw).toFixed(2)}" y2="${y.toFixed(2)}" stroke="${GRID}" stroke-width="0.5"/>`;
+        const y = Math.round(scaleYd(v) * 2) / 2;
+        return `<line class="fc2-hgrid" x1="${padL}" y1="${y}" x2="${(padL + pw).toFixed(2)}" y2="${y}" stroke="${GRID}"/>`;
       })
       .join('');
 
     const leftLbl = leftTicks
       .map(v => {
-        const y = scaleYd(v);
+        const y = Math.round(scaleYd(v) * 2) / 2;
         return `<text x="${(padL - 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="11" fill="${BLUE}">${Math.round(v)}%</text>`;
       })
       .join('');
@@ -3726,16 +3734,16 @@
     const xLbl = xTickDays
       .map(day => {
         const x = scaleX(day - 1);
-        return `<text x="${x.toFixed(2)}" y="${(H - 6).toFixed(2)}" text-anchor="middle" font-family="${FONT}" font-size="11" fill="${TICK_X}">D${day}</text>`;
+        return `<text x="${x.toFixed(2)}" y="${(H - 6).toFixed(2)}" text-anchor="middle" font-family="${FONT}" font-size="11" fill="${TICK_X}">${String(day).padStart(2, '0')}</text>`;
       })
       .join('');
 
     const parts = [
       `<title>Daily deep sleep percent and training load by day.</title>`,
-      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Horizontal axis: D1 through D30.</desc>`,
+      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Horizontal axis: day labels 01 through 29 at four-day intervals.</desc>`,
       hLines,
-      pathDeep ? `<path d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` : '',
-      pathInt ? `<path d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      pathDeep ? `<path class="fc2-series" d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      pathInt ? `<path class="fc2-series" d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
       leftLbl,
       rightLbl,
       xLbl,
