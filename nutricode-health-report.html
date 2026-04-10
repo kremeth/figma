@@ -4765,7 +4765,8 @@
         const gen = handoffGen;
         dots.forEach((d) => d.classList.remove('rec-rhr-dot--collapsing', 'rec-rhr-dot--entering'));
         if (dots[prevIdx]) dots[prevIdx].classList.add('rec-rhr-dot--collapsing');
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        //const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const reduceMotion = false;
         const collapseMs = reduceMotion ? 40 : 200;
         const handoffDelayMs = reduceMotion ? 0 : 120;
         const enterMs = handoffDelayMs + (reduceMotion ? 60 : 440);
