@@ -1302,8 +1302,8 @@
     .rec-rhr-dots {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
+      gap: 10px;
+      padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid rgba(0, 0, 0, 0.05);
       background: #ffffff;
@@ -1311,23 +1311,69 @@
     .rec-rhr-dot {
       appearance: none;
       border: 0;
-      width: 8px;
-      height: 8px;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      max-width: 10px;
+      height: 10px;
       padding: 0;
+      margin: 0;
       border-radius: 999px;
-      background: rgba(23, 23, 26, 0.18);
+      background: #d8d8dc;
       cursor: pointer;
-      transition: width 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+      overflow: hidden;
+      transition:
+        max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        background-color 0.25s ease,
+        transform 0.2s ease;
     }
-    .rec-rhr-dot:hover,
-    .rec-rhr-dot:focus-visible {
-      transform: scale(1.08);
-      outline: none;
-      background: rgba(23, 23, 26, 0.34);
+    .rec-rhr-dot__label {
+      display: block;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      line-height: 1;
+      color: #5c5c62;
+      white-space: nowrap;
+      pointer-events: none;
+      transition:
+        max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s ease;
     }
     .rec-rhr-dot.active {
-      width: 24px;
-      background: var(--ink);
+      max-width: 160px;
+      height: 28px;
+      padding: 0 14px;
+      background: #ececee;
+      transform: none;
+    }
+    .rec-rhr-dot.active .rec-rhr-dot__label {
+      max-width: 120px;
+      opacity: 1;
+      transition-delay: 0.04s, 0.08s;
+    }
+    .rec-rhr-dot:not(.active):hover {
+      transform: scale(1.12);
+      background: #c8c8cc;
+    }
+    .rec-rhr-dot:focus-visible {
+      outline: 2px solid rgba(0, 113, 227, 0.45);
+      outline-offset: 2px;
+    }
+    .rec-rhr-dot.active:hover {
+      background: #e2e2e6;
+    }
+    .rec-rhr-dot.active:focus-visible {
+      transform: none;
     }
     /* Plan section — same scale as focus heading, dark text on light page */
     #plan-heading {
@@ -3135,10 +3181,10 @@
           <div class="nc-protocol-nav">
             <span id="recRhrCount" aria-live="polite">Priority 1 of 4</span>
             <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">
-              <button type="button" class="rec-rhr-dot active" aria-label="Priority 1" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 2" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 3" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Priority 4" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"></button>
+              <button type="button" class="rec-rhr-dot active" aria-label="Priority 1" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 1</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Priority 2" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 2</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Priority 3" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 3</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Priority 4" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Priority 4</span></button>
             </div>
           </div>
         </div>
@@ -3656,10 +3702,11 @@
       for (let d = 1; d <= 30; d += 1) {
         const k = String(d);
         const ai = act[k]?.average_intensity;
-        if (ai != null && Number.isFinite(+ai)) intensityDaily[d - 1] = +ai;
+        if (ai != null && Number.isFinite(+ai) && +ai > 0) intensityDaily[d - 1] = +ai;
         const st = m.sleep_time?.[k];
         const deep = m.deep_sleep?.[k];
-        if (st != null && +st > 0 && deep != null && Number.isFinite(+deep)) {
+        /* skip days where deep sleep was 0 or not recorded (invalid/missing nights) */
+        if (st != null && +st > 0 && deep != null && Number.isFinite(+deep) && +deep > 0) {
           deepDaily[d - 1] = (100 * +deep) / +st;
         }
       }
@@ -3682,12 +3729,24 @@
 
     const validD = deepDaily.filter(v => v != null && Number.isFinite(v));
     const validI = intensityDaily.filter(v => v != null && Number.isFinite(v));
-    let minD = Math.min(...validD);
-    let maxD = Math.max(...validD);
-    let minI = Math.min(...validI);
-    let maxI = Math.max(...validI);
-    const padDy = Math.max(0.25, (maxD - minD) * 0.12);
-    const padIy = Math.max(0.02, (maxI - minI) * 0.12);
+
+    /* Trim top/bottom 5 % of each series to suppress outlier spikes */
+    const trimmedRange = arr => {
+      if (arr.length < 4) return [Math.min(...arr), Math.max(...arr)];
+      const sorted = [...arr].sort((a, b) => a - b);
+      const cut = Math.max(1, Math.floor(sorted.length * 0.05));
+      return [sorted[cut], sorted[sorted.length - 1 - cut]];
+    };
+    const [rawMinD, rawMaxD] = trimmedRange(validD);
+    const [rawMinI, rawMaxI] = trimmedRange(validI);
+
+    let minD = rawMinD;
+    let maxD = rawMaxD;
+    let minI = rawMinI;
+    let maxI = rawMaxI;
+
+    const padDy = Math.max(0.25, (maxD - minD) * 0.08);
+    const padIy = Math.max(0.02, (maxI - minI) * 0.08);
     minD -= padDy;
     maxD += padDy;
     minI -= padIy;
@@ -3727,7 +3786,7 @@
     const pathInt = pathForSeries(intensityDaily, scaleYi);
 
     const nLeftTicks = 5;
-    const nRightTicks = 8;
+    const nRightTicks = 5;
     const leftTicks = Array.from({ length: nLeftTicks }, (_, t) => maxD - (t / (nLeftTicks - 1)) * (maxD - minD));
     const rightTicks = Array.from({ length: nRightTicks }, (_, t) => maxI - (t / (nRightTicks - 1)) * (maxI - minI));
 
