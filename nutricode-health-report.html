@@ -1373,11 +1373,11 @@
       scroll-snap-align: start;
       scroll-snap-stop: always;
       border: none;
-      border-radius: 0;
+      border-radius: 12px;
       background: #ffffff;
       box-shadow: none;
       min-height: 560px;
-      overflow: visible;
+      overflow: hidden;
       transition: opacity 0.3s ease;
     }
     .focus-carousel > .focus-card.focus-card__shell.is-active {
@@ -1467,7 +1467,7 @@
       gap: 12px;
       background: #ffffff;
       border: 1px solid rgba(0, 0, 0, 0.045);
-      border-radius: 16px;
+      border-radius: 12px;
     }
     .focus-card__chart {
       width: 100%;
@@ -1612,7 +1612,7 @@
       gap: 14px;
       padding: 20px;
       overflow: visible;
-      border-radius: 22px;
+      border-radius: 12px;
       border: 1px solid rgba(15, 23, 42, 0.07);
       background: #f5f5f7;
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 30px rgba(15, 23, 42, 0.04);
@@ -1641,7 +1641,10 @@
       color: #8f8f95;
       line-height: 1.35;
     }
-    #focus-card-4 .focus-card__stage > .card .chart-label--10 { font-size: 10px; }
+    #focus-card-4 .focus-card__stage > .card .chart-label--10 {
+      font-size: 10px;
+      text-align: center;
+    }
     #focus-card-4 .focus-card__stage > .card .legend {
       display: flex;
       gap: 10px;
@@ -1682,9 +1685,8 @@
     #focus-card-4 .focus-card__stage > .card .chart-wrap {
       position: relative;
       width: 100%;
-      height: 286px;
-      padding: 14px 14px 10px 10px;
-      border-radius: 18px;
+      padding: 14px 12px 10px;
+      border-radius: 12px;
       background: #ffffff;
       border: 1px solid rgba(15, 23, 42, 0.06);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
@@ -1698,10 +1700,11 @@
       pointer-events: none;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
     }
-    #focus-card-4 .focus-card__stage > .card .chart-wrap canvas {
+    #focus-card-4 .focus-card__stage > .card .chart-wrap .focus-scatter-svg {
       display: block;
-      width: 100% !important;
-      height: 100% !important;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
     }
     #focus-card-4 .focus-card__stage > .card .graph-why {
       margin-top: 2px;
@@ -1797,8 +1800,7 @@
         border-radius: 18px;
       }
       #focus-card-4 .focus-card__stage > .card .chart-wrap {
-        height: 248px;
-        padding: 12px 12px 8px 8px;
+        padding: 12px 10px 8px;
       }
     }
     @media (max-width: 550px) {
@@ -3083,7 +3085,7 @@
               <div class="card">
                 <div class="chart-header">
                   <div class="chart-meta">
-                    <div class="chart-label chart-label--10">Training intensity vs next-day resting HR</div>
+                    <div class="chart-label chart-label--10">Training intensity vs next-day RHR</div>
                   </div>
                 </div>
                 <div class="legend">
@@ -3091,11 +3093,13 @@
                   <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
                 </div>
                 <div class="chart-wrap">
-                  <canvas id="c-scatter" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">Next-day resting heart rate versus same-day training intensity.</canvas>
+                  <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="0 0 460 260" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
+                    <title>Next-day resting heart rate versus same-day training intensity.</title>
+                  </svg>
                 </div>
                 <details class="graph-why">
                   <summary><span class="graph-why__title">Why it matters</span></summary>
-                  <p class="graph-why__copy"><strong>Recovery read-through.</strong> Resting HR often lags a hard session: same-day load plotted against the following morning’s RHR helps spot when training stress is still showing up in the cardiovascular system.</p>
+                  <p class="graph-why__copy">The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
                 </details>
               </div>
             </div>
@@ -3416,62 +3420,15 @@
 
   /* ── Focus card: training intensity vs next-day RHR (raw_data.json) ── */
   (async function buildFocusScatterFromRaw() {
-    const canvasId = 'c-scatter';
-    if (typeof Chart === 'undefined' || !document.getElementById(canvasId)) return;
+    const svg = document.getElementById('c-scatter');
+    if (!svg) return;
 
-    const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-    const GRID = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(60,60,67,0.1)';
-    const TICK = isDark ? 'rgba(235,235,245,0.6)' : '#8e8e93';
-    const BLUE = '#0a84ff';
-    const BLUE_B = 'rgba(10,132,255,0.1)';
     const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
-
-    const base = (yMin, yMax) => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: { top: 8, right: 10, bottom: 0, left: 2 },
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          displayColors: false,
-          backgroundColor: isDark ? 'rgba(28,28,30,0.94)' : 'rgba(255,255,255,0.98)',
-          titleColor: isDark ? '#f5f5f7' : '#17171a',
-          bodyColor: isDark ? 'rgba(235,235,245,0.72)' : '#636873',
-          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)',
-          borderWidth: 1,
-          padding: 12,
-          cornerRadius: 12,
-          titleFont: { size: 12, weight: '600' },
-          bodyFont: { size: 12 },
-        },
-      },
-      scales: {
-        x: {
-          grid: { display: false, drawTicks: false },
-          border: { display: false },
-          ticks: {
-            color: TICK,
-            font: { family: FONT_MONO, size: 10, weight: '500' },
-            padding: 8,
-            maxTicksLimit: 8,
-          },
-        },
-        y: {
-          min: yMin,
-          max: yMax,
-          grid: { color: GRID, lineWidth: 1, drawTicks: false },
-          border: { display: false },
-          ticks: {
-            color: TICK,
-            font: { family: FONT_MONO, size: 10, weight: '500' },
-            padding: 8,
-          },
-        },
-      },
-      animation: { duration: 400, easing: 'easeOutQuart' },
-    });
+    const GRID = '#eceef2';
+    const AXIS = '#e3e6eb';
+    const TICK = '#9ca3af';
+    const TICK_SOFT = '#b7bcc6';
+    const BLUE = '#0a84ff';
 
     const seed = s => {
       let x = s;
@@ -3480,6 +3437,33 @@
         return x - Math.floor(x);
       };
     };
+
+    const niceStep = (range, ticks) => {
+      const rough = Math.max(range, 0.0001) / Math.max(1, ticks - 1);
+      const power = 10 ** Math.floor(Math.log10(rough));
+      const scaled = rough / power;
+      let factor = 1;
+      if (scaled <= 1) factor = 1;
+      else if (scaled <= 2) factor = 2;
+      else if (scaled <= 2.5) factor = 2.5;
+      else if (scaled <= 5) factor = 5;
+      else factor = 10;
+      return factor * power;
+    };
+
+    const buildTicks = (min, max, count) => {
+      const step = niceStep(max - min, count);
+      const start = Math.floor(min / step) * step;
+      const end = Math.ceil(max / step) * step;
+      const ticks = [];
+      for (let value = start; value <= end + step * 0.5; value += step) {
+        ticks.push(+value.toFixed(4));
+      }
+      return ticks;
+    };
+
+    const formatIntensity = value => value.toFixed(1);
+    const formatBpm = value => `${Math.round(value)}`;
 
     let pts = [];
     try {
@@ -3500,6 +3484,7 @@
     } catch (e) {
       console.warn('c-scatter (health report): raw_data.json not loaded (serve report over http(s) from repo root)', e);
     }
+
     if (pts.length < 2) {
       const rng = seed(7);
       pts = Array.from({ length: 14 }, () => ({
@@ -3511,102 +3496,97 @@
     const xs = pts.map(p => p.x);
     const ys = pts.map(p => p.y);
     const n = pts.length;
-    const mx = xs.reduce((a, b) => a + b, 0) / n;
-    const my = ys.reduce((a, b) => a + b, 0) / n;
+    const meanX = xs.reduce((sum, value) => sum + value, 0) / n;
+    const meanY = ys.reduce((sum, value) => sum + value, 0) / n;
+
     let num = 0;
     let dx2 = 0;
-    pts.forEach(p => {
-      num += (p.x - mx) * (p.y - my);
-      dx2 += (p.x - mx) ** 2;
+    pts.forEach(point => {
+      num += (point.x - meanX) * (point.y - meanY);
+      dx2 += (point.x - meanX) ** 2;
     });
+
     const slope = dx2 > 1e-12 ? num / dx2 : 0;
-    const intercept = my - slope * mx;
-    const pred = x => slope * x + intercept;
-    const residuals = pts.map(p => p.y - pred(p.x));
-    const denom = Math.max(1, n - 2);
-    const resStd = Math.sqrt(residuals.reduce((s, r) => s + r * r, 0) / denom);
-    const band = Math.max(1.5, Math.min(10, resStd * 1.96));
+    const intercept = meanY - slope * meanX;
+    const predict = x => slope * x + intercept;
 
-    const xLo = Math.min(...xs);
-    const xHi = Math.max(...xs);
-    const xPad = Math.max(0.08, (xHi - xLo) * 0.08);
-    const regX = [xLo - xPad, xHi + xPad];
-    const regY = regX.map(x => slope * x + intercept);
+    const rawXMin = Math.min(...xs);
+    const rawXMax = Math.max(...xs);
+    const rawYMin = Math.min(...ys, predict(rawXMin), predict(rawXMax));
+    const rawYMax = Math.max(...ys, predict(rawXMin), predict(rawXMax));
 
-    const yMin = Math.max(38, Math.min(...ys, ...regY.map(v => v - band)) - 2);
-    const yMax = Math.min(72, Math.max(...ys, ...regY.map(v => v + band)) + 2);
+    const xPad = Math.max(0.08, (rawXMax - rawXMin || 0.6) * 0.18);
+    const yPad = Math.max(1.5, (rawYMax - rawYMin || 5) * 0.22);
 
-    const scatterBase = base(yMin, yMax);
-    const yOpts = {
-      ...scatterBase.scales.y,
-      title: { display: true, text: 'Next-day RHR', color: TICK, font: { family: FONT_MONO, size: 11 } },
-      ticks: { ...scatterBase.scales.y.ticks, callback: v => `${Math.round(Number(v))} bpm` },
-    };
+    const xTicks = buildTicks(rawXMin - xPad, rawXMax + xPad, 6);
+    const yTicks = buildTicks(rawYMin - yPad, rawYMax + yPad, 5);
 
-    new Chart(canvasId, {
-      type: 'scatter',
-      data: {
-        datasets: [
-          {
-            label: 'CI band',
-            data: regX.flatMap((x, i) => [{ x, y: regY[i] + band }, { x, y: regY[i] - band }]),
-            backgroundColor: BLUE_B,
-            borderColor: 'transparent',
-            pointRadius: 0,
-            fill: true,
-            showLine: false,
-            order: 3,
-          },
-          {
-            label: 'Regression',
-            type: 'line',
-            data: regX.map((x, i) => ({ x, y: regY[i] })),
-            borderColor: BLUE,
-            borderWidth: 1.8,
-            borderCapStyle: 'round',
-            borderJoinStyle: 'round',
-            pointRadius: 0,
-            fill: false,
-            tension: 0,
-            order: 2,
-          },
-          {
-            label: 'Points',
-            data: pts,
-            backgroundColor: 'rgba(10,132,255,0.9)',
-            borderColor: 'rgba(255,255,255,0.98)',
-            borderWidth: 1.75,
-            pointRadius: 4.5,
-            pointHoverRadius: 6,
-            order: 1,
-          },
-        ],
-      },
-      options: {
-        ...scatterBase,
-        scales: {
-          x: {
-            ...scatterBase.scales.x,
-            title: { display: true, text: 'Training intensity', color: TICK, font: { family: FONT_MONO, size: 11 } },
-          },
-          y: yOpts,
-        },
-        plugins: {
-          ...scatterBase.plugins,
-          tooltip: {
-            ...scatterBase.plugins.tooltip,
-            callbacks: {
-              title: () => '',
-              label: ctx =>
-                ctx.dataset.label === 'Points'
-                  ? `Intensity ${ctx.parsed.x.toFixed(2)} · Next-day RHR ${Math.round(ctx.parsed.y)} bpm`
-                  : null,
-              filter: ctx => ctx.dataset.label === 'Points',
-            },
-          },
-        },
-      },
-    });
+    const domainXMin = xTicks[0];
+    const domainXMax = xTicks[xTicks.length - 1];
+    const domainYMin = yTicks[0];
+    const domainYMax = yTicks[yTicks.length - 1];
+
+    const viewWidth = 460;
+    const viewHeight = 260;
+    const plot = { left: 48, right: 438, top: 12, bottom: 226 };
+    const plotWidth = plot.right - plot.left;
+    const plotHeight = plot.bottom - plot.top;
+
+    const scaleX = value => plot.left + ((value - domainXMin) / (domainXMax - domainXMin)) * plotWidth;
+    const scaleY = value => plot.bottom - ((value - domainYMin) / (domainYMax - domainYMin)) * plotHeight;
+
+    const verticalGrid = xTicks.slice(1).map(value => {
+      const x = scaleX(value).toFixed(2);
+      return `<line x1="${x}" y1="${plot.top}" x2="${x}" y2="${plot.bottom}" stroke="${GRID}" stroke-width="1"></line>`;
+    }).join('');
+
+    const horizontalGrid = yTicks.slice(1).map(value => {
+      const y = scaleY(value).toFixed(2);
+      return `<line x1="${plot.left}" y1="${y}" x2="${plot.right}" y2="${y}" stroke="${GRID}" stroke-width="1"></line>`;
+    }).join('');
+
+    const xLabels = xTicks.map((value, index) => {
+      const x = scaleX(value).toFixed(2);
+      const anchor = index === xTicks.length - 1 ? 'end' : 'middle';
+      return `<text x="${x}" y="242" text-anchor="${anchor}" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK}">${formatIntensity(value)}</text>`;
+    }).join('');
+
+    const yLabels = yTicks.map(value => {
+      const y = scaleY(value).toFixed(2);
+      return `<text x="42" y="${(+y + 3).toFixed(2)}" text-anchor="end" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK_SOFT}">${formatBpm(value)}</text>`;
+    }).join('');
+
+    const regressionLine = `
+      <line
+        x1="${scaleX(domainXMin).toFixed(2)}"
+        y1="${scaleY(predict(domainXMin)).toFixed(2)}"
+        x2="${scaleX(domainXMax).toFixed(2)}"
+        y2="${scaleY(predict(domainXMax)).toFixed(2)}"
+        stroke="${BLUE}"
+        stroke-width="2"
+        stroke-linecap="round"
+      ></line>`;
+
+    const circles = pts.map(point => `
+      <circle cx="${scaleX(point.x).toFixed(2)}" cy="${scaleY(point.y).toFixed(2)}" r="4.5" fill="${BLUE}" stroke="rgba(255,255,255,0.98)" stroke-width="1.5">
+        <title>Intensity ${point.x.toFixed(2)} · Next-day RHR ${Math.round(point.y)} bpm</title>
+      </circle>`).join('');
+
+    svg.innerHTML = `
+      <title>Next-day resting heart rate versus same-day training intensity.</title>
+      <desc>Scatter of training intensity versus next-day resting heart rate from Garmin export.</desc>
+      <line x1="${plot.left}" y1="${plot.top}" x2="${plot.left}" y2="${plot.bottom}" stroke="${AXIS}" stroke-width="1"></line>
+      ${verticalGrid}
+      ${horizontalGrid}
+      <line x1="${plot.left}" y1="${plot.bottom}" x2="${plot.right}" y2="${plot.bottom}" stroke="${AXIS}" stroke-width="1"></line>
+      ${yLabels}
+      ${xLabels}
+      <text x="${(plot.left + plot.right) / 2}" y="${viewHeight - 4}" text-anchor="middle" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK}" letter-spacing="0.08em">INTENSITY</text>
+      ${regressionLine}
+      ${circles}
+    `;
+
+    svg.setAttribute('viewBox', `0 0 ${viewWidth} ${viewHeight}`);
   })();
 </script>
 </body>
