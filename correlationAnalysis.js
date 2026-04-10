@@ -475,11 +475,11 @@ function runCorrelationAnalysis(rawData) {
     }
 
     if (config.autocorrLabel) {
-      const { r: rAuto, n: nAuto } = autocorrelationLag1(targetSeries);
-      allResults.push({
-        label: config.autocorrLabel, r: rAuto, n: nAuto, direction: config.autocorrDirection, threshold: config.autocorrThreshold, supplements: config.autocorrSupplements,
-        significant: isSignificant(rAuto, config.autocorrDirection, config.autocorrThreshold),
-      });
+    const { r: rAuto, n: nAuto } = autocorrelationLag1(targetSeries);
+    allResults.push({
+      label: config.autocorrLabel, r: rAuto, n: nAuto, direction: config.autocorrDirection, threshold: config.autocorrThreshold, supplements: config.autocorrSupplements,
+      significant: isSignificant(rAuto, config.autocorrDirection, config.autocorrThreshold),
+    });
     }
 
     output[config.label] = allResults;

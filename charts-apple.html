@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutricode Charts</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --text-1: #1d1d1f;
+    --text-2: #6e6e73;
+    --text-3: #aeaeb2;
+    --border: rgba(0,0,0,0.06);
+    --accent: #0071e3;
+    --accent-2: #34c759;
+    --accent-r: #ff3b30;
+    --accent-a: #ff9500;
+    --radius: 18px;
+    --tab-h: 36px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 48px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.022em;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .page-sub {
+    font-size: 15px;
+    color: var(--text-2);
+    margin-bottom: 36px;
+    text-align: center;
+    letter-spacing: -0.01em;
+  }
+
+  /* Pill tab bar */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    height: var(--tab-h);
+    padding: 0 16px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background .18s, color .18s, box-shadow .18s;
+    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+  .tab.active {
+    background: #fff;
+    color: var(--text-1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  /* Card */
+  .card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 32px 32px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+  .chart-meta { flex: 1; }
+  .chart-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .chart-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.022em;
+    line-height: 1.2;
+  }
+  .chart-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+
+  /* Stat pill */
+  .stat-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .stat-pill-val {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .stat-pill-label {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+  .negative { color: var(--accent-r); }
+  .positive { color: var(--accent-2); }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+  }
+  .legend-line {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .legend-dash {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: repeating-linear-gradient(90deg, var(--accent-r) 0, var(--accent-r) 4px, transparent 4px, transparent 7px);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .legend-band {
+    width: 16px;
+    height: 8px;
+    border-radius: 3px;
+    opacity: 0.35;
+  }
+  .legend-bar {
+    width: 10px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  /* Chart wrapper */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 260px;
+  }
+
+  /* Insight bar */
+  .insight {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+  }
+  .insight strong { color: var(--text-1); font-weight: 600; }
+
+  .panel { display: none; width: 100%; max-width: 720px; flex-direction: column; align-items: stretch; }
+  .panel.active { display: flex; }
+
+  /* Autocorr threshold labels */
+  .threshold-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .threshold-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+  }
+  .threshold-dash {
+    width: 18px;
+    height: 1.5px;
+    background: var(--accent-r);
+    border-radius: 1px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Metric analysis</div>
+<div class="page-sub">HRV · 30-day dataset · Garmin</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="show('scatter',this)">Scatter</button>
+  <button class="tab" onclick="show('rolling',this)">Rolling</button>
+  <button class="tab" onclick="show('autocorr',this)">Autocorr</button>
+  <button class="tab" onclick="show('baseline',this)">Baseline</button>
+  <button class="tab" onclick="show('variance',this)">Variance</button>
+</div>
+
+<!-- 1. SCATTER -->
+<div id="panel-scatter" class="panel active">
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Single-day correlation</div>
+      <div class="chart-title">HRV vs training intensity</div>
+      <div class="chart-desc">Each point is one day. The line shows the relationship direction.</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-val negative">r = −0.66</div>
+      <div class="stat-pill-label">n = 10 days</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Daily reading</div>
+    <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
+    <div class="legend-item"><div class="legend-band" style="background:#0071e3"></div>95% CI band</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-scatter" role="img" aria-label="Scatter plot of HRV versus training intensity showing negative correlation r equals negative 0.66">Negative correlation between HRV and prior-day training intensity.</canvas></div>
+  <div class="insight"><strong>Significant.</strong> Hard training yesterday reliably predicts lower HRV today — the relationship crosses the −0.40 threshold. The issue is acute carryover, not sleep quality.</div>
+</div>
+</div>
+
+<!-- 2. ROLLING -->
+<div id="panel-rolling" class="panel">
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Rolling 7-day correlation</div>
+      <div class="chart-title">RHR vs training load</div>
+      <div class="chart-desc">Accumulated weekly load compared against rolling resting heart rate.</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-val negative">r = 0.86</div>
+      <div class="stat-pill-label">rolling · n = 7</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Resting HR (left)</div>
+    <div class="legend-item"><div class="legend-line" style="background:#ff9500"></div>Training load (right)</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-rolling" role="img" aria-label="Dual axis line chart showing resting heart rate and training load over 30 days">RHR and training load trend over 30 days.</canvas></div>
+  <div class="insight"><strong>Overreaching signal.</strong> The rolling correlation of 0.86 far exceeds the single-day value of 0.50. RHR is not resetting between sessions — load is accumulating week-on-week.</div>
+</div>
+</div>
+
+<!-- 3. AUTOCORR -->
+<div id="panel-autocorr" class="panel">
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Lag-1 to lag-5 autocorrelation</div>
+      <div class="chart-title">HRV autocorrelation</div>
+      <div class="chart-desc">Does yesterday's HRV predict today's? High lag-1 means a persistent state.</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-val" style="color:#6e6e73">r = −0.12</div>
+      <div class="stat-pill-label">lag-1 · reactive</div>
+    </div>
+  </div>
+  <div class="threshold-legend">
+    <div class="threshold-item"><div class="threshold-dash"></div>Significance threshold (±0.60)</div>
+    <div class="legend-item"><div class="legend-bar" style="background:#0071e3"></div>Positive</div>
+    <div class="legend-item"><div class="legend-bar" style="background:#ff3b30"></div>Negative</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-autocorr" role="img" aria-label="Correlogram showing HRV autocorrelation at lags 1 through 5">HRV autocorrelation at lags 1 to 5.</canvas></div>
+  <div class="insight"><strong>Reactive system.</strong> Low lag-1 autocorrelation means HRV is not stuck in a persistent state — it responds quickly to daily inputs. The pattern is acute, not chronic.</div>
+</div>
+</div>
+
+<!-- 4. BASELINE -->
+<div id="panel-baseline" class="panel">
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Baseline vs. current average</div>
+      <div class="chart-title">Sleep metrics comparison</div>
+      <div class="chart-desc">Pre-supplement baseline against the last 14-day average.</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-val positive">+18%</div>
+      <div class="stat-pill-label">avg improvement</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-bar" style="background:#b4b2a9"></div>Baseline</div>
+    <div class="legend-item"><div class="legend-bar" style="background:#0071e3"></div>Current avg</div>
+    <div class="legend-item"><div class="legend-dash"></div>Healthy target</div>
+  </div>
+  <div class="chart-wrap" style="height:240px"><canvas id="c-baseline" role="img" aria-label="Grouped bar chart comparing baseline and current average for deep sleep, REM, efficiency, and disruptions">Baseline vs current average for four sleep metrics.</canvas></div>
+  <div class="insight"><strong>Deep sleep up 32%.</strong> Efficiency and REM are both above baseline. Disruptions slightly increased — the only metric moving in the wrong direction.</div>
+</div>
+</div>
+
+<!-- 5. VARIANCE -->
+<div id="panel-variance" class="panel">
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Variance · spread scatter</div>
+      <div class="chart-title">HRV stability</div>
+      <div class="chart-desc">Points above and below the mean line. Band shows ±1 standard deviation.</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-pill-val" style="color:#ff9500">CV 10.8%</div>
+      <div class="stat-pill-label">moderate variance</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-band" style="background:#0071e3"></div>±1 SD band</div>
+    <div class="legend-item"><div class="legend-line" style="background:#1d1d1f;opacity:.25"></div>Mean (104ms)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Daily reading</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-variance" role="img" aria-label="Spread scatter plot of HRV readings around the mean with standard deviation band">HRV readings scattered around the 104ms mean.</canvas></div>
+  <div class="insight"><strong>Moderate variance (CV 10.8%).</strong> The metric is performing well but has room-to-night fluctuation. Not yet in the very stable (&lt;8%) zone. No declining trend detected.</div>
+</div>
+</div>
+
+<script>
+const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+const GRID = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+const TICK = isDark ? 'rgba(255,255,255,0.30)' : '#aeaeb2';
+const BLUE = '#0071e3';
+const BLUE_A = 'rgba(0,113,227,0.10)';
+const BLUE_B = 'rgba(0,113,227,0.14)';
+const AMBER = '#ff9500';
+const RED   = '#ff3b30';
+const GREEN = '#34c759';
+const GRAY  = '#b4b2a9';
+
+const base = (yMin, yMax) => ({
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{
+    backgroundColor: isDark?'rgba(28,28,30,0.92)':'rgba(255,255,255,0.96)',
+    titleColor: isDark?'#f5f5f7':'#1d1d1f',
+    bodyColor: isDark?'#aeaeb2':'#6e6e73',
+    borderColor: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)',
+    borderWidth:1, padding:10, cornerRadius:10,
+    titleFont:{size:12,weight:'600'},
+    bodyFont:{size:12}
+  }},
+  scales:{
+    x:{grid:{display:false}, border:{display:false}, ticks:{color:TICK,font:{size:11},maxTicksLimit:8}},
+    y:{min:yMin, max:yMax, grid:{color:GRID, lineWidth:1}, border:{display:false}, ticks:{color:TICK,font:{size:11}}}
+  },
+  animation:{duration:400,easing:'easeOutQuart'}
+});
+
+const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor(x);}; };
+const rng = seed(7);
+
+/* ── 1. SCATTER ── */
+const scatterX = Array.from({length:10},()=>+(rng()*2+0.8).toFixed(2));
+const scatterY = scatterX.map(x=>Math.round(130-18*x+(rng()-0.5)*14));
+const mx=scatterX.reduce((a,v)=>a+v,0)/10, my=scatterY.reduce((a,v)=>a+v,0)/10;
+let num=0,dx2=0,dy2=0;
+scatterX.forEach((x,i)=>{num+=(x-mx)*(scatterY[i]-my);dx2+=(x-mx)**2;dy2+=(scatterY[i]-my)**2;});
+const r=num/Math.sqrt(dx2*dy2);
+const slope=num/dx2, intercept=my-slope*mx;
+const regX=[Math.min(...scatterX)-0.05,Math.max(...scatterX)+0.05];
+const regY=regX.map(x=>slope*x+intercept);
+
+new Chart('c-scatter',{type:'scatter',data:{datasets:[
+  {label:'CI band',data:regX.flatMap((x,i)=>[
+    {x,y:regY[i]+12},{x,y:regY[i]-12}
+  ]),backgroundColor:BLUE_B,borderColor:'transparent',pointRadius:0,fill:true,showLine:false,order:3},
+  {label:'Regression',type:'line',data:regX.map((x,i)=>({x,y:regY[i]})),
+   borderColor:BLUE,borderWidth:1.5,pointRadius:0,fill:false,tension:0,order:2},
+  {label:'Points',data:scatterX.map((x,i)=>({x,y:scatterY[i]})),
+   backgroundColor:BLUE,borderColor:'#fff',borderWidth:1.5,pointRadius:5,pointHoverRadius:7,order:1},
+]},options:{...base(70,140),
+  scales:{
+    x:{...base(70,140).scales.x, title:{display:true,text:'Training intensity (prior day)',color:TICK,font:{size:11}}},
+    y:{...base(70,140).scales.y, title:{display:true,text:'HRV (ms)',color:TICK,font:{size:11}}}
+  },
+  plugins:{...base(70,140).plugins,tooltip:{...base(70,140).plugins.tooltip,callbacks:{
+    title:()=>'', label:ctx=>ctx.dataset.label==='Points'?`Intensity ${ctx.parsed.x.toFixed(2)}  ·  HRV ${Math.round(ctx.parsed.y)}ms`:null,
+    filter:ctx=>ctx.dataset.label==='Points'
+  }}}
+}});
+
+/* ── 2. ROLLING ── */
+const rngR=seed(13);
+const days30=Array.from({length:30},(_,i)=>`D${i+1}`);
+const rhr=days30.map((_,i)=>Math.round(52+i*0.18+(rngR()-0.5)*2.5));
+const load=days30.map((_,i)=>+(1.4+i*0.025+(rngR()-0.5)*0.4).toFixed(2));
+
+new Chart('c-rolling',{type:'line',data:{labels:days30,datasets:[
+  {label:'RHR',data:rhr,borderColor:BLUE,borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0.35,yAxisID:'yL',fill:false},
+  {label:'Load',data:load,borderColor:AMBER,borderWidth:2,pointRadius:0,pointHoverRadius:4,tension:0.35,yAxisID:'yR',fill:false,borderDash:[4,3]},
+]},options:{
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{...base(0,1).plugins.tooltip,mode:'index',intersect:false,callbacks:{
+    label:ctx=>ctx.dataset.label==='RHR'?`RHR: ${ctx.parsed.y}bpm`:`Load: ${ctx.parsed.y.toFixed(2)}`
+  }}},
+  scales:{
+    x:{grid:{display:false},border:{display:false},ticks:{color:TICK,font:{size:11},maxTicksLimit:8}},
+    yL:{position:'left',min:48,max:62,grid:{color:GRID,lineWidth:1},border:{display:false},ticks:{color:BLUE,font:{size:11},callback:v=>v+'bpm'}},
+    yR:{position:'right',min:1.0,max:2.2,grid:{display:false},border:{display:false},ticks:{color:AMBER,font:{size:11},callback:v=>v.toFixed(1)}},
+  },
+  animation:{duration:400,easing:'easeOutQuart'}
+}});
+
+/* ── 3. AUTOCORRELATION ── */
+const lags=[1,2,3,4,5];
+const lagVals=[-0.12,0.08,-0.19,0.11,-0.07];
+
+new Chart('c-autocorr',{type:'bar',data:{labels:lags.map(l=>`Lag ${l}`),datasets:[
+  {data:lagVals,
+   backgroundColor:lagVals.map(v=>v>=0?'rgba(0,113,227,0.75)':'rgba(255,59,48,0.75)'),
+   borderColor:lagVals.map(v=>v>=0?BLUE:RED),
+   borderWidth:0,borderRadius:6,borderSkipped:false},
+]},options:{...base(-0.8,0.8),
+  plugins:{...base(-0.8,0.8).plugins,annotation:{annotations:{
+    pos:{type:'line',yMin:0.60,yMax:0.60,borderColor:'rgba(255,59,48,0.45)',borderWidth:1,borderDash:[4,4]},
+    neg:{type:'line',yMin:-0.60,yMax:-0.60,borderColor:'rgba(255,59,48,0.45)',borderWidth:1,borderDash:[4,4]},
+    zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(0,0,0,0.12)',borderWidth:1},
+  }}},
+  scales:{
+    x:{...base(-0.8,0.8).scales.x},
+    y:{...base(-0.8,0.8).scales.y,ticks:{color:TICK,font:{size:11},callback:v=>v.toFixed(1)}}
+  },
+  tooltip:{...base(-0.8,0.8).plugins.tooltip,callbacks:{label:ctx=>`r = ${ctx.parsed.y.toFixed(2)}`}}
+}});
+
+/* ── 4. BASELINE ── */
+const metrics=['Deep sleep %','REM %','Efficiency','Disruptions/hr'];
+const bsVals =[13.8, 21.0, 90, 1.10];
+const curVals=[18.2, 22.5, 95, 1.54];
+const targets=[17.0, 22.0, 92, 1.50];
+
+new Chart('c-baseline',{type:'bar',data:{labels:metrics,datasets:[
+  {label:'Baseline',data:bsVals,backgroundColor:isDark?'rgba(180,178,169,0.5)':GRAY,borderRadius:6,barPercentage:0.45,categoryPercentage:0.7},
+  {label:'Current',data:curVals,backgroundColor:BLUE,borderRadius:6,barPercentage:0.45,categoryPercentage:0.7},
+]},options:{
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{...base(0,1).plugins.tooltip,mode:'index',intersect:false}},
+  scales:{
+    x:{grid:{display:false},border:{display:false},ticks:{color:TICK,font:{size:11}}},
+    y:{grid:{color:GRID,lineWidth:1},border:{display:false},ticks:{color:TICK,font:{size:11},callback:v=>v}},
+  },
+  animation:{duration:400,easing:'easeOutQuart'}
+}});
+
+/* ── 5. VARIANCE ── */
+const rngV=seed(99);
+const mean5=104;
+const sd5=11.3;
+const pts=Array.from({length:18},(_,i)=>({x:i,y:Math.round(mean5+(rngV()-0.5)*sd5*2.2)}));
+
+new Chart('c-variance',{type:'scatter',data:{datasets:[
+  {label:'SD band',type:'line',
+   data:[{x:-0.5,y:mean5+sd5},{x:17.5,y:mean5+sd5}],
+   backgroundColor:BLUE_A,borderColor:'transparent',
+   fill:{target:{value:mean5-sd5},above:BLUE_A},
+   pointRadius:0,showLine:true,tension:0,order:3},
+  {label:'SD lower',type:'line',
+   data:[{x:-0.5,y:mean5-sd5},{x:17.5,y:mean5-sd5}],
+   borderColor:'transparent',fill:false,pointRadius:0,showLine:true,order:3},
+  {label:'Mean',type:'line',
+   data:[{x:-0.5,y:mean5},{x:17.5,y:mean5}],
+   borderColor:'rgba(0,0,0,0.18)',borderWidth:1,borderDash:[3,3],
+   pointRadius:0,fill:false,tension:0,order:2},
+  {label:'Daily',data:pts,
+   backgroundColor:BLUE,borderColor:'rgba(255,255,255,0.8)',borderWidth:1.5,
+   pointRadius:5,pointHoverRadius:7,order:1},
+]},options:{...base(mean5-35,mean5+35),
+  plugins:{...base(mean5-35,mean5+35).plugins,tooltip:{...base(mean5-35,mean5+35).plugins.tooltip,callbacks:{
+    title:()=>'',
+    label:ctx=>ctx.dataset.label==='Daily'?`Day ${ctx.parsed.x+1} · HRV ${ctx.parsed.y}ms`:null,
+    filter:ctx=>ctx.dataset.label==='Daily'
+  }}},
+  scales:{
+    x:{min:-0.5,max:17.5,grid:{display:false},border:{display:false},
+       ticks:{color:TICK,font:{size:11},callback:(_,i)=>i%4===0?`D${i+1}`:''}},
+    y:{min:mean5-35,max:mean5+35,grid:{color:GRID,lineWidth:1},border:{display:false},
+       ticks:{color:TICK,font:{size:11},callback:v=>v+'ms'}}
+  }
+}});
+
+function show(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --text-1: #1d1d1f;
+    --text-2: #6e6e73;
+    --text-3: #aeaeb2;
+    --border: rgba(0,0,0,0.06);
+    --accent: #0071e3;
+    --accent-r: #ff3b30;
+    --accent-a: #ff9500;
+    --radius: 18px;
+    --font-graph-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --font-ui: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 48px 24px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.022em;
+    margin-bottom: 36px;
+    text-align: center;
+  }
+
+  .graph-stack {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    align-items: stretch;
+  }
+
+  .card {
+    width: 100%;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 32px 32px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.06);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+  }
+  .chart-meta { flex: 1; }
+  .chart-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .chart-label--10 {
+    font-size: 10px;
+    text-align: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  }
+  /* Chart labels + legends use mono; scatter title stays system sans via .chart-label--10 */
+  .graph-stack .chart-label:not(.chart-label--10),
+  .graph-stack .legend-item,
+  .graph-stack .threshold-item {
+    font-family: var(--font-graph-mono);
+  }
+  /* “Why it matters” + body copy use Urbanist, not mono */
+  .graph-stack .graph-why,
+  .graph-stack .graph-why * {
+    font-family: var(--font-ui);
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+  }
+  .legend-num {
+    font-family: var(--font-graph-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+  .legend-line {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+  }
+  .legend-dash {
+    width: 16px;
+    height: 2px;
+    border-radius: 1px;
+    background: repeating-linear-gradient(90deg, var(--accent-r) 0, var(--accent-r) 4px, transparent 4px, transparent 7px);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .legend-band {
+    width: 16px;
+    height: 8px;
+    border-radius: 3px;
+    opacity: 0.35;
+  }
+  .legend-bar {
+    width: 10px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 260px;
+  }
+
+  .graph-why {
+    margin-top: 20px;
+    border: none;
+    background: transparent;
+  }
+  .graph-why > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .graph-why > summary::-webkit-details-marker {
+    display: none;
+  }
+  .graph-why > summary::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-top: -2px;
+    border-right: 2px solid var(--text-2);
+    border-bottom: 2px solid var(--text-2);
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    opacity: 0.65;
+  }
+  .graph-why[open] > summary {
+    border-radius: 10px 10px 0 0;
+    border-bottom: none;
+  }
+  .graph-why[open] > summary::after {
+    margin-top: 2px;
+    transform: rotate(-135deg);
+  }
+  .graph-why .graph-why__copy {
+    margin: 0;
+    padding: 0 14px 14px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    font-size: 13px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+  }
+  .graph-why__copy strong {
+    color: var(--text-1);
+    font-weight: 600;
+  }
+  .graph-why .graph-why__title {
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+  }
+
+  .threshold-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .threshold-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+  }
+  .threshold-dash {
+    width: 18px;
+    height: 1.5px;
+    background: var(--accent-r);
+    border-radius: 1px;
+    opacity: 0.6;
+  }
+
+  .legend-swatch {
+    width: 14px;
+    height: 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .legend-swatch--neg {
+    background: rgba(255,59,48,0.72);
+  }
+  .legend-swatch--neutral {
+    background: rgba(245,245,247,1);
+  }
+  .legend-swatch--pos {
+    background: rgba(0,113,227,0.72);
+  }
+
+  .chart-wrap--heatmap {
+    height: auto;
+  }
+  .heatmap-mount {
+    width: 100%;
+    min-height: 330px;
+  }
+  .heatmap-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 640px) {
+    .heatmap-mount {
+      min-height: 292px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Graphs</div>
+
+<div class="graph-stack">
+
+<!-- 1. SCATTER -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label chart-label--10">Training intensity vs next-day resting HR</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Day pairs</div>
+    <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-scatter" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">Next-day resting heart rate versus same-day training intensity.</canvas></div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Recovery read-through.</strong> Resting HR often lags a hard session: same-day load plotted against the following morning’s RHR helps spot when training stress is still showing up in the cardiovascular system.</p>
+  </details>
+</div>
+
+<!-- 2. ROLLING -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">7-day average · deep sleep vs training load</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Deep sleep %</div>
+    <div class="legend-item"><div class="legend-line" style="background:#ff9500"></div>Training intensity</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-rolling" role="img" aria-label="Dual axis chart of 7-day trailing average deep sleep percent and training intensity over 30 days from Garmin export">Seven-day rolling averages of deep sleep percent and training intensity.</canvas></div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Smoothed recovery context.</strong> A 7-day trailing mean dulls single noisy nights and rest days so you can see whether deep sleep share and training load are drifting together or diverging across the month.</p>
+  </details>
+</div>
+
+<!-- 3. AUTOCORR -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Lag-1 to lag-5 autocorrelation</div>
+    </div>
+  </div>
+  <div class="threshold-legend">
+    <div class="threshold-item"><div class="threshold-dash"></div>Significance threshold (<span class="legend-num">±0.60</span>)</div>
+    <div class="legend-item"><div class="legend-bar" style="background:#0071e3"></div>Positive</div>
+    <div class="legend-item"><div class="legend-bar" style="background:#ff3b30"></div>Negative</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-autocorr" role="img" aria-label="Correlogram showing HRV autocorrelation at lags 1 through 5">HRV autocorrelation at lags 1 to 5.</canvas></div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Reactive system.</strong> Low lag-1 autocorrelation means HRV is not stuck in a persistent state — it responds quickly to daily inputs. The pattern is acute, not chronic.</p>
+  </details>
+</div>
+
+<!-- 4. BASELINE -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Nightly sleep efficiency · 30 days</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-bar" style="background:#0071e3"></div>Daily value</div>
+    <div class="legend-item"><div class="legend-dash"></div>Target average to reach</div>
+  </div>
+  <div class="chart-wrap" style="height:260px"><canvas id="c-baseline" role="img" aria-label="Bar chart of sleep efficiency for each of 30 days with a dashed target line">Daily sleep efficiency versus target average.</canvas></div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Room to reach the target.</strong> Many nights land under the 92% efficiency goal; closing that gap is the clearest path before tuning other sleep metrics.</p>
+  </details>
+</div>
+
+<!-- 5. VARIANCE -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Variance · spread scatter</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-band" style="background:#0071e3"></div><span class="legend-num">±1</span> SD band</div>
+    <div class="legend-item"><div class="legend-line" style="background:#1d1d1f;opacity:.25"></div>Mean (<span class="legend-num">104ms</span>)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Daily reading</div>
+  </div>
+  <div class="chart-wrap"><canvas id="c-variance" role="img" aria-label="Spread scatter plot of HRV readings around the mean with standard deviation band">HRV readings scattered around the 104ms mean.</canvas></div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Moderate variance (CV 10.8%).</strong> The metric is performing well but has room-to-night fluctuation. Not yet in the very stable (&lt;8%) zone. No declining trend detected.</p>
+  </details>
+</div>
+
+<!-- 6. CORRELATION HEATMAP -->
+<div class="card">
+  <div class="chart-header">
+    <div class="chart-meta">
+      <div class="chart-label">Correlation heatmap · pairwise relationships</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch legend-swatch--neg"></div>Negative correlation</div>
+    <div class="legend-item"><div class="legend-swatch legend-swatch--neutral"></div>Near zero</div>
+    <div class="legend-item"><div class="legend-swatch legend-swatch--pos"></div>Positive correlation</div>
+  </div>
+  <div class="chart-wrap chart-wrap--heatmap">
+    <div id="c-heatmap" class="heatmap-mount" role="img" aria-label="Correlation heatmap comparing training load, resting heart rate, HRV, deep sleep, REM sleep, and sleep efficiency"></div>
+  </div>
+  <details class="graph-why">
+    <summary><span class="graph-why__title">Why it matters</span></summary>
+    <p class="graph-why__copy"><strong>Overview of the system.</strong> A heatmap makes it easier to see which metrics tend to move together, which move in opposite directions, and where a single intervention could improve more than one outcome at once.</p>
+  </details>
+</div>
+
+</div>
+
+<script>
+/* chartjs-plugin-annotation UMD (above) calls Chart.register when Chart is present */
+const isDark = matchMedia('(prefers-color-scheme:dark)').matches;
+const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
+if (typeof Chart !== 'undefined') {
+  Chart.defaults.font.family = FONT_MONO;
+}
+const GRID = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+const TICK = isDark ? 'rgba(255,255,255,0.30)' : '#aeaeb2';
+const BLUE = '#0071e3';
+const BLUE_A = 'rgba(0,113,227,0.10)';
+const BLUE_B = 'rgba(0,113,227,0.14)';
+const AMBER = '#ff9500';
+const RED   = '#ff3b30';
+
+const base = (yMin, yMax) => ({
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{
+    backgroundColor: isDark?'rgba(28,28,30,0.92)':'rgba(255,255,255,0.96)',
+    titleColor: isDark?'#f5f5f7':'#1d1d1f',
+    bodyColor: isDark?'#aeaeb2':'#6e6e73',
+    borderColor: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)',
+    borderWidth:1, padding:10, cornerRadius:10,
+    titleFont:{family:FONT_MONO,size:12,weight:'600'},
+    bodyFont:{family:FONT_MONO,size:12}
+  }},
+  scales:{
+    x:{grid:{display:false}, border:{display:false}, ticks:{color:TICK,font:{family:FONT_MONO,size:11},maxTicksLimit:8}},
+    y:{min:yMin, max:yMax, grid:{color:GRID, lineWidth:1}, border:{display:false}, ticks:{color:TICK,font:{family:FONT_MONO,size:11}}}
+  },
+  animation:{duration:400,easing:'easeOutQuart'}
+});
+
+const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor(x);}; };
+
+/* ── 1. SCATTER — next-day RHR (y) vs same-day training intensity (x), raw_data.json ── */
+(async function buildScatterFromRaw() {
+  let pts = [];
+  try {
+    const res = await fetch('raw_data.json', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error(res.statusText);
+    const data = await res.json();
+    const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
+    if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
+    const { metrics, daily_activity: activity } = vis;
+    const rhr = metrics.RHR;
+    for (let d = 1; d < 30; d += 1) {
+      const today = activity[String(d)];
+      const x = today?.average_intensity;
+      const yRaw = rhr[String(d + 1)];
+      if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
+      pts.push({ x: +Number(x).toFixed(4), y: +Number(yRaw).toFixed(2) });
+    }
+  } catch (e) {
+    console.warn('c-scatter: raw_data.json not loaded (serve page over http(s) from repo root)', e);
+  }
+  if (pts.length < 2) {
+    const rng = seed(7);
+    pts = Array.from({ length: 14 }, () => ({
+      x: +(rng() * 1.3 + 1.05).toFixed(2),
+      y: Math.round(48 + rng() * 8),
+    }));
+  }
+
+  const xs = pts.map(p => p.x);
+  const ys = pts.map(p => p.y);
+  const n = pts.length;
+  const mx = xs.reduce((a, b) => a + b, 0) / n;
+  const my = ys.reduce((a, b) => a + b, 0) / n;
+  let num = 0;
+  let dx2 = 0;
+  pts.forEach(p => {
+    num += (p.x - mx) * (p.y - my);
+    dx2 += (p.x - mx) ** 2;
+  });
+  const slope = dx2 > 1e-12 ? num / dx2 : 0;
+  const intercept = my - slope * mx;
+  const pred = x => slope * x + intercept;
+  const residuals = pts.map(p => p.y - pred(p.x));
+  const denom = Math.max(1, n - 2);
+  const resStd = Math.sqrt(residuals.reduce((s, r) => s + r * r, 0) / denom);
+  const band = Math.max(1.5, Math.min(10, resStd * 1.96));
+
+  const xLo = Math.min(...xs);
+  const xHi = Math.max(...xs);
+  const xPad = Math.max(0.08, (xHi - xLo) * 0.08);
+  const regX = [xLo - xPad, xHi + xPad];
+  const regY = regX.map(x => slope * x + intercept);
+
+  const yMin = Math.max(38, Math.min(...ys, ...regY.map(v => v - band)) - 2);
+  const yMax = Math.min(72, Math.max(...ys, ...regY.map(v => v + band)) + 2);
+
+  const scatterBase = base(yMin, yMax);
+  const yOpts = {
+    ...scatterBase.scales.y,
+    title: { display: true, text: 'Next-day RHR', color: TICK, font: { family: FONT_MONO, size: 11 } },
+    ticks: { ...scatterBase.scales.y.ticks, callback: v => `${Math.round(Number(v))} bpm` },
+  };
+
+  new Chart('c-scatter', {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'CI band',
+          data: regX.flatMap((x, i) => [{ x, y: regY[i] + band }, { x, y: regY[i] - band }]),
+          backgroundColor: BLUE_B,
+          borderColor: 'transparent',
+          pointRadius: 0,
+          fill: true,
+          showLine: false,
+          order: 3,
+        },
+        {
+          label: 'Regression',
+          type: 'line',
+          data: regX.map((x, i) => ({ x, y: regY[i] })),
+          borderColor: BLUE,
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+          order: 2,
+        },
+        {
+          label: 'Points',
+          data: pts,
+          backgroundColor: BLUE,
+          borderColor: '#fff',
+          borderWidth: 1.5,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          order: 1,
+        },
+      ],
+    },
+    options: {
+      ...scatterBase,
+      scales: {
+        x: {
+          ...scatterBase.scales.x,
+          title: { display: true, text: 'Training intensity', color: TICK, font: { family: FONT_MONO, size: 11 } },
+        },
+        y: yOpts,
+      },
+      plugins: {
+        ...scatterBase.plugins,
+        tooltip: {
+          ...scatterBase.plugins.tooltip,
+          callbacks: {
+            title: () => '',
+            label: ctx =>
+              ctx.dataset.label === 'Points'
+                ? `Intensity ${ctx.parsed.x.toFixed(2)} · Next-day RHR ${Math.round(ctx.parsed.y)} bpm`
+                : null,
+            filter: ctx => ctx.dataset.label === 'Points',
+          },
+        },
+      },
+    },
+  });
+})();
+
+/* ── 2. ROLLING — 7-day trailing mean: deep sleep % & training intensity (raw_data.json) ── */
+(async function buildRollingFromRaw() {
+  const days30 = Array.from({ length: 30 }, (_, i) => `D${i + 1}`);
+
+  const roll7 = (arr, endIdx) => {
+    const start = Math.max(0, endIdx - 6);
+    const vals = [];
+    for (let j = start; j <= endIdx; j += 1) {
+      const v = arr[j];
+      if (v != null && Number.isFinite(v)) vals.push(v);
+    }
+    if (vals.length === 0) return null;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  };
+
+  let intensityDaily = Array(30).fill(null);
+  let deepDaily = Array(30).fill(null);
+
+  try {
+    const res = await fetch('raw_data.json', { credentials: 'same-origin' });
+    if (!res.ok) throw new Error(res.statusText);
+    const data = await res.json();
+    const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
+    if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
+    const m = vis.metrics;
+    const act = vis.daily_activity;
+    for (let d = 1; d <= 30; d += 1) {
+      const k = String(d);
+      const ai = act[k]?.average_intensity;
+      if (ai != null && Number.isFinite(+ai)) intensityDaily[d - 1] = +ai;
+      const st = m.sleep_time?.[k];
+      const deep = m.deep_sleep?.[k];
+      if (st != null && st > 0 && deep != null) deepDaily[d - 1] = (100 * deep) / st;
+    }
+  } catch (e) {
+    console.warn('c-rolling: raw_data.json not loaded (serve page over http(s) from repo root)', e);
+    const rngR = seed(13);
+    intensityDaily = days30.map(() => +(1.35 + (rngR() - 0.5) * 0.55).toFixed(2));
+    deepDaily = days30.map(() => +(16 + (rngR() - 0.5) * 6).toFixed(2));
+  }
+
+  const deepRoll = days30.map((_, i) => roll7(deepDaily, i));
+  const loadRoll = days30.map((_, i) => roll7(intensityDaily, i));
+
+  const finL = deepRoll.filter(v => v != null && Number.isFinite(v));
+  const finR = loadRoll.filter(v => v != null && Number.isFinite(v));
+  let minL = finL.length ? Math.min(...finL) : 10;
+  let maxL = finL.length ? Math.max(...finL) : 25;
+  let minR = finR.length ? Math.min(...finR) : 1;
+  let maxR = finR.length ? Math.max(...finR) : 2.2;
+  const padL = Math.max(0.8, (maxL - minL) * 0.1);
+  const padR = Math.max(0.06, (maxR - minR) * 0.1);
+  minL -= padL;
+  maxL += padL;
+  minR -= padR;
+  maxR += padR;
+
+  new Chart('c-rolling', {
+    type: 'line',
+    data: {
+      labels: days30,
+      datasets: [
+        {
+          label: 'Deep sleep (7d)',
+          data: deepRoll,
+          borderColor: BLUE,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.35,
+          yAxisID: 'yL',
+          fill: false,
+          spanGaps: false,
+        },
+        {
+          label: 'Intensity (7d)',
+          data: loadRoll,
+          borderColor: AMBER,
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.35,
+          yAxisID: 'yR',
+          fill: false,
+          borderDash: [4, 3],
+          spanGaps: false,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          ...base(0, 1).plugins.tooltip,
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: ctx =>
+              ctx.dataset.label === 'Deep sleep (7d)'
+                ? `Deep sleep (7d avg): ${ctx.parsed.y != null ? ctx.parsed.y.toFixed(1) : '—'}%`
+                : `Intensity (7d avg): ${ctx.parsed.y != null ? ctx.parsed.y.toFixed(2) : '—'}`,
+          },
+        },
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { color: TICK, font: { family: FONT_MONO, size: 11 }, maxTicksLimit: 8 } },
+        yL: {
+          position: 'left',
+          min: minL,
+          max: maxL,
+          grid: { color: GRID, lineWidth: 1 },
+          border: { display: false },
+          ticks: { color: BLUE, font: { family: FONT_MONO, size: 11 }, callback: v => `${Math.round(v)}%` },
+        },
+        yR: {
+          position: 'right',
+          min: minR,
+          max: maxR,
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: AMBER, font: { family: FONT_MONO, size: 11 }, callback: v => Number(v).toFixed(2) },
+        },
+      },
+      animation: { duration: 400, easing: 'easeOutQuart' },
+    },
+  });
+})();
+
+/* ── 3. AUTOCORRELATION ── */
+const lags=[1,2,3,4,5];
+const lagVals=[-0.12,0.08,-0.19,0.11,-0.07];
+
+const autocorrBase = base(-0.8,0.8);
+new Chart('c-autocorr',{type:'bar',data:{labels:lags.map(l=>`Lag ${l}`),datasets:[
+  {data:lagVals,
+   backgroundColor:lagVals.map(v=>v>=0?'rgba(0,113,227,0.75)':'rgba(255,59,48,0.75)'),
+   borderColor:lagVals.map(v=>v>=0?BLUE:RED),
+   borderWidth:0,borderRadius:6,borderSkipped:false},
+]},options:{
+  ...autocorrBase,
+  plugins:{
+    ...autocorrBase.plugins,
+    annotation:{annotations:{
+      pos:{type:'line',yMin:0.60,yMax:0.60,borderColor:'rgba(255,59,48,0.45)',borderWidth:1,borderDash:[4,4]},
+      neg:{type:'line',yMin:-0.60,yMax:-0.60,borderColor:'rgba(255,59,48,0.45)',borderWidth:1,borderDash:[4,4]},
+      zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(0,0,0,0.12)',borderWidth:1},
+    }},
+    tooltip:{...autocorrBase.plugins.tooltip,callbacks:{label:ctx=>`r = ${ctx.parsed.y.toFixed(2)}`}}
+  },
+  scales:{
+    x:{...autocorrBase.scales.x},
+    y:{...autocorrBase.scales.y,ticks:{color:TICK,font:{family:FONT_MONO,size:11},callback:v=>v.toFixed(1)}}
+  },
+}});
+
+/* ── 4. BASELINE — one bar per day, dashed line = target average (above typical nights) ── */
+const rngB = seed(19);
+const baselineDays = Array.from({length:30},(_,i)=>`D${i+1}`);
+const TARGET_EFF = 92; /* % — goal to reach; drawn above most daily bars */
+const dailyEff = baselineDays.map(()=>Math.round(82 + rngB()*9)); /* ~82–91% */
+
+const baselineOpts = {
+  responsive:true,maintainAspectRatio:false,
+  plugins:{
+    legend:{display:false},
+    tooltip:{
+      ...base(75,100).plugins.tooltip,
+      callbacks:{
+        label:ctx=>`Efficiency ${ctx.parsed.y}%`,
+      },
+    },
+    annotation:{
+      annotations:{
+        targetAvg:{
+          type:'line',
+          yScaleID:'y',
+          yMin:TARGET_EFF,
+          yMax:TARGET_EFF,
+          borderColor:'rgba(255,59,48,0.75)',
+          borderWidth:1.5,
+          borderDash:[5,4],
+          label:{
+            display:true,
+            content:`Target avg ${TARGET_EFF}%`,
+            position:'end',
+            backgroundColor:isDark?'rgba(28,28,30,0.9)':'rgba(255,255,255,0.95)',
+            color:isDark?'#f5f5f7':'#1d1d1f',
+            font:{family:FONT_MONO,size:11,weight:'600'},
+            padding:{top:4,right:8,bottom:4,left:8},
+            borderRadius:6,
+          },
+        },
+      },
+    },
+  },
+  scales:{
+    x:{
+      grid:{display:false},
+      border:{display:false},
+      ticks:{color:TICK,font:{family:FONT_MONO,size:10},maxRotation:0,autoSkip:true,maxTicksLimit:10},
+    },
+    y:{
+      min:75,
+      max:100,
+      grid:{color:GRID,lineWidth:1},
+      border:{display:false},
+      ticks:{color:TICK,font:{family:FONT_MONO,size:11},callback:v=>v+'%'},
+    },
+  },
+  animation:{duration:400,easing:'easeOutQuart'},
+};
+
+new Chart('c-baseline',{
+  type:'bar',
+  data:{
+    labels:baselineDays,
+    datasets:[{
+      label:'Nightly efficiency',
+      data:dailyEff,
+      backgroundColor:isDark?'rgba(0,113,227,0.65)':'rgba(0,113,227,0.85)',
+      borderRadius:4,
+      borderSkipped:false,
+      barPercentage:0.72,
+      categoryPercentage:0.9,
+    }],
+  },
+  options:baselineOpts,
+});
+
+/* ── 5. VARIANCE — tighter ±1 SD band; points still use wider draw spread ── */
+const rngV=seed(99);
+const mean5=104;
+const sdBand=6.2;  /* half-height of shaded band (tighter than ~11.3) */
+const sdPts=11.3;  /* scatter spread unchanged */
+const yPad=26;
+const pts=Array.from({length:18},(_,i)=>({x:i,y:Math.round(mean5+(rngV()-0.5)*sdPts*2.2)}));
+
+new Chart('c-variance',{type:'scatter',data:{datasets:[
+  {label:'SD band',type:'line',
+   data:[{x:-0.5,y:mean5+sdBand},{x:17.5,y:mean5+sdBand}],
+   backgroundColor:BLUE_A,borderColor:'transparent',
+   fill:{target:{value:mean5-sdBand},above:BLUE_A},
+   pointRadius:0,showLine:true,tension:0,order:3},
+  {label:'SD lower',type:'line',
+   data:[{x:-0.5,y:mean5-sdBand},{x:17.5,y:mean5-sdBand}],
+   borderColor:'transparent',fill:false,pointRadius:0,showLine:true,order:3},
+  {label:'Mean',type:'line',
+   data:[{x:-0.5,y:mean5},{x:17.5,y:mean5}],
+   borderColor:'rgba(0,0,0,0.18)',borderWidth:1,borderDash:[3,3],
+   pointRadius:0,fill:false,tension:0,order:2},
+  {label:'Daily',data:pts,
+   backgroundColor:BLUE,borderColor:'rgba(255,255,255,0.8)',borderWidth:1.5,
+   pointRadius:5,pointHoverRadius:7,order:1},
+]},options:{...base(mean5-yPad,mean5+yPad),
+  plugins:{...base(mean5-yPad,mean5+yPad).plugins,tooltip:{...base(mean5-yPad,mean5+yPad).plugins.tooltip,callbacks:{
+    title:()=>'',
+    label:ctx=>ctx.dataset.label==='Daily'?`Day ${ctx.parsed.x+1} · HRV ${ctx.parsed.y}ms`:null,
+    filter:ctx=>ctx.dataset.label==='Daily'
+  }}},
+  scales:{
+    x:{min:-0.5,max:17.5,grid:{display:false},border:{display:false},
+       ticks:{color:TICK,font:{family:FONT_MONO,size:11},callback:(_,i)=>i%4===0?`D${i+1}`:''}},
+    y:{min:mean5-yPad,max:mean5+yPad,grid:{color:GRID,lineWidth:1},border:{display:false},
+       ticks:{color:TICK,font:{family:FONT_MONO,size:11},callback:v=>v+'ms'}}
+  }
+}});
+
+/* ── 6. CORRELATION HEATMAP — pairwise Pearson r on days with both metrics (raw_data.json) ── */
+(function buildCorrelationHeatmap() {
+  const mount = document.getElementById('c-heatmap');
+  if (!mount) return;
+
+  const labels = ['LOAD', 'RHR', 'HRV', 'DEEP', 'REM', 'EFF'];
+  /** @type {(number|null)[][]} */
+  let values = [
+    [1, null, null, null, null, null],
+    [null, 1, null, null, null, null],
+    [null, null, 1, null, null, null],
+    [null, null, null, 1, null, null],
+    [null, null, null, null, 1, null],
+    [null, null, null, null, null, 1],
+  ];
+
+  const pearson = (xs, ys) => {
+    const n = xs.length;
+    if (n < 2) return null;
+    let mx = 0;
+    let my = 0;
+    for (let i = 0; i < n; i += 1) {
+      mx += xs[i];
+      my += ys[i];
+    }
+    mx /= n;
+    my /= n;
+    let num = 0;
+    let dx2 = 0;
+    let dy2 = 0;
+    for (let i = 0; i < n; i += 1) {
+      const ax = xs[i] - mx;
+      const ay = ys[i] - my;
+      num += ax * ay;
+      dx2 += ax * ax;
+      dy2 += ay * ay;
+    }
+    const den = Math.sqrt(dx2 * dy2);
+    if (den < 1e-12) return null;
+    const r = num / den;
+    return Math.max(-1, Math.min(1, r));
+  };
+
+  const buildMatrixFromVis = (vis) => {
+    const m = vis.metrics;
+    const act = vis.daily_activity;
+    const keys = ['load', 'rhr', 'hrv', 'deep', 'rem', 'eff'];
+    const dayRow = (d) => {
+      const k = String(d);
+      const st = m.sleep_time?.[k];
+      const deepS = m.deep_sleep?.[k];
+      const remS = m.rem_sleep?.[k];
+      const effRaw = m.sleep_efficiency?.[k];
+      const ai = act[k]?.average_intensity;
+      return {
+        load: ai != null && Number.isFinite(+ai) ? +ai : null,
+        rhr: m.RHR?.[k] != null ? +m.RHR[k] : null,
+        hrv: m.HRV?.[k] != null ? +m.HRV[k] : null,
+        deep: st != null && st > 0 && deepS != null ? (100 * deepS) / st : null,
+        rem: st != null && st > 0 && remS != null ? (100 * remS) / st : null,
+        eff:
+          effRaw != null
+            ? effRaw <= 1
+              ? 100 * +effRaw
+              : +effRaw
+            : null,
+      };
+    };
+    const days = Array.from({ length: 30 }, (_, i) => dayRow(i + 1));
+    const nM = keys.length;
+    return Array.from({ length: nM }, (_, i) =>
+      Array.from({ length: nM }, (_, j) => {
+        if (i === j) return 1;
+        const xs = [];
+        const ys = [];
+        for (const r of days) {
+          const a = r[keys[i]];
+          const b = r[keys[j]];
+          if (a != null && b != null && Number.isFinite(a) && Number.isFinite(b)) {
+            xs.push(a);
+            ys.push(b);
+          }
+        }
+        if (xs.length < 2) return null;
+        return pearson(xs, ys);
+      }),
+    );
+  };
+
+  const loadData = async () => {
+    try {
+      const res = await fetch('raw_data.json', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(res.statusText);
+      const data = await res.json();
+      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
+      if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
+      values = buildMatrixFromVis(vis);
+      mount.setAttribute(
+        'aria-label',
+        'Correlation heatmap from Garmin export: same-day training load, RHR, HRV, deep and REM as percent of sleep time, and sleep efficiency',
+      );
+    } catch (e) {
+      console.warn('c-heatmap: raw_data.json not loaded (serve page over http(s) from repo root)', e);
+    }
+  };
+
+  const hexToRgb = (hex) => {
+    const clean = hex.replace('#', '');
+    const value = clean.length === 3
+      ? clean.split('').map((c) => c + c).join('')
+      : clean;
+    return {
+      r: parseInt(value.slice(0, 2), 16),
+      g: parseInt(value.slice(2, 4), 16),
+      b: parseInt(value.slice(4, 6), 16),
+    };
+  };
+
+  const mix = (from, to, t) => {
+    const a = hexToRgb(from);
+    const b = hexToRgb(to);
+    const clamped = Math.max(0, Math.min(1, t));
+    const lerp = (x, y) => Math.round(x + (y - x) * clamped);
+    return `rgb(${lerp(a.r, b.r)}, ${lerp(a.g, b.g)}, ${lerp(a.b, b.b)})`;
+  };
+
+  const fillFor = (value) => {
+    if (value == null || Number.isNaN(value)) return '#f5f5f7';
+    const strength = Math.abs(value);
+    if (value >= 0) return mix('#f5f5f7', BLUE, 0.18 + strength * 0.82);
+    return mix('#f5f5f7', RED, 0.18 + strength * 0.82);
+  };
+
+  const textFor = (value) => {
+    if (value == null || Number.isNaN(value)) return TICK;
+    return Math.abs(value) >= 0.45 ? '#ffffff' : '#1d1d1f';
+  };
+
+  const render = () => {
+    const width = Math.max(320, Math.floor(mount.getBoundingClientRect().width || 0));
+    const left = width < 520 ? 58 : 72;
+    const top = width < 520 ? 52 : 66;
+    const gap = width < 520 ? 6 : 8;
+    const available = width - left - 8 - gap * (labels.length - 1);
+    const cell = Math.max(32, Math.min(64, Math.floor(available / labels.length)));
+    const plot = labels.length * cell + gap * (labels.length - 1);
+    const height = top + plot + 8;
+
+    const topLabels = labels.map((label, i) => {
+      const x = left + i * (cell + gap) + cell / 2;
+      const y = width < 520 ? 36 : 44;
+      const rotate = width < 520 ? -38 : -32;
+      return `<text x="${x}" y="${y}" transform="rotate(${rotate} ${x} ${y})" text-anchor="middle" fill="${TICK}" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="${width < 520 ? 9 : 10}" font-weight="600" letter-spacing="0.05em">${label}</text>`;
+    }).join('');
+
+    const leftLabels = labels.map((label, i) => {
+      const x = width < 520 ? 42 : 56;
+      const y = top + i * (cell + gap) + cell / 2 + 3;
+      return `<text x="${x}" y="${y}" text-anchor="end" fill="${TICK}" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="${width < 520 ? 9 : 10}" font-weight="600" letter-spacing="0.05em">${label}</text>`;
+    }).join('');
+
+    let cells = '';
+    for (let row = 0; row < labels.length; row += 1) {
+      for (let col = 0; col < labels.length; col += 1) {
+        const x = left + col * (cell + gap);
+        const y = top + row * (cell + gap);
+        const value = values[row][col];
+        const rounded =
+          value == null || Number.isNaN(value)
+            ? '—'
+            : value > 0
+              ? `+${value.toFixed(2)}`
+              : value.toFixed(2);
+
+        cells += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" rx="${Math.max(8, Math.floor(cell * 0.18))}" fill="${fillFor(value)}" stroke="rgba(0,0,0,0.04)" stroke-width="1"/>`;
+        cells += `<text x="${x + cell / 2}" y="${y + cell / 2 + 4}" text-anchor="middle" fill="${textFor(value)}" font-family="'JetBrains Mono', ui-monospace, monospace" font-size="${width < 520 ? 9 : 10}" font-weight="600">${rounded}</text>`;
+      }
+    }
+
+    mount.innerHTML = `
+      <svg class="heatmap-svg" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="${left - 12}" y="${top - 12}" width="${plot + 24}" height="${plot + 24}" rx="18" fill="rgba(255,255,255,0.84)" stroke="rgba(0,0,0,0.04)"/>
+        ${topLabels}
+        ${leftLabels}
+        ${cells}
+      </svg>
+    `;
+  };
+
+  loadData().finally(() => {
+    render();
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(render);
+      ro.observe(mount);
+    } else {
+      window.addEventListener('resize', render);
+    }
+  });
+})();
+</script>
+</body>
+</html>

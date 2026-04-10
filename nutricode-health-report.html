@@ -1234,7 +1234,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 22px;
-      align-items: end;
+      align-items: center;
       margin-bottom: 24px;
     }
     .focus-section-header::after {
@@ -1269,14 +1269,14 @@
       padding: 0;
       width: 100%;
       min-width: 0;
-      align-self: start;
+      align-self: center;
     }
     .nc-protocol-nav {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
       gap: 16px;
       flex-wrap: wrap;
@@ -1306,8 +1306,7 @@
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid rgba(0, 0, 0, 0.05);
-      background: rgba(255, 255, 255, 0.78);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+      background: #ffffff;
     }
     .rec-rhr-dot {
       appearance: none;
@@ -1363,7 +1362,7 @@
     .focus-carousel::-webkit-scrollbar {
       display: none;
     }
-    /* Carousel slide: single shell (no outer .card wrapper) */
+    /* Carousel slide: shell is layout-only (no outer card chrome) */
     .focus-carousel > .focus-card.focus-card__shell {
       --focus-card-accent-rgb: 255, 0, 0;
       --focus-card-text-color: #b51c1c;
@@ -1373,17 +1372,16 @@
       box-sizing: border-box;
       scroll-snap-align: start;
       scroll-snap-stop: always;
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
+      border: none;
+      border-radius: 0;
       background: #ffffff;
-      box-shadow: var(--shadow-lift);
+      box-shadow: none;
       min-height: 560px;
-      overflow: hidden;
-      transition: opacity 0.3s ease, box-shadow 0.3s ease;
+      overflow: visible;
+      transition: opacity 0.3s ease;
     }
     .focus-carousel > .focus-card.focus-card__shell.is-active {
       opacity: 1;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
     }
     .focus-carousel > .focus-card.focus-card__shell:not(.is-active) {
       opacity: 0.35;
@@ -1397,10 +1395,11 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      padding: 24px;
+      gap: 20px;
+      padding: 26px 26px 24px;
       color: var(--ink);
-      background: none;
+      background: #ffffff;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
     .focus-card__stage::after {
       content: none;
@@ -1408,6 +1407,7 @@
     .focus-card__stage-top,
     .focus-card__stage-copy,
     .focus-card__visual,
+    #focus-card-4 .focus-card__stage > .card,
     .focus-card__why-toggle {
       position: relative;
       z-index: 1;
@@ -1422,40 +1422,18 @@
       display: inline-flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 5px;
-      padding: 4px 10px 4px 8px;
+      padding: 5px 11px;
       border-radius: 999px;
       font-family: var(--font-ui);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.01em;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
       text-transform: none;
-      background: rgba(var(--focus-card-accent-rgb), 0.10);
+      background: rgba(var(--focus-card-accent-rgb), 0.1);
       border: 1px solid rgba(var(--focus-card-accent-rgb), 0.22);
       color: var(--focus-card-text-color, var(--ink-2));
       white-space: nowrap;
-    }
-    .stage-category-tag__chart {
-      flex-shrink: 0;
-      display: block;
-      color: var(--focus-card-text-color, var(--ink-3));
-    }
-    .stage-category-tag__focus {
-      font-weight: 600;
-      color: var(--focus-card-text-color, var(--ink-2));
-    }
-    /* Focus section — same pill as recommendation.html .nc-protocol-band (HRV tag) */
-    .focus-section-band .stage-category-tag {
-      background: rgba(34, 197, 94, 0.12);
-      border-color: rgba(34, 197, 94, 0.32);
-      color: #14532d;
-      box-shadow: none;
-    }
-    .focus-section-band .stage-category-tag__chart {
-      color: #16a34a;
-    }
-    .focus-section-band .stage-category-tag__focus {
-      color: #166534;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.52);
     }
     .focus-card__stage-copy {
       display: grid;
@@ -1463,45 +1441,55 @@
     }
     .focus-card__title {
       font-family: var(--font-ui);
-      font-size: clamp(28px, 3.4vw, 34px);
+      font-size: clamp(30px, 3.6vw, 36px);
       font-weight: 600;
       color: var(--ink);
       letter-spacing: -0.035em;
       margin: 0;
-      line-height: 1.05;
+      line-height: 1.02;
       text-wrap: balance;
       max-width: 12ch;
     }
     .focus-card__summary {
       font-family: var(--font-ui);
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 400;
-      line-height: 1.62;
+      line-height: 1.56;
       letter-spacing: var(--ls-15);
       color: var(--ink-3);
-      max-width: 34ch;
+      max-width: 31ch;
     }
+    /* One panel around chart + caption (no second box on .focus-card__chart) */
     .focus-card__visual {
       margin-top: auto;
-      padding: 0;
+      padding: 14px 16px 14px;
       display: grid;
-      gap: 14px;
+      gap: 12px;
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.045);
+      border-radius: 16px;
     }
     .focus-card__chart {
       width: 100%;
       min-width: 0;
       display: block;
       min-height: 0;
-      padding: 0;
-      border: none;
-      background: transparent;
-      border-radius: 0;
     }
     .focus-card__chart svg {
       display: block;
       width: 100%;
       max-width: none;
       height: auto;
+    }
+    .focus-card__chart svg text {
+      font-family: var(--font-mono) !important;
+      letter-spacing: var(--ls-9) !important;
+      font-weight: 500;
+    }
+    .focus-card__chart svg rect {
+      fill: rgba(var(--focus-card-accent-rgb), 0.72) !important;
+      rx: 2.5px;
+      ry: 2.5px;
     }
     .focus-card__chart svg rect:not([fill="rgba(0,0,0,0.07)"]):not([fill="#9ca3af"]):not([fill="none"]) {
       /* kept for legacy SVGs — new SVGs use hardcoded colors */
@@ -1511,34 +1499,34 @@
     }
     .focus-card__chart-cap {
       display: block;
-      margin-top: -2px;
-      font-family: var(--font-ui);
-      font-size: 11px;
+      margin-top: 0;
+      font-family: var(--font-mono);
+      font-size: 10px;
       font-weight: 500;
       line-height: 1.35;
-      letter-spacing: var(--ls-11);
+      letter-spacing: var(--ls-10);
       color: var(--ink-4);
-      text-align: center;
+      text-align: left;
     }
     .focus-card__why-toggle {
       margin-top: 14px;
       border: none;
       background: transparent;
       text-align: left;
-      --why-toggle-border: rgba(0, 0, 0, 0.06);
-      --why-toggle-chevron: rgba(0, 0, 0, 0.42);
+      --why-toggle-border: rgba(0, 0, 0, 0.05);
+      --why-toggle-chevron: rgba(0, 0, 0, 0.34);
     }
     .focus-card__why-toggle > summary {
       list-style: none;
       cursor: pointer;
-      padding: 12px 14px;
+      padding: 13px 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      background: #fafafa;
+      background: #ffffff;
       border: 1px solid var(--why-toggle-border);
       border-radius: var(--radius-md);
     }
@@ -1565,10 +1553,10 @@
       transform: rotate(-135deg);
     }
     .focus-card__why-toggle .focus-card__panel-copy {
-      padding: 0 14px 14px;
+      padding: 0 15px 15px;
       margin: 0;
       max-width: none;
-      background: #fafafa;
+      background: #ffffff;
       border: 1px solid var(--why-toggle-border);
       border-top: none;
       border-radius: 0 0 var(--radius-md) var(--radius-md);
@@ -1590,6 +1578,137 @@
       letter-spacing: var(--ls-14);
       color: var(--ink-3);
     }
+
+    /* Embedded scatter (focus card 4) — same structure as graphs.html */
+    #focus-card-4 .focus-card__stage > .card {
+      margin-top: auto;
+      padding: 18px 18px 16px;
+      overflow: visible;
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 16px;
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-meta { flex: 1; min-width: 0; }
+    #focus-card-4 .focus-card__stage > .card .chart-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-label--10 { font-size: 10px; }
+    #focus-card-4 .focus-card__stage > .card .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    #focus-card-4 .focus-card__stage > .card .legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--ink-3);
+      letter-spacing: -0.01em;
+      line-height: 1.35;
+    }
+    #focus-card-4 .focus-card__stage > .card .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    #focus-card-4 .focus-card__stage > .card .legend-line {
+      width: 16px;
+      height: 2px;
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 260px;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why {
+      margin-top: 18px;
+      border: none;
+      background: transparent;
+      font-family: var(--font-ui);
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why * {
+      font-family: var(--font-ui);
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: #fafafa;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      text-transform: uppercase;
+      color: var(--ink-4);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why > summary::-webkit-details-marker { display: none; }
+    #focus-card-4 .focus-card__stage > .card .graph-why > summary::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      margin-top: -2px;
+      border-right: 2px solid var(--ink-4);
+      border-bottom: 2px solid var(--ink-4);
+      transform: rotate(45deg);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+      opacity: 0.65;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why[open] > summary {
+      border-radius: 10px 10px 0 0;
+      border-bottom: none;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why[open] > summary::after {
+      margin-top: 2px;
+      transform: rotate(-135deg);
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why .graph-why__copy {
+      margin: 0;
+      padding: 0 14px 14px;
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--ink-3);
+      letter-spacing: var(--ls-13);
+      line-height: 1.5;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why__copy strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    #focus-card-4 .focus-card__stage > .card .graph-why .graph-why__title {
+      font: inherit;
+      letter-spacing: inherit;
+      text-transform: inherit;
+      color: inherit;
+    }
+
     @media (max-width: 760px) {
       .focus-section-header {
         grid-template-columns: 1fr;
@@ -2718,7 +2837,7 @@
     <div class="focus-band-shell">
       <div class="focus-section-header reveal">
         <div class="focus-section-header__copy">
-          <h2 class="section-label section-label--caps" id="focus-heading">Focus areas to move from 74 to 90+</h2>
+          <h2 class="section-label section-label--caps" id="focus-heading">How you move from 74 to 90+</h2>
           <p class="focus-section-intro">Four ranked priorities with the clearest path to improving your score.</p>
         </div>
         <div class="nc-protocol-header">
@@ -2736,10 +2855,10 @@
       <div class="focus-carousel reveal d1" id="focusCarousel" tabindex="0" aria-label="Priority recommendation carousel">
 <!-- FOCUS_STACK_CORRELATION_START -->
 
-        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 255, 0, 0; --focus-card-text-color: #b51c1c;">
+        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 255, 95, 86; --focus-card-text-color: #b9423a;">
             <div class="focus-card__stage">
               <div class="focus-card__stage-top">
-                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg><span class="stage-category-tag__focus">REM Sleep</span></span>
+                <span class="stage-category-tag">REM Sleep</span>
               </div>
               <div class="focus-card__stage-copy">
                 <h3 class="focus-card__title">Boost your REM Sleep</h3>
@@ -2783,9 +2902,9 @@
                     <rect x="209" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
                     <!-- cohort average 21% -->
                     <line x1="8" y1="31.5" x2="212" y2="31.5" stroke="#6b7280" stroke-width="1.35" stroke-dasharray="4 3" stroke-linecap="round"/>
-                    <text x="208" y="34" font-family="system-ui,sans-serif" font-size="8" font-weight="600" fill="#6b7280" text-anchor="end">Avg 21%</text>
-                    <text x="0" y="79" font-family="system-ui,sans-serif" font-size="8" fill="#9ca3af">Older</text>
-                    <text x="220" y="79" font-family="system-ui,sans-serif" font-size="8" fill="#9ca3af" text-anchor="end">Recent</text>
+                    <text x="208" y="34" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" font-weight="600" fill="#6b7280" text-anchor="end">Avg 21%</text>
+                    <text x="0" y="79" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" fill="#9ca3af">Older</text>
+                    <text x="220" y="79" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" fill="#9ca3af" text-anchor="end">Recent</text>
                   </svg>
                 </div>
                 <span class="focus-card__chart-cap">Daily REM share vs cohort average (21%)</span>
@@ -2800,7 +2919,7 @@
         <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation" style="--focus-card-accent-rgb: 255, 159, 10; --focus-card-text-color: #995000;">
             <div class="focus-card__stage">
               <div class="focus-card__stage-top">
-                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg><span class="stage-category-tag__focus">Deep Sleep</span></span>
+                <span class="stage-category-tag">Deep Sleep</span>
               </div>
               <div class="focus-card__stage-copy">
                 <h3 class="focus-card__title">Protect Deep Sleep as training load rises</h3>
@@ -2829,9 +2948,9 @@
                     <circle cx="185" cy="62" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
                     <circle cx="205" cy="58" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
                     <!-- axis labels -->
-                    <text x="104" y="78" font-family="system-ui,sans-serif" font-size="9" fill="#ff9f0a" text-anchor="end">1.84</text>
-                    <text x="0" y="12" font-family="system-ui,sans-serif" font-size="9" fill="#9ca3af">high deep</text>
-                    <text x="0" y="76" font-family="system-ui,sans-serif" font-size="9" fill="#9ca3af">low deep</text>
+                    <text x="104" y="78" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#ff9f0a" text-anchor="end">1.84</text>
+                    <text x="0" y="12" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#9ca3af">high deep</text>
+                    <text x="0" y="76" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#9ca3af">low deep</text>
                   </svg>
                 </div>
                 <span class="focus-card__chart-cap">Training intensity vs deep sleep hours</span>
@@ -2846,7 +2965,7 @@
         <div class="focus-card focus-card__shell" id="focus-card-3" data-focus-index="2" role="article" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 255, 0, 0; --focus-card-text-color: #b51c1c;">
             <div class="focus-card__stage">
               <div class="focus-card__stage-top">
-                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg><span class="stage-category-tag__focus">Light Sleep</span></span>
+                <span class="stage-category-tag">Light Sleep</span>
               </div>
               <div class="focus-card__stage-copy">
                 <h3 class="focus-card__title">Lower Light Sleep Duration</h3>
@@ -2856,14 +2975,14 @@
                 <div class="focus-card__chart" aria-hidden="true">
                   <!-- Light Sleep: paired horizontal bar — You 69% vs Avg 57% -->
                   <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="14" font-family="system-ui,sans-serif" font-size="10" fill="#9ca3af" letter-spacing="0.08em">YOUR VALUE</text>
+                    <text x="0" y="14" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#9ca3af" letter-spacing="0.08em">YOUR VALUE</text>
                     <rect x="0" y="20" width="220" height="10" rx="3" fill="rgba(0,0,0,0.07)"/>
                     <rect x="0" y="20" width="152" height="10" rx="3" fill="#ff0000" fill-opacity="0.82"/>
-                    <text x="156" y="30" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#17171a">69%</text>
-                    <text x="0" y="58" font-family="system-ui,sans-serif" font-size="10" fill="#9ca3af" letter-spacing="0.08em">AVERAGE</text>
+                    <text x="156" y="30" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" font-weight="600" fill="#17171a">69%</text>
+                    <text x="0" y="58" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#9ca3af" letter-spacing="0.08em">AVERAGE</text>
                     <rect x="0" y="64" width="220" height="10" rx="3" fill="rgba(0,0,0,0.07)"/>
                     <rect x="0" y="64" width="125" height="10" rx="3" fill="#9ca3af" fill-opacity="0.55"/>
-                    <text x="129" y="74" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#6b7280">57%</text>
+                    <text x="129" y="74" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" font-weight="600" fill="#6b7280">57%</text>
                   </svg>
                 </div>
                 <span class="focus-card__chart-cap">Light sleep share vs demographic average</span>
@@ -2878,42 +2997,30 @@
         <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 93, 169, 200; --focus-card-text-color: #0d5b7a;">
             <div class="focus-card__stage">
               <div class="focus-card__stage-top">
-                <span class="stage-category-tag"><svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg><span class="stage-category-tag__focus">RHR</span></span>
+                <span class="stage-category-tag">RHR</span>
               </div>
               <div class="focus-card__stage-copy">
                 <h3 class="focus-card__title">Recover better after hard training</h3>
                 <p class="focus-card__summary">On days when your training intensity reached 2.05, your next-day RHR tended to rise above 50 bpm.</p>
               </div>
-              <div class="focus-card__visual">
-                <div class="focus-card__chart" aria-hidden="true">
-                  <!-- RHR: area line trend — next-day RHR spikes after hard training days -->
-                  <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <linearGradient id="rhr-area" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#5da9c8" stop-opacity="0.28"/>
-                        <stop offset="100%" stop-color="#5da9c8" stop-opacity="0.03"/>
-                      </linearGradient>
-                    </defs>
-                    <!-- threshold line at 50 bpm (y=36) -->
-                    <line x1="0" y1="36" x2="220" y2="36" stroke="#5da9c8" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
-                    <text x="182" y="33" font-family="system-ui,sans-serif" font-size="9" fill="#5da9c8">50 bpm</text>
-                    <!-- area fill -->
-                    <path d="M0,52 L22,48 L44,54 L66,30 L88,26 L110,50 L132,46 L154,28 L176,24 L198,48 L220,52 L220,80 L0,80 Z" fill="url(#rhr-area)"/>
-                    <!-- line -->
-                    <polyline points="0,52 22,48 44,54 66,30 88,26 110,50 132,46 154,28 176,24 198,48 220,52" stroke="#5da9c8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <!-- dots on hard-session peaks -->
-                    <circle cx="66" cy="30" r="3.5" fill="#5da9c8"/>
-                    <circle cx="88" cy="26" r="3.5" fill="#5da9c8"/>
-                    <circle cx="154" cy="28" r="3.5" fill="#5da9c8"/>
-                    <circle cx="176" cy="24" r="3.5" fill="#5da9c8"/>
-                  </svg>
+              <div class="card">
+                <div class="chart-header">
+                  <div class="chart-meta">
+                    <div class="chart-label chart-label--10">Training intensity vs next-day resting HR</div>
+                  </div>
                 </div>
-                <span class="focus-card__chart-cap">Next-day RHR after hard training sessions</span>
+                <div class="legend">
+                  <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Day pairs</div>
+                  <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
+                </div>
+                <div class="chart-wrap">
+                  <canvas id="c-scatter" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">Next-day resting heart rate versus same-day training intensity.</canvas>
+                </div>
+                <details class="graph-why">
+                  <summary><span class="graph-why__title">Why it matters</span></summary>
+                  <p class="graph-why__copy"><strong>Recovery read-through.</strong> Resting HR often lags a hard session: same-day load plotted against the following morning’s RHR helps spot when training stress is still showing up in the cardiovascular system.</p>
+                </details>
               </div>
-              <details class="focus-card__why-toggle">
-                <summary><span class="focus-card__panel-title">Why it matters</span></summary>
-                <p class="focus-card__panel-copy">This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
-              </details>
             </div>
         </div>
 <!-- FOCUS_STACK_CORRELATION_END -->
@@ -3048,7 +3155,7 @@
   </div>
 </div>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
   /* ── Sleep stacked bar chart (rounded column caps via clip-path) ── */
   (function buildSleepChart() {
@@ -3227,6 +3334,176 @@
     if (closeBtn) closeBtn.addEventListener('click', () => dialog.close());
     dialog.addEventListener('click', (e) => {
       if (e.target === dialog) dialog.close();
+    });
+  })();
+
+  /* ── Focus card: training intensity vs next-day RHR (raw_data.json) ── */
+  (async function buildFocusScatterFromRaw() {
+    const canvasId = 'c-scatter';
+    if (typeof Chart === 'undefined' || !document.getElementById(canvasId)) return;
+
+    const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    const GRID = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    const TICK = isDark ? 'rgba(255,255,255,0.30)' : '#aeaeb2';
+    const BLUE = '#0071e3';
+    const BLUE_B = 'rgba(0,113,227,0.14)';
+    const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
+
+    const base = (yMin, yMax) => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark ? 'rgba(28,28,30,0.92)' : 'rgba(255,255,255,0.96)',
+          titleColor: isDark ? '#f5f5f7' : '#17171a',
+          bodyColor: isDark ? '#aeaeb2' : '#6b7280',
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 10,
+          titleFont: { size: 12, weight: '600' },
+          bodyFont: { size: 12 },
+        },
+      },
+      scales: {
+        x: { grid: { display: false }, border: { display: false }, ticks: { color: TICK, font: { size: 11 }, maxTicksLimit: 8 } },
+        y: { min: yMin, max: yMax, grid: { color: GRID, lineWidth: 1 }, border: { display: false }, ticks: { color: TICK, font: { size: 11 } } },
+      },
+      animation: { duration: 400, easing: 'easeOutQuart' },
+    });
+
+    const seed = s => {
+      let x = s;
+      return () => {
+        x = Math.sin(x) * 10000;
+        return x - Math.floor(x);
+      };
+    };
+
+    let pts = [];
+    try {
+      const res = await fetch('raw_data.json', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(res.statusText);
+      const data = await res.json();
+      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
+      if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
+      const { metrics, daily_activity: activity } = vis;
+      const rhr = metrics.RHR;
+      for (let d = 1; d < 30; d += 1) {
+        const today = activity[String(d)];
+        const x = today?.average_intensity;
+        const yRaw = rhr[String(d + 1)];
+        if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
+        pts.push({ x: +Number(x).toFixed(4), y: +Number(yRaw).toFixed(2) });
+      }
+    } catch (e) {
+      console.warn('c-scatter (health report): raw_data.json not loaded (serve report over http(s) from repo root)', e);
+    }
+    if (pts.length < 2) {
+      const rng = seed(7);
+      pts = Array.from({ length: 14 }, () => ({
+        x: +(rng() * 1.3 + 1.05).toFixed(2),
+        y: Math.round(48 + rng() * 8),
+      }));
+    }
+
+    const xs = pts.map(p => p.x);
+    const ys = pts.map(p => p.y);
+    const n = pts.length;
+    const mx = xs.reduce((a, b) => a + b, 0) / n;
+    const my = ys.reduce((a, b) => a + b, 0) / n;
+    let num = 0;
+    let dx2 = 0;
+    pts.forEach(p => {
+      num += (p.x - mx) * (p.y - my);
+      dx2 += (p.x - mx) ** 2;
+    });
+    const slope = dx2 > 1e-12 ? num / dx2 : 0;
+    const intercept = my - slope * mx;
+    const pred = x => slope * x + intercept;
+    const residuals = pts.map(p => p.y - pred(p.x));
+    const denom = Math.max(1, n - 2);
+    const resStd = Math.sqrt(residuals.reduce((s, r) => s + r * r, 0) / denom);
+    const band = Math.max(1.5, Math.min(10, resStd * 1.96));
+
+    const xLo = Math.min(...xs);
+    const xHi = Math.max(...xs);
+    const xPad = Math.max(0.08, (xHi - xLo) * 0.08);
+    const regX = [xLo - xPad, xHi + xPad];
+    const regY = regX.map(x => slope * x + intercept);
+
+    const yMin = Math.max(38, Math.min(...ys, ...regY.map(v => v - band)) - 2);
+    const yMax = Math.min(72, Math.max(...ys, ...regY.map(v => v + band)) + 2);
+
+    const scatterBase = base(yMin, yMax);
+    const yOpts = {
+      ...scatterBase.scales.y,
+      title: { display: true, text: 'Next-day RHR', color: TICK, font: { family: FONT_MONO, size: 11 } },
+      ticks: { ...scatterBase.scales.y.ticks, callback: v => `${Math.round(Number(v))} bpm` },
+    };
+
+    new Chart(canvasId, {
+      type: 'scatter',
+      data: {
+        datasets: [
+          {
+            label: 'CI band',
+            data: regX.flatMap((x, i) => [{ x, y: regY[i] + band }, { x, y: regY[i] - band }]),
+            backgroundColor: BLUE_B,
+            borderColor: 'transparent',
+            pointRadius: 0,
+            fill: true,
+            showLine: false,
+            order: 3,
+          },
+          {
+            label: 'Regression',
+            type: 'line',
+            data: regX.map((x, i) => ({ x, y: regY[i] })),
+            borderColor: BLUE,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+            order: 2,
+          },
+          {
+            label: 'Points',
+            data: pts,
+            backgroundColor: BLUE,
+            borderColor: '#fff',
+            borderWidth: 1.5,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            order: 1,
+          },
+        ],
+      },
+      options: {
+        ...scatterBase,
+        scales: {
+          x: {
+            ...scatterBase.scales.x,
+            title: { display: true, text: 'Training intensity', color: TICK, font: { family: FONT_MONO, size: 11 } },
+          },
+          y: yOpts,
+        },
+        plugins: {
+          ...scatterBase.plugins,
+          tooltip: {
+            ...scatterBase.plugins.tooltip,
+            callbacks: {
+              title: () => '',
+              label: ctx =>
+                ctx.dataset.label === 'Points'
+                  ? `Intensity ${ctx.parsed.x.toFixed(2)} · Next-day RHR ${Math.round(ctx.parsed.y)} bpm`
+                  : null,
+              filter: ctx => ctx.dataset.label === 'Points',
+            },
+          },
+        },
+      },
     });
   })();
 </script>
