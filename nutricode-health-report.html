@@ -1404,17 +1404,18 @@
       padding: 0 15px;
       border-radius: 999px;
       background: #f2f2f4;
-      /*box-shadow:
+      background: white;
+      box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.96),
         0 1px 2px rgba(15,23,42,0.05),
-        0 8px 20px rgba(15,23,42,0.04);*/
+        0 8px 20px rgba(15,23,42,0.04);
       transform: none;
       /*transition:  width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
       min-width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
       max-width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s);*/
     }
     .rec-rhr-dot.active::before {
-      opacity: 1;
+      opacity: 0;
     }
     /* Inner width = pill width minus horizontal padding (15px + 15px on .rec-rhr-dot.active) */
     .rec-rhr-dot.active .rec-rhr-dot__label {
