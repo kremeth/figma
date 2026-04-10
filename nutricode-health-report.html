@@ -1531,16 +1531,18 @@
       padding: 34px 34px 30px;
       display: flex;
       flex-direction: column;
+      gap: 0;
       background: #ffffff;
     }
     #focus-card-2 .fc2-tag {
+      order: 1;
       display: inline-flex;
       align-self: flex-start;
       align-items: center;
       gap: 8px;
       min-height: 31px;
       padding: 7px 14px;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       border-radius: 999px;
       background: rgba(10,132,255,0.08);
       border: 1px solid rgba(10,132,255,0.16);
@@ -1563,37 +1565,40 @@
       flex-shrink: 0;
     }
     #focus-card-2 .fc2-title {
+      order: 2;
       font-family: var(--font-ui);
       max-width: 12ch;
-      font-size: clamp(32px, 4vw, 38px);
+      font-size: clamp(30px, 3.8vw, 36px);
       font-weight: 600;
       color: #1d1d1f;
       letter-spacing: -0.045em;
-      line-height: 1.04;
-      margin: 0 0 14px 0;
+      line-height: 1.05;
+      margin: 0 0 12px 0;
       text-wrap: balance;
     }
     #focus-card-2 .fc2-summary {
+      order: 3;
       font-family: var(--font-ui);
-      max-width: 36ch;
-      font-size: 16px;
+      max-width: 34ch;
+      font-size: 15px;
       font-weight: 400;
       color: #5f6672;
-      line-height: 1.58;
+      line-height: 1.6;
       letter-spacing: var(--ls-15);
-      margin: 0 0 22px 0;
+      margin: 0 0 18px 0;
     }
     #focus-card-2 .fc2-sep {
       display: none;
     }
     #focus-card-2 .fc2-legend {
+      order: 5;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 16px;
+      gap: 12px 16px;
       flex-wrap: wrap;
       padding: 0;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     #focus-card-2 .fc2-legend__item {
       display: inline-flex;
@@ -1620,15 +1625,16 @@
     }
     #focus-card-2 .fc2-legend__label {
       font-family: var(--font-ui);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
-      color: #626873;
-      letter-spacing: -0.01em;
+      color: #8a9099;
+      letter-spacing: -0.005em;
       white-space: nowrap;
     }
     #focus-card-2 .fc2-chart-panel {
+      order: 6;
       position: relative;
-      margin-top: 4px;
+      margin-top: 0;
       padding: 0;
       border: none;
       border-radius: 0;
@@ -1646,17 +1652,19 @@
       position: relative;
     }
     #focus-card-2 .fc2-cap {
+      order: 4;
       align-self: flex-start;
-      margin: 10px 0 0;
-      font-family: var(--font-ui);
-      font-size: 9px;
+      margin: 6px 0 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
       text-align: left;
-      color: #8f8f95;
+      color: #7e848d;
     }
     #focus-card-2 .fc2-footer {
+      order: 7;
       margin-top: 16px;
       padding-top: 14px;
       border-top: 1px solid rgba(15,23,42,0.06);
@@ -1719,9 +1727,10 @@
     @media (max-width: 760px) {
       #focus-card-2.focus-card__shell { border-radius: 24px; }
       #focus-card-2 .fc2-body { padding: 28px 26px 28px; }
-      #focus-card-2 .fc2-title { font-size: 26px; max-width: none; }
+      #focus-card-2 .fc2-title { font-size: 24px; max-width: none; }
       #focus-card-2 .fc2-summary { max-width: none; }
-      #focus-card-2 .fc2-legend { gap: 14px; margin-bottom: 12px; }
+      #focus-card-2 .fc2-cap { margin: 4px 0 8px; }
+      #focus-card-2 .fc2-legend { gap: 10px 14px; margin-bottom: 10px; }
     }
 
     .focus-card__why-toggle {
@@ -3686,14 +3695,14 @@
     const leftLbl = leftTicks
       .map(v => {
         const y = scaleYd(v);
-        return `<text x="${(padL - 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="12" fill="${BLUE}">${Math.round(v)}%</text>`;
+        return `<text x="${(padL - 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="11" fill="${BLUE}">${Math.round(v)}%</text>`;
       })
       .join('');
 
     const rightLbl = rightTicks
       .map(v => {
         const y = scaleYi(v);
-        return `<text x="${(padL + pw + 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="start" font-family="${FONT}" font-size="12" fill="${ORANGE}">${v.toFixed(2)}</text>`;
+        return `<text x="${(padL + pw + 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="start" font-family="${FONT}" font-size="11" fill="${ORANGE}">${v.toFixed(2)}</text>`;
       })
       .join('');
 
@@ -3701,7 +3710,7 @@
     const xLbl = xTickDays
       .map(day => {
         const x = scaleX(day - 1);
-        return `<text x="${x.toFixed(2)}" y="${(H - 6).toFixed(2)}" text-anchor="middle" font-family="${FONT}" font-size="12" fill="${TICK_X}">D${day}</text>`;
+        return `<text x="${x.toFixed(2)}" y="${(H - 6).toFixed(2)}" text-anchor="middle" font-family="${FONT}" font-size="11" fill="${TICK_X}">D${day}</text>`;
       })
       .join('');
 
@@ -3709,8 +3718,8 @@
       `<title>Daily deep sleep percent and training load by day.</title>`,
       `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Horizontal axis: D1 through D30.</desc>`,
       hLines,
-      pathDeep ? `<path d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>` : '',
-      pathInt ? `<path d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      pathDeep ? `<path d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      pathInt ? `<path d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>` : '',
       leftLbl,
       rightLbl,
       xLbl,
