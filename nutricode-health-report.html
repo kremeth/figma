@@ -1569,7 +1569,7 @@
     .focus-card__stage-top,
     .focus-card__stage-copy,
     .focus-card__visual,
-    #focus-card-4 .focus-recovery-chart,
+    #focus-card-4 .fc4-body,
     .focus-card__why-toggle {
       position: relative;
       z-index: 1;
@@ -1669,6 +1669,470 @@
       letter-spacing: var(--ls-10);
       color: var(--ink-4);
       text-align: left;
+    }
+
+    /* ── Focus card 1: Figma Nutricode 23755:9851 (REM recommendation) ── */
+    #focus-card-1.focus-card__shell {
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      box-shadow: none;
+    }
+    #focus-card-1 .focus-card__stage {
+      padding: 0;
+      gap: 0;
+      background: transparent;
+      border-bottom: none;
+    }
+    #focus-card-1 .fc1-accent {
+      height: 3px;
+      width: 100%;
+      flex-shrink: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 2, 7, 0.03) 7%,
+        rgba(0, 113, 227, 0.2) 50%,
+        rgba(0, 2, 7, 0.03) 93%,
+        rgba(0, 0, 0, 0) 100%
+      );
+    }
+    #focus-card-1 .fc1-body {
+      position: relative;
+      padding: 36px 34px 32px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
+    }
+    #focus-card-1 .fc1-title {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin: 0 0 10px 0;
+    }
+    #focus-card-1 .fc1-summary {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 14px;
+      font-weight: 400;
+      color: #6e6e73;
+      line-height: 1.35;
+      letter-spacing: var(--ls-15);
+      margin: 0 0 26px 0;
+    }
+    #focus-card-1 .fc1-sep {
+      display: block;
+      height: 1px;
+      min-height: 1px;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 0.85;
+    }
+    #focus-card-1 .fc1-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 20px 0 18px;
+      margin: 0;
+    }
+    #focus-card-1 .fc1-legend__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #focus-card-1 .fc1-legend__swatch {
+      flex-shrink: 0;
+    }
+    #focus-card-1 .fc1-legend__swatch--rem {
+      width: 22px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #0071e3 0%, #0077ed 50%, #0077ed 100%);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    #focus-card-1 .fc1-legend__swatch--avg {
+      width: 15px;
+      height: 0;
+      border: none;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      border-top: 2px dashed #9ca3af;
+    }
+    #focus-card-1 .fc1-legend__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: #6e6e73;
+      letter-spacing: -0.02px;
+      white-space: nowrap;
+    }
+    #focus-card-1 .fc1-chart-panel {
+      position: relative;
+      margin-top: 0;
+      padding: 0;
+      border: 1px solid rgba(229, 229, 234, 0.5);
+      border-radius: 20px;
+      background: #ffffff;
+      min-width: 0;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    #focus-card-1 .fc1-chart-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(0, 113, 227, 0.02) 7%,
+        rgba(0, 0, 0, 0) 50%,
+        rgba(255, 149, 0, 0.02) 93%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    #focus-card-1 .fc1-chart-panel svg {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 340 / 200;
+      position: relative;
+      z-index: 1;
+    }
+    #focus-card-1 .fc1-chart-panel svg text {
+      font-family: var(--font-mono);
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+    }
+    #focus-card-1 .fc1-cap {
+      align-self: center;
+      margin: 22px 0 0;
+      padding: 0 12px;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #86868b;
+      line-height: 1.47;
+    }
+    #focus-card-1 .fc1-footer {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    #focus-card-1 .fc1-why-details > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #focus-card-1 .fc1-why-details > summary::-webkit-details-marker { display: none; }
+    #focus-card-1 .fc1-why-label {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    #focus-card-1 .fc1-why-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #f5f5f7;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #focus-card-1 .fc1-why-icon::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid rgba(60, 60, 67, 0.62);
+      border-bottom: 1.5px solid rgba(60, 60, 67, 0.62);
+      transform: rotate(45deg);
+      margin-top: -4px;
+      display: block;
+    }
+    #focus-card-1 .fc1-why-details[open] .fc1-why-icon::after {
+      transform: rotate(-135deg);
+      margin-top: 4px;
+    }
+    #focus-card-1 .fc1-why-panel {
+      margin: 12px 0 0 0;
+      max-width: none;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      color: #636873;
+      line-height: 1.62;
+      letter-spacing: var(--ls-14);
+    }
+    @media (max-width: 760px) {
+      #focus-card-1.focus-card__shell { border-radius: 24px; }
+      #focus-card-1 .fc1-body { padding: 30px 22px 26px; }
+      #focus-card-1 .fc1-title { font-size: 18px; }
+      #focus-card-1 .fc1-summary { margin-bottom: 22px; }
+      #focus-card-1 .fc1-legend { gap: 20px; padding: 16px 0 14px; }
+      #focus-card-1 .fc1-chart-panel { border-radius: 18px; }
+      #focus-card-1 .fc1-cap { margin-top: 18px; font-size: 9px; letter-spacing: 0.1em; }
+      #focus-card-1 .fc1-footer { margin-top: 22px; padding-top: 16px; }
+      #focus-card-1 .fc1-why-label { font-size: 11px; }
+    }
+
+    /* ── Focus card 3: Figma Nutricode 23755:10011 (Light Sleep) — same system as card 1 ── */
+    #focus-card-3.focus-card__shell {
+      border-radius: 30px;
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      box-shadow: none;
+    }
+    #focus-card-3 .focus-card__stage {
+      padding: 0;
+      gap: 0;
+      background: transparent;
+      border-bottom: none;
+    }
+    #focus-card-3 .fc3-accent {
+      height: 3px;
+      width: 100%;
+      flex-shrink: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 2, 7, 0.03) 7%,
+        rgba(0, 113, 227, 0.2) 50%,
+        rgba(0, 2, 7, 0.03) 93%,
+        rgba(0, 0, 0, 0) 100%
+      );
+    }
+    #focus-card-3 .fc3-body {
+      position: relative;
+      padding: 36px 34px 32px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
+    }
+    #focus-card-3 .fc3-title {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin: 0 0 10px 0;
+    }
+    #focus-card-3 .fc3-summary {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 14px;
+      font-weight: 400;
+      color: #6e6e73;
+      line-height: 1.35;
+      letter-spacing: var(--ls-15);
+      margin: 0 0 26px 0;
+    }
+    #focus-card-3 .fc3-sep {
+      display: block;
+      height: 1px;
+      min-height: 1px;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 0.85;
+    }
+    #focus-card-3 .fc3-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 20px 0 18px;
+      margin: 0;
+    }
+    #focus-card-3 .fc3-legend__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    #focus-card-3 .fc3-legend__swatch {
+      flex-shrink: 0;
+    }
+    #focus-card-3 .fc3-legend__swatch--light {
+      width: 22px;
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #0071e3 0%, #0077ed 50%, #0077ed 100%);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    #focus-card-3 .fc3-legend__swatch--avg {
+      width: 15px;
+      height: 0;
+      border: none;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      border-top: 2px dashed #9ca3af;
+    }
+    #focus-card-3 .fc3-legend__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: #6e6e73;
+      letter-spacing: -0.02px;
+      white-space: nowrap;
+    }
+    #focus-card-3 .fc3-chart-panel {
+      position: relative;
+      margin-top: 0;
+      padding: 0;
+      border: 1px solid rgba(229, 229, 234, 0.5);
+      border-radius: 20px;
+      background: #ffffff;
+      min-width: 0;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    #focus-card-3 .fc3-chart-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(0, 113, 227, 0.02) 7%,
+        rgba(0, 0, 0, 0) 50%,
+        rgba(255, 149, 0, 0.02) 93%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    #focus-card-3 .fc3-chart-panel svg {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: 340 / 200;
+      position: relative;
+      z-index: 1;
+    }
+    #focus-card-3 .fc3-chart-panel svg text {
+      font-family: var(--font-mono);
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+    }
+    #focus-card-3 .fc3-cap {
+      align-self: center;
+      margin: 22px 0 0;
+      padding: 0 12px;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #86868b;
+      line-height: 1.47;
+    }
+    #focus-card-3 .fc3-footer {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    #focus-card-3 .fc3-why-details > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #focus-card-3 .fc3-why-details > summary::-webkit-details-marker { display: none; }
+    #focus-card-3 .fc3-why-label {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    #focus-card-3 .fc3-why-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #f5f5f7;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #focus-card-3 .fc3-why-icon::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid rgba(60, 60, 67, 0.62);
+      border-bottom: 1.5px solid rgba(60, 60, 67, 0.62);
+      transform: rotate(45deg);
+      margin-top: -4px;
+      display: block;
+    }
+    #focus-card-3 .fc3-why-details[open] .fc3-why-icon::after {
+      transform: rotate(-135deg);
+      margin-top: 4px;
+    }
+    #focus-card-3 .fc3-why-panel {
+      margin: 12px 0 0 0;
+      max-width: none;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      color: #636873;
+      line-height: 1.62;
+      letter-spacing: var(--ls-14);
+    }
+    @media (max-width: 760px) {
+      #focus-card-3.focus-card__shell { border-radius: 24px; }
+      #focus-card-3 .fc3-body { padding: 30px 22px 26px; }
+      #focus-card-3 .fc3-title { font-size: 18px; }
+      #focus-card-3 .fc3-summary { margin-bottom: 22px; }
+      #focus-card-3 .fc3-legend { gap: 20px; padding: 16px 0 14px; }
+      #focus-card-3 .fc3-chart-panel { border-radius: 18px; }
+      #focus-card-3 .fc3-cap { margin-top: 18px; font-size: 9px; letter-spacing: 0.1em; }
+      #focus-card-3 .fc3-footer { margin-top: 22px; padding-top: 16px; }
+      #focus-card-3 .fc3-why-label { font-size: 11px; }
     }
 
     /* ── Focus card 2: full redesign matching Figma Nutricode 23741:6453 ── */
@@ -1988,145 +2452,215 @@
       color: var(--ink-3);
     }
 
-    /* Focus card 4 — matches Figma Nutricode frame (recommendation + scatter + what it means) */
+    /* Focus card 4 — Figma Nutricode 23755:10179 (Recovery / scatter) */
     #focus-card-4.focus-card__shell {
-      border-radius: 20px;
+      border-radius: 30px;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      box-shadow: none;
     }
     #focus-card-4 .focus-card__stage {
-      gap: 22px;
-      padding: 30px 30px 28px;
-      background: #ffffff;
+      padding: 0;
+      gap: 0;
+      background: transparent;
       border-bottom: none;
     }
-    #focus-card-4 .focus-card__stage-top {
-      margin-bottom: -2px;
+    #focus-card-4 .fc4-accent {
+      height: 3px;
+      width: 100%;
+      flex-shrink: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 2, 7, 0.03) 7%,
+        rgba(0, 113, 227, 0.2) 50%,
+        rgba(0, 2, 7, 0.03) 93%,
+        rgba(0, 0, 0, 0) 100%
+      );
     }
-    #focus-card-4 .stage-category-tag {
-      padding: 6px 14px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.065em;
-      text-transform: uppercase;
-      background: #e8f4f8;
-      border: 1px solid #c5e3ed;
-      color: #0d5b7a;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    }
-    #focus-card-4 .focus-card__stage-copy {
-      gap: 10px;
-    }
-    #focus-card-4 .focus-card__title {
-      max-width: none;
-      font-size: clamp(26px, 3.2vw, 28px);
-      font-weight: 600;
-      letter-spacing: -0.045em;
-      line-height: 1.15;
-      color: #1d1d1f;
-    }
-    #focus-card-4 .focus-card__summary {
-      max-width: 36ch;
-      font-size: 15px;
-      line-height: 1.5;
-      letter-spacing: -0.015em;
-      color: #6e6e73;
-    }
-    #focus-card-4 .focus-card__summary strong {
-      font-weight: 600;
-      color: #1d1d1f;
-    }
-    #focus-card-4 .focus-recovery-chart {
-      margin-top: auto;
+    #focus-card-4 .fc4-body {
+      position: relative;
+      padding: 36px 34px 32px;
       display: flex;
       flex-direction: column;
-      gap: 0;
-      width: 100%;
+      min-width: 0;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
     }
-    #focus-card-4 .focus-recovery-chart__plot {
+    #focus-card-4 .fc4-title {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 20px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin: 0 0 10px 0;
+    }
+    #focus-card-4 .fc4-summary {
+      font-family: var(--font-ui);
+      max-width: none;
+      font-size: 14px;
+      font-weight: 400;
+      color: #6e6e73;
+      line-height: 1.35;
+      letter-spacing: var(--ls-15);
+      margin: 0 0 26px 0;
+    }
+    #focus-card-4 .fc4-summary strong {
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+    #focus-card-4 .fc4-sep {
+      display: block;
+      height: 1px;
+      min-height: 1px;
+      flex-shrink: 0;
+      background: rgba(0, 0, 0, 0.1);
+      opacity: 0.85;
+    }
+    #focus-card-4 .fc4-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px 40px;
+      flex-wrap: wrap;
+      padding: 18px 0 16px;
+      margin: 0;
+    }
+    #focus-card-4 .fc4-legend__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #focus-card-4 .fc4-legend__swatch--reg {
+      width: 22px;
+      height: 2px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      background: linear-gradient(90deg, #0071e3 0%, #0077ed 50%, #0077ed 100%);
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    #focus-card-4 .fc4-legend__swatch--pairs {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      background: #d5d8dd;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    #focus-card-4 .fc4-legend__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: #6e6e73;
+      letter-spacing: -0.02px;
+      white-space: nowrap;
+    }
+    #focus-card-4 .fc4-chart-panel {
       position: relative;
-      width: 100%;
-      padding: 16px 14px 12px;
-      border-radius: 16px;
-      background: #fafafa;
-      border: 0.5px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+      margin-top: 0;
+      padding: 18px 14px 14px;
+      border: 1px solid rgba(229, 229, 234, 0.5);
+      border-radius: 20px;
+      background: #ffffff;
+      min-width: 0;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.04);
       overflow: hidden;
+      isolation: isolate;
     }
-    #focus-card-4 .focus-recovery-chart__plot .focus-scatter-svg {
+    #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
       display: block;
       width: 100%;
       max-width: 100%;
       height: auto;
+      aspect-ratio: 460 / 260;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why {
-      margin-top: 32px;
-      padding-top: 22px;
-      border-top: 1px solid #e5e5ea;
-      background: transparent;
+    #focus-card-4 .fc4-chart-panel .focus-scatter-svg text {
+      font-family: var(--font-mono);
+    }
+    #focus-card-4 .fc4-cap {
+      align-self: center;
+      margin: 22px 0 0;
+      padding: 0 12px;
       font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #86868b;
+      line-height: 1.47;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why * {
-      font-family: var(--font-ui);
+    #focus-card-4 .fc4-footer {
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(15, 23, 42, 0.06);
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why > summary {
+    #focus-card-4 .fc4-why-details > summary {
       list-style: none;
       cursor: pointer;
-      padding: 0 2px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      background: transparent;
-      border: none;
-      border-radius: 0;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.085em;
-      text-transform: uppercase;
-      color: #86868b;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why > summary::-webkit-details-marker {
-      display: none;
+    #focus-card-4 .fc4-why-details > summary::-webkit-details-marker { display: none; }
+    #focus-card-4 .fc4-why-label {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why > summary::after {
+    #focus-card-4 .fc4-why-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #f5f5f7;
+      border: 1px solid rgba(15, 23, 42, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #focus-card-4 .fc4-why-icon::after {
       content: "";
       width: 8px;
       height: 8px;
-      margin-top: -2px;
-      border-right: 1.5px solid rgba(95, 95, 102, 0.72);
-      border-bottom: 1.5px solid rgba(95, 95, 102, 0.72);
+      border-right: 1.5px solid rgba(60, 60, 67, 0.62);
+      border-bottom: 1.5px solid rgba(60, 60, 67, 0.62);
       transform: rotate(45deg);
-      transition: transform 0.2s ease;
-      flex-shrink: 0;
+      margin-top: -4px;
+      display: block;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why[open] > summary::after {
-      margin-top: 2px;
+    #focus-card-4 .fc4-why-details[open] .fc4-why-icon::after {
       transform: rotate(-135deg);
+      margin-top: 4px;
     }
-    #focus-card-4 .focus-recovery-chart__means.graph-why .graph-why__copy {
-      margin: 0;
-      padding: 12px 2px 0 0;
-      background: transparent;
-      border: none;
-      border-radius: 0;
+    #focus-card-4 .fc4-why-panel {
+      margin: 12px 0 0 0;
+      max-width: none;
       font-family: var(--font-ui);
-      font-size: 15px;
-      color: #6e6e73;
-      letter-spacing: -0.015em;
-      line-height: 1.5;
+      font-size: 14px;
+      font-weight: 400;
+      color: #636873;
+      line-height: 1.62;
+      letter-spacing: var(--ls-14);
     }
-    #focus-card-4 .graph-why__accent {
+    #focus-card-4 .fc4-why-accent {
       font-weight: 600;
       color: #0071e3;
-    }
-    #focus-card-4 .focus-recovery-chart__means.graph-why .graph-why__title {
-      font: inherit;
-      letter-spacing: inherit;
-      text-transform: inherit;
-      color: inherit;
     }
 
     @media (max-width: 760px) {
@@ -2144,16 +2678,15 @@
       .focus-card__title {
         max-width: none;
       }
-      #focus-card-4 .focus-card__stage {
-        gap: 20px;
-        padding: 24px 22px 22px;
-      }
-      #focus-card-4 .focus-card__summary {
-        max-width: none;
-      }
-      #focus-card-4 .focus-recovery-chart__plot {
-        padding: 14px 10px 10px;
-      }
+      #focus-card-4.focus-card__shell { border-radius: 24px; }
+      #focus-card-4 .fc4-body { padding: 30px 22px 26px; }
+      #focus-card-4 .fc4-title { font-size: 18px; }
+      #focus-card-4 .fc4-summary { margin-bottom: 22px; }
+      #focus-card-4 .fc4-legend { gap: 16px 28px; padding: 14px 0 12px; }
+      #focus-card-4 .fc4-chart-panel { border-radius: 18px; padding: 14px 10px 10px; }
+      #focus-card-4 .fc4-cap { margin-top: 18px; font-size: 9px; letter-spacing: 0.1em; }
+      #focus-card-4 .fc4-footer { margin-top: 22px; padding-top: 16px; }
+      #focus-card-4 .fc4-why-label { font-size: 11px; }
     }
     @media (max-width: 550px) {
       .focus-band-shell {
@@ -3285,64 +3818,93 @@
       <div class="focus-carousel reveal d1" id="focusCarousel" tabindex="0" aria-label="Priority recommendation carousel">
 <!-- FOCUS_STACK_CORRELATION_START -->
 
-        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 255, 95, 86; --focus-card-text-color: #b9423a;">
+        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
             <div class="focus-card__stage">
-              <div class="focus-card__stage-top">
-                <span class="stage-category-tag">REM Sleep</span>
-              </div>
-              <div class="focus-card__stage-copy">
-                <h3 class="focus-card__title">Boost your REM Sleep</h3>
-                <p class="focus-card__summary">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
-              </div>
-              <div class="focus-card__visual">
-                <div class="focus-card__chart" aria-hidden="true">
-                  <!-- REM: 30 nightly bars + cohort average line (21%) — ymax 28% -->
-                  <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- plot: baseline 72, scale 0–28% -->
-                    <!-- daily bars: nightly REM % (illustrative); scale 0–28%, baseline y=72 -->
-                    <rect x="6" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="13" y="48.86" width="5" height="23.14" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="20" y="54.64" width="5" height="17.36" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="27" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="34" y="56.57" width="5" height="15.43" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="41" y="46.93" width="5" height="25.07" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="48" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="55" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="62" y="54.64" width="5" height="17.36" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="69" y="48.86" width="5" height="23.14" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="76" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="83" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="90" y="45" width="5" height="27" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="97" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="104" y="54.64" width="5" height="17.36" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="111" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="118" y="48.86" width="5" height="23.14" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="125" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="132" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="139" y="54.64" width="5" height="17.36" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="146" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="153" y="46.93" width="5" height="25.07" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="160" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="167" y="48.86" width="5" height="23.14" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="174" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="181" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="188" y="54.64" width="5" height="17.36" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="195" y="50.79" width="5" height="21.21" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="202" y="48.86" width="5" height="23.14" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <rect x="209" y="52.71" width="5" height="19.29" rx="1" fill="#ff0000" fill-opacity="0.82"/>
-                    <!-- cohort average 21% -->
-                    <line x1="8" y1="31.5" x2="212" y2="31.5" stroke="#6b7280" stroke-width="1.35" stroke-dasharray="4 3" stroke-linecap="round"/>
-                    <text x="208" y="34" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" font-weight="600" fill="#6b7280" text-anchor="end">Avg 21%</text>
-                    <text x="0" y="79" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" fill="#9ca3af">Older</text>
-                    <text x="220" y="79" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="8" fill="#9ca3af" text-anchor="end">Recent</text>
+              <div class="fc1-accent" aria-hidden="true"></div>
+              <div class="fc1-body">
+                <h3 class="fc1-title">Boost your REM Sleep</h3>
+                <p class="fc1-summary">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
+                <div class="fc1-sep" aria-hidden="true"></div>
+                <div class="fc1-legend" aria-hidden="true">
+                  <div class="fc1-legend__item">
+                    <span class="fc1-legend__swatch fc1-legend__swatch--rem"></span>
+                    <span class="fc1-legend__label">REM Sleep %</span>
+                  </div>
+                  <div class="fc1-legend__item">
+                    <span class="fc1-legend__swatch fc1-legend__swatch--avg"></span>
+                    <span class="fc1-legend__label">Demographic Avg.</span>
+                  </div>
+                </div>
+                <div class="fc1-chart-panel">
+                  <svg viewBox="0 0 340 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily REM sleep percentage from 75 to 100 percent over 28 days with demographic average near 92 percent">
+                    <defs>
+                      <linearGradient id="fc1-bar" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0a84ff"/>
+                        <stop offset="100%" stop-color="#0071e3"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Y-axis labels 100% → 75% -->
+                    <text x="30" y="46" font-size="8" fill="#b7bcc6" text-anchor="end">100%</text>
+                    <text x="30" y="65.2" font-size="8" fill="#b7bcc6" text-anchor="end">95%</text>
+                    <text x="30" y="84.4" font-size="8" fill="#b7bcc6" text-anchor="end">90%</text>
+                    <text x="30" y="103.6" font-size="8" fill="#b7bcc6" text-anchor="end">85%</text>
+                    <text x="30" y="122.8" font-size="8" fill="#b7bcc6" text-anchor="end">80%</text>
+                    <text x="30" y="142" font-size="8" fill="#b7bcc6" text-anchor="end">75%</text>
+                    <!-- Demographic average ~92% -->
+                    <line x1="42" y1="79.5" x2="318" y2="79.5" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <!-- Daily bars (illustrative %); plot bottom y=158, top y=42 for 75–100% -->
+                    <rect x="42" y="91.2" width="7.2" height="66.8" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="50.5" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="59" y="96.4" width="7.2" height="61.6" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="67.5" y="75.6" width="7.2" height="82.4" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="76" y="88" width="7.2" height="70" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="84.5" y="68.4" width="7.2" height="89.6" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="93" y="79.5" width="7.2" height="78.5" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="101.5" y="91.2" width="7.2" height="66.8" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="110" y="75.6" width="7.2" height="82.4" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="118.5" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="127" y="96.4" width="7.2" height="61.6" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="135.5" y="79.5" width="7.2" height="78.5" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="144" y="88" width="7.2" height="70" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="152.5" y="63.2" width="7.2" height="94.8" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="161" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="169.5" y="91.2" width="7.2" height="66.8" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="178" y="79.5" width="7.2" height="78.5" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="186.5" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="195" y="68.4" width="7.2" height="89.6" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="203.5" y="88" width="7.2" height="70" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="212" y="91.2" width="7.2" height="66.8" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="220.5" y="75.6" width="7.2" height="82.4" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="229" y="79.5" width="7.2" height="78.5" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="237.5" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="246" y="88" width="7.2" height="70" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="254.5" y="68.4" width="7.2" height="89.6" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="263" y="84.8" width="7.2" height="73.2" rx="1.2" fill="url(#fc1-bar)"/>
+                    <rect x="271.5" y="75.6" width="7.2" height="82.4" rx="1.2" fill="url(#fc1-bar)"/>
+                    <!-- X-axis day labels (centers on bars 0,3,6,…,27) -->
+                    <text x="45.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D1</text>
+                    <text x="71.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D4</text>
+                    <text x="96.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D7</text>
+                    <text x="122.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D10</text>
+                    <text x="147.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D13</text>
+                    <text x="173.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D16</text>
+                    <text x="198.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D19</text>
+                    <text x="224.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D22</text>
+                    <text x="249.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D25</text>
+                    <text x="275.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D28</text>
                   </svg>
                 </div>
-                <span class="focus-card__chart-cap">Daily REM share vs cohort average (21%)</span>
+                <p class="fc1-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc1-footer">
+                  <details class="fc1-why-details">
+                    <summary>
+                      <span class="fc1-why-label">Why it matters</span>
+                      <span class="fc1-why-icon" aria-hidden="true"></span>
+                    </summary>
+                    <p class="fc1-why-panel">REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.</p>
+                  </details>
+                </div>
               </div>
-              <details class="focus-card__why-toggle">
-                <summary><span class="focus-card__panel-title">Why it matters</span></summary>
-                <p class="focus-card__panel-copy">REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.</p>
-              </details>
             </div>
         </div>
 
@@ -3385,57 +3947,124 @@
             </div>
         </div>
 
-        <div class="focus-card focus-card__shell" id="focus-card-3" data-focus-index="2" role="article" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 255, 0, 0; --focus-card-text-color: #b51c1c;">
+        <div class="focus-card focus-card__shell" id="focus-card-3" data-focus-index="2" role="article" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
             <div class="focus-card__stage">
-              <div class="focus-card__stage-top">
-                <span class="stage-category-tag">Light Sleep</span>
-              </div>
-              <div class="focus-card__stage-copy">
-                <h3 class="focus-card__title">Lower Light Sleep Duration</h3>
-                <p class="focus-card__summary">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
-              </div>
-              <div class="focus-card__visual">
-                <div class="focus-card__chart" aria-hidden="true">
-                  <!-- Light Sleep: paired horizontal bar — You 69% vs Avg 57% -->
-                  <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <text x="0" y="14" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#9ca3af" letter-spacing="0.08em">YOUR VALUE</text>
-                    <rect x="0" y="20" width="220" height="10" rx="3" fill="rgba(0,0,0,0.07)"/>
-                    <rect x="0" y="20" width="152" height="10" rx="3" fill="#ff0000" fill-opacity="0.82"/>
-                    <text x="156" y="30" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" font-weight="600" fill="#17171a">69%</text>
-                    <text x="0" y="58" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" fill="#9ca3af" letter-spacing="0.08em">AVERAGE</text>
-                    <rect x="0" y="64" width="220" height="10" rx="3" fill="rgba(0,0,0,0.07)"/>
-                    <rect x="0" y="64" width="125" height="10" rx="3" fill="#9ca3af" fill-opacity="0.55"/>
-                    <text x="129" y="74" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" font-weight="600" fill="#6b7280">57%</text>
+              <div class="fc3-accent" aria-hidden="true"></div>
+              <div class="fc3-body">
+                <h3 class="fc3-title">Lower Light Sleep Duration</h3>
+                <p class="fc3-summary">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
+                <div class="fc3-sep" aria-hidden="true"></div>
+                <div class="fc3-legend" aria-hidden="true">
+                  <div class="fc3-legend__item">
+                    <span class="fc3-legend__swatch fc3-legend__swatch--light"></span>
+                    <span class="fc3-legend__label">Light Sleep %</span>
+                  </div>
+                  <div class="fc3-legend__item">
+                    <span class="fc3-legend__swatch fc3-legend__swatch--avg"></span>
+                    <span class="fc3-legend__label">Demographic Avg.</span>
+                  </div>
+                </div>
+                <div class="fc3-chart-panel">
+                  <svg viewBox="0 0 340 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily light sleep percentage from 75 to 100 percent over 28 days with demographic average near 92 percent">
+                    <defs>
+                      <linearGradient id="fc3-bar" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0a84ff"/>
+                        <stop offset="100%" stop-color="#0071e3"/>
+                      </linearGradient>
+                    </defs>
+                    <text x="30" y="46" font-size="8" fill="#b7bcc6" text-anchor="end">100%</text>
+                    <text x="30" y="65.2" font-size="8" fill="#b7bcc6" text-anchor="end">95%</text>
+                    <text x="30" y="84.4" font-size="8" fill="#b7bcc6" text-anchor="end">90%</text>
+                    <text x="30" y="103.6" font-size="8" fill="#b7bcc6" text-anchor="end">85%</text>
+                    <text x="30" y="122.8" font-size="8" fill="#b7bcc6" text-anchor="end">80%</text>
+                    <text x="30" y="142" font-size="8" fill="#b7bcc6" text-anchor="end">75%</text>
+                    <line x1="42" y1="79.5" x2="318" y2="79.5" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3" stroke-linecap="round"/>
+                    <rect x="42" y="93.04" width="7.2" height="64.96" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="50.5" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="59" y="97.68" width="7.2" height="60.32" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="67.5" y="74.48" width="7.2" height="83.52" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="76" y="88.4" width="7.2" height="69.6" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="84.5" y="79.12" width="7.2" height="78.88" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="93" y="69.84" width="7.2" height="88.16" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="101.5" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="110" y="93.04" width="7.2" height="64.96" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="118.5" y="79.12" width="7.2" height="78.88" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="127" y="88.4" width="7.2" height="69.6" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="135.5" y="74.48" width="7.2" height="83.52" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="144" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="152.5" y="97.68" width="7.2" height="60.32" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="161" y="69.84" width="7.2" height="88.16" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="169.5" y="79.12" width="7.2" height="78.88" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="178" y="88.4" width="7.2" height="69.6" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="186.5" y="74.48" width="7.2" height="83.52" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="195" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="203.5" y="93.04" width="7.2" height="64.96" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="212" y="79.12" width="7.2" height="78.88" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="220.5" y="69.84" width="7.2" height="88.16" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="229" y="88.4" width="7.2" height="69.6" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="237.5" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="246" y="74.48" width="7.2" height="83.52" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="254.5" y="79.12" width="7.2" height="78.88" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="263" y="88.4" width="7.2" height="69.6" rx="1.2" fill="url(#fc3-bar)"/>
+                    <rect x="271.5" y="83.76" width="7.2" height="74.24" rx="1.2" fill="url(#fc3-bar)"/>
+                    <text x="45.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D1</text>
+                    <text x="71.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D4</text>
+                    <text x="96.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D7</text>
+                    <text x="122.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D10</text>
+                    <text x="147.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D13</text>
+                    <text x="173.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D16</text>
+                    <text x="198.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D19</text>
+                    <text x="224.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D22</text>
+                    <text x="249.6" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D25</text>
+                    <text x="275.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D28</text>
                   </svg>
                 </div>
-                <span class="focus-card__chart-cap">Light sleep share vs demographic average</span>
+                <p class="fc3-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc3-footer">
+                  <details class="fc3-why-details">
+                    <summary>
+                      <span class="fc3-why-label">Why it matters</span>
+                      <span class="fc3-why-icon" aria-hidden="true"></span>
+                    </summary>
+                    <p class="fc3-why-panel">Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.</p>
+                  </details>
+                </div>
               </div>
-              <details class="focus-card__why-toggle">
-                <summary><span class="focus-card__panel-title">Why it matters</span></summary>
-                <p class="focus-card__panel-copy">Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.</p>
-              </details>
             </div>
         </div>
 
-        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 93, 169, 200; --focus-card-text-color: #0d5b7a;">
+        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
             <div class="focus-card__stage">
-              <div class="focus-card__stage-top">
-                <span class="stage-category-tag">Recovery</span>
-              </div>
-              <div class="focus-card__stage-copy">
-                <h3 class="focus-card__title">Recover better after hard training</h3>
-                <p class="focus-card__summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
-              </div>
-              <div class="focus-recovery-chart">
-                <div class="focus-recovery-chart__plot">
+              <div class="fc4-accent" aria-hidden="true"></div>
+              <div class="fc4-body">
+                <h3 class="fc4-title">Recover better after hard training</h3>
+                <p class="fc4-summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
+                <div class="fc4-sep" aria-hidden="true"></div>
+                <div class="fc4-legend" aria-hidden="true">
+                  <div class="fc4-legend__item">
+                    <span class="fc4-legend__swatch fc4-legend__swatch--reg" aria-hidden="true"></span>
+                    <span class="fc4-legend__label">Regression Line</span>
+                  </div>
+                  <div class="fc4-legend__item">
+                    <span class="fc4-legend__swatch fc4-legend__swatch--pairs" aria-hidden="true"></span>
+                    <span class="fc4-legend__label">Day pairs</span>
+                  </div>
+                </div>
+                <div class="fc4-chart-panel">
                   <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="0 0 460 260" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
                     <title>Next-day resting heart rate versus same-day training intensity.</title>
                   </svg>
                 </div>
-                <details class="focus-recovery-chart__means graph-why" open>
-                  <summary><span class="graph-why__title">What it means</span></summary>
-                  <p class="graph-why__copy">The upward direction of the <span class="graph-why__accent">regression line</span> suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
-                </details>
+                <p class="fc4-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc4-footer">
+                  <details class="fc4-why-details">
+                    <summary>
+                      <span class="fc4-why-label">Why it matters</span>
+                      <span class="fc4-why-icon" aria-hidden="true"></span>
+                    </summary>
+                    <p class="fc4-why-panel">The upward direction of the <span class="fc4-why-accent">regression line</span> suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+                  </details>
+                </div>
               </div>
             </div>
         </div>
