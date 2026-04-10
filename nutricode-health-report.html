@@ -1391,7 +1391,7 @@
       text-align: center;
       white-space: nowrap;
       text-overflow: clip;
-    };
+    }
     /* Snap label closed when leaving active so old text never lingers during pill shrink */
     .rec-rhr-dot:not(.active) .rec-rhr-dot__label {
       transition: none;
@@ -1500,6 +1500,29 @@
         transition-delay: 0ms !important;
       }
     }
+    /* Mobile: height 8px→32px interpolation causes row jank / touch issues; snap height, keep width pill transition */
+   /* @media (max-width: 900px) {
+      .rec-rhr-dot {
+        transition:
+          width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+          min-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+          max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+          height 0s linear,
+          border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
+          background-color 0s ease,
+          box-shadow 0.28s ease,
+          opacity 0.22s ease,
+          transform 0.22s ease;
+      }
+      .rec-rhr-dot.active.rec-rhr-dot--entering {
+        transition:
+          height 0s linear,
+          border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+          box-shadow 0.28s ease var(--rec-rhr-handoff-delay, 0.12s),
+          opacity 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),
+          transform 0.22s ease var(--rec-rhr-handoff-delay, 0.12s);
+      }
+    } */
     /* Plan section — same scale as focus heading, dark text on light page */
     #plan-heading {
       color: var(--ink);
