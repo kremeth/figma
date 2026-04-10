@@ -1407,7 +1407,7 @@
     .focus-card__stage-top,
     .focus-card__stage-copy,
     .focus-card__visual,
-    #focus-card-4 .focus-card__stage > .card,
+    #focus-card-4 .focus-recovery-chart,
     .focus-card__why-toggle {
       position: relative;
       z-index: 1;
@@ -1508,6 +1508,195 @@
       color: var(--ink-4);
       text-align: left;
     }
+
+    /* ── Focus card 2: full redesign matching Figma Nutricode 23741:6453 ── */
+    #focus-card-2.focus-card__shell {
+      border-radius: 28px;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 20px 60px rgba(0, 0, 0, 0.08);
+    }
+    #focus-card-2 .focus-card__stage {
+      padding: 0;
+      gap: 0;
+      background: transparent;
+      border-bottom: none;
+    }
+    #focus-card-2 .fc2-accent {
+      height: 3px;
+      background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,113,227,0.2) 50%, rgba(0,0,0,0) 100%);
+      flex-shrink: 0;
+    }
+    #focus-card-2 .fc2-body {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    #focus-card-2 .fc2-tag {
+      display: inline-flex;
+      align-self: flex-start;
+      align-items: center;
+      height: 33px;
+      padding: 0 18px;
+      margin-bottom: 28px;
+      border-radius: 999px;
+      background: linear-gradient(168deg, rgba(0,113,227,0.08) 0%, rgba(0,113,227,0.12) 100%);
+      border: 1px solid rgba(0, 113, 227, 0.2);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.092em;
+      text-transform: uppercase;
+      color: #0071e3;
+      white-space: nowrap;
+    }
+    #focus-card-2 .fc2-title {
+      font-family: var(--font-ui);
+      font-size: 32px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: -0.39px;
+      line-height: 1.12;
+      margin: 0 0 16px 0;
+    }
+    #focus-card-2 .fc2-summary {
+      font-family: var(--font-ui);
+      font-size: 17px;
+      font-weight: 400;
+      color: #6e6e73;
+      line-height: 1.47;
+      margin: 0 0 38px 0;
+    }
+    #focus-card-2 .fc2-sep {
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.1);
+    }
+    #focus-card-2 .fc2-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 16px 0;
+    }
+    #focus-card-2 .fc2-legend__item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #focus-card-2 .fc2-legend__swatch {
+      width: 22px;
+      height: 2px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1);
+    }
+    #focus-card-2 .fc2-legend__swatch--deep {
+      background: linear-gradient(90deg, #0071e3 0%, #0077ed 100%);
+    }
+    #focus-card-2 .fc2-legend__swatch--load {
+      background: linear-gradient(90deg, #ff9500 0%, #ffa520 100%);
+    }
+    #focus-card-2 .fc2-legend__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: #6e6e73;
+      letter-spacing: -0.045px;
+      white-space: nowrap;
+    }
+    #focus-card-2 .fc2-chart-panel {
+      position: relative;
+      margin-top: 22px;
+      border-radius: 20px;
+      border: 1px solid rgba(229, 229, 234, 0.5);
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    #focus-card-2 .fc2-chart-panel-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(148deg, rgba(0,113,227,0.02) 0%, rgba(0,0,0,0) 50%, rgba(255,149,0,0.02) 100%);
+      pointer-events: none;
+    }
+    #focus-card-2 .fc2-chart-panel svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+    #focus-card-2 .fc2-cap {
+      margin: 16px 0 0 0;
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #86868b;
+    }
+    #focus-card-2 .fc2-footer {
+      margin-top: 26px;
+    }
+    #focus-card-2 .fc2-why-details > summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #focus-card-2 .fc2-why-details > summary::-webkit-details-marker { display: none; }
+    #focus-card-2 .fc2-why-label {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    #focus-card-2 .fc2-why-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f5f5f7;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #focus-card-2 .fc2-why-icon::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid rgba(60,60,67,0.6);
+      border-bottom: 1.5px solid rgba(60,60,67,0.6);
+      transform: rotate(45deg);
+      margin-top: -3px;
+      display: block;
+    }
+    #focus-card-2 .fc2-why-details[open] .fc2-why-icon::after {
+      transform: rotate(-135deg);
+      margin-top: 3px;
+    }
+    #focus-card-2 .fc2-why-panel {
+      margin: 14px 0 0 0;
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 400;
+      color: #6e6e73;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+    }
+    @media (max-width: 760px) {
+      #focus-card-2.focus-card__shell { border-radius: 22px; }
+      #focus-card-2 .fc2-body { padding: 28px 28px 32px; }
+      #focus-card-2 .fc2-title { font-size: 26px; }
+    }
+
     .focus-card__why-toggle {
       margin-top: 14px;
       border: none;
@@ -1579,147 +1768,91 @@
       color: var(--ink-3);
     }
 
-    /* Embedded scatter (focus card 4) */
+    /* Focus card 4 — matches Figma Nutricode frame (recommendation + scatter + what it means) */
+    #focus-card-4.focus-card__shell {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
     #focus-card-4 .focus-card__stage {
       gap: 22px;
       padding: 30px 30px 28px;
-      background: #fcfcfd;
+      background: #ffffff;
+      border-bottom: none;
     }
     #focus-card-4 .focus-card__stage-top {
       margin-bottom: -2px;
     }
     #focus-card-4 .stage-category-tag {
-      padding: 6px 12px;
-      background: rgba(var(--focus-card-accent-rgb), 0.1);
-      border-color: rgba(var(--focus-card-accent-rgb), 0.2);
-      color: var(--focus-card-text-color, var(--ink-2));
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+      padding: 6px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.065em;
+      text-transform: uppercase;
+      background: #e8f4f8;
+      border: 1px solid #c5e3ed;
+      color: #0d5b7a;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
     }
     #focus-card-4 .focus-card__stage-copy {
       gap: 10px;
     }
     #focus-card-4 .focus-card__title {
-      max-width: 13ch;
-      letter-spacing: -0.04em;
+      max-width: none;
+      font-size: clamp(26px, 3.2vw, 28px);
+      font-weight: 600;
+      letter-spacing: -0.045em;
+      line-height: 1.15;
+      color: #1d1d1f;
     }
     #focus-card-4 .focus-card__summary {
-      max-width: 35ch;
-      color: #5f6672;
+      max-width: 36ch;
+      font-size: 15px;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+      color: #6e6e73;
     }
-    #focus-card-4 .focus-card__stage > .card {
-      margin-top: auto;
-      display: grid;
-      gap: 14px;
-      padding: 20px;
-      overflow: visible;
-      border-radius: 12px;
-      border: 1px solid rgba(15, 23, 42, 0.07);
-      background: #f5f5f7;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 30px rgba(15, 23, 42, 0.04);
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 0;
-      gap: 16px;
-      padding-bottom: 2px;
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-meta {
-      flex: 1;
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-label {
-      margin: 0;
-      font-family: var(--font-ui);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: #8f8f95;
-      line-height: 1.35;
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-label--10 {
-      font-size: 10px;
-      text-align: center;
-    }
-    #focus-card-4 .focus-card__stage > .card .legend {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 0;
-    }
-    #focus-card-4 .focus-card__stage > .card .legend .legend-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 32px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(15, 23, 42, 0.07);
-      background: rgba(255,255,255,0.84);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
-      font-family: var(--font-ui);
-      font-size: 11px;
+    #focus-card-4 .focus-card__summary strong {
       font-weight: 600;
-      color: #565d69;
-      letter-spacing: -0.01em;
-      line-height: 1;
+      color: #1d1d1f;
     }
-    #focus-card-4 .focus-card__stage > .card .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      box-shadow: 0 0 0 4px rgba(10,132,255,0.12);
+    #focus-card-4 .focus-recovery-chart {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
     }
-    #focus-card-4 .focus-card__stage > .card .legend-line {
-      width: 18px;
-      height: 2px;
-      border-radius: 999px;
-      flex-shrink: 0;
-      box-shadow: 0 0 0 4px rgba(10,132,255,0.08);
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-wrap {
+    #focus-card-4 .focus-recovery-chart__plot {
       position: relative;
       width: 100%;
-      padding: 14px 12px 10px;
-      border-radius: 12px;
-      background: #ffffff;
-      border: 1px solid rgba(15, 23, 42, 0.06);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+      padding: 16px 14px 12px;
+      border-radius: 16px;
+      background: #fafafa;
+      border: 0.5px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
       overflow: hidden;
     }
-    #focus-card-4 .focus-card__stage > .card .chart-wrap::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
-    }
-    #focus-card-4 .focus-card__stage > .card .chart-wrap .focus-scatter-svg {
+    #focus-card-4 .focus-recovery-chart__plot .focus-scatter-svg {
       display: block;
       width: 100%;
       max-width: 100%;
       height: auto;
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why {
-      margin-top: 2px;
-      padding-top: 2px;
-      border-top: 1px solid rgba(15, 23, 42, 0.06);
+    #focus-card-4 .focus-recovery-chart__means.graph-why {
+      margin-top: 32px;
+      padding-top: 22px;
+      border-top: 1px solid #e5e5ea;
       background: transparent;
       font-family: var(--font-ui);
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why * {
+    #focus-card-4 .focus-recovery-chart__means.graph-why * {
       font-family: var(--font-ui);
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why > summary {
+    #focus-card-4 .focus-recovery-chart__means.graph-why > summary {
       list-style: none;
       cursor: pointer;
-      padding: 12px 2px 0;
+      padding: 0 2px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1727,16 +1860,18 @@
       background: transparent;
       border: none;
       border-radius: 0;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.085em;
       text-transform: uppercase;
-      color: #8f8f95;
+      color: #86868b;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why > summary::-webkit-details-marker { display: none; }
-    #focus-card-4 .focus-card__stage > .card .graph-why > summary::after {
+    #focus-card-4 .focus-recovery-chart__means.graph-why > summary::-webkit-details-marker {
+      display: none;
+    }
+    #focus-card-4 .focus-recovery-chart__means.graph-why > summary::after {
       content: "";
       width: 8px;
       height: 8px;
@@ -1747,27 +1882,27 @@
       transition: transform 0.2s ease;
       flex-shrink: 0;
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why[open] > summary::after {
+    #focus-card-4 .focus-recovery-chart__means.graph-why[open] > summary::after {
       margin-top: 2px;
       transform: rotate(-135deg);
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why .graph-why__copy {
+    #focus-card-4 .focus-recovery-chart__means.graph-why .graph-why__copy {
       margin: 0;
-      padding: 10px 2px 0;
+      padding: 12px 2px 0 0;
       background: transparent;
       border: none;
       border-radius: 0;
       font-family: var(--font-ui);
-      font-size: 13px;
-      color: #636873;
-      letter-spacing: var(--ls-13);
-      line-height: 1.58;
+      font-size: 15px;
+      color: #6e6e73;
+      letter-spacing: -0.015em;
+      line-height: 1.5;
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why__copy strong {
-      color: var(--ink);
+    #focus-card-4 .graph-why__accent {
       font-weight: 600;
+      color: #0071e3;
     }
-    #focus-card-4 .focus-card__stage > .card .graph-why .graph-why__title {
+    #focus-card-4 .focus-recovery-chart__means.graph-why .graph-why__title {
       font: inherit;
       letter-spacing: inherit;
       text-transform: inherit;
@@ -1795,12 +1930,8 @@
       #focus-card-4 .focus-card__summary {
         max-width: none;
       }
-      #focus-card-4 .focus-card__stage > .card {
-        padding: 16px;
-        border-radius: 18px;
-      }
-      #focus-card-4 .focus-card__stage > .card .chart-wrap {
-        padding: 12px 10px 8px;
+      #focus-card-4 .focus-recovery-chart__plot {
+        padding: 14px 10px 10px;
       }
     }
     @media (max-width: 550px) {
@@ -2995,49 +3126,44 @@
             </div>
         </div>
 
-        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation" style="--focus-card-accent-rgb: 255, 159, 10; --focus-card-text-color: #995000;">
+        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation">
             <div class="focus-card__stage">
-              <div class="focus-card__stage-top">
-                <span class="stage-category-tag">Deep Sleep</span>
-              </div>
-              <div class="focus-card__stage-copy">
-                <h3 class="focus-card__title">Protect Deep Sleep as training load rises</h3>
-                <p class="focus-card__summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
-              </div>
-              <div class="focus-card__visual">
-                <div class="focus-card__chart" aria-hidden="true">
-                  <!-- Deep Sleep: scatter with threshold line — intensity vs deep sleep hours -->
-                  <svg width="220" height="80" viewBox="0 0 220 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <clipPath id="clip-deep"><rect width="220" height="80"/></clipPath>
-                    </defs>
-                    <!-- danger zone above threshold (high intensity = low deep sleep) -->
-                    <rect x="110" y="0" width="110" height="80" rx="3" fill="#ff9f0a" fill-opacity="0.07"/>
-                    <!-- threshold line at x=110 (intensity 1.84) -->
-                    <line x1="110" y1="0" x2="110" y2="80" stroke="#ff9f0a" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- dots: low intensity = higher deep sleep; high intensity = lower deep sleep -->
-                    <circle cx="18" cy="18" r="3.5" fill="#ff9f0a" fill-opacity="0.7"/>
-                    <circle cx="38" cy="24" r="3.5" fill="#ff9f0a" fill-opacity="0.7"/>
-                    <circle cx="58" cy="20" r="3.5" fill="#ff9f0a" fill-opacity="0.7"/>
-                    <circle cx="78" cy="30" r="3.5" fill="#ff9f0a" fill-opacity="0.7"/>
-                    <circle cx="95" cy="34" r="3.5" fill="#ff9f0a" fill-opacity="0.7"/>
-                    <circle cx="125" cy="54" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
-                    <circle cx="145" cy="60" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
-                    <circle cx="165" cy="56" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
-                    <circle cx="185" cy="62" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
-                    <circle cx="205" cy="58" r="3.5" fill="#ff9f0a" fill-opacity="0.9"/>
-                    <!-- axis labels -->
-                    <text x="104" y="78" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#ff9f0a" text-anchor="end">1.84</text>
-                    <text x="0" y="12" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#9ca3af">high deep</text>
-                    <text x="0" y="76" font-family="'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace" font-size="9" fill="#9ca3af">low deep</text>
-                  </svg>
+              <div class="fc2-accent" aria-hidden="true"></div>
+              <div class="fc2-body">
+                <span class="fc2-tag">Deep Sleep</span>
+                <h3 class="fc2-title">Protect Deep Sleep as training load rises</h3>
+                <p class="fc2-summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
+
+                <div class="fc2-sep" aria-hidden="true"></div>
+                <div class="fc2-legend" aria-hidden="true">
+                  <div class="fc2-legend__item">
+                    <span class="fc2-legend__swatch fc2-legend__swatch--deep"></span>
+                    <span class="fc2-legend__label">Deep Sleep %</span>
+                  </div>
+                  <div class="fc2-legend__item">
+                    <span class="fc2-legend__swatch fc2-legend__swatch--load"></span>
+                    <span class="fc2-legend__label">Training Load</span>
+                  </div>
                 </div>
-                <span class="focus-card__chart-cap">Training intensity vs deep sleep hours</span>
+                <div class="fc2-sep" aria-hidden="true"></div>
+
+                <div class="fc2-chart-panel">
+                  <div class="fc2-chart-panel-bg" aria-hidden="true"></div>
+                  <svg id="c-dual-deep-intensity" viewBox="0 0 340 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
+                </div>
+
+                <p class="fc2-cap">Deep sleep % vs training intensity</p>
+
+                <div class="fc2-footer">
+                  <details class="fc2-why-details">
+                    <summary>
+                      <span class="fc2-why-label">Why it matters</span>
+                      <span class="fc2-why-icon" aria-hidden="true"></span>
+                    </summary>
+                    <p class="fc2-why-panel">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most. Keeping intensity in check on most days helps preserve deep sleep and long-term adaptation.</p>
+                  </details>
+                </div>
               </div>
-              <details class="focus-card__why-toggle">
-                <summary><span class="focus-card__panel-title">Why it matters</span></summary>
-                <p class="focus-card__panel-copy">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most.</p>
-              </details>
             </div>
         </div>
 
@@ -3076,30 +3202,21 @@
         <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 93, 169, 200; --focus-card-text-color: #0d5b7a;">
             <div class="focus-card__stage">
               <div class="focus-card__stage-top">
-                <span class="stage-category-tag">RHR</span>
+                <span class="stage-category-tag">Recovery</span>
               </div>
               <div class="focus-card__stage-copy">
                 <h3 class="focus-card__title">Recover better after hard training</h3>
-                <p class="focus-card__summary">On days when your training intensity reached 2.05, your next-day RHR tended to rise above 50 bpm.</p>
+                <p class="focus-card__summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
               </div>
-              <div class="card">
-                <div class="chart-header">
-                  <div class="chart-meta">
-                    <div class="chart-label chart-label--10">Training intensity vs next-day RHR</div>
-                  </div>
-                </div>
-                <div class="legend">
-                  <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Day pairs</div>
-                  <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
-                </div>
-                <div class="chart-wrap">
+              <div class="focus-recovery-chart">
+                <div class="focus-recovery-chart__plot">
                   <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="0 0 460 260" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
                     <title>Next-day resting heart rate versus same-day training intensity.</title>
                   </svg>
                 </div>
-                <details class="graph-why">
-                  <summary><span class="graph-why__title">Why it matters</span></summary>
-                  <p class="graph-why__copy">The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+                <details class="focus-recovery-chart__means graph-why" open>
+                  <summary><span class="graph-why__title">What it means</span></summary>
+                  <p class="graph-why__copy">The upward direction of the <span class="graph-why__accent">regression line</span> suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
                 </details>
               </div>
             </div>
@@ -3418,17 +3535,197 @@
     });
   })();
 
-  /* ── Focus card: training intensity vs next-day RHR (raw_data.json) ── */
+  /* ── Focus card 2: dual-axis daily deep sleep % vs training intensity — Figma 23741:6453 ── */
+  (async function buildFocusDualDeepIntensityFromRaw() {
+    const svg = document.getElementById('c-dual-deep-intensity');
+    if (!svg) return;
+
+    const FONT = "'JetBrains Mono', ui-monospace, monospace";
+    const BLUE = '#0071e3';
+    const ORANGE = '#ff9500';
+    const GRID = 'rgba(0, 0, 0, 0.08)';
+    const TICK_X = '#86868b';
+    const W = 340;
+    const H = 210;
+    const padL = 42;  /* room for left labels "14%"–"18%" */
+    const padR = 46;  /* room for right labels "1.15"–"1.50" */
+    const padT = 16;
+    const padB = 28;  /* room for x labels */
+    const pw = W - padL - padR;
+    const ph = H - padT - padB;
+
+    const seed = s => {
+      let x = s;
+      return () => {
+        x = Math.sin(x) * 10000;
+        return x - Math.floor(x);
+      };
+    };
+
+    let deepDaily = Array(30).fill(null);
+    let intensityDaily = Array(30).fill(null);
+
+    try {
+      const res = await fetch('raw_data.json', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error(res.statusText);
+      const data = await res.json();
+      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
+      if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
+      const m = vis.metrics;
+      const act = vis.daily_activity;
+      for (let d = 1; d <= 30; d += 1) {
+        const k = String(d);
+        const ai = act[k]?.average_intensity;
+        if (ai != null && Number.isFinite(+ai)) intensityDaily[d - 1] = +ai;
+        const st = m.sleep_time?.[k];
+        const deep = m.deep_sleep?.[k];
+        if (st != null && +st > 0 && deep != null && Number.isFinite(+deep)) {
+          deepDaily[d - 1] = (100 * +deep) / +st;
+        }
+      }
+    } catch (e) {
+      console.warn(
+        'c-dual-deep-intensity: raw_data.json not loaded (serve report over http(s) from repo root)',
+        e,
+      );
+    }
+
+    const rng = seed(29);
+    const hasDeep = deepDaily.some(v => v != null && Number.isFinite(v));
+    const hasInt = intensityDaily.some(v => v != null && Number.isFinite(v));
+    if (!hasDeep || !hasInt) {
+      for (let i = 0; i < 30; i += 1) {
+        deepDaily[i] = +(15 + Math.sin(i / 3.5) * 1.4 + (rng() - 0.5) * 0.9).toFixed(2);
+        intensityDaily[i] = +(1.32 - i * 0.005 + Math.sin(i / 2.8) * 0.1 + (rng() - 0.5) * 0.035).toFixed(2);
+      }
+    }
+
+    const validD = deepDaily.filter(v => v != null && Number.isFinite(v));
+    const validI = intensityDaily.filter(v => v != null && Number.isFinite(v));
+    let minD = Math.min(...validD);
+    let maxD = Math.max(...validD);
+    let minI = Math.min(...validI);
+    let maxI = Math.max(...validI);
+    const padDy = Math.max(0.25, (maxD - minD) * 0.12);
+    const padIy = Math.max(0.02, (maxI - minI) * 0.12);
+    minD -= padDy;
+    maxD += padDy;
+    minI -= padIy;
+    maxI += padIy;
+    if (maxD - minD < 1e-6) {
+      minD -= 1;
+      maxD += 1;
+    }
+    if (maxI - minI < 1e-6) {
+      minI -= 0.1;
+      maxI += 0.1;
+    }
+
+    const scaleX = i => padL + (i / 29) * pw;
+    const scaleYd = v => padT + ph - ((v - minD) / (maxD - minD)) * ph;
+    const scaleYi = v => padT + ph - ((v - minI) / (maxI - minI)) * ph;
+
+    const pathForSeries = (vals, scaleY) => {
+      let d = '';
+      let started = false;
+      for (let i = 0; i < 30; i += 1) {
+        const v = vals[i];
+        if (v == null || !Number.isFinite(v)) {
+          started = false;
+          continue;
+        }
+        const x = scaleX(i);
+        const y = scaleY(v);
+        d += started ? ` L${x.toFixed(2)},${y.toFixed(2)}` : `M${x.toFixed(2)},${y.toFixed(2)}`;
+        started = true;
+      }
+      return d;
+    };
+
+    /* smooth cubic bezier through points */
+    const smoothPath = (vals, scaleY) => {
+      const pts = [];
+      for (let i = 0; i < 30; i += 1) {
+        const v = vals[i];
+        if (v != null && Number.isFinite(v)) pts.push({ i, x: scaleX(i), y: scaleY(v) });
+      }
+      if (pts.length < 2) return '';
+      let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+      for (let k = 1; k < pts.length; k += 1) {
+        const p0 = pts[k - 1];
+        const p1 = pts[k];
+        const tension = 0.35;
+        const cpx = (p0.x + p1.x) / 2;
+        const cpy0 = p0.y + (p1.y - (pts[k - 2] ? pts[k - 2].y : p0.y)) * tension;
+        const cpy1 = p1.y - ((pts[k + 1] ? pts[k + 1].y : p1.y) - p0.y) * tension;
+        d += ` C${cpx.toFixed(2)},${cpy0.toFixed(2)} ${cpx.toFixed(2)},${cpy1.toFixed(2)} ${p1.x.toFixed(2)},${p1.y.toFixed(2)}`;
+      }
+      return d;
+    };
+
+    const pathDeep = smoothPath(deepDaily, scaleYd);
+    const pathInt = smoothPath(intensityDaily, scaleYi);
+
+    const nLeftTicks = 5;
+    const nRightTicks = 8;
+    const leftTicks = Array.from({ length: nLeftTicks }, (_, t) => maxD - (t / (nLeftTicks - 1)) * (maxD - minD));
+    const rightTicks = Array.from({ length: nRightTicks }, (_, t) => maxI - (t / (nRightTicks - 1)) * (maxI - minI));
+
+    const hLines = leftTicks
+      .map(v => {
+        const y = scaleYd(v);
+        return `<line x1="${padL}" y1="${y.toFixed(2)}" x2="${(padL + pw).toFixed(2)}" y2="${y.toFixed(2)}" stroke="${GRID}" stroke-width="0.5"/>`;
+      })
+      .join('');
+
+    const leftLbl = leftTicks
+      .map(v => {
+        const y = scaleYd(v);
+        return `<text x="${(padL - 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="12" fill="${BLUE}">${Math.round(v)}%</text>`;
+      })
+      .join('');
+
+    const rightLbl = rightTicks
+      .map(v => {
+        const y = scaleYi(v);
+        return `<text x="${(padL + pw + 5).toFixed(2)}" y="${(y + 4).toFixed(2)}" text-anchor="start" font-family="${FONT}" font-size="12" fill="${ORANGE}">${v.toFixed(2)}</text>`;
+      })
+      .join('');
+
+    const xTickDays = [1, 5, 9, 13, 17, 21, 25, 29];
+    const xLbl = xTickDays
+      .map(day => {
+        const x = scaleX(day - 1);
+        return `<text x="${x.toFixed(2)}" y="${(H - 6).toFixed(2)}" text-anchor="middle" font-family="${FONT}" font-size="12" fill="${TICK_X}">D${day}</text>`;
+      })
+      .join('');
+
+    const parts = [
+      `<title>Daily deep sleep percent and training load by day.</title>`,
+      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Horizontal axis: D1 through D30.</desc>`,
+      hLines,
+      pathDeep ? `<path d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      pathInt ? `<path d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      leftLbl,
+      rightLbl,
+      xLbl,
+    ];
+
+    svg.innerHTML = parts.join('');
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  })();
+
+  /* ── Focus card: training intensity vs next-day RHR (raw_data.json) — matches Figma Nutricode frame ── */
   (async function buildFocusScatterFromRaw() {
     const svg = document.getElementById('c-scatter');
     if (!svg) return;
 
     const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
-    const GRID = '#eceef2';
+    const GRID = '#f0f0f2';
     const AXIS = '#e3e6eb';
     const TICK = '#9ca3af';
     const TICK_SOFT = '#b7bcc6';
-    const BLUE = '#0a84ff';
+    const BLUE = '#0071e3';
 
     const seed = s => {
       let x = s;
@@ -3463,7 +3760,7 @@
     };
 
     const formatIntensity = value => value.toFixed(1);
-    const formatBpm = value => `${Math.round(value)}`;
+    const formatBpmTick = value => `${Math.round(value)}`;
 
     let pts = [];
     try {
@@ -3528,17 +3825,12 @@
 
     const viewWidth = 460;
     const viewHeight = 260;
-    const plot = { left: 48, right: 438, top: 12, bottom: 226 };
+    const plot = { left: 56, right: 438, top: 12, bottom: 226 };
     const plotWidth = plot.right - plot.left;
     const plotHeight = plot.bottom - plot.top;
 
     const scaleX = value => plot.left + ((value - domainXMin) / (domainXMax - domainXMin)) * plotWidth;
     const scaleY = value => plot.bottom - ((value - domainYMin) / (domainYMax - domainYMin)) * plotHeight;
-
-    const verticalGrid = xTicks.slice(1).map(value => {
-      const x = scaleX(value).toFixed(2);
-      return `<line x1="${x}" y1="${plot.top}" x2="${x}" y2="${plot.bottom}" stroke="${GRID}" stroke-width="1"></line>`;
-    }).join('');
 
     const horizontalGrid = yTicks.slice(1).map(value => {
       const y = scaleY(value).toFixed(2);
@@ -3548,12 +3840,12 @@
     const xLabels = xTicks.map((value, index) => {
       const x = scaleX(value).toFixed(2);
       const anchor = index === xTicks.length - 1 ? 'end' : 'middle';
-      return `<text x="${x}" y="242" text-anchor="${anchor}" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK}">${formatIntensity(value)}</text>`;
+      return `<text x="${x}" y="242" text-anchor="${anchor}" font-family="${FONT_MONO}" font-size="9" font-weight="500" fill="${TICK}">${formatIntensity(value)}</text>`;
     }).join('');
 
     const yLabels = yTicks.map(value => {
       const y = scaleY(value).toFixed(2);
-      return `<text x="42" y="${(+y + 3).toFixed(2)}" text-anchor="end" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK_SOFT}">${formatBpm(value)}</text>`;
+      return `<text x="50" y="${(+y + 3).toFixed(2)}" text-anchor="end" font-family="${FONT_MONO}" font-size="9" font-weight="400" fill="${TICK_SOFT}">${formatBpmTick(value)}</text>`;
     }).join('');
 
     const regressionLine = `
@@ -3563,25 +3855,32 @@
         x2="${scaleX(domainXMax).toFixed(2)}"
         y2="${scaleY(predict(domainXMax)).toFixed(2)}"
         stroke="${BLUE}"
-        stroke-width="2"
+        stroke-width="1.5"
         stroke-linecap="round"
       ></line>`;
 
+    const pointShadowFilter = `
+      <filter id="focusScatterPtSh" x="-100%" y="-100%" width="300%" height="300%">
+        <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.1"/>
+        <feDropShadow dx="0" dy="1" stdDeviation="0.5" flood-color="#000000" flood-opacity="0.1"/>
+      </filter>`;
     const circles = pts.map(point => `
-      <circle cx="${scaleX(point.x).toFixed(2)}" cy="${scaleY(point.y).toFixed(2)}" r="4.5" fill="${BLUE}" stroke="rgba(255,255,255,0.98)" stroke-width="1.5">
+      <circle cx="${scaleX(point.x).toFixed(2)}" cy="${scaleY(point.y).toFixed(2)}" r="2" fill="#c4c4c4" filter="url(#focusScatterPtSh)">
         <title>Intensity ${point.x.toFixed(2)} · Next-day RHR ${Math.round(point.y)} bpm</title>
       </circle>`).join('');
 
+    const yAxisMid = (plot.top + plot.bottom) / 2;
     svg.innerHTML = `
+      <defs>${pointShadowFilter}</defs>
       <title>Next-day resting heart rate versus same-day training intensity.</title>
       <desc>Scatter of training intensity versus next-day resting heart rate from Garmin export.</desc>
+      <text x="12" y="${yAxisMid.toFixed(2)}" transform="rotate(-90 12 ${yAxisMid.toFixed(2)})" text-anchor="middle" font-family="${FONT_MONO}" font-size="9" font-weight="400" fill="${TICK}" letter-spacing="0.167px">NEXT-DAY RHR</text>
       <line x1="${plot.left}" y1="${plot.top}" x2="${plot.left}" y2="${plot.bottom}" stroke="${AXIS}" stroke-width="1"></line>
-      ${verticalGrid}
       ${horizontalGrid}
       <line x1="${plot.left}" y1="${plot.bottom}" x2="${plot.right}" y2="${plot.bottom}" stroke="${AXIS}" stroke-width="1"></line>
       ${yLabels}
       ${xLabels}
-      <text x="${(plot.left + plot.right) / 2}" y="${viewHeight - 4}" text-anchor="middle" font-family="${FONT_MONO}" font-size="8" font-weight="500" fill="${TICK}" letter-spacing="0.08em">INTENSITY</text>
+      <text x="${(plot.left + plot.right) / 2}" y="${viewHeight - 4}" text-anchor="middle" font-family="${FONT_MONO}" font-size="9" font-weight="400" fill="${TICK}" letter-spacing="0.167px">INTENSITY</text>
       ${regressionLine}
       ${circles}
     `;

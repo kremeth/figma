@@ -149,6 +149,14 @@
     color: var(--text-2);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
   }
+  .card--scatter-hero .legend-item--muted {
+    color: #8e8e93;
+    font-weight: 400;
+  }
+  .card--scatter-hero .legend-dot--muted {
+    background: #c7c7cc !important;
+    opacity: 0.95;
+  }
   .legend-num {
     font-family: var(--font-graph-mono);
     font-variant-numeric: tabular-nums;
@@ -369,17 +377,17 @@
 <div class="card card--scatter-hero">
   <div class="chart-header">
     <div class="chart-meta">
-      <div class="chart-label chart-label--10">Training intensity vs next-day RHR</div>
+      <div class="chart-label chart-label--10">Training intensity vs deep sleep %</div>
     </div>
   </div>
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#0071e3"></div>Day pairs</div>
+    <div class="legend-item legend-item--muted"><div class="legend-dot legend-dot--muted"></div>Day pairs</div>
     <div class="legend-item"><div class="legend-line" style="background:#0071e3"></div>Regression line</div>
   </div>
-  <div class="chart-wrap"><canvas id="c-scatter" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">Next-day resting heart rate versus same-day training intensity.</canvas></div>
+  <div class="chart-wrap"><canvas id="c-scatter" role="img" aria-label="Scatter of training intensity versus same-day deep sleep percentage from Garmin export">Deep sleep percentage versus same-day training intensity.</canvas></div>
   <details class="graph-why">
     <summary><span class="graph-why__title">Why it matters</span></summary>
-    <p class="graph-why__copy">The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+    <p class="graph-why__copy">The regression line shows how nightly deep sleep share tends to move with training load on the same day. Steeper negative slopes often mean hard sessions are cutting into deep sleep unless recovery time and sleep opportunity catch up.</p>
   </details>
 </div>
 
@@ -515,7 +523,7 @@ const base = (yMin, yMax) => ({
 
 const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor(x);}; };
 
-/* ── 1. SCATTER — next-day RHR (y) vs same-day training intensity (x), raw_data.json ── */
+/* ── 1. SCATTER — same-day deep sleep % (y) vs same-day training intensity (x), raw_data.json ── */
 (async function buildScatterFromRaw() {
   let pts = [];
   try {
@@ -525,13 +533,19 @@ const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor
     const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
     if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
     const { metrics, daily_activity: activity } = vis;
-    const rhr = metrics.RHR;
-    for (let d = 1; d < 30; d += 1) {
-      const today = activity[String(d)];
+    const deep = metrics.deep_sleep;
+    const st = metrics.sleep_time;
+    for (let d = 1; d <= 30; d += 1) {
+      const k = String(d);
+      const today = activity[k];
       const x = today?.average_intensity;
-      const yRaw = rhr[String(d + 1)];
-      if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
-      pts.push({ x: +Number(x).toFixed(4), y: +Number(yRaw).toFixed(2) });
+      const sleepT = st?.[k];
+      const deepV = deep?.[k];
+      if (x == null || sleepT == null || deepV == null || !(+sleepT > 0)) continue;
+      if (!Number.isFinite(+x) || !Number.isFinite(+deepV)) continue;
+      const yPct = (100 * +deepV) / +sleepT;
+      if (!Number.isFinite(yPct)) continue;
+      pts.push({ x: +Number(x).toFixed(4), y: +yPct.toFixed(2) });
     }
   } catch (e) {
     console.warn('c-scatter: raw_data.json not loaded (serve page over http(s) from repo root)', e);
@@ -540,7 +554,7 @@ const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor
     const rng = seed(7);
     pts = Array.from({ length: 14 }, () => ({
       x: +(rng() * 1.3 + 1.05).toFixed(2),
-      y: Math.round(48 + rng() * 8),
+      y: +(16 + (rng() - 0.5) * 6).toFixed(2),
     }));
   }
 
@@ -569,14 +583,14 @@ const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor
   const regX = [xLo - xPad, xHi + xPad];
   const regY = regX.map(x => slope * x + intercept);
 
-  const yMin = Math.max(38, Math.min(...ys, ...regY.map(v => v - band)) - 2);
-  const yMax = Math.min(72, Math.max(...ys, ...regY.map(v => v + band)) + 2);
+  const yMin = Math.max(0, Math.min(...ys, ...regY.map(v => v - band)) - 2);
+  const yMax = Math.min(55, Math.max(...ys, ...regY.map(v => v + band)) + 2);
 
   const scatterBase = base(yMin, yMax);
   const yOpts = {
     ...scatterBase.scales.y,
-    title: { display: true, text: 'Next-day RHR', color: TICK, font: { family: FONT_MONO, size: 11 } },
-    ticks: { ...scatterBase.scales.y.ticks, callback: v => `${Math.round(Number(v))} bpm` },
+    title: { display: true, text: 'Deep sleep %', color: TICK, font: { family: FONT_MONO, size: 11 } },
+    ticks: { ...scatterBase.scales.y.ticks, callback: v => `${Math.round(Number(v))}%` },
   };
 
   new Chart('c-scatter', {
@@ -607,11 +621,11 @@ const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor
         {
           label: 'Points',
           data: pts,
-          backgroundColor: BLUE,
-          borderColor: '#fff',
-          borderWidth: 1.5,
-          pointRadius: 5,
-          pointHoverRadius: 7,
+          backgroundColor: 'rgba(142,142,147,0.42)',
+          borderColor: 'rgba(255,255,255,0.9)',
+          borderWidth: 1.25,
+          pointRadius: 4.5,
+          pointHoverRadius: 6,
           order: 1,
         },
       ],
@@ -633,7 +647,7 @@ const seed = s => { let x=s; return ()=>{x=Math.sin(x)*10000;return x-Math.floor
             title: () => '',
             label: ctx =>
               ctx.dataset.label === 'Points'
-                ? `Intensity ${ctx.parsed.x.toFixed(2)} · Next-day RHR ${Math.round(ctx.parsed.y)} bpm`
+                ? `Intensity ${ctx.parsed.x.toFixed(2)} · Deep sleep ${ctx.parsed.y.toFixed(1)}%`
                 : null,
             filter: ctx => ctx.dataset.label === 'Points',
           },
