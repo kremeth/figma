@@ -1208,15 +1208,15 @@
       max-width: none;
       margin-left: calc(-1 * var(--focus-bleed-l));
       margin-right: calc(-1 * var(--focus-bleed-r));
-      padding-top: clamp(36px, 6vw, 52px);
-      padding-bottom: clamp(48px, 7vw, 72px);
+      padding-top: clamp(48px, 8vw, 72px);
+      padding-bottom: clamp(56px, 9vw, 84px);
       padding-left: var(--focus-bleed-l);
       padding-right: var(--focus-bleed-r);
       box-sizing: border-box;
       position: relative;
       overflow: hidden;
       isolation: isolate;
-      background: #eceef2;
+      background: #f0f1f5;
     }
     .focus-section-band .inner.page-section {
       position: relative;
@@ -1673,7 +1673,7 @@
 
     /* ── Focus card 1: Figma Nutricode 23755:9851 (REM recommendation) ── */
     #focus-card-1.focus-card__shell {
-      border-radius: 30px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.06);
       background: #ffffff;
@@ -1704,6 +1704,8 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      border-radius: 12px;
+      overflow: hidden;
       background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 50%, #fafafa 100%);
     }
     #focus-card-1 .fc1-title {
@@ -1892,7 +1894,7 @@
       letter-spacing: var(--ls-14);
     }
     @media (max-width: 760px) {
-      #focus-card-1.focus-card__shell { border-radius: 24px; }
+      #focus-card-1.focus-card__shell { border-radius: 12px; }
       #focus-card-1 .fc1-body { padding: 30px 22px 26px; }
       #focus-card-1 .fc1-title { font-size: 18px; }
       #focus-card-1 .fc1-summary { margin-bottom: 22px; }
@@ -1905,7 +1907,7 @@
 
     /* ── Focus card 3: Figma Nutricode 23755:10011 (Light Sleep) — same system as card 1 ── */
     #focus-card-3.focus-card__shell {
-      border-radius: 30px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.06);
       background: #ffffff;
@@ -2124,7 +2126,7 @@
       letter-spacing: var(--ls-14);
     }
     @media (max-width: 760px) {
-      #focus-card-3.focus-card__shell { border-radius: 24px; }
+      #focus-card-3.focus-card__shell { border-radius: 12px; }
       #focus-card-3 .fc3-body { padding: 30px 22px 26px; }
       #focus-card-3 .fc3-title { font-size: 18px; }
       #focus-card-3 .fc3-summary { margin-bottom: 22px; }
@@ -2137,7 +2139,7 @@
 
     /* ── Focus card 2: full redesign matching Figma Nutricode 23741:6453 ── */
     #focus-card-2.focus-card__shell {
-      border-radius: 30px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.06);
       background: #ffffff;
@@ -2352,7 +2354,7 @@
       letter-spacing: var(--ls-14);
     }
     @media (max-width: 760px) {
-      #focus-card-2.focus-card__shell { border-radius: 24px; }
+      #focus-card-2.focus-card__shell { border-radius: 12px; }
       #focus-card-2 .fc2-body { padding: 34px 26px 28px; }
       #focus-card-2 .fc2-title { font-size: 20px; max-width: none; margin-bottom: 18px; }
       #focus-card-2 .fc2-summary { max-width: none; }
@@ -2454,7 +2456,7 @@
 
     /* Focus card 4 — Figma Nutricode 23755:10179 (Recovery / scatter) */
     #focus-card-4.focus-card__shell {
-      border-radius: 30px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid rgba(15, 23, 42, 0.06);
       background: #ffffff;
@@ -2678,7 +2680,7 @@
       .focus-card__title {
         max-width: none;
       }
-      #focus-card-4.focus-card__shell { border-radius: 24px; }
+      #focus-card-4.focus-card__shell { border-radius: 12px; }
       #focus-card-4 .fc4-body { padding: 30px 22px 26px; }
       #focus-card-4 .fc4-title { font-size: 18px; }
       #focus-card-4 .fc4-summary { margin-bottom: 22px; }
@@ -2694,6 +2696,416 @@
       }
       .focus-carousel > .focus-card.focus-card__shell {
         min-height: auto;
+      }
+    }
+
+    /* ─────────────────────── Focus Section Refinement ─────────────────────── */
+    .focus-band-shell {
+      display: grid;
+      gap: clamp(28px, 3.5vw, 40px);
+    }
+    .focus-section-header {
+      align-items: end;
+      gap: clamp(24px, 4vw, 44px);
+      padding: 0 2px 28px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.09);
+    }
+    .focus-section-header__copy {
+      display: grid;
+      gap: 10px;
+      max-width: 560px;
+    }
+    .focus-section-band #focus-heading {
+      margin-bottom: 0;
+      font-size: clamp(34px, 4.2vw, 46px);
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      color: #0f0f12;
+    }
+    .nc-protocol-header {
+      width: auto;
+      min-width: max-content;
+      margin: 0;
+    }
+    .nc-protocol-nav {
+      gap: 18px;
+      align-items: center;
+    }
+    #recRhrCount {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      padding-bottom: 4px;
+      color: #9ca0a8;
+    }
+    .focus-carousel {
+      gap: clamp(20px, 3vw, 36px);
+      padding-top: 0;
+      padding-bottom: 10px;
+    }
+    .focus-carousel > .focus-card.focus-card__shell {
+      border-radius: 12px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.03),
+        0 14px 34px rgba(15, 23, 42, 0.05);
+      min-height: 600px;
+      opacity: 0.32;
+      transform: translateY(6px);
+      transition:
+        opacity 0.28s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s ease;
+    }
+    .focus-carousel > .focus-card.focus-card__shell.is-active {
+      opacity: 1;
+      transform: none;
+      box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04),
+        0 24px 48px rgba(15, 23, 42, 0.07);
+    }
+    #focus-card-1.focus-card__shell,
+    #focus-card-2.focus-card__shell,
+    #focus-card-3.focus-card__shell,
+    #focus-card-4.focus-card__shell {
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.03),
+        0 14px 34px rgba(15, 23, 42, 0.05);
+    }
+    #focus-card-1.focus-card__shell.is-active,
+    #focus-card-2.focus-card__shell.is-active,
+    #focus-card-3.focus-card__shell.is-active,
+    #focus-card-4.focus-card__shell.is-active {
+      box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04),
+        0 24px 48px rgba(15, 23, 42, 0.07);
+    }
+    #focus-card-1 .fc1-accent,
+    #focus-card-3 .fc3-accent,
+    #focus-card-4 .fc4-accent {
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 113, 227, 0.06) 18%,
+        rgba(0, 113, 227, 0.18) 50%,
+        rgba(0, 113, 227, 0.06) 82%,
+        rgba(0, 0, 0, 0) 100%
+      );
+    }
+    #focus-card-1 .fc1-body,
+    #focus-card-2 .fc2-body,
+    #focus-card-3 .fc3-body,
+    #focus-card-4 .fc4-body {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas:
+        "title"
+        "summary"
+        "sep"
+        "cap"
+        "chart"
+        "legend"
+        "footer";
+      align-items: start;
+      column-gap: 0;
+      row-gap: 16px;
+      padding: clamp(38px, 4.5vw, 52px);
+      min-width: 0;
+      background: linear-gradient(to bottom, #ffffff 0%, #fcfcfd 100%);
+    }
+    #focus-card-1 .fc1-title,
+    #focus-card-2 .fc2-title,
+    #focus-card-3 .fc3-title,
+    #focus-card-4 .fc4-title {
+      grid-area: title;
+      max-width: none;
+      margin: 0;
+      font-size: clamp(26px, 2.8vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+    }
+    #focus-card-1 .fc1-summary,
+    #focus-card-2 .fc2-summary,
+    #focus-card-3 .fc3-summary,
+    #focus-card-4 .fc4-summary {
+      grid-area: summary;
+      max-width: none;
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.62;
+      color: #72737a;
+    }
+    #focus-card-1 .fc1-sep,
+    #focus-card-2 .fc2-sep,
+    #focus-card-3 .fc3-sep,
+    #focus-card-4 .fc4-sep {
+      grid-area: sep;
+      width: 100%;
+      max-width: none;
+      margin: 2px 0 0;
+      background: rgba(15, 23, 42, 0.055);
+      opacity: 1;
+    }
+    #focus-card-1 .fc1-legend,
+    #focus-card-2 .fc2-legend,
+    #focus-card-3 .fc3-legend,
+    #focus-card-4 .fc4-legend {
+      grid-area: legend;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 14px 24px;
+      width: 100%;
+      padding: 8px 0 0;
+      margin: 0;
+    }
+    #focus-card-1 .fc1-legend__item,
+    #focus-card-2 .fc2-legend__item,
+    #focus-card-3 .fc3-legend__item,
+    #focus-card-4 .fc4-legend__item {
+      gap: 8px;
+    }
+    #focus-card-1 .fc1-legend__label,
+    #focus-card-2 .fc2-legend__label,
+    #focus-card-3 .fc3-legend__label,
+    #focus-card-4 .fc4-legend__label {
+      color: #74757c;
+    }
+    #focus-card-1 .fc1-chart-panel,
+    #focus-card-2 .fc2-chart-panel,
+    #focus-card-3 .fc3-chart-panel,
+    #focus-card-4 .fc4-chart-panel {
+      grid-area: chart;
+      align-self: stretch;
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding: 18px 12px 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: #ffffff;
+      box-shadow:
+        0 1px 4px rgba(15, 23, 42, 0.03),
+        0 12px 28px rgba(15, 23, 42, 0.045);
+      min-height: clamp(260px, 28vw, 300px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      box-sizing: border-box;
+    }
+    #focus-card-1 .fc1-chart-panel::before,
+    #focus-card-3 .fc3-chart-panel::before {
+      background: linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.015) 0%,
+        rgba(255, 255, 255, 0) 32%
+      );
+    }
+    /* Bar charts: taller aspect + tighter horizontal padding so plots fill the card */
+    #focus-card-1 .fc1-chart-panel svg,
+    #focus-card-3 .fc3-chart-panel svg {
+      aspect-ratio: 340 / 228;
+    }
+    #focus-card-2 .fc2-chart-panel svg {
+      aspect-ratio: 340 / 224;
+    }
+    #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
+      aspect-ratio: 460 / 248;
+    }
+    #focus-card-1 .fc1-cap,
+    #focus-card-2 .fc2-cap,
+    #focus-card-3 .fc3-cap,
+    #focus-card-4 .fc4-cap {
+      grid-area: cap;
+      align-self: stretch;
+      justify-self: stretch;
+      margin: 4px 0 0;
+      padding: 0;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-align: center;
+      color: #a0a1a8;
+    }
+    #focus-card-1 .fc1-footer,
+    #focus-card-2 .fc2-footer,
+    #focus-card-3 .fc3-footer,
+    #focus-card-4 .fc4-footer {
+      grid-area: footer;
+      margin-top: 14px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(15, 23, 42, 0.055);
+    }
+    #focus-card-1 .fc1-why-label,
+    #focus-card-2 .fc2-why-label,
+    #focus-card-3 .fc3-why-label,
+    #focus-card-4 .fc4-why-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #2e3035;
+    }
+    #focus-card-1 .fc1-why-details,
+    #focus-card-2 .fc2-why-details,
+    #focus-card-3 .fc3-why-details,
+    #focus-card-4 .fc4-why-details {
+      width: 100%;
+      max-width: none;
+    }
+    #focus-card-1 .fc1-why-details > summary,
+    #focus-card-2 .fc2-why-details > summary,
+    #focus-card-3 .fc3-why-details > summary,
+    #focus-card-4 .fc4-why-details > summary {
+      min-height: 34px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      column-gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #focus-card-1 .fc1-why-icon,
+    #focus-card-2 .fc2-why-icon,
+    #focus-card-3 .fc3-why-icon,
+    #focus-card-4 .fc4-why-icon {
+      justify-self: end;
+    }
+    #focus-card-1 .fc1-why-icon,
+    #focus-card-3 .fc3-why-icon,
+    #focus-card-4 .fc4-why-icon {
+      width: 30px;
+      height: 30px;
+    }
+    #focus-card-2 .fc2-why-icon {
+      width: 32px;
+      height: 32px;
+    }
+    #focus-card-1 .fc1-why-panel,
+    #focus-card-2 .fc2-why-panel,
+    #focus-card-3 .fc3-why-panel,
+    #focus-card-4 .fc4-why-panel {
+      margin-top: 14px;
+      max-width: 72ch;
+      color: #636873;
+    }
+    @media (max-width: 900px) {
+      .focus-band-shell {
+        gap: 22px;
+      }
+      .focus-section-header {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 18px;
+        padding-bottom: 18px;
+      }
+      .focus-section-header__copy {
+        max-width: none;
+      }
+      .focus-section-band #focus-heading {
+        max-width: 11ch;
+        font-size: clamp(28px, 8vw, 36px);
+      }
+      .nc-protocol-header,
+      .nc-protocol-nav {
+        width: 100%;
+      }
+      .rec-rhr-dots {
+        width: auto;
+        max-width: 100%;
+      }
+      .focus-carousel {
+        padding-bottom: 6px;
+      }
+      .focus-carousel > .focus-card.focus-card__shell {
+        min-height: auto;
+        opacity: 1;
+        transform: none;
+      }
+      #focus-card-1 .fc1-body,
+      #focus-card-2 .fc2-body,
+      #focus-card-3 .fc3-body,
+      #focus-card-4 .fc4-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: clamp(28px, 6vw, 34px) clamp(20px, 4vw, 26px);
+      }
+      #focus-card-1 .fc1-title,
+      #focus-card-2 .fc2-title,
+      #focus-card-3 .fc3-title,
+      #focus-card-4 .fc4-title {
+        max-width: none;
+        font-size: clamp(22px, 6vw, 30px);
+      }
+      #focus-card-1 .fc1-summary,
+      #focus-card-2 .fc2-summary,
+      #focus-card-3 .fc3-summary,
+      #focus-card-4 .fc4-summary {
+        max-width: none;
+        margin-top: 12px;
+      }
+      #focus-card-1 .fc1-sep,
+      #focus-card-2 .fc2-sep,
+      #focus-card-3 .fc3-sep,
+      #focus-card-4 .fc4-sep {
+        width: 100%;
+        margin-top: 22px;
+      }
+      #focus-card-1 .fc1-legend,
+      #focus-card-2 .fc2-legend,
+      #focus-card-3 .fc3-legend,
+      #focus-card-4 .fc4-legend {
+        justify-content: center;
+        gap: 12px 18px;
+        padding-top: 10px;
+      }
+      #focus-card-1 .fc1-chart-panel,
+      #focus-card-2 .fc2-chart-panel,
+      #focus-card-3 .fc3-chart-panel,
+      #focus-card-4 .fc4-chart-panel {
+        margin-top: 14px;
+        border-radius: 18px;
+        padding: 12px 12px 10px;
+        height: 170px;
+        min-height: 170px;
+        max-height: 170px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: stretch;
+        box-sizing: border-box;
+      }
+      #focus-card-1 .fc1-chart-panel svg,
+      #focus-card-2 .fc2-chart-panel svg,
+      #focus-card-3 .fc3-chart-panel svg,
+      #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        aspect-ratio: unset;
+      }
+      #focus-card-1 .fc1-cap,
+      #focus-card-2 .fc2-cap,
+      #focus-card-3 .fc3-cap,
+      #focus-card-4 .fc4-cap {
+        align-self: center;
+        justify-self: center;
+        margin-top: 14px;
+        text-align: center;
+      }
+      #focus-card-1 .fc1-footer,
+      #focus-card-2 .fc2-footer,
+      #focus-card-3 .fc3-footer,
+      #focus-card-4 .fc4-footer {
+        margin-top: 18px;
+        padding-top: 18px;
       }
     }
 
@@ -3805,7 +4217,7 @@
         </div>
         <div class="nc-protocol-header">
           <div class="nc-protocol-nav">
-            <span id="recRhrCount" aria-live="polite">Priority 1 of 4</span>
+            <span id="recRhrCount" aria-live="polite">REM Sleep · 1 of 4</span>
             <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">
               <button type="button" class="rec-rhr-dot active" aria-label="REM Sleep" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">REM Sleep</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Deep Sleep" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Deep Sleep</span></button>
@@ -3825,16 +4237,7 @@
                 <h3 class="fc1-title">Boost your REM Sleep</h3>
                 <p class="fc1-summary">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
                 <div class="fc1-sep" aria-hidden="true"></div>
-                <div class="fc1-legend" aria-hidden="true">
-                  <div class="fc1-legend__item">
-                    <span class="fc1-legend__swatch fc1-legend__swatch--rem"></span>
-                    <span class="fc1-legend__label">REM Sleep %</span>
-                  </div>
-                  <div class="fc1-legend__item">
-                    <span class="fc1-legend__swatch fc1-legend__swatch--avg"></span>
-                    <span class="fc1-legend__label">Demographic Avg.</span>
-                  </div>
-                </div>
+                <p class="fc1-cap">Intensity vs Next-Day Resting Heart Rate</p>
                 <div class="fc1-chart-panel">
                   <svg viewBox="0 0 340 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily REM sleep percentage from 75 to 100 percent over 28 days with demographic average near 92 percent">
                     <defs>
@@ -3894,7 +4297,16 @@
                     <text x="275.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D28</text>
                   </svg>
                 </div>
-                <p class="fc1-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc1-legend" aria-hidden="true">
+                  <div class="fc1-legend__item">
+                    <span class="fc1-legend__swatch fc1-legend__swatch--rem"></span>
+                    <span class="fc1-legend__label">REM Sleep %</span>
+                  </div>
+                  <div class="fc1-legend__item">
+                    <span class="fc1-legend__swatch fc1-legend__swatch--avg"></span>
+                    <span class="fc1-legend__label">Demographic Avg.</span>
+                  </div>
+                </div>
                 <div class="fc1-footer">
                   <details class="fc1-why-details">
                     <summary>
@@ -3912,10 +4324,16 @@
             <div class="focus-card__stage">
               <div class="fc2-accent" aria-hidden="true"></div>
               <div class="fc2-body">
-                <h3 class="fc2-title">Protect Deep Sleep as training load rises</h3>
+                <h3 class="fc2-title">Protect deep sleep after training</h3>
                 <p class="fc2-summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
 
                 <div class="fc2-sep" aria-hidden="true"></div>
+                <p class="fc2-cap">Deep sleep % vs training intensity</p>
+
+                <div class="fc2-chart-panel">
+                  <svg id="c-dual-deep-intensity" viewBox="0 0 340 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
+                </div>
+
                 <div class="fc2-legend" aria-hidden="true">
                   <div class="fc2-legend__item">
                     <span class="fc2-legend__swatch fc2-legend__swatch--deep"></span>
@@ -3927,12 +4345,6 @@
                   </div>
                 </div>
                 <div class="fc2-sep" aria-hidden="true"></div>
-
-                <div class="fc2-chart-panel">
-                  <svg id="c-dual-deep-intensity" viewBox="0 0 340 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
-                </div>
-
-                <p class="fc2-cap">Deep sleep % vs training intensity</p>
 
                 <div class="fc2-footer">
                   <details class="fc2-why-details">
@@ -3954,16 +4366,7 @@
                 <h3 class="fc3-title">Lower Light Sleep Duration</h3>
                 <p class="fc3-summary">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
                 <div class="fc3-sep" aria-hidden="true"></div>
-                <div class="fc3-legend" aria-hidden="true">
-                  <div class="fc3-legend__item">
-                    <span class="fc3-legend__swatch fc3-legend__swatch--light"></span>
-                    <span class="fc3-legend__label">Light Sleep %</span>
-                  </div>
-                  <div class="fc3-legend__item">
-                    <span class="fc3-legend__swatch fc3-legend__swatch--avg"></span>
-                    <span class="fc3-legend__label">Demographic Avg.</span>
-                  </div>
-                </div>
+                <p class="fc3-cap">Intensity vs Next-Day Resting Heart Rate</p>
                 <div class="fc3-chart-panel">
                   <svg viewBox="0 0 340 200" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily light sleep percentage from 75 to 100 percent over 28 days with demographic average near 92 percent">
                     <defs>
@@ -4019,7 +4422,16 @@
                     <text x="275.1" y="192" font-size="8" fill="#9ca3af" text-anchor="middle">D28</text>
                   </svg>
                 </div>
-                <p class="fc3-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc3-legend" aria-hidden="true">
+                  <div class="fc3-legend__item">
+                    <span class="fc3-legend__swatch fc3-legend__swatch--light"></span>
+                    <span class="fc3-legend__label">Light Sleep %</span>
+                  </div>
+                  <div class="fc3-legend__item">
+                    <span class="fc3-legend__swatch fc3-legend__swatch--avg"></span>
+                    <span class="fc3-legend__label">Demographic Avg.</span>
+                  </div>
+                </div>
                 <div class="fc3-footer">
                   <details class="fc3-why-details">
                     <summary>
@@ -4040,6 +4452,12 @@
                 <h3 class="fc4-title">Recover better after hard training</h3>
                 <p class="fc4-summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
                 <div class="fc4-sep" aria-hidden="true"></div>
+                <p class="fc4-cap">Intensity vs Next-Day Resting Heart Rate</p>
+                <div class="fc4-chart-panel">
+                  <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="0 0 460 260" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
+                    <title>Next-day resting heart rate versus same-day training intensity.</title>
+                  </svg>
+                </div>
                 <div class="fc4-legend" aria-hidden="true">
                   <div class="fc4-legend__item">
                     <span class="fc4-legend__swatch fc4-legend__swatch--reg" aria-hidden="true"></span>
@@ -4050,12 +4468,6 @@
                     <span class="fc4-legend__label">Day pairs</span>
                   </div>
                 </div>
-                <div class="fc4-chart-panel">
-                  <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="0 0 460 260" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
-                    <title>Next-day resting heart rate versus same-day training intensity.</title>
-                  </svg>
-                </div>
-                <p class="fc4-cap">Intensity vs Next-Day Resting Heart Rate</p>
                 <div class="fc4-footer">
                   <details class="fc4-why-details">
                     <summary>
