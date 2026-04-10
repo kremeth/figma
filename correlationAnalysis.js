@@ -1431,10 +1431,31 @@ function correlationMiniChartSvg(r) {
 <polyline points="${pts}" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
 }
 
+/** Short label inside `.stage-category-tag__focus` (e.g. HRV, REM). */
+const FOCUS_TAG_SHORT = {
+  REM: "REM",
+  LightSleep: "LIGHT",
+  DeepSleep: "DEEP",
+  Awake: "AWAKE",
+  SleepEfficiency: "SLEEP",
+  HRV: "HRV",
+  RHR: "RHR",
+  Disruptions: "DISRUPT",
+  TotalSleep: "TOTAL",
+};
+
+function focusTagShort(targetMetric) {
+  if (targetMetric && FOCUS_TAG_SHORT[targetMetric]) return FOCUS_TAG_SHORT[targetMetric];
+  const s = String(targetMetric || "").replace(/([A-Z])/g, " $1").trim();
+  return s ? s.toUpperCase().slice(0, 12) : "FOCUS";
+}
+
+const FOCUS_STAGE_CATEGORY_SVG = `<svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg>`;
+
 function buildFocusStackHtml(topThree, rawData) {
   return topThree.map((row, idx) => {
     const d = `d${(idx % 3) + 1}`;
-    const prio = idx + 1;
+    const tagText = focusTagShort(row.targetMetric);
     const sub = (row.how_it_works && row.how_it_works.trim()) ? row.how_it_works : "—";
     const leadRaw = (row.body && row.body.trim()) ? row.body : row.label;
     const leadTrim = leadRaw.trim();
@@ -1444,19 +1465,16 @@ function buildFocusStackHtml(topThree, rawData) {
     if (vsAvg && !vsAvg.endsWith(".")) {
       vsAvg += ".";
     }
-    const cap = `${row.targetMetric} · n=${row.n}`;
-    const interventionDisplay = formatInterventionForDisplay(row.supplements);
     return `
       <div class="focus-item reveal ${d}">
-        <p class="focus-area-label">Priority ${prio}</p>
         <article class="card focus-card">
         <div class="focus-card__inner">
           <div class="focus-card__intro">
+            <span class="stage-category-tag">
+              ${FOCUS_STAGE_CATEGORY_SVG}
+              <span class="stage-category-tag__focus">${escapeHtml(tagText)}</span>
+            </span>
             <h3 class="focus-card__title">${escapeHtml(row.title)}</h3>
-            <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Supplement Focus</span>
-              <span class="focus-card__intervention-value">${escapeHtml(interventionDisplay)}</span>
-            </p>
           </div>
           <div class="focus-card__content-row">
             <div class="focus-card__col focus-card__col--text">
@@ -1465,16 +1483,15 @@ function buildFocusStackHtml(topThree, rawData) {
                 ${buildCorrelationStrengthHtml(row.r)}
                 <details class="focus-card__plain-more">
                   <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">More</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Less</span>
+                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">Why it matters</span>
+                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Hide</span>
                   </summary>
                   <p class="focus-card__plain-sub">${escapeHtml(sub).replace(/\n/g, "<br />")}</p>
                 </details>
               </div>
             </div>
-            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
+            <div class="focus-card__chart" aria-hidden="true">
               ${correlationMiniChartSvg(row.r)}
-              <span class="focus-card__chart-cap">${escapeHtml(cap)}</span>
             </div>
           </div>
         </div>

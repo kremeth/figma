@@ -42,8 +42,8 @@
       --space-2: 16px;
       --space-3: 24px;
       --space-4: 32px;
-      --space-5: 40px;
-      --space-6: 56px;
+      --space-5: 32px;
+      --space-6: 44px;
       /* Radius — more architectural, less playful */
       --radius-sm:  6px;
       --radius-md: 12px;
@@ -72,6 +72,22 @@
       --ls-34: calc(34px * 0.02);
       /* Minimum horizontal inset from viewport — keeps the column off screen edges on all sizes */
       --page-edge: clamp(16px, 4.5vw, 24px);
+      /* Focus / priority section (dark band) */
+      --focus-surface: #171a21;
+      --focus-surface-2: #1d212b;
+      --focus-surface-3: #252a38;
+      --focus-panel: rgba(255, 255, 255, 0.04);
+      --focus-panel-strong: rgba(255, 255, 255, 0.065);
+      --focus-border: rgba(255, 255, 255, 0.08);
+      --focus-border-strong: rgba(255, 255, 255, 0.15);
+      --focus-text: rgba(255, 255, 255, 0.92);
+      --focus-text-soft: rgba(255, 255, 255, 0.78);
+      --focus-text-muted: rgba(255, 255, 255, 0.58);
+      --focus-text-subtle: rgba(255, 255, 255, 0.38);
+      --focus-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 10px 26px rgba(0, 0, 0, 0.18);
+      --focus-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
+      --focus-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      --focus-accent-rgb: 245, 158, 11;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1187,29 +1203,14 @@
     }
 
     /* ─────────────────────── Focus section band ─────────────────────── */
-    /* Full-bleed: negative margins alone do not widen the border box (background),
-       so width must include both body-padding “bleeds” or the band clips on one side. */
     .focus-section-band {
-      --focus-surface: #171a21;
-      --focus-surface-2: #1d212b;
-      --focus-surface-3: #252a38;
-      --focus-panel: rgba(255, 255, 255, 0.04);
-      --focus-panel-strong: rgba(255, 255, 255, 0.065);
-      --focus-border: rgba(255, 255, 255, 0.08);
-      --focus-border-strong: rgba(255, 255, 255, 0.15);
-      --focus-text: rgba(255, 255, 255, 0.92);
-      --focus-text-soft: rgba(255, 255, 255, 0.78);
-      --focus-text-muted: rgba(255, 255, 255, 0.58);
-      --focus-text-subtle: rgba(255, 255, 255, 0.38);
-      --focus-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 10px 26px rgba(0, 0, 0, 0.18);
-      --focus-bleed-l: max(var(--page-edge), env(safe-area-inset-left, 0px));
-      --focus-bleed-r: max(var(--page-edge), env(safe-area-inset-right, 0px));
+      --focus-shell-max: 1080px;
       width: calc(100% + var(--focus-bleed-l) + var(--focus-bleed-r));
       max-width: none;
       margin-left: calc(-1 * var(--focus-bleed-l));
       margin-right: calc(-1 * var(--focus-bleed-r));
-      padding-top: clamp(72px, 9vw, 112px);
-      padding-bottom: clamp(76px, 10vw, 120px);
+      padding-top: clamp(36px, 6vw, 52px);
+      padding-bottom: clamp(48px, 7vw, 72px);
       padding-left: var(--focus-bleed-l);
       padding-right: var(--focus-bleed-r);
       box-sizing: border-box;
@@ -1217,9 +1218,9 @@
       overflow: hidden;
       isolation: isolate;
       background:
-        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.18), rgba(59, 130, 246, 0) 30%),
-        radial-gradient(circle at 100% 0%, rgba(245, 158, 11, 0.16), rgba(245, 158, 11, 0) 26%),
-        linear-gradient(180deg, #1a1c23 0%, #11141b 54%, #0d0f14 100%);
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 30%),
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), rgba(59, 130, 246, 0) 34%),
+        linear-gradient(180deg, #eef1f5 0%, #e6eaf0 100%);
     }
     .focus-section-band::before,
     .focus-section-band::after {
@@ -1230,7 +1231,7 @@
     }
     .focus-section-band::before {
       inset: 0;
-      background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 24%, rgba(245, 158, 11, 0) 76%, rgba(245, 158, 11, 0.08) 100%);
+      background: linear-gradient(90deg, rgba(255,255,255,0.56) 0%, rgba(255,255,255,0) 18%, rgba(255,255,255,0) 82%, rgba(255,255,255,0.42) 100%);
       opacity: 0.9;
     }
     .focus-section-band::after {
@@ -1238,46 +1239,102 @@
       right: 0;
       top: 0;
       height: 1px;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-      opacity: 0.85;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.76) 50%, rgba(255,255,255,0) 100%);
     }
     .focus-section-band .inner.page-section {
       position: relative;
       z-index: 1;
-      max-width: 640px;
+      max-width: var(--focus-shell-max);
       padding-top: 0;
     }
+    .focus-band-shell {
+      border-radius: var(--radius-lg);
+      padding: clamp(20px, 3.25vw, 32px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.56) 0%, rgba(255,255,255,0.34) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 22px 44px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255,255,255,0.52);
+      backdrop-filter: blur(18px) saturate(135%);
+    }
     .focus-section-header {
-      max-width: 560px;
-      margin-bottom: 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 22px;
+      align-items: end;
+      margin-bottom: 24px;
     }
     .focus-section-header::after {
-      content: "";
-      display: block;
-      width: 132px;
-      height: 1px;
-      margin-top: 18px;
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.82), rgba(245, 158, 11, 0));
+      content: none;
+    }
+    .focus-section-header__copy {
+      max-width: 640px;
     }
     .focus-section-band #focus-heading {
       font-family: var(--font-ui);
-      color: #ffffff;
-      font-size: 34px;
+      color: var(--ink);
+      font-size: clamp(30px, 4.6vw, 40px);
       font-weight: 600;
-      letter-spacing: var(--ls-34);
+      letter-spacing: -0.03em;
       text-transform: none;
-      line-height: 1.1;
-      margin-bottom: 12px;
+      line-height: 1.02;
+      margin-bottom: 10px;
       text-wrap: balance;
     }
     .focus-section-intro {
       font-family: var(--font-ui);
-      max-width: 540px;
+      max-width: 52ch;
       font-size: 16px;
       font-weight: 400;
       letter-spacing: var(--ls-15);
       line-height: 1.6;
-      color: var(--focus-text-muted);
+      color: var(--ink-3);
+    }
+    .focus-protocol-nav {
+      display: grid;
+      gap: 12px;
+      justify-items: end;
+      align-self: start;
+      min-width: max-content;
+    }
+    .focus-protocol-count {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      white-space: nowrap;
+    }
+    .focus-card-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.78);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+    }
+    .focus-card-dot {
+      appearance: none;
+      border: 0;
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border-radius: 999px;
+      background: rgba(23, 23, 26, 0.18);
+      cursor: pointer;
+      transition: width .3s ease, background-color .3s ease, transform .3s ease;
+    }
+    .focus-card-dot:hover,
+    .focus-card-dot:focus-visible {
+      transform: scale(1.08);
+      outline: none;
+      background: rgba(23, 23, 26, 0.34);
+    }
+    .focus-card-dot.active {
+      width: 24px;
+      background: var(--ink);
     }
     /* Plan section — same scale as focus heading, dark text on light page */
     #plan-heading {
@@ -1290,583 +1347,428 @@
       margin-top: 36px;
       margin-bottom: 52px;
     }
-    .focus-stack {
+    .focus-carousel {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;
+      gap: 18px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 0;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
     }
-    .focus-item {
-      display: grid;
-      grid-template-columns: 92px minmax(0, 1fr);
-      align-items: start;
-      min-width: 0;
-      gap: 14px;
-      position: relative;
-      --focus-accent-rgb: 245, 158, 11;
+    .focus-carousel::-webkit-scrollbar {
+      display: none;
     }
-    .focus-item:nth-child(2) { --focus-accent-rgb: 96, 165, 250; }
-    .focus-item:nth-child(3) { --focus-accent-rgb: 167, 139, 250; }
-    .focus-item:nth-child(4) { --focus-accent-rgb: 248, 113, 113; }
-
-    /* ─────────────────────── Focus cards ─────────────────────── */
     .focus-card.card {
-      padding: 0;
-      background: linear-gradient(180deg, var(--focus-surface-2) 0%, var(--focus-surface) 100%);
-      border: 1px solid var(--focus-border);
-      border-radius: var(--radius-md);
+      --focus-card-accent-rgb: 245, 158, 11;
+      scroll-snap-align: start;
+      border: 1px solid rgba(0,0,0,0.055);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.78) 100%);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06), 0 2px 8px rgba(0,0,0,0.04);
+      min-height: 560px;
       overflow: hidden;
-      box-shadow: var(--focus-shadow);
+      transition: transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s cubic-bezier(.22,1,.36,1), border-color .4s cubic-bezier(.22,1,.36,1);
+    }
+    .focus-card.card.is-active {
+      border-color: rgba(0,0,0,0.075);
+      box-shadow: 0 20px 38px rgba(15, 23, 42, 0.08), 0 2px 10px rgba(0,0,0,0.045);
+    }
+    .focus-card__shell {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.92fr) minmax(0, 1.08fr);
+      min-height: 100%;
+    }
+    .focus-card__stage {
       position: relative;
-      transition: transform .45s cubic-bezier(.22,1,.36,1), box-shadow .45s cubic-bezier(.22,1,.36,1), border-color .45s cubic-bezier(.22,1,.36,1);
-    }
-    .focus-card.card::before,
-    .focus-card.card::after {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .focus-card.card::before {
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(var(--focus-accent-rgb), 0.88), rgba(var(--focus-accent-rgb), 0));
-      opacity: 0.42;
-    }
-    .focus-card.card::after {
-      top: 0;
-      right: 0;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle at top right, rgba(var(--focus-accent-rgb), 0.14), rgba(var(--focus-accent-rgb), 0) 70%);
-      opacity: 0.6;
-    }
-    @media (hover: hover) and (pointer: fine) {
-      .focus-item:hover .focus-card.card {
-        transform: translateY(-3px);
-        border-color: var(--focus-border-strong);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), 0 14px 32px rgba(0, 0, 0, 0.22);
-      }
-    }
-    .focus-card__inner {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      min-width: 0;
-      padding: 22px 20px 20px;
+      gap: 20px;
+      padding: 28px;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at top right, rgba(var(--focus-card-accent-rgb), 0.24), rgba(var(--focus-card-accent-rgb), 0) 38%),
+        linear-gradient(180deg, #1f2328 0%, #2a2d35 100%);
+    }
+    .focus-card__stage::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0) 32%);
+    }
+    .focus-card__stage-top,
+    .focus-card__stage-copy,
+    .focus-card__stage-highlights,
+    .focus-card__visual {
       position: relative;
       z-index: 1;
     }
-    .focus-area-label {
+    .focus-card__stage-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .focus-card__priority {
       font-family: var(--font-ui);
-      display: grid;
-      gap: 10px;
-      align-self: start;
-      padding-top: 14px;
       font-size: 10px;
       font-weight: 600;
-      color: var(--focus-text-muted);
-      margin: 0;
-      letter-spacing: 0.12em;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
       text-transform: uppercase;
-      font-variant-numeric: tabular-nums;
+      color: rgba(255,255,255,0.56);
     }
-    .focus-area-label::after {
-      content: "";
-      width: 36px;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.12);
+    .stage-category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(var(--focus-card-accent-rgb), 0.24);
+      background: rgba(var(--focus-card-accent-rgb), 0.14);
+      color: rgba(255,255,255,0.94);
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
-    .focus-item:first-child .focus-area-label {
-      color: #ffd48c;
+    .stage-category-tag__chart {
+      flex-shrink: 0;
+      display: block;
     }
-    .focus-item:first-child .focus-area-label::after {
-      background: rgba(245, 158, 11, 0.55);
-    }
-    .focus-item:first-child .focus-card.card {
-      background: linear-gradient(135deg, var(--focus-surface-3) 0%, var(--focus-surface) 100%);
-      border-color: rgba(245, 158, 11, 0.18);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 16px 34px rgba(0, 0, 0, 0.24);
-    }
-    .focus-item:first-child .focus-card__inner {
-      padding: 24px 22px 22px;
-      gap: 18px;
-    }
-    .focus-card__intro {
-      min-width: 0;
-      width: 100%;
-      margin-bottom: 0;
+    .focus-card__stage-copy {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 14px;
-      align-items: start;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      gap: 12px;
+    }
+    .focus-card__eyebrow {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: var(--ls-11);
+      color: rgba(255,255,255,0.62);
     }
     .focus-card__title {
       font-family: var(--font-ui);
-      font-size: 24px;
+      font-size: clamp(28px, 3.4vw, 34px);
       font-weight: 600;
       color: #ffffff;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.035em;
       margin: 0;
-      line-height: 1.12;
-      white-space: normal;
-      overflow: visible;
-      text-overflow: unset;
+      line-height: 1.05;
       text-wrap: balance;
+      max-width: 12ch;
     }
-    .focus-item:first-child .focus-card__title {
-      font-size: clamp(26px, 6vw, 32px);
-      max-width: 420px;
-    }
-    .focus-card__intervention {
-      margin: 0;
-      display: grid;
-      justify-items: start;
-      align-content: start;
-      gap: 8px;
+    .focus-card__summary {
       font-family: var(--font-ui);
-      font-size: 12px;
-      line-height: 1.35;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.62;
+      letter-spacing: var(--ls-15);
+      color: rgba(255,255,255,0.72);
+      max-width: 34ch;
     }
-    .focus-card__intervention-kicker {
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--focus-text-subtle);
-    }
-    .focus-card__intervention-value {
-      font-weight: 600;
-      color: #ffffff;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(var(--focus-accent-rgb), 0.1);
-      border: 1px solid rgba(var(--focus-accent-rgb), 0.18);
-    }
-    .focus-card__content-row {
+    .focus-card__stage-highlights {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 150px;
-      align-items: stretch;
-      gap: 16px;
-      min-width: 0;
-      margin-bottom: 0;
-    }
-    .focus-item:first-child .focus-card__content-row {
-      grid-template-columns: minmax(0, 1fr) 168px;
-      gap: 18px;
-    }
-    .focus-card__col--text {
-      min-width: 0;
-      display: flex;
-      align-items: stretch;
-      flex-direction: column;
-    }
-    .focus-card__chart {
-      width: 100%;
-      max-width: none;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
-      min-width: 0;
-      min-height: 152px;
+    }
+    .focus-card__highlight {
       padding: 14px;
       border-radius: var(--radius-md);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.055);
+      min-height: 92px;
+      display: grid;
+      align-content: start;
+      gap: 6px;
     }
-    .focus-item:first-child .focus-card__chart {
-      min-height: 174px;
-      padding: 16px;
-      border-color: rgba(245, 158, 11, 0.18);
-      background: linear-gradient(180deg, rgba(245, 158, 11, 0.09) 0%, rgba(255, 255, 255, 0.025) 100%);
-    }
-    .focus-card__chart::before {
-      content: "Pattern";
+    .focus-card__highlight-label {
       font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.12em;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
       text-transform: uppercase;
-      color: var(--focus-text-subtle);
+      color: rgba(255,255,255,0.48);
+    }
+    .focus-card__highlight-value {
+      font-family: var(--font-ui);
+      font-size: clamp(24px, 4vw, 30px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+    }
+    .focus-card__highlight-note {
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.45;
+      letter-spacing: var(--ls-12);
+      color: rgba(255,255,255,0.58);
+    }
+    .focus-card__visual {
+      margin-top: auto;
+      padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      display: grid;
+      gap: 14px;
+    }
+    .focus-card__visual-copy {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .focus-card__visual-label {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.44);
+    }
+    .focus-card__visual-value {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: var(--ls-13);
+      color: rgba(255,255,255,0.88);
+      text-align: right;
+    }
+    .focus-card__chart {
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 172px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,0.06);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
     }
     .focus-card__chart svg {
       display: block;
       width: 100%;
-      max-width: 132px;
+      max-width: 220px;
       height: auto;
-      opacity: 1;
-      margin: auto;
-      overflow: visible;
-    }
-    .focus-item:first-child .focus-card__chart svg {
-      max-width: 142px;
     }
     .focus-card__chart svg rect {
-      fill: rgba(var(--focus-accent-rgb), 0.88) !important;
+      fill: rgba(var(--focus-card-accent-rgb), 0.88) !important;
       opacity: 1 !important;
     }
     .focus-card__chart svg polyline {
-      stroke: rgba(255, 255, 255, 0.5) !important;
+      stroke: rgba(255,255,255,0.64) !important;
     }
     .focus-card__chart-cap {
-      font-family: var(--font-ui);
-      font-size: 10px;
-      font-weight: 600;
-      color: var(--focus-text-muted);
-      text-align: left;
-      letter-spacing: var(--ls-10);
-    }
-    .focus-card__body {
-      font-family: var(--font-ui);
-      font-size: 15px;
-      font-weight: 400;
-      color: var(--focus-text-soft);
-      line-height: 1.68;
-      letter-spacing: var(--ls-15);
-      margin: 0;
-      width: 100%;
-      max-width: none;
-      background: none;
-      border-radius: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    .focus-card__body--plain {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      background: none;
-      border-radius: 0;
-      padding: 0;
-      border: 0;
-      box-sizing: border-box;
-    }
-    .focus-item:first-child .focus-card__body--plain {
-      padding: 0;
-      gap: 16px;
-      background: none;
-    }
-    .focus-card__plain-lead {
-      font-family: var(--font-ui);
-      margin: 0;
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 1.62;
-      letter-spacing: var(--ls-15);
-      color: var(--focus-text);
-      max-width: 34ch;
-    }
-    .focus-item:first-child .focus-card__plain-lead {
-      font-size: 17px;
-      line-height: 1.54;
-      max-width: 32ch;
-    }
-    .focus-card__plain-em,
-    .focus-card__metric-em {
-      font-weight: 600;
-      color: #ffffff;
-    }
-    .focus-card__plain-sub {
-      font-family: var(--font-ui);
-      margin: 0;
-      font-size: 13px;
-      font-weight: 400;
-      line-height: 1.6;
-      letter-spacing: var(--ls-13);
-      color: var(--focus-text-muted);
-    }
-    .focus-card__correlation-strength {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      align-items: center;
-      gap: 10px 12px;
-      margin: 0;
-      padding-top: 2px;
-    }
-    .focus-card__correlation-strength-label {
       display: block;
+      margin-top: -2px;
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.35;
+      letter-spacing: var(--ls-11);
+      color: rgba(255,255,255,0.58);
+      text-align: center;
+    }
+    .focus-card__detail {
+      display: grid;
+      align-content: start;
+      gap: 16px;
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.84) 100%);
+    }
+    .focus-card__detail-top {
+      display: grid;
+      gap: 12px;
+    }
+    .focus-card__detail-kicker,
+    .focus-card__panel-title,
+    .focus-card__stat-label,
+    .focus-card__signal-title {
       font-family: var(--font-ui);
       font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      font-weight: 600;
+      letter-spacing: var(--ls-10-caps);
+      line-height: 1.25;
       text-transform: uppercase;
-      color: var(--focus-text-subtle);
+    }
+    .focus-card__detail-kicker {
+      color: var(--ink-4);
+    }
+    .focus-card__detail-headline {
+      font-family: var(--font-ui);
+      font-size: clamp(24px, 3vw, 30px);
+      font-weight: 600;
+      line-height: 1.14;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      max-width: 26ch;
+      text-wrap: balance;
+    }
+    .focus-card__detail-body {
+      font-family: var(--font-ui);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.64;
+      letter-spacing: var(--ls-15);
+      color: var(--ink-3);
+      max-width: 58ch;
+    }
+    .focus-card__stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .focus-card__stat {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(0,0,0,0.048);
+      background: #f7f8fb;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+      display: grid;
+      gap: 7px;
+    }
+    .focus-card__stat-label {
+      color: var(--ink-4);
+    }
+    .focus-card__stat-value {
+      font-family: var(--font-ui);
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+    .focus-card__panel-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(250px, 0.85fr);
+      gap: 12px;
+    }
+    .focus-card__panel {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(0,0,0,0.05);
+      background: #f7f8fb;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.78);
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+    .focus-card__panel-title {
+      color: var(--ink-4);
+    }
+    .focus-card__panel-copy {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.65;
+      letter-spacing: var(--ls-14);
+      color: var(--ink-3);
+    }
+    .focus-card__signal-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .focus-card__signal-title {
+      color: var(--ink-4);
+    }
+    .focus-card__signal-value {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: var(--ls-13);
+      color: var(--ink);
       white-space: nowrap;
     }
-    .focus-card__correlation-strength-track {
+    .focus-card__signal-track {
       position: relative;
       width: 100%;
       height: 6px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(23,23,26,0.08);
       overflow: hidden;
     }
-    .focus-card__correlation-strength-fill {
+    .focus-card__signal-fill {
       position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      min-width: 0;
-      max-width: 100%;
+      inset: 0 auto 0 0;
+      width: 0;
       border-radius: 999px;
-      background: linear-gradient(90deg, rgba(var(--focus-accent-rgb), 0.8) 0%, rgba(255, 255, 255, 0.62) 100%);
+      background: linear-gradient(90deg, rgba(var(--focus-card-accent-rgb), 0.88) 0%, rgba(var(--focus-card-accent-rgb), 0.44) 100%);
     }
-    .focus-card__correlation-strength[aria-label*="not available"] .focus-card__correlation-strength-track {
-      background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 12px, rgba(255, 255, 255, 0.04) 12px 24px);
+    .focus-card__panel--comparison .focus-card__signal-track {
+      background: repeating-linear-gradient(90deg, rgba(23,23,26,0.08) 0 14px, rgba(23,23,26,0.045) 14px 28px);
     }
-    .focus-card__correlation-strength[aria-label*="not available"] .focus-card__correlation-strength-fill {
+    .focus-card__panel--comparison .focus-card__signal-fill {
       display: none;
     }
-    .focus-card__plain-more {
-      margin: 0;
-    }
-    .focus-card__plain-more-toggle {
-      font-family: var(--font-ui);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: var(--ls-12);
-      color: var(--focus-text-soft);
-      cursor: pointer;
-      list-style: none;
-      user-select: none;
-    }
-    .focus-card__plain-more-toggle::-webkit-details-marker {
-      display: none;
-    }
-    .focus-card__plain-more-toggle::marker {
-      content: '';
-    }
-    .focus-card__plain-more-toggle::before {
-      content: '+';
-      display: inline-grid;
-      place-items: center;
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid var(--focus-border);
-      opacity: 0.9;
-      font-size: 13px;
-      line-height: 1;
-    }
-    .focus-card__plain-more[open] .focus-card__plain-more-toggle::before {
-      content: '−';
-    }
-    .focus-card__plain-more-text--less {
-      display: none;
-    }
-    .focus-card__plain-more[open] .focus-card__plain-more-text--more {
-      display: none;
-    }
-    .focus-card__plain-more[open] .focus-card__plain-more-text--less {
-      display: inline;
-    }
-    .focus-card__plain-more-toggle:focus-visible {
-      outline: 2px solid rgba(255, 255, 255, 0.18);
-      outline-offset: 3px;
-      border-radius: 999px;
-    }
-    .focus-card__plain-more .focus-card__plain-sub {
-      margin-top: 10px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-    }
-    .focus-card__mini-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      min-width: 0;
-      padding-top: 2px;
-    }
-    .focus-card__mini-stat {
-      background: none;
-      border: none;
-      border-radius: 0;
-      padding: 16px 0 0;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-      min-width: 0;
-      box-sizing: border-box;
-      border-top: 1px solid var(--focus-border);
-    }
-    .focus-card__mini-stat-label {
-      font-family: var(--font-ui);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--focus-text-subtle);
-      line-height: 1.4;
-    }
-    .focus-card__mini-stat-val {
-      font-family: var(--font-ui);
-      line-height: 1.05;
-      font-variant-numeric: tabular-nums;
-    }
-    .focus-card__mini-stat-val--amber {
-      font-size: 20px;
-      font-weight: 600;
-      color: #f5b64d;
-      letter-spacing: -0.025em;
-    }
-    .focus-card__mini-stat-val--recovery {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 1px;
-    }
-    .focus-card__mini-stat-val--recovery .focus-card__mini-stat-num {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--focus-text);
-      letter-spacing: -0.025em;
-    }
-    .focus-card__mini-stat-val--recovery .focus-card__mini-stat-suffix,
-    .focus-card__mini-stat-val--coral .focus-card__mini-stat-unit,
-    .focus-card__mini-stat-val--amber-ms .focus-card__mini-stat-unit,
-    .focus-card__mini-stat-val--white-ms .focus-card__mini-stat-unit,
-    .focus-card__mini-stat-val--coral-pct .focus-card__mini-stat-suffix,
-    .focus-card__mini-stat-val--amber-pct .focus-card__mini-stat-suffix,
-    .focus-card__mini-stat-val--purple-pct .focus-card__mini-stat-suffix,
-    .focus-card__mini-stat-val--coral-pts .focus-card__mini-stat-unit {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--focus-text-subtle);
-    }
-    .focus-card__mini-stat-val--coral { color: #f08274; }
-    .focus-card__mini-stat-val--coral .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--amber-ms .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--white-ms .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--coral-pct .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--amber-pct .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--purple-pct .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--coral-pts .focus-card__mini-stat-num {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: -0.025em;
-    }
-    .focus-card__mini-stat-val--white-ms .focus-card__mini-stat-num { color: #ffffff; }
-    .focus-card__mini-stat-val--amber-ms .focus-card__mini-stat-num,
-    .focus-card__mini-stat-val--amber-pct .focus-card__mini-stat-num { color: #f5b64d; }
-    .focus-card__mini-stat-val--purple-pct .focus-card__mini-stat-num { color: #c0afff; }
     @media (max-width: 980px) {
-      .focus-section-band .inner.page-section {
-        max-width: 640px;
+      .focus-card__shell {
+        grid-template-columns: 1fr;
+      }
+      .focus-card__detail-headline {
+        max-width: none;
+      }
+      .focus-card__panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 760px) {
+      .focus-section-header {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+      .focus-protocol-nav {
+        justify-items: start;
+      }
+      .focus-card__stage,
+      .focus-card__detail {
+        padding: 22px;
+      }
+      .focus-card__title {
+        max-width: none;
+      }
+      .focus-card__stats {
+        grid-template-columns: 1fr;
       }
     }
     @media (max-width: 550px) {
-      .focus-section-band {
-        padding-top: 56px;
-        padding-bottom: 68px;
+      .focus-band-shell {
+        padding: 18px;
       }
-      .focus-section-header {
-        margin-bottom: 24px;
+      .focus-card.card {
+        min-height: auto;
       }
-      .focus-section-header::after {
-        width: 96px;
-      }
-      .focus-section-band #focus-heading {
-        font-size: 24px;
-        margin-bottom: 26px;
-      }
-      .focus-section-intro {
-        font-size: 15px;
-      }
-      .focus-stack {
-        gap: 18px;
-      }
-      .focus-item {
+      .focus-card__stage-highlights {
         grid-template-columns: 1fr;
-        gap: 10px;
       }
-      .focus-area-label {
-        display: inline-flex;
-        align-items: center;
-        align-self: flex-start;
-        gap: 0;
-        padding: 7px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--focus-border);
+      .focus-card__visual {
+        padding: 16px;
       }
-      .focus-area-label::after {
-        content: none;
+      .focus-card__visual-copy {
+        display: grid;
+        gap: 6px;
       }
-      .focus-item:first-child .focus-area-label {
-        background: rgba(245, 158, 11, 0.16);
-        border-color: rgba(245, 158, 11, 0.26);
+      .focus-card__visual-value {
+        text-align: left;
       }
-      .focus-card__inner,
-      .focus-item:first-child .focus-card__inner {
-        padding: 20px;
-      }
-      .focus-card__title,
-      .focus-item:first-child .focus-card__title {
-        font-size: 22px;
-        max-width: none;
-      }
-      .focus-card__intro {
-        grid-template-columns: 1fr;
-        gap: 14px;
-        padding-bottom: 14px;
-      }
-      .focus-card__content-row,
-      .focus-item:first-child .focus-card__content-row {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .focus-card__chart,
-      .focus-item:first-child .focus-card__chart {
-        min-height: 0;
-      }
-      .focus-card__chart svg,
-      .focus-item:first-child .focus-card__chart svg {
-        max-width: 164px;
-      }
-      .focus-item:first-child .focus-card__plain-lead {
-        font-size: 16px;
-      }
-      .focus-card__correlation-strength {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-      .focus-card__mini-stats {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .focus-card__mini-stat-label {
-        font-size: 9px;
-      }
-      .focus-card__mini-stat-val--amber,
-      .focus-card__mini-stat-val--recovery .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--coral .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--amber-ms .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--white-ms .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--coral-pct .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--amber-pct .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--purple-pct .focus-card__mini-stat-num,
-      .focus-card__mini-stat-val--coral-pts .focus-card__mini-stat-num {
-        font-size: 16px;
-      }
-      .focus-card__mini-stat-val--recovery .focus-card__mini-stat-suffix,
-      .focus-card__mini-stat-val--coral .focus-card__mini-stat-unit,
-      .focus-card__mini-stat-val--amber-ms .focus-card__mini-stat-unit,
-      .focus-card__mini-stat-val--white-ms .focus-card__mini-stat-unit,
-      .focus-card__mini-stat-val--coral-pct .focus-card__mini-stat-suffix,
-      .focus-card__mini-stat-val--amber-pct .focus-card__mini-stat-suffix,
-      .focus-card__mini-stat-val--purple-pct .focus-card__mini-stat-suffix,
-      .focus-card__mini-stat-val--coral-pts .focus-card__mini-stat-unit {
-        font-size: 11px;
+      .focus-card__chart {
+        min-height: 148px;
       }
     }
 
@@ -1967,12 +1869,6 @@
        Tighten rhythm, fix tight grids, ensure breathable padding
     ───────────────────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      /* Tighter space tokens */
-      :root {
-        --space-5: 32px;
-        --space-6: 44px;
-      }
-
       /* Report header */
       .report-header { padding: 24px 0 18px; }
       .report-header-top { margin-bottom: 20px; }
@@ -2980,165 +2876,340 @@
 ═══════════════════════════════════════ -->
 <section class="focus-section-band">
   <div class="inner page-section">
-    <div class="focus-section-header reveal">
-      <h2 class="section-label section-label--caps" id="focus-heading">Your priority areas</h2>
-      <p class="focus-section-intro">The patterns with the clearest upside for sleep, recovery, and next-day readiness.</p>
-    </div>
-    <div class="focus-stack">
+    <div class="focus-band-shell">
+      <div class="focus-section-header reveal">
+        <div class="focus-section-header__copy">
+          <h2 class="section-label section-label--caps" id="focus-heading">Your priority areas</h2>
+          <p class="focus-section-intro">Four ranked opportunities, ordered by the clearest upside for sleep architecture, recovery quality, and next-day readiness.</p>
+        </div>
+        <div class="focus-protocol-nav">
+          <span class="focus-protocol-count" id="focusCardCount" aria-live="polite">Priority 1 of 4</span>
+          <div class="focus-card-dots" id="focusCardDots" role="tablist" aria-label="Choose priority recommendation">
+            <button type="button" class="focus-card-dot active" data-focus-target="0" aria-label="Priority 1" aria-controls="focus-card-1" role="tab" aria-selected="true"></button>
+            <button type="button" class="focus-card-dot" data-focus-target="1" aria-label="Priority 2" aria-controls="focus-card-2" role="tab" aria-selected="false"></button>
+            <button type="button" class="focus-card-dot" data-focus-target="2" aria-label="Priority 3" aria-controls="focus-card-3" role="tab" aria-selected="false"></button>
+            <button type="button" class="focus-card-dot" data-focus-target="3" aria-label="Priority 4" aria-controls="focus-card-4" role="tab" aria-selected="false"></button>
+          </div>
+        </div>
+      </div>
+      <div class="focus-carousel reveal d1" id="focusCarousel" tabindex="0" aria-label="Priority recommendation carousel">
 <!-- FOCUS_STACK_CORRELATION_START -->
 
-      <div class="focus-item reveal d1">
-        <p class="focus-area-label">Priority 1</p>
-        <article class="card focus-card">
-        <div class="focus-card__inner">
-          <div class="focus-card__intro">
-            <h3 class="focus-card__title">Boost your REM Sleep</h3>
-            <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Focus Area</span>
-              <span class="focus-card__intervention-value">Rem Sleep</span>
-            </p>
-          </div>
-          <div class="focus-card__content-row">
-            <div class="focus-card__col focus-card__col--text">
-              <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
-                
-                <details class="focus-card__plain-more">
-                  <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">Why it matters</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Hide</span>
-                  </summary>
-                  <p class="focus-card__plain-sub">REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.</p>
-                </details>
+        <article class="card focus-card is-active" id="focus-card-1" data-focus-index="0" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 245, 158, 11;">
+          <div class="focus-card__shell">
+            <div class="focus-card__stage">
+              <div class="focus-card__stage-top">
+                <p class="focus-card__priority">Priority 1</p>
+                <span class="stage-category-tag">
+                  <svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg>
+                  <span class="stage-category-tag__focus">REM Sleep</span>
+                </span>
               </div>
-            </div>
-            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
-              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/>
-<polyline points="4,46 15,50 26,54 37,46 48,50 59,54 70,46 81,50 92,54" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-              <span class="focus-card__chart-cap">REM · n=null</span>
-            </div>
-          </div>
-        </div>
-      </article>
-      </div>
-
-      <div class="focus-item reveal d2">
-        <p class="focus-area-label">Priority 2</p>
-        <article class="card focus-card">
-        <div class="focus-card__inner">
-          <div class="focus-card__intro">
-            <h3 class="focus-card__title">Protect Deep Sleep as training load rises</h3>
-            <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Focus Area</span>
-              <span class="focus-card__intervention-value">Deep Sleep</span>
-            </p>
-          </div>
-          <div class="focus-card__content-row">
-            <div class="focus-card__col focus-card__col--text">
-              <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">When your <span class="focus-card__metric-em">7-day average training intensity</span> stayed above <span class="focus-card__metric-em">1.84</span>, your <span class="focus-card__metric-em">7-day average Deep Sleep</span> tended to remain below <span class="focus-card__metric-em">0.7 hours</span>, which is 9% below your 30-day average.</p>
-                <div class="focus-card__correlation-strength" role="group" aria-label="Correlation strength, 80 percent">
-                <span class="focus-card__correlation-strength-label">Correlation strength: 80%</span>
-                <div class="focus-card__correlation-strength-track" aria-hidden="true">
-                  <div class="focus-card__correlation-strength-fill" style="width:80%"></div>
+              <div class="focus-card__stage-copy">
+                <p class="focus-card__eyebrow">Sleep architecture</p>
+                <h3 class="focus-card__title">Boost your REM Sleep</h3>
+                <p class="focus-card__summary">Largest sleep-architecture gap versus your demographic baseline, and the clearest upside for sharper overnight recovery.</p>
+              </div>
+              <div class="focus-card__stage-highlights">
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Current REM</span>
+                  <strong class="focus-card__highlight-value">11%</strong>
+                  <span class="focus-card__highlight-note">Your measured sleep mix</span>
+                </div>
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Benchmark</span>
+                  <strong class="focus-card__highlight-value">21%</strong>
+                  <span class="focus-card__highlight-note">Demographic average</span>
                 </div>
               </div>
-                <details class="focus-card__plain-more">
-                  <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">Why it matters</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Hide</span>
-                  </summary>
-                  <p class="focus-card__plain-sub">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most.</p>
-                </details>
+              <div class="focus-card__visual">
+                <div class="focus-card__visual-copy">
+                  <span class="focus-card__visual-label">Pattern snapshot</span>
+                  <span class="focus-card__visual-value">Baseline gap · 49% below average</span>
+                </div>
+                <div class="focus-card__chart" aria-hidden="true">
+                  <svg width="99" height="62" viewBox="0 0 99 62" fill="none"><rect x="0" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><polyline points="4,46 15,50 26,54 37,46 48,50 59,54 70,46 81,50 92,54" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </div>
+                <span class="focus-card__chart-cap">REM share vs demographic average</span>
               </div>
             </div>
-            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
-              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="15" width="7" height="47" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="28" width="7" height="34" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="39" width="7" height="23" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="40" width="7" height="22" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="30" width="7" height="32" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="17" width="7" height="45" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="10" width="7" height="52" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="15" width="7" height="47" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="28" width="7" height="34" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="39" width="7" height="23" fill="#f59e0b" opacity="0.85" rx="1"/>
-<polyline points="4,24 15,28 26,32 37,24 48,28 59,32 70,24 81,28 92,32" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-              <span class="focus-card__chart-cap">DeepSleep · n=8</span>
-            </div>
-          </div>
-        </div>
-      </article>
-      </div>
-
-      <div class="focus-item reveal d3">
-        <p class="focus-area-label">Priority 3</p>
-        <article class="card focus-card">
-        <div class="focus-card__inner">
-          <div class="focus-card__intro">
-            <h3 class="focus-card__title">Lower Light Sleep Duration</h3>
-            <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Focus Area</span>
-              <span class="focus-card__intervention-value">Sleep Quality</span>
-            </p>
-          </div>
-          <div class="focus-card__content-row">
-            <div class="focus-card__col focus-card__col--text">
-              <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
-                
-                <details class="focus-card__plain-more">
-                  <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">Why it matters</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Hide</span>
-                  </summary>
-                  <p class="focus-card__plain-sub">Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.</p>
-                </details>
+            <div class="focus-card__detail">
+              <div class="focus-card__detail-top">
+                <span class="focus-card__detail-kicker">What stood out</span>
+                <p class="focus-card__detail-headline">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
+                <p class="focus-card__detail-body">This is the strongest sleep-architecture gap in the report, so it deserves the clearest placement and the most attention.</p>
               </div>
-            </div>
-            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
-              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/>
-<polyline points="4,46 15,50 26,54 37,46 48,50 59,54 70,46 81,50 92,54" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-              <span class="focus-card__chart-cap">LightSleep · n=null</span>
-            </div>
-          </div>
-        </div>
-      </article>
-      </div>
-
-      <div class="focus-item reveal d1">
-        <p class="focus-area-label">Priority 4</p>
-        <article class="card focus-card">
-        <div class="focus-card__inner">
-          <div class="focus-card__intro">
-            <h3 class="focus-card__title">Recover better after hard training for higher next-day RHR</h3>
-            <p class="focus-card__intervention">
-              <span class="focus-card__intervention-kicker">Focus Area</span>
-              <span class="focus-card__intervention-value">Recovery</span>
-            </p>
-          </div>
-          <div class="focus-card__content-row">
-            <div class="focus-card__col focus-card__col--text">
-              <div class="focus-card__body focus-card__body--plain">
-                <p class="focus-card__plain-lead">On days when your <span class="focus-card__metric-em">training intensity</span> reached <span class="focus-card__metric-em">2.05</span>, your <span class="focus-card__metric-em">next-day RHR</span> tended to rise above <span class="focus-card__metric-em">50 bpm</span>, which is 5% above your 30-day average.</p>
-                <div class="focus-card__correlation-strength" role="group" aria-label="Correlation strength, 50 percent">
-                <span class="focus-card__correlation-strength-label">Correlation strength: 50%</span>
-                <div class="focus-card__correlation-strength-track" aria-hidden="true">
-                  <div class="focus-card__correlation-strength-fill" style="width:50%"></div>
+              <div class="focus-card__stats" aria-label="REM summary">
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Gap</span>
+                  <span class="focus-card__stat-value">-49%</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Focus area</span>
+                  <span class="focus-card__stat-value">REM</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Signal</span>
+                  <span class="focus-card__stat-value">Baseline</span>
                 </div>
               </div>
-                <details class="focus-card__plain-more">
-                  <summary class="focus-card__plain-more-toggle">
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--more">Why it matters</span>
-                    <span class="focus-card__plain-more-text focus-card__plain-more-text--less">Hide</span>
-                  </summary>
-                  <p class="focus-card__plain-sub">This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
-                </details>
+              <div class="focus-card__panel-grid">
+                <div class="focus-card__panel">
+                  <span class="focus-card__panel-title">Why it matters</span>
+                  <p class="focus-card__panel-copy">REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.</p>
+                </div>
+                <div class="focus-card__panel focus-card__panel--comparison">
+                  <div class="focus-card__signal-row">
+                    <span class="focus-card__signal-title">Evidence lens</span>
+                    <span class="focus-card__signal-value">Demographic average</span>
+                  </div>
+                  <div class="focus-card__signal-track" aria-hidden="true">
+                    <span class="focus-card__signal-fill"></span>
+                  </div>
+                  <p class="focus-card__panel-copy">This recommendation is being driven by a meaningful benchmark shortfall rather than a single training-correlation threshold.</p>
+                </div>
               </div>
             </div>
-            <div class="focus-card__chart" aria-label="Correlation chart placeholder">
-              <svg width="99" height="62" viewBox="0 0 99 62" fill="none" aria-hidden="true"><rect x="0" y="23" width="7" height="39" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="26" width="7" height="36" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="34" width="7" height="28" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="41" width="7" height="21" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="41" width="7" height="21" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="35" width="7" height="27" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="27" width="7" height="35" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="23" width="7" height="39" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="26" width="7" height="36" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="34" width="7" height="28" fill="#f59e0b" opacity="0.85" rx="1"/>
-<polyline points="4,32 15,36 26,40 37,32 48,36 59,40 70,32 81,36 92,40" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-              <span class="focus-card__chart-cap">RHR · n=10</span>
+          </div>
+        </article>
+
+        <article class="card focus-card" id="focus-card-2" data-focus-index="1" aria-label="Priority 2 recommendation" style="--focus-card-accent-rgb: 59, 130, 246;">
+          <div class="focus-card__shell">
+            <div class="focus-card__stage">
+              <div class="focus-card__stage-top">
+                <p class="focus-card__priority">Priority 2</p>
+                <span class="stage-category-tag">
+                  <svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg>
+                  <span class="stage-category-tag__focus">Deep Sleep</span>
+                </span>
+              </div>
+              <div class="focus-card__stage-copy">
+                <p class="focus-card__eyebrow">Recovery quality</p>
+                <h3 class="focus-card__title">Protect Deep Sleep as training load rises</h3>
+                <p class="focus-card__summary">When training stays hard, deep sleep drops below your recovery floor, making this one of the clearest repeatable patterns in the report.</p>
+              </div>
+              <div class="focus-card__stage-highlights">
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Load threshold</span>
+                  <strong class="focus-card__highlight-value">1.84+</strong>
+                  <span class="focus-card__highlight-note">7-day average intensity</span>
+                </div>
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Deep sleep floor</span>
+                  <strong class="focus-card__highlight-value">&lt;0.7h</strong>
+                  <span class="focus-card__highlight-note">7-day average deep sleep</span>
+                </div>
+              </div>
+              <div class="focus-card__visual">
+                <div class="focus-card__visual-copy">
+                  <span class="focus-card__visual-label">Pattern snapshot</span>
+                  <span class="focus-card__visual-value">Correlation strength · 80%</span>
+                </div>
+                <div class="focus-card__chart" aria-hidden="true">
+                  <svg width="99" height="62" viewBox="0 0 99 62" fill="none"><rect x="0" y="15" width="7" height="47" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="28" width="7" height="34" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="39" width="7" height="23" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="40" width="7" height="22" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="30" width="7" height="32" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="17" width="7" height="45" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="10" width="7" height="52" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="15" width="7" height="47" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="28" width="7" height="34" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="39" width="7" height="23" fill="#f59e0b" opacity="0.85" rx="1"/><polyline points="4,24 15,28 26,32 37,24 48,28 59,32 70,24 81,28 92,32" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </div>
+                <span class="focus-card__chart-cap">Training intensity vs deep sleep</span>
+              </div>
+            </div>
+            <div class="focus-card__detail">
+              <div class="focus-card__detail-top">
+                <span class="focus-card__detail-kicker">What stood out</span>
+                <p class="focus-card__detail-headline">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
+                <p class="focus-card__detail-body">This pattern sits just behind REM in importance because it directly points to harder training weeks outpacing your current recovery depth.</p>
+              </div>
+              <div class="focus-card__stats" aria-label="Deep sleep summary">
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">30-day delta</span>
+                  <span class="focus-card__stat-value">-9%</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Trigger</span>
+                  <span class="focus-card__stat-value">Hard weeks</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Signal</span>
+                  <span class="focus-card__stat-value">Strong</span>
+                </div>
+              </div>
+              <div class="focus-card__panel-grid">
+                <div class="focus-card__panel">
+                  <span class="focus-card__panel-title">Why it matters</span>
+                  <p class="focus-card__panel-copy">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most.</p>
+                </div>
+                <div class="focus-card__panel">
+                  <div class="focus-card__signal-row">
+                    <span class="focus-card__signal-title">Signal strength</span>
+                    <span class="focus-card__signal-value">80%</span>
+                  </div>
+                  <div class="focus-card__signal-track" aria-hidden="true">
+                    <span class="focus-card__signal-fill" style="width: 80%;"></span>
+                  </div>
+                  <p class="focus-card__panel-copy">Among the clearest repeatable patterns in your data, which is why it belongs near the top of the stack.</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </article>
-      </div>
+        </article>
+
+        <article class="card focus-card" id="focus-card-3" data-focus-index="2" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 167, 139, 250;">
+          <div class="focus-card__shell">
+            <div class="focus-card__stage">
+              <div class="focus-card__stage-top">
+                <p class="focus-card__priority">Priority 3</p>
+                <span class="stage-category-tag">
+                  <svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg>
+                  <span class="stage-category-tag__focus">Light Sleep</span>
+                </span>
+              </div>
+              <div class="focus-card__stage-copy">
+                <p class="focus-card__eyebrow">Sleep quality</p>
+                <h3 class="focus-card__title">Lower Light Sleep Duration</h3>
+                <p class="focus-card__summary">Light sleep is running high enough to crowd out more restorative stages, which makes overall sleep quality feel flatter than total duration suggests.</p>
+              </div>
+              <div class="focus-card__stage-highlights">
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Current light sleep</span>
+                  <strong class="focus-card__highlight-value">69%</strong>
+                  <span class="focus-card__highlight-note">Your measured share</span>
+                </div>
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Benchmark</span>
+                  <strong class="focus-card__highlight-value">57%</strong>
+                  <span class="focus-card__highlight-note">Demographic average</span>
+                </div>
+              </div>
+              <div class="focus-card__visual">
+                <div class="focus-card__visual-copy">
+                  <span class="focus-card__visual-label">Pattern snapshot</span>
+                  <span class="focus-card__visual-value">Baseline gap · 21% above average</span>
+                </div>
+                <div class="focus-card__chart" aria-hidden="true">
+                  <svg width="99" height="62" viewBox="0 0 99 62" fill="none"><rect x="0" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="44" width="7" height="18" fill="#f59e0b" opacity="0.85" rx="1"/><polyline points="4,46 15,50 26,54 37,46 48,50 59,54 70,46 81,50 92,54" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </div>
+                <span class="focus-card__chart-cap">Light sleep share vs demographic average</span>
+              </div>
+            </div>
+            <div class="focus-card__detail">
+              <div class="focus-card__detail-top">
+                <span class="focus-card__detail-kicker">What stood out</span>
+                <p class="focus-card__detail-headline">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
+                <p class="focus-card__detail-body">The issue here is less about total hours and more about balance: your nights are not tilting far enough into the most restorative stages.</p>
+              </div>
+              <div class="focus-card__stats" aria-label="Light sleep summary">
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Gap</span>
+                  <span class="focus-card__stat-value">+21%</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Focus area</span>
+                  <span class="focus-card__stat-value">Quality</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Signal</span>
+                  <span class="focus-card__stat-value">Baseline</span>
+                </div>
+              </div>
+              <div class="focus-card__panel-grid">
+                <div class="focus-card__panel">
+                  <span class="focus-card__panel-title">Why it matters</span>
+                  <p class="focus-card__panel-copy">Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.</p>
+                </div>
+                <div class="focus-card__panel focus-card__panel--comparison">
+                  <div class="focus-card__signal-row">
+                    <span class="focus-card__signal-title">Evidence lens</span>
+                    <span class="focus-card__signal-value">Demographic average</span>
+                  </div>
+                  <div class="focus-card__signal-track" aria-hidden="true">
+                    <span class="focus-card__signal-fill"></span>
+                  </div>
+                  <p class="focus-card__panel-copy">Like REM, this priority is grounded in a clear architecture imbalance against a stable reference point.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card focus-card" id="focus-card-4" data-focus-index="3" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 248, 113, 113;">
+          <div class="focus-card__shell">
+            <div class="focus-card__stage">
+              <div class="focus-card__stage-top">
+                <p class="focus-card__priority">Priority 4</p>
+                <span class="stage-category-tag">
+                  <svg class="stage-category-tag__chart" width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M2 10.5V8M5 10.5V5.5M8 10.5V7M11 10.5V3" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path></svg>
+                  <span class="stage-category-tag__focus">RHR</span>
+                </span>
+              </div>
+              <div class="focus-card__stage-copy">
+                <p class="focus-card__eyebrow">Recovery strain</p>
+                <h3 class="focus-card__title">Recover better after hard training</h3>
+                <p class="focus-card__summary">Harder sessions are carrying into the next day with a measurable rise in resting heart rate, pointing to recovery stress after intensity spikes.</p>
+              </div>
+              <div class="focus-card__stage-highlights">
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Load trigger</span>
+                  <strong class="focus-card__highlight-value">2.05</strong>
+                  <span class="focus-card__highlight-note">Training intensity reached</span>
+                </div>
+                <div class="focus-card__highlight">
+                  <span class="focus-card__highlight-label">Next-day RHR</span>
+                  <strong class="focus-card__highlight-value">&gt;50</strong>
+                  <span class="focus-card__highlight-note">BPM tendency after hard days</span>
+                </div>
+              </div>
+              <div class="focus-card__visual">
+                <div class="focus-card__visual-copy">
+                  <span class="focus-card__visual-label">Pattern snapshot</span>
+                  <span class="focus-card__visual-value">Correlation strength · 50%</span>
+                </div>
+                <div class="focus-card__chart" aria-hidden="true">
+                  <svg width="99" height="62" viewBox="0 0 99 62" fill="none"><rect x="0" y="23" width="7" height="39" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="9" y="26" width="7" height="36" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="18" y="34" width="7" height="28" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="27" y="41" width="7" height="21" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="36" y="41" width="7" height="21" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="45" y="35" width="7" height="27" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="54" y="27" width="7" height="35" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="63" y="23" width="7" height="39" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="72" y="26" width="7" height="36" fill="#f59e0b" opacity="0.85" rx="1"/><rect x="81" y="34" width="7" height="28" fill="#f59e0b" opacity="0.85" rx="1"/><polyline points="4,32 15,36 26,40 37,32 48,36 59,40 70,32 81,36 92,40" stroke="rgba(255,255,255,0.55)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                </div>
+                <span class="focus-card__chart-cap">Training load vs next-day RHR</span>
+              </div>
+            </div>
+            <div class="focus-card__detail">
+              <div class="focus-card__detail-top">
+                <span class="focus-card__detail-kicker">What stood out</span>
+                <p class="focus-card__detail-headline">On days when your training intensity reached 2.05, your next-day RHR tended to rise above 50 bpm.</p>
+                <p class="focus-card__detail-body">This is a more moderate signal than the sleep priorities above, but it is still useful because it links recovery stress directly to hard-session timing.</p>
+              </div>
+              <div class="focus-card__stats" aria-label="RHR summary">
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">30-day delta</span>
+                  <span class="focus-card__stat-value">+5%</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Trigger</span>
+                  <span class="focus-card__stat-value">High load</span>
+                </div>
+                <div class="focus-card__stat">
+                  <span class="focus-card__stat-label">Signal</span>
+                  <span class="focus-card__stat-value">Moderate</span>
+                </div>
+              </div>
+              <div class="focus-card__panel-grid">
+                <div class="focus-card__panel">
+                  <span class="focus-card__panel-title">Why it matters</span>
+                  <p class="focus-card__panel-copy">This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+                </div>
+                <div class="focus-card__panel">
+                  <div class="focus-card__signal-row">
+                    <span class="focus-card__signal-title">Signal strength</span>
+                    <span class="focus-card__signal-value">50%</span>
+                  </div>
+                  <div class="focus-card__signal-track" aria-hidden="true">
+                    <span class="focus-card__signal-fill" style="width: 50%;"></span>
+                  </div>
+                  <p class="focus-card__panel-copy">A moderate but meaningful recovery pattern that is still worth surfacing because it affects next-day readiness.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
 <!-- FOCUS_STACK_CORRELATION_END -->
+      </div>
+    </div>
   </div>
-</div>
 </section>
 
 
@@ -3351,6 +3422,73 @@
       btn.classList.add('active');
     });
   });
+
+  /* ── Focus priority carousel ── */
+  (function () {
+    const carousel = document.getElementById('focusCarousel');
+    const count = document.getElementById('focusCardCount');
+    const dotsWrap = document.getElementById('focusCardDots');
+    if (!carousel || !count || !dotsWrap) return;
+
+    const cards = Array.from(carousel.querySelectorAll('.focus-card[data-focus-index]'));
+    const dots = Array.from(dotsWrap.querySelectorAll('.focus-card-dot'));
+    if (!cards.length || cards.length !== dots.length) return;
+
+    let activeIndex = 0;
+
+    function setActive(index) {
+      activeIndex = index;
+      count.textContent = `Priority ${index + 1} of ${cards.length}`;
+
+      cards.forEach((card, i) => {
+        card.classList.toggle('is-active', i === index);
+      });
+
+      dots.forEach((dot, i) => {
+        const active = i === index;
+        dot.classList.toggle('active', active);
+        dot.setAttribute('aria-selected', active ? 'true' : 'false');
+        dot.setAttribute('tabindex', active ? '0' : '-1');
+      });
+    }
+
+    function scrollToCard(index) {
+      cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        setActive(index);
+        scrollToCard(index);
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+      const index = cards.indexOf(visible.target);
+      if (index === -1 || index === activeIndex) return;
+      setActive(index);
+    }, { root: carousel, threshold: [0.45, 0.6, 0.82] });
+
+    cards.forEach(card => observer.observe(card));
+
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+      event.preventDefault();
+      const nextIndex = event.key === 'ArrowRight'
+        ? Math.min(activeIndex + 1, cards.length - 1)
+        : Math.max(activeIndex - 1, 0);
+      if (nextIndex === activeIndex) return;
+      setActive(nextIndex);
+      scrollToCard(nextIndex);
+    });
+
+    setActive(0);
+  })();
 
   /* ── Scroll reveal ── */
   const io = new IntersectionObserver(entries => {
