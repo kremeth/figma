@@ -1387,7 +1387,7 @@
       color: #5b5c63;
       text-align: center;
       white-space: nowrap;
-      text-overflow: ellipsis;
+      text-overflow: clip;
       transition:
         max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
         opacity 0.18s ease,
@@ -1410,12 +1410,14 @@
     .rec-rhr-dot.active::before {
       opacity: 1;
     }
+    /* Inner width = pill width minus horizontal padding (15px + 15px on .rec-rhr-dot.active) */
     .rec-rhr-dot.active .rec-rhr-dot__label {
-      max-width: calc(var(--rec-rhr-pill-w) - 36px);
+      max-width: calc(var(--rec-rhr-pill-w) - 30px);
       opacity: 1;
       transform: translateX(0);
-      padding: 0 1px;
+      padding: 0;
       color: #45464d;
+      text-overflow: clip;
     }
     .rec-rhr-dot:not(.active):hover {
       transform: scale(1.08);
@@ -3249,7 +3251,7 @@
         </div>
         <div class="nc-protocol-header">
           <div class="nc-protocol-nav">
-            <span id="recRhrCount" aria-live="polite">REM Sleep · 1 of 4</span>
+            <span id="recRhrCount" aria-live="polite">Priority 1 of 4</span>
             <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">
               <button type="button" class="rec-rhr-dot active" aria-label="REM Sleep" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">REM Sleep</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Deep Sleep" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Deep Sleep</span></button>
@@ -3654,7 +3656,10 @@
       dotsWrap.appendChild(measurer);
     }
 
-    const PILL_PAD_X = 36;
+    /* Must match .rec-rhr-dot.active horizontal padding (15 + 15) */
+    const PILL_H_PAD = 30;
+    /* Extra px so longest label never clips (subpixels, kerning, zoom) */
+    const PILL_SLACK = 16;
 
     function dotLabel(dot, index) {
       return (
@@ -3668,9 +3673,11 @@
       let maxW = 0;
       dots.forEach((dot, index) => {
         measurer.textContent = dotLabel(dot, index);
-        maxW = Math.max(maxW, Math.ceil(measurer.getBoundingClientRect().width));
+        const rectW = measurer.getBoundingClientRect().width;
+        const scrollW = measurer.scrollWidth;
+        maxW = Math.max(maxW, Math.ceil(Math.max(rectW, scrollW)));
       });
-      const pillW = Math.max(maxW + PILL_PAD_X, 74);
+      const pillW = Math.max(maxW + PILL_H_PAD + PILL_SLACK, 96);
       dotsWrap.style.setProperty('--rec-rhr-pill-w', `${pillW}px`);
     }
 
@@ -3678,7 +3685,7 @@
       const idx = Math.max(0, Math.min(cards.length - 1, index));
       if (idx === activeIndex && cards[idx].classList.contains('is-active')) return;
       activeIndex = idx;
-      count.textContent = `${dotLabel(dots[idx], idx)} · ${idx + 1} of ${cards.length}`;
+      count.textContent = `Priority ${idx + 1} of ${cards.length}`;
       cards.forEach((card, i) => card.classList.toggle('is-active', i === idx));
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === idx);
