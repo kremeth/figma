@@ -61,6 +61,14 @@
     padding: 32px 32px 28px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 0 0 0.5px rgba(0,0,0,0.06);
   }
+  .card--scatter-hero {
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow:
+      0 18px 34px rgba(0,0,0,0.04),
+      0 2px 10px rgba(0,0,0,0.03),
+      0 0 0 1px rgba(0,0,0,0.05);
+  }
 
   .chart-header {
     display: flex;
@@ -83,6 +91,23 @@
     text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   }
+  .card--scatter-hero .chart-header {
+    margin-bottom: 18px;
+  }
+  .card--scatter-hero .chart-meta {
+    max-width: 420px;
+  }
+  .card--scatter-hero .chart-label--10 {
+    margin: 0;
+    color: var(--text-1);
+    font-size: clamp(28px, 4vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 1.02;
+    text-align: left;
+    text-transform: none;
+    text-wrap: balance;
+  }
   /* Chart labels + legends use mono; scatter title stays system sans via .chart-label--10 */
   .graph-stack .chart-label:not(.chart-label--10),
   .graph-stack .legend-item,
@@ -100,6 +125,10 @@
     flex-wrap: wrap;
     margin-bottom: 16px;
   }
+  .card--scatter-hero .legend {
+    gap: 10px;
+    margin-bottom: 22px;
+  }
   .legend-item {
     display: flex;
     align-items: center;
@@ -107,6 +136,18 @@
     font-size: 12px;
     color: var(--text-2);
     letter-spacing: -0.01em;
+  }
+  .card--scatter-hero .legend-item {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: #f7f7f8;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--text-2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
   }
   .legend-num {
     font-family: var(--font-graph-mono);
@@ -146,11 +187,42 @@
     width: 100%;
     height: 260px;
   }
+  .card--scatter-hero .chart-wrap {
+    height: 312px;
+    padding: 18px 18px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.05);
+    background: #fafafb;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.88);
+  }
+  .card--scatter-hero .chart-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
 
   .graph-why {
     margin-top: 20px;
     border: none;
     background: transparent;
+  }
+  .card--scatter-hero .graph-why {
+    margin-top: 16px;
+  }
+  .card--scatter-hero .graph-why > summary {
+    padding: 13px 16px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.05);
+    color: #8e8e93;
+  }
+  .card--scatter-hero .graph-why[open] > summary {
+    border-radius: 14px 14px 0 0;
+    border-bottom: none;
+  }
+  .card--scatter-hero .graph-why .graph-why__copy {
+    padding: 0 16px 16px;
+    background: #ffffff;
+    border-radius: 0 0 14px 14px;
   }
   .graph-why > summary {
     list-style: none;
@@ -270,6 +342,17 @@
   }
 
   @media (max-width: 640px) {
+    .card--scatter-hero {
+      padding: 22px;
+    }
+    .card--scatter-hero .chart-label--10 {
+      font-size: 26px;
+    }
+    .card--scatter-hero .chart-wrap {
+      height: 280px;
+      padding: 14px 14px 12px;
+      border-radius: 18px;
+    }
     .heatmap-mount {
       min-height: 292px;
     }
@@ -283,7 +366,7 @@
 <div class="graph-stack">
 
 <!-- 1. SCATTER -->
-<div class="card">
+<div class="card card--scatter-hero">
   <div class="chart-header">
     <div class="chart-meta">
       <div class="chart-label chart-label--10">Training intensity vs next-day resting HR</div>

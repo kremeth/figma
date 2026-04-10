@@ -1579,66 +1579,134 @@
       color: var(--ink-3);
     }
 
-    /* Embedded scatter (focus card 4) — same structure as graphs.html */
+    /* Embedded scatter (focus card 4) */
+    #focus-card-4 .focus-card__stage {
+      gap: 22px;
+      padding: 30px 30px 28px;
+      background: #fcfcfd;
+    }
+    #focus-card-4 .focus-card__stage-top {
+      margin-bottom: -2px;
+    }
+    #focus-card-4 .stage-category-tag {
+      padding: 6px 12px;
+      background: rgba(var(--focus-card-accent-rgb), 0.1);
+      border-color: rgba(var(--focus-card-accent-rgb), 0.2);
+      color: var(--focus-card-text-color, var(--ink-2));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+    #focus-card-4 .focus-card__stage-copy {
+      gap: 10px;
+    }
+    #focus-card-4 .focus-card__title {
+      max-width: 13ch;
+      letter-spacing: -0.04em;
+    }
+    #focus-card-4 .focus-card__summary {
+      max-width: 35ch;
+      color: #5f6672;
+    }
     #focus-card-4 .focus-card__stage > .card {
       margin-top: auto;
-      padding: 18px 18px 16px;
+      display: grid;
+      gap: 14px;
+      padding: 20px;
       overflow: visible;
+      border-radius: 22px;
+      border: 1px solid rgba(15, 23, 42, 0.07);
+      background: #f5f5f7;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03), 0 12px 30px rgba(15, 23, 42, 0.04);
     }
     #focus-card-4 .focus-card__stage > .card .chart-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 0;
       gap: 16px;
+      padding-bottom: 2px;
     }
-    #focus-card-4 .focus-card__stage > .card .chart-meta { flex: 1; min-width: 0; }
+    #focus-card-4 .focus-card__stage > .card .chart-meta {
+      flex: 1;
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
     #focus-card-4 .focus-card__stage > .card .chart-label {
+      margin: 0;
       font-family: var(--font-ui);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--ink-4);
-      margin-bottom: 4px;
+      color: #8f8f95;
       line-height: 1.35;
     }
     #focus-card-4 .focus-card__stage > .card .chart-label--10 { font-size: 10px; }
     #focus-card-4 .focus-card__stage > .card .legend {
       display: flex;
-      gap: 20px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 14px;
+      margin-bottom: 0;
     }
     #focus-card-4 .focus-card__stage > .card .legend .legend-item {
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--ink-3);
+      gap: 8px;
+      min-height: 32px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(15, 23, 42, 0.07);
+      background: rgba(255,255,255,0.84);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      color: #565d69;
       letter-spacing: -0.01em;
-      line-height: 1.35;
+      line-height: 1;
     }
     #focus-card-4 .focus-card__stage > .card .legend-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
+      box-shadow: 0 0 0 4px rgba(10,132,255,0.12);
     }
     #focus-card-4 .focus-card__stage > .card .legend-line {
-      width: 16px;
+      width: 18px;
       height: 2px;
-      border-radius: 1px;
+      border-radius: 999px;
       flex-shrink: 0;
+      box-shadow: 0 0 0 4px rgba(10,132,255,0.08);
     }
     #focus-card-4 .focus-card__stage > .card .chart-wrap {
       position: relative;
       width: 100%;
-      height: 260px;
+      height: 286px;
+      padding: 14px 14px 10px 10px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+      overflow: hidden;
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+    }
+    #focus-card-4 .focus-card__stage > .card .chart-wrap canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
     }
     #focus-card-4 .focus-card__stage > .card .graph-why {
-      margin-top: 18px;
-      border: none;
+      margin-top: 2px;
+      padding-top: 2px;
+      border-top: 1px solid rgba(15, 23, 42, 0.06);
       background: transparent;
       font-family: var(--font-ui);
     }
@@ -1648,38 +1716,33 @@
     #focus-card-4 .focus-card__stage > .card .graph-why > summary {
       list-style: none;
       cursor: pointer;
-      padding: 12px 14px;
+      padding: 12px 2px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      background: #fafafa;
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
       font-size: 10px;
-      font-weight: 600;
-      letter-spacing: var(--ls-10-caps);
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--ink-4);
+      color: #8f8f95;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
     #focus-card-4 .focus-card__stage > .card .graph-why > summary::-webkit-details-marker { display: none; }
     #focus-card-4 .focus-card__stage > .card .graph-why > summary::after {
       content: "";
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       margin-top: -2px;
-      border-right: 2px solid var(--ink-4);
-      border-bottom: 2px solid var(--ink-4);
+      border-right: 1.5px solid rgba(95, 95, 102, 0.72);
+      border-bottom: 1.5px solid rgba(95, 95, 102, 0.72);
       transform: rotate(45deg);
       transition: transform 0.2s ease;
       flex-shrink: 0;
-      opacity: 0.65;
-    }
-    #focus-card-4 .focus-card__stage > .card .graph-why[open] > summary {
-      border-radius: 10px 10px 0 0;
-      border-bottom: none;
     }
     #focus-card-4 .focus-card__stage > .card .graph-why[open] > summary::after {
       margin-top: 2px;
@@ -1687,16 +1750,15 @@
     }
     #focus-card-4 .focus-card__stage > .card .graph-why .graph-why__copy {
       margin: 0;
-      padding: 0 14px 14px;
-      background: #ffffff;
-      border: 1px solid var(--card-border);
-      border-top: none;
-      border-radius: 0 0 10px 10px;
+      padding: 10px 2px 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
       font-family: var(--font-ui);
       font-size: 13px;
-      color: var(--ink-3);
+      color: #636873;
       letter-spacing: var(--ls-13);
-      line-height: 1.5;
+      line-height: 1.58;
     }
     #focus-card-4 .focus-card__stage > .card .graph-why__copy strong {
       color: var(--ink);
@@ -1722,6 +1784,21 @@
       }
       .focus-card__title {
         max-width: none;
+      }
+      #focus-card-4 .focus-card__stage {
+        gap: 20px;
+        padding: 24px 22px 22px;
+      }
+      #focus-card-4 .focus-card__summary {
+        max-width: none;
+      }
+      #focus-card-4 .focus-card__stage > .card {
+        padding: 16px;
+        border-radius: 18px;
+      }
+      #focus-card-4 .focus-card__stage > .card .chart-wrap {
+        height: 248px;
+        padding: 12px 12px 8px 8px;
       }
     }
     @media (max-width: 550px) {
@@ -3343,32 +3420,55 @@
     if (typeof Chart === 'undefined' || !document.getElementById(canvasId)) return;
 
     const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
-    const GRID = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-    const TICK = isDark ? 'rgba(255,255,255,0.30)' : '#aeaeb2';
-    const BLUE = '#0071e3';
-    const BLUE_B = 'rgba(0,113,227,0.14)';
+    const GRID = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(60,60,67,0.1)';
+    const TICK = isDark ? 'rgba(235,235,245,0.6)' : '#8e8e93';
+    const BLUE = '#0a84ff';
+    const BLUE_B = 'rgba(10,132,255,0.1)';
     const FONT_MONO = "'JetBrains Mono', ui-monospace, monospace";
 
     const base = (yMin, yMax) => ({
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { top: 8, right: 10, bottom: 0, left: 2 },
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: isDark ? 'rgba(28,28,30,0.92)' : 'rgba(255,255,255,0.96)',
+          displayColors: false,
+          backgroundColor: isDark ? 'rgba(28,28,30,0.94)' : 'rgba(255,255,255,0.98)',
           titleColor: isDark ? '#f5f5f7' : '#17171a',
-          bodyColor: isDark ? '#aeaeb2' : '#6b7280',
-          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+          bodyColor: isDark ? 'rgba(235,235,245,0.72)' : '#636873',
+          borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(15,23,42,0.08)',
           borderWidth: 1,
-          padding: 10,
-          cornerRadius: 10,
+          padding: 12,
+          cornerRadius: 12,
           titleFont: { size: 12, weight: '600' },
           bodyFont: { size: 12 },
         },
       },
       scales: {
-        x: { grid: { display: false }, border: { display: false }, ticks: { color: TICK, font: { size: 11 }, maxTicksLimit: 8 } },
-        y: { min: yMin, max: yMax, grid: { color: GRID, lineWidth: 1 }, border: { display: false }, ticks: { color: TICK, font: { size: 11 } } },
+        x: {
+          grid: { display: false, drawTicks: false },
+          border: { display: false },
+          ticks: {
+            color: TICK,
+            font: { family: FONT_MONO, size: 10, weight: '500' },
+            padding: 8,
+            maxTicksLimit: 8,
+          },
+        },
+        y: {
+          min: yMin,
+          max: yMax,
+          grid: { color: GRID, lineWidth: 1, drawTicks: false },
+          border: { display: false },
+          ticks: {
+            color: TICK,
+            font: { family: FONT_MONO, size: 10, weight: '500' },
+            padding: 8,
+          },
+        },
       },
       animation: { duration: 400, easing: 'easeOutQuart' },
     });
@@ -3462,7 +3562,9 @@
             type: 'line',
             data: regX.map((x, i) => ({ x, y: regY[i] })),
             borderColor: BLUE,
-            borderWidth: 1.5,
+            borderWidth: 1.8,
+            borderCapStyle: 'round',
+            borderJoinStyle: 'round',
             pointRadius: 0,
             fill: false,
             tension: 0,
@@ -3471,11 +3573,11 @@
           {
             label: 'Points',
             data: pts,
-            backgroundColor: BLUE,
-            borderColor: '#fff',
-            borderWidth: 1.5,
-            pointRadius: 5,
-            pointHoverRadius: 7,
+            backgroundColor: 'rgba(10,132,255,0.9)',
+            borderColor: 'rgba(255,255,255,0.98)',
+            borderWidth: 1.75,
+            pointRadius: 4.5,
+            pointHoverRadius: 6,
             order: 1,
           },
         ],
