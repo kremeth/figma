@@ -90,6 +90,7 @@
       --focus-accent-rgb: 245, 158, 11;
       --focus-card-accent-rgb: 255, 0, 0;
       --focus-card-text-color: #b51c1c;
+      --rec-rhr-handoff-delay: 0.12s;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1350,14 +1351,16 @@
       min-width: 8px;
       max-width: 8px;
       height: 8px;
-      border-radius: 50%;
+      border-radius: 16px;
       background: rgba(60, 60, 67, 0.14);
       overflow: hidden;
       transition:
-        width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1),
+       width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+        min-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
+        max-width 0.38s cubic-bezier(0.2, 0.9, 0.2, 1),
         height 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
         border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1),
-        background-color 0.22s ease,
+        background-color 0.0s ease,
         box-shadow 0.28s ease,
         opacity 0.22s ease,
         transform 0.22s ease;
@@ -1406,6 +1409,9 @@
         0 1px 2px rgba(15,23,42,0.05),
         0 8px 20px rgba(15,23,42,0.04);
       transform: none;
+      /*transition:  width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+      min-width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+      max-width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s);*/
     }
     .rec-rhr-dot.active::before {
       opacity: 1;
@@ -1447,7 +1453,7 @@
     .rec-rhr-dot.rec-rhr-dot--collapsing {
       transition:
         width 0.14s cubic-bezier(0.32, 0, 0.67, 1),
-        height 0.12s cubic-bezier(0.32, 0, 0.67, 1),
+        height 0.0s cubic-bezier(0.32, 0, 0.67, 1),
         border-radius 0.12s cubic-bezier(0.32, 0, 0.67, 1),
         background-color 0.12s ease,
         box-shadow 0.14s ease,
@@ -1459,10 +1465,11 @@
     }
     .rec-rhr-dot.active.rec-rhr-dot--entering {
       transition:
-        width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+        /*width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
+        min-width 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),*/
         height 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
         border-radius 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) var(--rec-rhr-handoff-delay, 0.12s),
-        background-color 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),
+        /*background-color 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),*/
         box-shadow 0.28s ease var(--rec-rhr-handoff-delay, 0.12s),
         opacity 0.22s ease var(--rec-rhr-handoff-delay, 0.12s),
         transform 0.22s ease var(--rec-rhr-handoff-delay, 0.12s);
