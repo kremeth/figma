@@ -1528,25 +1528,24 @@
     }
     #focus-card-2 .fc2-body {
       position: relative;
-      padding: 34px 34px 30px;
+      padding: 38px 34px 32px;
       display: flex;
       flex-direction: column;
-      gap: 0;
       background: #ffffff;
     }
     #focus-card-2 .fc2-tag {
-      order: 1;
       display: inline-flex;
       align-self: flex-start;
       align-items: center;
-      gap: 8px;
       min-height: 31px;
       padding: 7px 14px;
-      margin-bottom: 18px;
+      margin-bottom: 34px;
       border-radius: 999px;
       background: rgba(10,132,255,0.08);
       border: 1px solid rgba(10,132,255,0.16);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.84);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.88),
+        0 4px 10px rgba(10,132,255,0.1);
       font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 700;
@@ -1555,92 +1554,85 @@
       color: #0a69d1;
       white-space: nowrap;
     }
-    #focus-card-2 .fc2-tag::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #0a84ff;
-      box-shadow: 0 0 0 4px rgba(10,132,255,0.08);
-      flex-shrink: 0;
-    }
     #focus-card-2 .fc2-title {
-      order: 2;
       font-family: var(--font-ui);
-      max-width: 12ch;
-      font-size: clamp(30px, 3.8vw, 36px);
+      max-width: 11ch;
+      font-size: clamp(32px, 4vw, 38px);
       font-weight: 600;
       color: #1d1d1f;
       letter-spacing: -0.045em;
-      line-height: 1.05;
-      margin: 0 0 12px 0;
+      line-height: 1.04;
+      margin: 0 0 24px 0;
       text-wrap: balance;
     }
     #focus-card-2 .fc2-summary {
-      order: 3;
       font-family: var(--font-ui);
-      max-width: 34ch;
-      font-size: 15px;
+      max-width: 33ch;
+      font-size: 16px;
       font-weight: 400;
-      color: #5f6672;
-      line-height: 1.6;
+      color: #6e6e73;
+      line-height: 1.56;
       letter-spacing: var(--ls-15);
-      margin: 0 0 18px 0;
+      margin: 0 0 34px 0;
     }
     #focus-card-2 .fc2-sep {
-      display: none;
+      display: block;
+      height: 1px;
+      background: rgba(15,23,42,0.06);
     }
     #focus-card-2 .fc2-legend {
-      order: 5;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 12px 16px;
+      justify-content: center;
+      gap: 28px;
       flex-wrap: wrap;
-      padding: 0;
-      margin-bottom: 12px;
+      padding: 18px 0 20px;
+      margin: 13px 0 0;
+    }
+    #focus-card-2 .fc2-legend + .fc2-sep {
+      display: none;
     }
     #focus-card-2 .fc2-legend__item {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: auto;
       padding: 0;
       border: none;
       background: transparent;
       box-shadow: none;
     }
     #focus-card-2 .fc2-legend__swatch {
-      width: 18px;
+      width: 16px;
       height: 3px;
       border-radius: 999px;
       flex-shrink: 0;
       box-shadow: none;
     }
     #focus-card-2 .fc2-legend__swatch--deep {
-      background: linear-gradient(90deg, #0a84ff 0%, #45a1ff 100%);
+      background: #0a84ff;
     }
     #focus-card-2 .fc2-legend__swatch--load {
-      background: linear-gradient(90deg, #ff9500 0%, #ffb03b 100%);
+      background: #ff9500;
     }
     #focus-card-2 .fc2-legend__label {
-      font-family: var(--font-ui);
-      font-size: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       font-weight: 500;
-      color: #8a9099;
-      letter-spacing: -0.005em;
+      color: #6b7280;
+      letter-spacing: 0;
       white-space: nowrap;
     }
     #focus-card-2 .fc2-chart-panel {
-      order: 6;
       position: relative;
-      margin-top: 0;
-      padding: 0;
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      box-shadow: none;
-      overflow: visible;
+      margin-top: 14px;
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(15,23,42,0.05);
+      border-radius: 26px;
+      background: #fafafa;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.88),
+        0 8px 24px rgba(15,23,42,0.04);
+      overflow: hidden;
     }
     #focus-card-2 .fc2-chart-panel-bg {
       display: none;
@@ -1652,21 +1644,19 @@
       position: relative;
     }
     #focus-card-2 .fc2-cap {
-      order: 4;
-      align-self: flex-start;
-      margin: 6px 0 8px;
-      font-family: var(--font-mono);
+      align-self: center;
+      margin: 20px 0 0;
+      font-family: var(--font-ui);
       font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.09em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      text-align: left;
-      color: #7e848d;
+      text-align: center;
+      color: #8f8f95;
     }
     #focus-card-2 .fc2-footer {
-      order: 7;
-      margin-top: 16px;
-      padding-top: 14px;
+      margin-top: 28px;
+      padding-top: 20px;
       border-top: 1px solid rgba(15,23,42,0.06);
     }
     #focus-card-2 .fc2-why-details > summary {
@@ -1682,19 +1672,19 @@
     #focus-card-2 .fc2-why-details > summary::-webkit-details-marker { display: none; }
     #focus-card-2 .fc2-why-label {
       font-family: var(--font-ui);
-      font-size: 10px;
-      font-weight: 700;
-      color: #8f8f95;
-      letter-spacing: 0.18em;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
     }
     #focus-card-2 .fc2-why-icon {
-      width: 14px;
-      height: 14px;
-      border-radius: 0;
-      background: transparent;
-      border: none;
-      box-shadow: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 999px;
+      background: #f5f5f7;
+      border: 1px solid rgba(15,23,42,0.04);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1702,17 +1692,17 @@
     }
     #focus-card-2 .fc2-why-icon::after {
       content: "";
-      width: 7px;
-      height: 7px;
-      border-right: 1.5px solid rgba(60,60,67,0.6);
-      border-bottom: 1.5px solid rgba(60,60,67,0.6);
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid rgba(60,60,67,0.62);
+      border-bottom: 1.5px solid rgba(60,60,67,0.62);
       transform: rotate(45deg);
-      margin-top: -3px;
+      margin-top: -4px;
       display: block;
     }
     #focus-card-2 .fc2-why-details[open] .fc2-why-icon::after {
       transform: rotate(-135deg);
-      margin-top: 3px;
+      margin-top: 4px;
     }
     #focus-card-2 .fc2-why-panel {
       margin: 12px 0 0 0;
@@ -1726,11 +1716,15 @@
     }
     @media (max-width: 760px) {
       #focus-card-2.focus-card__shell { border-radius: 24px; }
-      #focus-card-2 .fc2-body { padding: 28px 26px 28px; }
-      #focus-card-2 .fc2-title { font-size: 24px; max-width: none; }
+      #focus-card-2 .fc2-body { padding: 34px 26px 28px; }
+      #focus-card-2 .fc2-tag { margin-bottom: 28px; }
+      #focus-card-2 .fc2-title { font-size: 28px; max-width: none; margin-bottom: 18px; }
       #focus-card-2 .fc2-summary { max-width: none; }
-      #focus-card-2 .fc2-cap { margin: 4px 0 8px; }
-      #focus-card-2 .fc2-legend { gap: 10px 14px; margin-bottom: 10px; }
+      #focus-card-2 .fc2-legend { gap: 18px; padding: 16px 0 18px; }
+      #focus-card-2 .fc2-chart-panel { margin-top: 12px; padding: 14px 14px 12px; border-radius: 24px; }
+      #focus-card-2 .fc2-cap { margin-top: 18px; }
+      #focus-card-2 .fc2-footer { margin-top: 24px; padding-top: 18px; }
+      #focus-card-2 .fc2-why-label { font-size: 11px; }
     }
 
     .focus-card__why-toggle {
@@ -3677,8 +3671,30 @@
       return d;
     };
 
-    const pathDeep = pathForSeries(deepDaily, scaleYd);
-    const pathInt = pathForSeries(intensityDaily, scaleYi);
+    const smoothPath = (vals, scaleY) => {
+      const pts = [];
+      for (let i = 0; i < 30; i += 1) {
+        const v = vals[i];
+        if (v != null && Number.isFinite(v)) pts.push({ x: scaleX(i), y: scaleY(v) });
+      }
+      if (pts.length < 2) return '';
+      if (pts.length === 2) {
+        return `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)} L${pts[1].x.toFixed(2)},${pts[1].y.toFixed(2)}`;
+      }
+      let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+      for (let i = 1; i < pts.length - 1; i += 1) {
+        const midX = (pts[i].x + pts[i + 1].x) / 2;
+        const midY = (pts[i].y + pts[i + 1].y) / 2;
+        d += ` Q${pts[i].x.toFixed(2)},${pts[i].y.toFixed(2)} ${midX.toFixed(2)},${midY.toFixed(2)}`;
+      }
+      const penultimate = pts[pts.length - 2];
+      const last = pts[pts.length - 1];
+      d += ` Q${penultimate.x.toFixed(2)},${penultimate.y.toFixed(2)} ${last.x.toFixed(2)},${last.y.toFixed(2)}`;
+      return d;
+    };
+
+    const pathDeep = smoothPath(deepDaily, scaleYd);
+    const pathInt = smoothPath(intensityDaily, scaleYi);
 
     const nLeftTicks = 5;
     const nRightTicks = 8;
