@@ -2025,13 +2025,10 @@
       box-sizing: border-box;
     }
     #focus-card-3 .fc3-legend__swatch--day-pairs {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #0071e3;
-      box-shadow:
-        0 1px 2px rgba(15, 23, 42, 0.12),
-        0 1px 1px rgba(0, 0, 0, 0.06);
+      display: block;
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
     }
     #focus-card-3 .fc3-legend__label {
       font-family: var(--font-mono);
@@ -2288,7 +2285,7 @@
       max-width: 100%;
       min-width: 0;
       height: auto;
-      aspect-ratio: 340 / 210;
+      aspect-ratio: 400 / 210;
       position: relative;
       overflow: visible;
       -webkit-backface-visibility: hidden;
@@ -2950,7 +2947,7 @@
       aspect-ratio: 269 / 140;
     }
     #focus-card-2 .fc2-chart-panel svg {
-      aspect-ratio: 340 / 224;
+      aspect-ratio: 400 / 210;
     }
     #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
       width: 100%;
@@ -3153,6 +3150,29 @@
         height: 90%;
         max-height: 100%;
         aspect-ratio: unset;
+      }
+      /* fc2 dual-axis: viewBox 400×210 — keep aspect ratio + scaling strokes (iOS ≤900px, incl. landscape) */
+      #focus-card-2 .fc2-chart-panel {
+        height: auto;
+        min-height: 158px;
+        max-height: none;
+      }
+      #focus-card-2 .fc2-chart-panel svg {
+        height: auto;
+        max-height: none;
+        aspect-ratio: 400 / 210;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+      }
+      #focus-card-2 .fc2-chart-panel svg .fc2-hgrid {
+        vector-effect: none;
+        stroke-width: 1.25;
+        shape-rendering: geometricPrecision;
+      }
+      #focus-card-2 .fc2-chart-panel svg .fc2-series {
+        vector-effect: none;
+        stroke-width: 3;
+        shape-rendering: geometricPrecision;
       }
       #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
         display: block;
@@ -4405,7 +4425,7 @@
                 <p class="fc2-cap">Deep sleep % vs training intensity</p>
 
                 <div class="fc2-chart-panel">
-                  <svg id="c-dual-deep-intensity" viewBox="0 0 340 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
+                  <svg id="c-dual-deep-intensity" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
                 </div>
 
                 <div class="fc2-legend" aria-hidden="true">
@@ -4497,7 +4517,15 @@
                     <span class="fc3-legend__label">Target range</span>
                   </div>
                   <div class="fc3-legend__item">
-                    <span class="fc3-legend__swatch fc3-legend__swatch--day-pairs"></span>
+                    <svg class="fc3-legend__swatch fc3-legend__swatch--day-pairs" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <filter id="fc3LegendDayPairsSh" x="-100%" y="-100%" width="300%" height="300%">
+                          <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.12"/>
+                          <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="#000000" flood-opacity="0.08"/>
+                        </filter>
+                      </defs>
+                      <circle cx="7" cy="7" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3LegendDayPairsSh)"/>
+                    </svg>
                     <span class="fc3-legend__label">Day pairs</span>
                   </div>
                 </div>
@@ -5000,10 +5028,13 @@
     const ORANGE = '#ff9500';
     const GRID = 'rgba(0, 0, 0, 0.08)';
     const TICK_X = '#86868b';
-    const W = 340;
     const H = 210;
-    const plotInsetX = 12; /* narrow plot slightly; y labels stay at 0 and W */
-    const plotW = W - 2 * plotInsetX;
+    /* Side gutters so y-axis labels stay inside viewBox (avoids clipping on narrow viewports). */
+    const plotInsetX = 42;
+    const plotW = 316; /* same plot width as original 340 - 2*12 */
+    const W = plotInsetX * 2 + plotW;
+    const leftLabelX = plotInsetX - 6;
+    const rightLabelX = W - plotInsetX + 6;
     const padT = 16;
     const padB = 34; /* room for x labels + gap so lines don’t crowd day ticks */
     const ph = H - padT - padB;
@@ -5096,6 +5127,7 @@
     const scaleX = i => plotInsetX + (i / 29) * plotW;
     const scaleYd = v => yPlotBottom - ((v - minD) / (maxD - minD)) * plotH;
     const scaleYi = v => yPlotBottom - ((v - minI) / (maxI - minI)) * plotH;
+    const clampY = y => Math.min(yPlotBottom, Math.max(yPlotTop, y));
 
     const pathForSeries = (vals, scaleY) => {
       let d = '';
@@ -5107,7 +5139,7 @@
           continue;
         }
         const x = scaleX(i);
-        const y = scaleY(v);
+        const y = clampY(scaleY(v));
         d += started ? ` L${x.toFixed(2)},${y.toFixed(2)}` : `M${x.toFixed(2)},${y.toFixed(2)}`;
         started = true;
       }
@@ -5133,14 +5165,14 @@
     const leftLbl = leftTicks
       .map(v => {
         const y = Math.round(scaleYd(v) * 2) / 2;
-        return `<text x="0" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="11" fill="${BLUE}">${Math.round(v)}%</text>`;
+        return `<text x="${leftLabelX}" y="${(y + 4).toFixed(2)}" text-anchor="end" font-family="${FONT}" font-size="11" fill="${BLUE}">${Math.round(v)}%</text>`;
       })
       .join('');
 
     const rightLbl = rightTicks
       .map(v => {
         const y = Math.round(scaleYi(v) * 2) / 2;
-        return `<text x="${W}" y="${(y + 4).toFixed(2)}" text-anchor="start" font-family="${FONT}" font-size="11" fill="${ORANGE}">${v.toFixed(2)}</text>`;
+        return `<text x="${rightLabelX}" y="${(y + 4).toFixed(2)}" text-anchor="start" font-family="${FONT}" font-size="11" fill="${ORANGE}">${v.toFixed(2)}</text>`;
       })
       .join('');
 
