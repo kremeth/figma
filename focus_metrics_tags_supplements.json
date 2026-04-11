@@ -1,0 +1,74 @@
+[
+  {
+    "order": 1,
+    "metric": "REM",
+    "tag": "rem_sleep",
+    "tier": 1,
+    "researchKey": "rem_sleep",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Vitamin D",
+        "score": 28,
+        "impact": "Very High"
+      },
+      "emergingResearch": null
+    }
+  },
+  {
+    "order": 2,
+    "metric": "DeepSleep",
+    "tag": "deep_sleep",
+    "tier": 1,
+    "researchKey": "deep_sleep",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Probiotics",
+        "score": 27.5,
+        "impact": "Very High"
+      },
+      "emergingResearch": {
+        "supplement": "Tongkat Ali",
+        "score": 24.5,
+        "impact": "High"
+      }
+    }
+  },
+  {
+    "order": 3,
+    "metric": "LightSleep",
+    "tag": "sleep_quality",
+    "tier": 1,
+    "researchKey": "sleep_quality",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Zinc",
+        "score": 25.5,
+        "impact": "High"
+      },
+      "emergingResearch": {
+        "supplement": "L-Theanine",
+        "score": 25.5,
+        "impact": "High"
+      }
+    }
+  },
+  {
+    "order": 4,
+    "metric": "HRV",
+    "tag": "recovery",
+    "tier": 4,
+    "researchKey": "recovery",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Vitamin E",
+        "score": 28.5,
+        "impact": "Very High"
+      },
+      "emergingResearch": {
+        "supplement": "Rhodiola Rosea",
+        "score": 28,
+        "impact": "Very High"
+      }
+    }
+  }
+]

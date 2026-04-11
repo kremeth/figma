@@ -1,0 +1,52 @@
+{
+  "v": 1,
+  "metrics": {
+    "HRV": { "band": "relative", "halfWidth": 0.1 },
+    "RHR": { "band": "absolute", "halfWidth": 2.5 },
+    "TotalSleep": {
+      "band": "relative",
+      "halfWidth": 0.1,
+      "clipBand": true,
+      "boundMin": 0
+    },
+    "Disruptions": {
+      "band": "relative",
+      "halfWidth": 0.15,
+      "clipBand": true,
+      "boundMin": 0
+    },
+    "REM": {
+      "band": "relative",
+      "halfWidth": 0.1,
+      "clipBand": true,
+      "boundMin": 0,
+      "boundMax": 100
+    },
+    "DeepSleep": {
+      "band": "relative",
+      "halfWidth": 0.1,
+      "clipBand": true,
+      "boundMin": 0,
+      "boundMax": 100
+    },
+    "LightSleep": {
+      "band": "relative",
+      "halfWidth": 0.1,
+      "clipBand": true,
+      "boundMin": 0,
+      "boundMax": 100
+    },
+    "Awake": {
+      "band": "relative",
+      "halfWidth": 0.2,
+      "clipBand": true,
+      "boundMin": 0,
+      "boundMax": 100
+    }
+  },
+  "stabilityTiers": [
+    { "id": "stable", "minPct": 80, "maxPct": 100 },
+    { "id": "variable", "minPct": 60, "maxPct": 79.99 },
+    { "id": "unstable", "minPct": 0, "maxPct": 59.99 }
+  ]
+}

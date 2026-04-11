@@ -426,6 +426,7 @@ function parseCorrelationCardsCsv(content) {
   const iTitle = idx("title");
   const iCopy = idx("copy");
   const iHow = idx("how_it_works");
+  const iMetric1 = idx("metric_1");
   const map = new Map();
   for (let r = 1; r < rows.length; r++) {
     const cells = rows[r];
@@ -437,6 +438,7 @@ function parseCorrelationCardsCsv(content) {
       title: cells[iTitle] ?? "",
       copy: (cells[iCopy] ?? "").replace(/\r\n/g, "\n").trim(),
       how_it_works: (cells[iHow] ?? "").replace(/\r\n/g, "\n").trim(),
+      metric_1: iMetric1 >= 0 && cells[iMetric1] ? cells[iMetric1].trim() : "",
     });
   }
   return map;
@@ -864,6 +866,155 @@ function computeMetricPriorityRows(rawData, normative) {
   return out;
 }
 
+// ---------------------------------------------------------------------------
+// Global metric priority: 5-tier cascade
+// ---------------------------------------------------------------------------
+
+const CANDIDATE_METRICS = ["HRV", "RHR", "TotalSleep", "Disruptions", "REM", "DeepSleep", "LightSleep", "Awake"];
+
+const METRIC_TO_NORM_KEY = {
+  HRV: "hrv", RHR: "rhr", TotalSleep: "total_sleep", Disruptions: "sleep_disruptions",
+  REM: "rem_sleep", DeepSleep: "deep_sleep", LightSleep: "light_sleep", Awake: "awake",
+};
+
+const DEFAULT_TAG = {
+  HRV: "hrv", RHR: "rhr", Disruptions: "sleep_quality", REM: "rem_sleep",
+  DeepSleep: "deep_sleep", LightSleep: "sleep_quality", Awake: "sleep_quality",
+  TotalSleep: "sleep_quality",
+};
+
+const LOWER_IS_BETTER = new Set(["RHR", "Disruptions", "LightSleep", "Awake"]);
+
+const METRIC_TO_SERIES_EXTRACTOR = {
+  HRV: (m) => m.HRV,
+  RHR: (m) => m.RHR,
+  TotalSleep: (m) => m.sleep_time,
+  Disruptions: (m) => m.disturbances,
+  REM: (m) => m.rem_sleep,
+  DeepSleep: (m) => m.deep_sleep,
+  LightSleep: (m) => m.light_sleep,
+  Awake: (m) => m.awake_time,
+};
+
+const HEALTHSPAN_FALLBACK_ORDER = [
+  "Acetyl L-Carnitine", "Resveratrol", "Vitamin B12", "Ashwagandha",
+];
+
+function buildGlobalMetricPriority(rawData, normative, top10) {
+  const viz = rawData?.connect_device_recommendation?.metric_analysis?.visualization;
+  if (!viz) return [];
+  const metrics = viz.metrics || {};
+  const meta = viz.meta || {};
+  const gender = meta.gender === "female" ? "female" : "male";
+  const band = ageBand(Number(meta.age) || 30);
+  const norm = (k) => normative?.[k]?.[gender]?.[band];
+  const p90 = (k) => top10?.[k]?.[gender]?.[band];
+
+  const { analyzeSeries: analyzeVar } = require(require("path").join(__dirname, "varianceRules.js"));
+
+  const totalSleepSecAvg = meanFromSeriesDict(metrics.sleep_time || {});
+  const totalSleepHours = totalSleepSecAvg == null ? null : totalSleepSecAvg / 3600;
+  const disruptionsAvg = meanFromSeriesDict(metrics.disturbances || {});
+  const disruptionsPerHour =
+    disruptionsAvg != null && totalSleepHours != null && totalSleepHours > 0
+      ? disruptionsAvg / totalSleepHours : null;
+
+  const userMeans = {};
+  for (const m of CANDIDATE_METRICS) {
+    if (m === "TotalSleep") { userMeans[m] = totalSleepHours; continue; }
+    if (m === "Disruptions") { userMeans[m] = disruptionsPerHour; continue; }
+    if (["REM", "DeepSleep", "LightSleep", "Awake"].includes(m)) {
+      const stageKey = METRIC_TO_NORM_KEY[m];
+      userMeans[m] = meanSleepStagePercent(metrics, stageKey);
+      continue;
+    }
+    const extractor = METRIC_TO_SERIES_EXTRACTOR[m];
+    userMeans[m] = extractor ? meanFromSeriesDict(extractor(metrics) || {}) : null;
+  }
+
+  function seriesValuesForMetric(metricId) {
+    const extractor = METRIC_TO_SERIES_EXTRACTOR[metricId];
+    if (!extractor) return [];
+    const raw = extractor(metrics) || {};
+    return Object.values(raw).filter((v) => v !== null && v !== undefined && !Number.isNaN(Number(v))).map(Number);
+  }
+
+  const tier1 = [];
+  const remaining1 = [];
+
+  for (const m of CANDIDATE_METRICS) {
+    const u = userMeans[m];
+    const avg = norm(METRIC_TO_NORM_KEY[m]);
+    if (u == null || avg == null || Number.isNaN(Number(u)) || Number.isNaN(Number(avg)) || Number(avg) === 0) {
+      remaining1.push(m);
+      continue;
+    }
+    const deficit = LOWER_IS_BETTER.has(m)
+      ? (Number(avg) - Number(u)) / Math.abs(Number(avg))
+      : (Number(u) - Number(avg)) / Math.abs(Number(avg));
+    if (deficit < 0) {
+      tier1.push({ metric: m, tier: 1, deficit, severity: Math.abs(deficit) });
+    } else {
+      remaining1.push(m);
+    }
+  }
+  tier1.sort((a, b) => b.severity - a.severity);
+
+  const tier2 = [];
+  const remaining2 = [];
+  for (const m of remaining1) {
+    const u = userMeans[m];
+    const target = p90(METRIC_TO_NORM_KEY[m]);
+    if (u == null || target == null || Number.isNaN(Number(u)) || Number.isNaN(Number(target)) || Number(target) === 0) {
+      remaining2.push(m);
+      continue;
+    }
+    const gap = LOWER_IS_BETTER.has(m)
+      ? (Number(u) - Number(target)) / Math.abs(Number(target))
+      : (Number(target) - Number(u)) / Math.abs(Number(target));
+    if (gap > 0.05) {
+      tier2.push({ metric: m, tier: 2, gap });
+    } else {
+      remaining2.push(m);
+    }
+  }
+  tier2.sort((a, b) => b.gap - a.gap);
+
+  const tier3 = [];
+  const tier4 = [];
+  const remaining34 = [];
+  for (const m of remaining2) {
+    const vals = seriesValuesForMetric(m);
+    const analysis = vals.length > 0 ? analyzeVar(vals, m) : null;
+    if (!analysis) { remaining34.push(m); continue; }
+    if (analysis.tier === "unstable") {
+      tier3.push({ metric: m, tier: 3, daysInRangePct: analysis.daysInRangePct });
+    } else if (analysis.tier === "variable") {
+      tier4.push({ metric: m, tier: 4, daysInRangePct: analysis.daysInRangePct });
+    } else {
+      remaining34.push(m);
+    }
+  }
+  tier3.sort((a, b) => a.daysInRangePct - b.daysInRangePct);
+  tier4.sort((a, b) => a.daysInRangePct - b.daysInRangePct);
+
+  const tier5 = HEALTHSPAN_FALLBACK_ORDER.map((supp, i) => ({
+    metric: "healthspan",
+    tier: 5,
+    tag: "healthspan",
+    fixedSupplement: supp,
+    healthspanRank: i,
+  }));
+
+  return [
+    ...tier1.map((e) => ({ ...e, tag: DEFAULT_TAG[e.metric] })),
+    ...tier2.map((e) => ({ ...e, tag: DEFAULT_TAG[e.metric] })),
+    ...tier3.map((e) => ({ ...e, tag: DEFAULT_TAG[e.metric] })),
+    ...tier4.map((e) => ({ ...e, tag: DEFAULT_TAG[e.metric] })),
+    ...tier5,
+  ];
+}
+
 function formatMetricValueForFallback(metric, v) {
   if (v == null || Number.isNaN(Number(v))) return "—";
   const x = Number(v);
@@ -1223,6 +1374,428 @@ function finalizeFocusPicksWithSleepHierarchy(sortedSignificant, preliminaryPick
   return picks;
 }
 
+// ---------------------------------------------------------------------------
+// Kuhn-Munkres (Hungarian) for optimal supplement ↔ metric assignment
+// ---------------------------------------------------------------------------
+
+const TARGET_METRIC_TO_RESEARCH_KEY = {
+  HRV: "hrv",
+  RHR: "rhr",
+  SleepEfficiency: "sleep_quality",
+  Disruptions: "sleep_disruptions",
+  REM: "rem_sleep",
+  DeepSleep: "deep_sleep",
+  LightSleep: "sleep_quality",
+  Awake: "sleep_quality",
+  TotalSleep: "sleep_quality",
+};
+
+const ELIGIBLE_IMPACTS = new Set(["Moderate", "High", "Very High"]);
+
+/**
+ * Resolve which top-level key in metrics_supplement_research to use for a focus card.
+ * Prefers the resolved correlation tag (e.g. recovery); falls back to metric-based key if missing.
+ *
+ * @param {string} [tag]        from focus pick `_tag` / resolveTop4WithCorrelations
+ * @param {string} targetMetric card ordering key (HRV, DeepSleep, …)
+ * @param {object} researchData parsed metrics_supplement_research JSON
+ */
+function researchKeyForSupplementLookup(tag, targetMetric, researchData) {
+  const t = tag != null ? String(tag).trim() : "";
+  if (t && typeof researchData[t] === "object" && researchData[t] !== null && !Array.isArray(researchData[t])) {
+    return t;
+  }
+  const tLower = t.toLowerCase();
+  if (
+    tLower &&
+    tLower !== t &&
+    typeof researchData[tLower] === "object" &&
+    researchData[tLower] !== null &&
+    !Array.isArray(researchData[tLower])
+  ) {
+    return tLower;
+  }
+  return TARGET_METRIC_TO_RESEARCH_KEY[targetMetric] || String(targetMetric).toLowerCase();
+}
+
+/**
+ * O(n^3) Kuhn-Munkres (Hungarian) for an n×n cost matrix (minimisation).
+ * Returns an array `col` of length n where col[row] = assigned column index.
+ */
+function hungarianAssignment(cost) {
+  const n = cost.length;
+  if (n === 0) return [];
+  const u = new Float64Array(n + 1);
+  const v = new Float64Array(n + 1);
+  const p = new Int32Array(n + 1);
+  const way = new Int32Array(n + 1);
+  const INF = 1e18;
+
+  for (let i = 1; i <= n; i++) {
+    const minv = new Float64Array(n + 1).fill(INF);
+    const used = new Uint8Array(n + 1);
+    p[0] = i;
+    let j0 = 0;
+    do {
+      used[j0] = 1;
+      const i0 = p[j0];
+      let delta = INF;
+      let j1 = -1;
+      for (let j = 1; j <= n; j++) {
+        if (used[j]) continue;
+        const cur = cost[i0 - 1][j - 1] - u[i0] - v[j];
+        if (cur < minv[j]) {
+          minv[j] = cur;
+          way[j] = j0;
+        }
+        if (minv[j] < delta) {
+          delta = minv[j];
+          j1 = j;
+        }
+      }
+      for (let j = 0; j <= n; j++) {
+        if (used[j]) {
+          u[p[j]] += delta;
+          v[j] -= delta;
+        } else {
+          minv[j] -= delta;
+        }
+      }
+      j0 = j1;
+    } while (p[j0] !== 0);
+    do {
+      const j1 = way[j0];
+      p[j0] = p[j1];
+      j0 = j1;
+    } while (j0);
+  }
+  const ans = new Array(n);
+  for (let j = 1; j <= n; j++) {
+    if (p[j] !== 0) ans[p[j] - 1] = j - 1;
+  }
+  return ans;
+}
+
+/**
+ * Run Hungarian once for a single tier (mostResearched or emergingResearch).
+ *
+ * @param {string[]} cardKeys      targetMetric per column (output keys; card order)
+ * @param {string[]} researchKeys  top-level JSON key per column (from resolved tags)
+ * @param {object}   researchData  parsed metrics_supplement_research JSON
+ * @param {string[]} supplementList supplement names for this tier
+ * @returns {Object.<string, {supplement: string, score: number, impact: string}>}
+ *          keyed by targetMetric (only entries with a real assignment)
+ */
+function runHungarianForTier(cardKeys, researchKeys, researchData, supplementList) {
+  const metricKeys = researchKeys;
+
+  const eligible = [];
+  for (const sup of supplementList) {
+    let anyEdge = false;
+    for (const mk of metricKeys) {
+      const entry = researchData[mk] && researchData[mk][sup];
+      if (
+        entry &&
+        typeof entry.supplement_score === "number" &&
+        ELIGIBLE_IMPACTS.has(entry.impact)
+      ) {
+        anyEdge = true;
+        break;
+      }
+    }
+    if (anyEdge) eligible.push(sup);
+  }
+
+  const nMetrics = metricKeys.length;
+  const nSupp = eligible.length;
+  if (nMetrics === 0 || nSupp === 0) return {};
+
+  let sMax = 0;
+  const scores = [];
+  for (let s = 0; s < nSupp; s++) {
+    const row = [];
+    for (let m = 0; m < nMetrics; m++) {
+      const entry = researchData[metricKeys[m]] && researchData[metricKeys[m]][eligible[s]];
+      if (
+        entry &&
+        typeof entry.supplement_score === "number" &&
+        ELIGIBLE_IMPACTS.has(entry.impact)
+      ) {
+        row.push({ score: entry.supplement_score, impact: entry.impact });
+        if (entry.supplement_score > sMax) sMax = entry.supplement_score;
+      } else {
+        row.push(null);
+      }
+    }
+    scores.push(row);
+  }
+
+  const PENALTY = sMax + 1000;
+  const dim = Math.max(nSupp, nMetrics);
+  const costMatrix = [];
+  for (let i = 0; i < dim; i++) {
+    const row = [];
+    for (let j = 0; j < dim; j++) {
+      if (i < nSupp && j < nMetrics && scores[i][j] !== null) {
+        row.push(sMax - scores[i][j].score);
+      } else if (i >= nSupp || j >= nMetrics) {
+        row.push(0);
+      } else {
+        row.push(PENALTY);
+      }
+    }
+    costMatrix.push(row);
+  }
+
+  const assignment = hungarianAssignment(costMatrix);
+  const result = {};
+  for (let i = 0; i < nSupp; i++) {
+    const j = assignment[i];
+    if (j < nMetrics && scores[i][j] !== null) {
+      const tm = cardKeys[j];
+      if (!result[tm] || scores[i][j].score > result[tm].score) {
+        result[tm] = {
+          supplement: eligible[i],
+          score: scores[i][j].score,
+          impact: scores[i][j].impact,
+        };
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Assign one mostResearched and one emergingResearch supplement per focus card
+ * via Kuhn-Munkres (maximise supplement_score, impact >= Moderate).
+ * Scores use the resolved tag’s research subtree (`_tag`), not the display metric.
+ *
+ * @param {object[]} focusPicks   focus card rows (each has .targetMetric, ._tag)
+ * @param {object}   researchData parsed metrics_supplement_research JSON
+ * @param {object}   tiers        parsed supplement_research_tiers.json
+ * @returns {{ mostResearched: Object, emergingResearch: Object }}
+ */
+function assignSupplementsToFocusCards(focusPicks, researchData, tiers) {
+  const cardKeys = [];
+  const researchKeys = [];
+  for (const p of focusPicks) {
+    const tm = p.targetMetric;
+    if (!tm) continue;
+    cardKeys.push(tm);
+    researchKeys.push(researchKeyForSupplementLookup(p._tag, tm, researchData));
+  }
+  return {
+    mostResearched: runHungarianForTier(cardKeys, researchKeys, researchData, tiers.mostResearched || []),
+    emergingResearch: runHungarianForTier(cardKeys, researchKeys, researchData, tiers.emergingResearch || []),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Phase 2 + validation loop: resolve top-4 metrics with correlation matching
+// ---------------------------------------------------------------------------
+
+/**
+ * Run Hopcroft-Karp on a set of edges and return matched picks.
+ * Left = metric names, right = intervention keys.
+ */
+function runHKOnEdges(edgeList) {
+  if (edgeList.length === 0) return [];
+  const leftIds = [...new Set(edgeList.map((e) => e.metric))].sort();
+  const rightIds = [...new Set(edgeList.map((e) => e.iv))].sort();
+  const uIx = new Map(leftIds.map((id, i) => [id, i]));
+  const vIx = new Map(rightIds.map((id, i) => [id, i]));
+  const nU = leftIds.length;
+  const nV = rightIds.length;
+  const adj = Array.from({ length: nU }, () => []);
+  const rowByPair = new Map();
+  for (const e of edgeList) {
+    const u = uIx.get(e.metric);
+    const v = vIx.get(e.iv);
+    adj[u].push(v);
+    rowByPair.set(`${e.metric}\0${e.iv}`, e.row);
+  }
+  const { pairU } = hopcroftKarpMatching(adj, nU, nV);
+  const picks = [];
+  for (let u = 0; u < nU; u++) {
+    const v = pairU[u];
+    if (v === -1) continue;
+    const metric = leftIds[u];
+    const iv = rightIds[v];
+    picks.push({ metric, iv, row: rowByPair.get(`${metric}\0${iv}`) });
+  }
+  return picks;
+}
+
+/**
+ * Collapse significant rows to one edge per (metric, intervention), keeping
+ * the row with highest marginScore (ties broken by preferring non-rolling).
+ */
+function collapseEdges(rows) {
+  const groups = new Map();
+  for (const row of rows) {
+    const iv = interventionKeyFromRow(row);
+    const metric = row.targetMetric;
+    if (!iv || !metric) continue;
+    const k = `${metric}\0${iv}`;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(row);
+  }
+  const edges = [];
+  for (const rws of groups.values()) {
+    const row = rws.slice().sort((a, b) => {
+      if (b.marginScore !== a.marginScore) return b.marginScore - a.marginScore;
+      return (rowUsesSevenDayRolling(a) ? 1 : 0) - (rowUsesSevenDayRolling(b) ? 1 : 0);
+    })[0];
+    edges.push({ iv: interventionKeyFromRow(row), metric: row.targetMetric, row });
+  }
+  return edges;
+}
+
+function resolveTop4WithCorrelations(globalPriority, resolvedRows, csvCardMap) {
+  const MAX_ITERATIONS = 20;
+  const allSignificant = resolvedRows.filter((r) => r.significant);
+
+  let excludedMetrics = new Set();
+
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    const top4 = [];
+    for (const entry of globalPriority) {
+      if (top4.length >= 4) break;
+      if (entry.tier === 5) {
+        top4.push(entry);
+        continue;
+      }
+      if (excludedMetrics.has(entry.metric)) continue;
+      top4.push(entry);
+    }
+
+    const healthspanEntries = top4.filter((e) => e.tier === 5);
+    const realEntries = top4.filter((e) => e.tier !== 5);
+    const realMetricNames = new Set(realEntries.map((e) => e.metric));
+
+    if (realEntries.length === 0) {
+      return { picks: healthspanEntries.slice(0, 4), tagMap: {} };
+    }
+
+    const relevantSig = allSignificant.filter((r) => realMetricNames.has(r.targetMetric));
+    const singleDay = relevantSig.filter((r) => !rowUsesSevenDayRolling(r));
+    const sevenDay = relevantSig.filter((r) => rowUsesSevenDayRolling(r));
+
+    const sdEdges = collapseEdges(singleDay);
+    const s7Edges = collapseEdges(sevenDay);
+
+    // Graph 2: 7-day matching to find surviving 7-day edges
+    const surviving7d = runHKOnEdges(s7Edges);
+
+    // Build candidate graphs
+    const candidates = [];
+
+    // Candidate A: single-day only
+    const matchA = runHKOnEdges(sdEdges);
+    candidates.push({ picks: matchA, has7d: false, sevenDayR: 0 });
+
+    // Candidate B_i: single-day + one surviving 7-day edge
+    for (const s7 of surviving7d) {
+      const s7Edge = s7Edges.find((e) => e.metric === s7.metric && e.iv === s7.iv);
+      if (!s7Edge) continue;
+      const combined = [...sdEdges, s7Edge];
+      const matchBi = runHKOnEdges(combined);
+      const absR = s7Edge.row ? Math.abs(Number(s7Edge.row.r) || 0) : 0;
+      candidates.push({ picks: matchBi, has7d: true, sevenDayR: absR });
+    }
+
+    // Select winner: max cardinality, then prefer 7d, then highest 7d significance
+    candidates.sort((a, b) => {
+      if (b.picks.length !== a.picks.length) return b.picks.length - a.picks.length;
+      if (a.has7d !== b.has7d) return a.has7d ? -1 : 1;
+      return b.sevenDayR - a.sevenDayR;
+    });
+    const winner = candidates[0];
+
+    // Build matched map: metric -> matched pick
+    const matchedByMetric = new Map();
+    for (const p of winner.picks) {
+      matchedByMetric.set(p.metric, p);
+    }
+
+    // Extract tag mapping
+    const tagMap = {};
+    for (const entry of realEntries) {
+      const m = entry.metric;
+      const matched = matchedByMetric.get(m);
+      if (matched && matched.row) {
+        const csvKey = labelToCsvKey(matched.row.label);
+        const card = csvKey ? csvCardMap.get(csvKey) : null;
+        tagMap[m] = (card && card.metric_1) ? card.metric_1 : DEFAULT_TAG[m] || m.toLowerCase();
+      } else {
+        tagMap[m] = DEFAULT_TAG[m] || m.toLowerCase();
+      }
+    }
+
+    // Validation: TotalSleep rule
+    let needsRerun = false;
+    if (realMetricNames.has("TotalSleep") && !matchedByMetric.has("TotalSleep")) {
+      excludedMetrics.add("TotalSleep");
+      needsRerun = true;
+    }
+
+    if (!needsRerun) {
+      // Validation: tag uniqueness
+      const tagToMetrics = new Map();
+      for (const entry of realEntries) {
+        const tag = tagMap[entry.metric];
+        if (!tagToMetrics.has(tag)) tagToMetrics.set(tag, []);
+        tagToMetrics.get(tag).push(entry);
+      }
+      for (const [, entriesWithTag] of tagToMetrics) {
+        if (entriesWithTag.length <= 1) continue;
+        const globalIndices = entriesWithTag.map((e) => globalPriority.indexOf(e));
+        const keepIdx = Math.min(...globalIndices);
+        for (let i = 0; i < entriesWithTag.length; i++) {
+          if (globalPriority.indexOf(entriesWithTag[i]) !== keepIdx) {
+            excludedMetrics.add(entriesWithTag[i].metric);
+            needsRerun = true;
+          }
+        }
+      }
+    }
+
+    if (needsRerun) continue;
+
+    // Build final picks
+    const finalPicks = [];
+    for (const entry of realEntries) {
+      const matched = matchedByMetric.get(entry.metric);
+      finalPicks.push({
+        metric: entry.metric,
+        tag: tagMap[entry.metric],
+        tier: entry.tier,
+        matchedRow: matched ? matched.row : null,
+      });
+    }
+    for (const entry of healthspanEntries) {
+      finalPicks.push({
+        metric: entry.metric,
+        tag: entry.tag,
+        tier: entry.tier,
+        fixedSupplement: entry.fixedSupplement,
+        matchedRow: null,
+      });
+    }
+
+    return { picks: finalPicks.slice(0, 4), tagMap };
+  }
+
+  // Safety: if we exhaust iterations, return whatever we have
+  const fallback = globalPriority.slice(0, 4).map((e) => ({
+    metric: e.metric,
+    tag: e.tag || DEFAULT_TAG[e.metric] || e.metric.toLowerCase(),
+    tier: e.tier,
+    matchedRow: null,
+  }));
+  return { picks: fallback, tagMap: {} };
+}
+
 function escapeHtml(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -1521,15 +2094,15 @@ if (typeof module !== "undefined" && require.main === module) {
   const filePath = process.argv[2];
 
   if (!filePath) {
-    console.error("Usage: node correlationAnalysis.js <path_to_raw_data.json> [correlation_cards_path] [nutricode-health-report.html]");
+    console.error("Usage: node correlationAnalysis.js <path_to_raw_data.json> [correlation_cards_path]");
     process.exit(1);
   }
 
   const resolvedRaw = path.resolve(filePath);
   const baseDir = path.dirname(resolvedRaw);
   const csvPath = process.argv[3] || path.join(baseDir, "correlation_cards - correlation_cards-2.csv");
-  const htmlPath = process.argv[4] || path.join(baseDir, "nutricode-health-report.html");
   const normativePath = path.join(baseDir, "normative_metrics.json");
+  const top10Path = path.join(baseDir, "top10_percent.json");
 
   const rawData = JSON.parse(fs.readFileSync(resolvedRaw, "utf8"));
   const results = runCorrelationAnalysis(rawData);
@@ -1561,20 +2134,87 @@ if (typeof module !== "undefined" && require.main === module) {
     const normative = fs.existsSync(normativePath)
       ? JSON.parse(fs.readFileSync(normativePath, "utf8"))
       : null;
-    const focusPicks = pickFocusCardsByPriorityDeficit(rawData, resolved, normative, 4);
-    for (let i = 0; i < focusPicks.length; i++) {
-      const row = focusPicks[i];
-      const iv = interventionKeyFromRow(row) || "—";
-      const roll = rowUsesSevenDayRolling(row) ? "rolling7" : "daily";
-      console.log(`  Focus ${i + 1}: ${roll}  intervention=${iv}  |r|-|τ|=${row.marginScore.toFixed(3)}  ${row.label}`);
+    const top10 = fs.existsSync(top10Path)
+      ? JSON.parse(fs.readFileSync(top10Path, "utf8"))
+      : null;
+
+    const globalPriority = buildGlobalMetricPriority(rawData, normative, top10);
+    console.log("\n  Global metric priority:");
+    for (let i = 0; i < globalPriority.length; i++) {
+      const e = globalPriority[i];
+      const detail = e.tier === 1 ? `deficit=${e.deficit.toFixed(3)}`
+        : e.tier === 2 ? `gap=${e.gap.toFixed(3)}`
+        : e.tier === 3 || e.tier === 4 ? `inRange=${e.daysInRangePct.toFixed(1)}%`
+        : `supplement=${e.fixedSupplement}`;
+      console.log(`    ${i + 1}. [tier ${e.tier}] ${e.metric}  ${detail}  tag=${e.tag}`);
     }
-    const frag = buildFocusStackHtml(focusPicks, rawData);
-    if (fs.existsSync(htmlPath)) {
-      injectFocusStackHtml(htmlPath, frag);
-      console.log(`Injected ${focusPicks.length} focus card(s) (priority deficits vs demographic avg; correlation-first + fallback; unique interventions) into: ${htmlPath}`);
-    } else {
-      console.warn(`HTML not found: ${htmlPath}`);
+
+    const { picks, tagMap } = resolveTop4WithCorrelations(globalPriority, resolved, cardMap);
+    console.log("\n  Final top-4 picks:");
+    for (let i = 0; i < picks.length; i++) {
+      const p = picks[i];
+      const corrLabel = p.matchedRow ? p.matchedRow.label : "(no correlation)";
+      const roll = p.matchedRow && rowUsesSevenDayRolling(p.matchedRow) ? "rolling7" : "daily";
+      console.log(`    ${i + 1}. [tier ${p.tier}] ${p.metric} → tag=${p.tag}  ${roll}  ${corrLabel}`);
     }
+
+    const focusPicks = picks.map((p) => {
+      if (p.matchedRow) {
+        return { ...p.matchedRow, targetMetric: p.metric, _tag: p.tag, _tier: p.tier };
+      }
+      const fallbackIv = p.fixedSupplement || DEFAULT_TAG[p.metric] || p.tag;
+      return {
+        label: `${p.metric} fallback`,
+        targetMetric: p.metric,
+        r: null, n: null, nBracket: null,
+        direction: null, threshold: null,
+        supplements: [fallbackIv],
+        significant: false,
+        marginScore: -1e9,
+        title: p.tier === 5 ? `Improve your healthspan with ${p.fixedSupplement}` : `Improve your ${p.metric}`,
+        body: "",
+        how_it_works: "",
+        xRaw: null, yRaw: null, xStr: "—", yStr: "—",
+        csvKey: null,
+        _tag: p.tag,
+        _tier: p.tier,
+      };
+    });
+
+    const researchPath = path.join(baseDir, "metrics_supplement_research copy 5.json");
+    const tiersPath = path.join(baseDir, "supplement_research_tiers.json");
+    let suppRecs = { mostResearched: {}, emergingResearch: {} };
+    let researchData = null;
+    if (fs.existsSync(researchPath) && fs.existsSync(tiersPath)) {
+      researchData = JSON.parse(fs.readFileSync(researchPath, "utf8"));
+      const tiers = JSON.parse(fs.readFileSync(tiersPath, "utf8"));
+      suppRecs = assignSupplementsToFocusCards(focusPicks, researchData, tiers);
+    }
+
+    const focusMetricsTagsSupplements = focusPicks.map((pick, i) => {
+      const tm = pick.targetMetric;
+      const row = {
+        order: i + 1,
+        metric: tm,
+        tag: pick._tag ?? null,
+        tier: pick._tier ?? null,
+        researchKey:
+          researchData && tm
+            ? researchKeyForSupplementLookup(pick._tag, tm, researchData)
+            : null,
+        supplements: {
+          mostResearched: suppRecs.mostResearched[tm] ?? null,
+          emergingResearch: suppRecs.emergingResearch[tm] ?? null,
+        },
+      };
+      return row;
+    });
+
+    const focusOutPath = path.join(baseDir, "focus_metrics_tags_supplements.json");
+    fs.writeFileSync(focusOutPath, JSON.stringify(focusMetricsTagsSupplements, null, 2), "utf8");
+    console.log("\n  Focus picks — metrics, tags, supplements:");
+    console.log(JSON.stringify(focusMetricsTagsSupplements, null, 2));
+    console.log(`  (also written to ${focusOutPath})`);
   } else {
     console.warn(`CSV not found: ${csvPath} — skip card resolution / HTML.`);
   }
@@ -1608,5 +2248,14 @@ if (typeof module !== "undefined") {
     formatInterventionForDisplay,
     normalizeMetricSide,
     parseLabelMetricKeys,
+    hungarianAssignment,
+    assignSupplementsToFocusCards,
+    researchKeyForSupplementLookup,
+    TARGET_METRIC_TO_RESEARCH_KEY,
+    buildGlobalMetricPriority,
+    resolveTop4WithCorrelations,
+    CANDIDATE_METRICS,
+    DEFAULT_TAG,
+    LOWER_IS_BETTER,
   };
 }
