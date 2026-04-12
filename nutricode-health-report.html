@@ -2299,7 +2299,7 @@
     }
     #focus-card-2 .fc2-chart-panel svg .fc2-series {
       stroke-width: 2.25px;
-      stroke-opacity: 0.5;
+      stroke-opacity: 1;
       shape-rendering: geometricPrecision;
     }
     #focus-card-2 .fc2-chart-panel svg text {
@@ -2395,6 +2395,7 @@
       #focus-card-2 .fc2-chart-panel svg .fc2-series {
         vector-effect: none;
         stroke-width: 3;
+        stroke-opacity: 1;
         shape-rendering: geometricPrecision;
       }
       #focus-card-2 .fc2-chart-panel svg text {
@@ -3171,6 +3172,7 @@
       #focus-card-2 .fc2-chart-panel svg .fc2-series {
         vector-effect: none;
         stroke-width: 3;
+        stroke-opacity: 1;
         shape-rendering: geometricPrecision;
       }
       #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
@@ -5128,21 +5130,52 @@
     const scaleYi = v => yPlotBottom - ((v - minI) / (maxI - minI)) * plotH;
     const clampY = y => Math.min(yPlotBottom, Math.max(yPlotTop, y));
 
-    const pathForSeries = (vals, scaleY) => {
-      let d = '';
-      let started = false;
-      for (let i = 0; i < 30; i += 1) {
-        const v = vals[i];
-        if (v == null || !Number.isFinite(v)) continue;
-        const x = scaleX(i);
-        const y = clampY(scaleY(v));
-        d += started ? ` L${x.toFixed(2)},${y.toFixed(2)}` : `M${x.toFixed(2)},${y.toFixed(2)}`;
-        started = true;
+    /* Catmull–Rom-style cubic Beziers through each run; null days start a new subpath. */
+    const smoothAlpha = 1 / 6;
+    const smoothRunToD = pts => {
+      const n = pts.length;
+      if (n === 0) return '';
+      if (n === 1) {
+        const p = pts[0];
+        return `M${p.x.toFixed(2)},${p.y.toFixed(2)}`;
+      }
+      if (n === 2) {
+        const [a, b] = pts;
+        return `M${a.x.toFixed(2)},${a.y.toFixed(2)} L${b.x.toFixed(2)},${b.y.toFixed(2)}`;
+      }
+      let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+      for (let i = 0; i < n - 1; i += 1) {
+        const p0 = pts[Math.max(0, i - 1)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(n - 1, i + 2)];
+        const c1x = p1.x + (p2.x - p0.x) * smoothAlpha;
+        const c1y = p1.y + (p2.y - p0.y) * smoothAlpha;
+        const c2x = p2.x - (p3.x - p1.x) * smoothAlpha;
+        const c2y = p2.y - (p3.y - p1.y) * smoothAlpha;
+        d += ` C${c1x.toFixed(2)},${c1y.toFixed(2)} ${c2x.toFixed(2)},${c2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
       }
       return d;
     };
 
-    /* Straight segments + round joins: predictable on mobile (no spline overshoot). */
+    const pathForSeries = (vals, scaleY) => {
+      const runs = [];
+      let cur = [];
+      for (let i = 0; i < 30; i += 1) {
+        const v = vals[i];
+        if (v == null || !Number.isFinite(v)) {
+          if (cur.length) {
+            runs.push(cur);
+            cur = [];
+          }
+          continue;
+        }
+        cur.push({ x: scaleX(i), y: clampY(scaleY(v)) });
+      }
+      if (cur.length) runs.push(cur);
+      return runs.map(smoothRunToD).join('');
+    };
+
     const pathDeep = pathForSeries(deepDaily, scaleYd);
     const pathInt = pathForSeries(intensityDaily, scaleYi);
 
@@ -5183,7 +5216,7 @@
 
     const parts = [
       `<title>Daily deep sleep percent and training load by day.</title>`,
-      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
+      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Series drawn as smooth curves through daily values; gaps indicate missing days. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
       hLines,
       pathDeep ? `<path class="fc2-series" d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
       pathInt ? `<path class="fc2-series" d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
