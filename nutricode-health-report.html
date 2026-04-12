@@ -405,7 +405,7 @@
     .pill-green { background: var(--green-bg); color: var(--green); }
     .pill-gray  { background: rgba(0,0,0,0.05); color: var(--ink-3); }
 
-    /* ─────────────────────── Score projection card (Figma 23602:6493) ─────────────────────── */
+    /* ─────────────────────── Score projection card (Figma 23782:6427) ─────────────────────── */
     .proj-card {
       padding: 31px 24px 0;
       overflow: hidden;
@@ -413,74 +413,33 @@
     .proj-hero {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 0;
-      max-width: 494px;
+      max-width: 358px;
     }
     .proj-chart-wrap {
       margin: 0;
-      padding: 14px 0 18px;
+      padding: 18px 0 8px;
     }
-    .proj-chart-wrap svg { display: block; width: 100%; }
+    .proj-chart-wrap svg { display: block; width: 100%; max-width: 438px; margin: 0 auto; }
     .trend-card-title {
       font-family: var(--font-ui);
-      font-size: 17px;
+      font-size: 32px;
       font-weight: 600;
-      letter-spacing: 0.4px;
-      color: #17171a;
-      line-height: 21.25px;
+      letter-spacing: -0.8px;
+      color: #1d1d1f;
+      line-height: 1.15;
       margin: 0;
     }
     .trend-card-sub {
       font-family: var(--font-ui);
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 400;
-      color: #6b7280;
+      color: #86868b;
       margin: 0;
-      letter-spacing: 0.143px;
-      line-height: 19.5px;
-      max-width: 494px;
-    }
-    .proj-milestones-wrap {
-      position: relative;
-    }
-    .proj-milestones {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      margin: 0;
-      padding: 0;
-      border-radius: 0 0 10px 10px;
-    }
-    .proj-milestone {
-      padding: 11px 6px 12px;
-      text-align: center;
-      min-width: 0;
-    }
-    .proj-milestone + .proj-milestone { border-left: 1px solid rgba(0, 0, 0, 0.055); }
-    .proj-val {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.24px;
-      line-height: 1.35;
-      color: #17171a;
-    }
-    .proj-milestone:first-child .proj-val { color: #9ca3af; }
-    .proj-milestone:nth-child(2) .proj-val,
-    .proj-milestone:nth-child(3) .proj-val { color: #17171a; }
-    .proj-milestone:nth-child(n+4) .proj-val { color: var(--blue); }
-    .proj-milestone:nth-child(n+4) .proj-lbl {
-      color: var(--blue);
-      font-weight: 600;
-    }
-    .proj-lbl {
-      font-family: var(--font-ui);
-      font-size: 8px;
-      font-weight: 400;
-      color: #d1d5db;
-      margin-top: 4px;
-      letter-spacing: 0.08px;
-      line-height: 1.35;
+      letter-spacing: 0;
+      line-height: 1.55;
+      max-width: 358px;
     }
     /* ─────────────────────── CTA ─────────────────────── */
     .cta-section { padding: var(--space-6) 0 72px; margin-top: var(--space-2); }
@@ -880,64 +839,75 @@
     .chart-card.reveal.d3 .chart-title { margin-bottom: 13px; }
     .recovery-chart-card { padding-bottom: var(--space-3); }
 
-    /* ─────────────────────── Phase split (Figma 23602:6529) ─────────────────────── */
-    /* Align with milestone columns: Phase 1 = Now + Month 1–2 (3 cols); Phase 2 = Month 3–4 (2 cols) */
+    /* ─────────────────────── Phase cards (Figma 23782:6427) ─────────────────────── */
     .roadmap-phases {
       display: grid;
-      grid-template-columns: 3fr 2fr;
-      margin: 0;
-      padding: 0 0 24px;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin: 16px auto 0;
+      padding: 0 16px 32px;
+      max-width: 438px;
     }
     .roadmap-phase {
       min-width: 0;
-      padding: 23px 24px 24px 24px;
+      padding: 23px 16px 22px;
       text-align: center;
+      border-radius: 12px;
+      background: #fff;
+      border: none;
+      box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 8px 16px rgba(0, 0, 0, 0.04);
     }
     .roadmap-phase + .roadmap-phase {
-      border-left: 1px solid rgba(0, 0, 0, 0.055);
-      padding-left: 22px;
-      background: linear-gradient(
-        to bottom,
-        rgba(91, 143, 216, 0.04) 0%,
-        rgba(91, 143, 216, 0) 100%
-      );
+      border: none;
+      padding: 23px 16px 22px;
+      background: #f5f3f3;
+      box-shadow: none;
+      opacity: 0.5;
     }
     .phase-num {
       font-family: var(--font-mono);
       font-size: 9px;
       font-weight: 400;
-      letter-spacing: 2.52px;
-      line-height: 11.25px;
+      letter-spacing: 0.2em;
+      line-height: 13.5px;
       text-transform: uppercase;
-      color: #d1d5db;
-      margin: 0 0 5px;
+      color: #aaa;
+      margin: 0 0 8px;
     }
     .phase-name {
       font-family: var(--font-ui);
-      font-size: 14px;
+      font-size: 20px;
       font-weight: 600;
-      letter-spacing: 0.182px;
-      line-height: 18.9px;
-      color: #17171a;
-      margin: 0 0 4px;
+      letter-spacing: -0.3px;
+      line-height: 23px;
+      color: #1d1d1f;
+      margin: 0 0 6px;
     }
     .phase-desc {
       font-family: var(--font-ui);
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
-      color: #6b7280;
-      letter-spacing: 0.096px;
-      line-height: 18px;
+      color: #86868b;
+      letter-spacing: 0;
+      line-height: 21px;
       margin: 0;
     }
     .phase-duration {
-      margin-top: 5px;
+      margin-top: 12px;
       font-family: var(--font-mono);
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 400;
-      color: #9ca3af;
-      letter-spacing: 0.1px;
-      line-height: 13.5px;
+      color: #a1a1a6;
+      letter-spacing: 0.01em;
+      line-height: 15.75px;
+    }
+    .phase-duration--infinity {
+      font-size: 22px;
+      line-height: 1;
+      color: #a1a1a6;
+      margin-top: 10px;
     }
     .section-label--caps {
       text-transform: uppercase;
@@ -3324,49 +3294,23 @@
       }
       .snap-val { font-size: 28px; }
 
-      /* ── Projection card ── */
-      .trend-card-title { font-size: 17px; }
-
+      /* ── Projection card (Figma 23782:6427) ── */
+      .trend-card-title { font-size: 22px; letter-spacing: -0.4px; }
+      .trend-card-sub { font-size: 14px; }
+      .proj-hero { max-width: none; }
       .proj-card { overflow: visible; }
 
-      /* Milestones — fit all 5 columns in the row (no horizontal clip) */
-      .proj-milestones-wrap { position: relative; }
-      .proj-milestones-wrap::after { content: none; }
-      .proj-milestones {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        overflow: visible;
-        margin: 0;
-        padding: 0;
-        border-radius: 0 0 10px 10px;
-        background: var(--card);
+      .roadmap-phases {
+        gap: 14px;
+        padding: 0 8px 24px;
+        max-width: none;
       }
-      .proj-milestone {
-        min-width: 0;
-        padding: 10px 2px 11px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-      }
-      .proj-milestone + .proj-milestone { border-left: 1px solid rgba(0, 0, 0, 0.055); }
-      .proj-val { font-size: 11px; }
-      .proj-lbl {
-        font-size: 7px;
-        margin-top: 3px;
-        padding: 0 1px;
-      text-align: center;
-        word-break: break-word;
-        hyphens: auto;
+      .roadmap-phase,
+      .roadmap-phase + .roadmap-phase {
+        padding: 18px 14px;
       }
 
-      /* ── Roadmap phase split — keep 3:2 with milestones; tighter horizontal padding ── */
-      .roadmap-phase { padding: 20px 10px; }
-      .roadmap-phase + .roadmap-phase {
-        border-left: 1px solid rgba(0, 0, 0, 0.055);
-        border-top: none;
-        padding-left: 10px;
-      }
+      .phase-name { font-size: 18px; }
 
       /* ── Bio panel rows: tighter horizontal padding on tablet/mobile ── */
       .bio-rows-grid { padding: 0 14px; }
@@ -4541,12 +4485,13 @@
 
   <div class="card proj-card reveal d1">
     <div class="proj-hero">
-      <p class="trend-card-title">Reach 90+. Then make it last.</p>
-      <p class="trend-card-sub">Each month, we review your metrics and adjust your stack if needed to keep your score moving up. Once you reach 90+, we shift from improving your current health to supporting long-term longevity.</p>
-      </div>
+      <p class="trend-card-title">Reach 90+.<br>Then make it last.</p>
+      <p class="trend-card-sub">Each month, we review your metrics and adjust your stack to keep your score moving up. Once you reach 90+, we focus on long-term longevity.</p>
+    </div>
 
     <div class="proj-chart-wrap">
-      <svg viewBox="0 0 536 180" fill="none" aria-label="Green through Month 2 and the climb to 90+ at Month 3; blue only from Month 3 to Month 4 at 90+">
+      <svg viewBox="0 0 400 148" fill="none" aria-label="Health score rises from 74 toward 90 in the optimise phase, then continues in blue in the longevity phase">
+        <title>Projection: score from 74 toward 90+ then sustained</title>
         <defs>
           <linearGradient id="proj-area-green" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="rgba(52,199,89,0.14)"/>
@@ -4557,86 +4502,38 @@
             <stop offset="100%" stop-color="rgba(91,143,216,0)"/>
           </linearGradient>
         </defs>
-        <g transform="translate(0, 36)">
-          <!-- Grid — subtle (60 bottom, 90 top) -->
-          <line x1="28" y1="104" x2="528" y2="104" stroke="#eeece7" stroke-width="1"/>
-          <line x1="28" y1="72" x2="528" y2="72" stroke="#eeece7" stroke-width="1"/>
-          <line x1="28" y1="36" x2="528" y2="36" stroke="#eeece7" stroke-width="1"/>
-        <!-- Y labels -->
-          <text x="28" y="118" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">60</text>
-          <text x="28" y="76" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">72</text>
-          <text x="28" y="40" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="#d1d5db">90</text>
-          <!-- Fill: green through first 90+ at Month 3; blue only under Month 3→4 plateau -->
-          <path d="M28,88 C80,92 110,82 148,70 C190,60 230,56 268,52 C300,48 340,40 388,36 L388,132 L28,132 Z" fill="url(#proj-area-green)"/>
-          <path d="M388,36 L508,36 L508,132 L388,132 Z" fill="url(#proj-area-blue)"/>
-          <!-- Line: green through Month 3 (first 90+); blue only Month 3→4 -->
-          <path d="M28,88 C80,92 110,82 148,70 C190,60 230,56 268,52 C300,48 340,40 388,36" stroke="#34c759" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M388,36 L508,36" stroke="#5b8fd8" stroke-width="2.25" stroke-linecap="round" fill="none"/>
-          <circle cx="28" cy="88" r="4" fill="rgba(52,199,89,0.35)"/>
-          <circle cx="148" cy="70" r="4" fill="#fff" stroke="#34c759" stroke-width="1.75"/>
-          <circle cx="268" cy="52" r="4" fill="#fff" stroke="#34c759" stroke-width="1.75"/>
-          <circle cx="388" cy="36" r="4" fill="#fff" stroke="#5b8fd8" stroke-width="1.75"/>
-          <circle cx="508" cy="36" r="5" fill="#5b8fd8"/>
-          <circle cx="508" cy="36" r="9" fill="rgba(91,143,216,0.14)"/>
-        </g>
-        <!-- Metric review annotations above each data point -->
-        <g aria-hidden="true" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="7.5" font-weight="400">
-          <!-- Now -->
-          <line x1="28" y1="118" x2="28" y2="123" stroke="#d1d5db" stroke-width="1"/>
-          <text x="28" y="104" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
-          <!-- Month 1 -->
-          <line x1="148" y1="100" x2="148" y2="105" stroke="#d1d5db" stroke-width="1"/>
-          <text x="148" y="86" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
-          <!-- Month 2 -->
-          <line x1="268" y1="82" x2="268" y2="87" stroke="#d1d5db" stroke-width="1"/>
-          <text x="268" y="68" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
-          <!-- Month 3 -->
-          <line x1="388" y1="66" x2="388" y2="71" stroke="#d1d5db" stroke-width="1"/>
-          <text x="388" y="52" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
-          <!-- Month 4 -->
-          <line x1="508" y1="64" x2="508" y2="69" stroke="#d1d5db" stroke-width="1"/>
-          <text x="508" y="50" text-anchor="middle" fill="#9ca3af" letter-spacing="0.05em">REVIEW</text>
-        </g>
+        <!-- Grid: full width x=10..390 -->
+        <line x1="10" y1="104" x2="390" y2="104" stroke="#eeece7" stroke-width="1"/>
+        <line x1="10" y1="76" x2="390" y2="76" stroke="#eeece7" stroke-width="1"/>
+        <line x1="10" y1="48" x2="390" y2="48" stroke="#eeece7" stroke-width="1"/>
+        <!-- Areas: green to transition; blue to x=390 (mapped from prior 44–364 → 10–390) -->
+        <path d="M10,90 C88.38,88 135.88,52 228.5,42 L228.5,118 L10,118 Z" fill="url(#proj-area-green)"/>
+        <path d="M228.5,42 L390,38 L390,118 L228.5,118 Z" fill="url(#proj-area-blue)"/>
+        <!-- Lines -->
+        <path d="M10,90 C88.38,88 135.88,52 228.5,42" stroke="#34c759" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M228.5,42 L390,38" stroke="#5b8fd8" stroke-width="2.25" stroke-linecap="round" fill="none"/>
+        <!-- Points: start (74), transition, end — only 74 and 90 labelled -->
+        <circle cx="10" cy="90" r="4" fill="rgba(52,199,89,0.35)"/>
+        <text x="10" y="112" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="10" fill="rgba(0,0,0,0.5)">74</text>
+        <text x="228.5" y="30" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="10" fill="rgba(0,0,0,0.5)">90</text>
+        <circle cx="228.5" cy="42" r="4" fill="#fff" stroke="#5b8fd8" stroke-width="1.75"/>
+        <circle cx="390" cy="38" r="9" fill="rgba(91,143,216,0.14)"/>
+        <circle cx="390" cy="38" r="5" fill="#5b8fd8"/>
       </svg>
     </div>
 
-    <div class="proj-milestones-wrap">
-    <div class="proj-milestones" role="list">
-      <div class="proj-milestone" role="listitem">
-        <p class="proj-val">74</p>
-        <p class="proj-lbl">Now</p>
-      </div>
-      <div class="proj-milestone" role="listitem">
-          <p class="proj-val">75</p>
-        <p class="proj-lbl">Month 1</p>
-      </div>
-      <div class="proj-milestone" role="listitem">
-          <p class="proj-val">83</p>
-        <p class="proj-lbl">Month 2</p>
-      </div>
-      <div class="proj-milestone" role="listitem">
-          <p class="proj-val">90+</p>
-        <p class="proj-lbl">Month 3</p>
-      </div>
-        <div class="proj-milestone" role="listitem">
-          <p class="proj-val">90+</p>
-          <p class="proj-lbl">Month 4</p>
-    </div>
-  </div>
-</div>
-
-    <div class="roadmap-phases">
-      <div class="roadmap-phase">
+    <div class="roadmap-phases" role="list">
+      <div class="roadmap-phase" role="listitem">
         <p class="phase-num">Phase 1</p>
         <p class="phase-name">Optimise</p>
         <p class="phase-desc">Reach 90+</p>
         <p class="phase-duration">~90 days</p>
       </div>
-      <div class="roadmap-phase">
+      <div class="roadmap-phase" role="listitem">
         <p class="phase-num">Phase 2</p>
         <p class="phase-name">Longevity</p>
         <p class="phase-desc">Make it last</p>
-        <p class="phase-duration">Ongoing</p>
+        <p class="phase-duration phase-duration--infinity" aria-label="Ongoing">∞</p>
       </div>
     </div>
   </div>
