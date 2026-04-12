@@ -854,7 +854,7 @@
       text-align: center;
       border-radius: 12px;
       background: #fff;
-      border: none;
+      border: 1px solid rgba(0, 0, 0, 0.06);
       box-shadow:
         0 1px 3px rgba(0, 0, 0, 0.04),
         0 8px 16px rgba(0, 0, 0, 0.04);
@@ -2208,19 +2208,25 @@
       box-shadow: none;
     }
     #focus-card-2 .fc2-legend__swatch {
-      width: 16px;
-      height: 3px;
-      border-radius: 999px;
       flex-shrink: 0;
-      box-shadow:
-        0 1px 2px -1px rgba(0, 0, 0, 0.1),
-        0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: none;
     }
     #focus-card-2 .fc2-legend__swatch--deep {
-      background: #0a84ff;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #0071e3;
+      box-shadow:
+        0 1px 2px -1px rgba(0, 0, 0, 0.12),
+        0 1px 3px rgba(0, 0, 0, 0.08);
     }
     #focus-card-2 .fc2-legend__swatch--load {
-      background: #ff9500;
+      width: 14px;
+      height: 12px;
+      border-radius: 0;
+      background: #ffd60a;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.08));
     }
     #focus-card-2 .fc2-legend__label {
       font-family: var(--font-mono);
@@ -2267,9 +2273,18 @@
       stroke-width: 1px;
       shape-rendering: crispEdges;
     }
-    #focus-card-2 .fc2-chart-panel svg .fc2-series {
-      stroke-width: 1.5px;
-      stroke-opacity: 1;
+    #focus-card-2 .fc2-chart-panel svg .fc2-marker-deep {
+      fill: #0071e3;
+      stroke: #fff;
+      stroke-width: 0.85px;
+      vector-effect: non-scaling-stroke;
+      shape-rendering: geometricPrecision;
+    }
+    #focus-card-2 .fc2-chart-panel svg .fc2-marker-int {
+      fill: #ffd60a;
+      stroke: #cfa800;
+      stroke-width: 0.65px;
+      vector-effect: non-scaling-stroke;
       shape-rendering: geometricPrecision;
     }
     #focus-card-2 .fc2-chart-panel svg text {
@@ -2362,11 +2377,13 @@
         stroke-width: 1.25;
         shape-rendering: geometricPrecision;
       }
-      #focus-card-2 .fc2-chart-panel svg .fc2-series {
+      #focus-card-2 .fc2-chart-panel svg .fc2-marker-deep {
         vector-effect: none;
-        stroke-width: 2;
-        stroke-opacity: 1;
-        shape-rendering: geometricPrecision;
+        stroke-width: 1.1px;
+      }
+      #focus-card-2 .fc2-chart-panel svg .fc2-marker-int {
+        vector-effect: none;
+        stroke-width: 0.9px;
       }
       #focus-card-2 .fc2-chart-panel svg text {
         font-size: 12px;
@@ -3139,11 +3156,13 @@
         stroke-width: 1.25;
         shape-rendering: geometricPrecision;
       }
-      #focus-card-2 .fc2-chart-panel svg .fc2-series {
+      #focus-card-2 .fc2-chart-panel svg .fc2-marker-deep {
         vector-effect: none;
-        stroke-width: 2;
-        stroke-opacity: 1;
-        shape-rendering: geometricPrecision;
+        stroke-width: 1.25px;
+      }
+      #focus-card-2 .fc2-chart-panel svg .fc2-marker-int {
+        vector-effect: none;
+        stroke-width: 1px;
       }
       #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
         display: block;
@@ -4314,7 +4333,7 @@
                 <p class="fc2-cap">Deep sleep % vs training intensity</p>
 
                 <div class="fc2-chart-panel">
-                  <svg id="c-dual-deep-intensity" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage and training intensity over 30 days"></svg>
+                  <svg id="c-dual-deep-intensity" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage (blue circles) and training intensity (yellow triangles) over 30 days"></svg>
                 </div>
 
                 <div class="fc2-legend" aria-hidden="true">
@@ -5168,44 +5187,12 @@
     const scaleYi = v => yPlotBottom - ((v - minI) / (maxI - minI)) * plotH;
     const clampY = y => Math.min(yPlotBottom, Math.max(yPlotTop, y));
 
-    /* Catmull–Rom-style cubic Beziers; null days are skipped but the curve stays one path (connects next valid day). */
-    const smoothAlpha = 1 / 6;
-    const smoothRunToD = pts => {
-      const n = pts.length;
-      if (n === 0) return '';
-      if (n === 1) {
-        const p = pts[0];
-        return `M${p.x.toFixed(2)},${p.y.toFixed(2)}`;
-      }
-      if (n === 2) {
-        const [a, b] = pts;
-        return `M${a.x.toFixed(2)},${a.y.toFixed(2)} L${b.x.toFixed(2)},${b.y.toFixed(2)}`;
-      }
-      let d = `M${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
-      for (let i = 0; i < n - 1; i += 1) {
-        const p0 = pts[Math.max(0, i - 1)];
-        const p1 = pts[i];
-        const p2 = pts[i + 1];
-        const p3 = pts[Math.min(n - 1, i + 2)];
-        const c1x = p1.x + (p2.x - p0.x) * smoothAlpha;
-        const c1y = p1.y + (p2.y - p0.y) * smoothAlpha;
-        const c2x = p2.x - (p3.x - p1.x) * smoothAlpha;
-        const c2y = p2.y - (p3.y - p1.y) * smoothAlpha;
-        d += ` C${c1x.toFixed(2)},${c1y.toFixed(2)} ${c2x.toFixed(2)},${c2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
-      }
-      return d;
-    };
-
-    const pathForSeries = (vals, scaleY) => {
-      const runs = [];
-      const cur = [];
-      for (let i = 0; i < 30; i += 1) {
-        const v = vals[i];
-        if (v == null || !Number.isFinite(v)) continue;
-        cur.push({ x: scaleX(i), y: clampY(scaleY(v)) });
-      }
-      if (cur.length) runs.push(cur);
-      return runs.map(smoothRunToD).join('');
+    const triPointsUp = (x, y) => {
+      const h = 5.5;
+      const w = 5;
+      const yApex = y - h * 0.6;
+      const yBase = y + h * 0.45;
+      return `${x.toFixed(2)},${yApex.toFixed(2)} ${(x - w).toFixed(2)},${yBase.toFixed(2)} ${(x + w).toFixed(2)},${yBase.toFixed(2)}`;
     };
 
     /* Clip both series to their shared day range (latest first valid, earliest last valid). */
@@ -5216,8 +5203,32 @@
     const clippedDeep = deepDaily.map((v, i) => (i >= sharedStart && i <= sharedEnd) ? v : null);
     const clippedInt = intensityDaily.map((v, i) => (i >= sharedStart && i <= sharedEnd) ? v : null);
 
-    const pathDeep = pathForSeries(clippedDeep, scaleYd);
-    const pathInt = pathForSeries(clippedInt, scaleYi);
+    const markerDeepParts = [];
+    const markerIntParts = [];
+    for (let i = 0; i < 30; i += 1) {
+      const vd = clippedDeep[i];
+      if (vd != null && Number.isFinite(vd)) {
+        const px = scaleX(i);
+        const py = clampY(scaleYd(vd));
+        markerDeepParts.push(
+          `<circle class="fc2-marker-deep" cx="${px.toFixed(2)}" cy="${py.toFixed(2)}" r="4"><title>Day ${i + 1} · Deep sleep ${(+vd).toFixed(1)}% of sleep time</title></circle>`,
+        );
+      }
+      const vi = clippedInt[i];
+      if (vi != null && Number.isFinite(vi)) {
+        const px = scaleX(i);
+        const py = clampY(scaleYi(vi));
+        markerIntParts.push(
+          `<polygon class="fc2-marker-int" points="${triPointsUp(px, py)}"><title>Day ${i + 1} · Training intensity ${(+vi).toFixed(2)}</title></polygon>`,
+        );
+      }
+    }
+    const gMarkersDeep = markerDeepParts.length
+      ? `<g class="fc2-markers fc2-markers--deep">${markerDeepParts.join('')}</g>`
+      : '';
+    const gMarkersInt = markerIntParts.length
+      ? `<g class="fc2-markers fc2-markers--int">${markerIntParts.join('')}</g>`
+      : '';
 
     const nLeftTicks = 5;
     const nRightTicks = 5;
@@ -5256,10 +5267,10 @@
 
     const parts = [
       `<title>Daily deep sleep percent and training load by day.</title>`,
-      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Series drawn as smooth curves through days with recorded values; missing days are omitted along the time axis. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
+      `<desc>Blue circles: deep sleep as percent of sleep time. Yellow triangles: same-day training intensity. One marker per day with a recorded value within the shared day range; missing days have no marker. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
       hLines,
-      pathDeep ? `<path class="fc2-series" d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
-      pathInt ? `<path class="fc2-series" d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
+      gMarkersDeep,
+      gMarkersInt,
       leftLbl,
       rightLbl,
       xLbl,
@@ -5267,6 +5278,10 @@
 
     svg.innerHTML = parts.join('');
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute(
+      'aria-label',
+      'Daily deep sleep percentage (blue circles) and training intensity (yellow triangles) over 30 days',
+    );
   })();
 
   /* ── Focus card: training intensity vs next-day RHR (raw_data.json) — matches Figma Nutricode frame ── */
