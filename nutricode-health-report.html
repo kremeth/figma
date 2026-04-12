@@ -2605,7 +2605,7 @@
       width: 100%;
       max-width: 100%;
       height: auto;
-      aspect-ratio: 276 / 144;
+      aspect-ratio: 306 / 156;
     }
     #focus-card-4 .fc4-chart-panel .focus-scatter-svg text {
       font-family: var(--font-mono);
@@ -2952,7 +2952,7 @@
     #focus-card-4 .fc4-chart-panel .focus-scatter-svg {
       width: 100%;
       max-width: 100%;
-      aspect-ratio: 276 / 144;
+      aspect-ratio: 306 / 156;
     }
     #focus-card-1 .fc1-cap,
     #focus-card-2 .fc2-cap,
@@ -3181,7 +3181,7 @@
         width: 100%;
         max-width: 100%;
         height: auto;
-        aspect-ratio: 276 / 144;
+        aspect-ratio: 306 / 156;
       }
       #focus-card-1 .fc1-cap,
       #focus-card-2 .fc2-cap,
@@ -4554,7 +4554,7 @@
                 <div class="fc4-sep" aria-hidden="true"></div>
                 <p class="fc4-cap">Intensity vs Next-Day Resting Heart Rate</p>
                 <div class="fc4-chart-panel">
-                  <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-16 0 276 144" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
+                  <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-46 0 306 156" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
                     <title>Next-day resting heart rate versus same-day training intensity.</title>
                   </svg>
                 </div>
@@ -5130,7 +5130,7 @@
     const scaleYi = v => yPlotBottom - ((v - minI) / (maxI - minI)) * plotH;
     const clampY = y => Math.min(yPlotBottom, Math.max(yPlotTop, y));
 
-    /* Catmull–Rom-style cubic Beziers through each run; null days start a new subpath. */
+    /* Catmull–Rom-style cubic Beziers; null days are skipped but the curve stays one path (connects next valid day). */
     const smoothAlpha = 1 / 6;
     const smoothRunToD = pts => {
       const n = pts.length;
@@ -5160,16 +5160,10 @@
 
     const pathForSeries = (vals, scaleY) => {
       const runs = [];
-      let cur = [];
+      const cur = [];
       for (let i = 0; i < 30; i += 1) {
         const v = vals[i];
-        if (v == null || !Number.isFinite(v)) {
-          if (cur.length) {
-            runs.push(cur);
-            cur = [];
-          }
-          continue;
-        }
+        if (v == null || !Number.isFinite(v)) continue;
         cur.push({ x: scaleX(i), y: clampY(scaleY(v)) });
       }
       if (cur.length) runs.push(cur);
@@ -5216,7 +5210,7 @@
 
     const parts = [
       `<title>Daily deep sleep percent and training load by day.</title>`,
-      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Series drawn as smooth curves through daily values; gaps indicate missing days. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
+      `<desc>Blue line: deep sleep as percent of sleep time. Orange line: same-day training intensity. Series drawn as smooth curves through days with recorded values; missing days are omitted along the time axis. Horizontal axis: day labels 01 through 30 between inset plot edges; y tick labels at SVG left and right.</desc>`,
       hLines,
       pathDeep ? `<path class="fc2-series" d="${pathDeep}" fill="none" stroke="${BLUE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
       pathInt ? `<path class="fc2-series" d="${pathInt}" fill="none" stroke="${ORANGE}" stroke-linecap="round" stroke-linejoin="round"/>` : '',
@@ -5336,13 +5330,17 @@
     const domainYMin = yTicks[0];
     const domainYMax = yTicks[yTicks.length - 1];
 
-    /* Domain max maps to x=260 (right edge of plot); viewBox width 276 → max x = -16+276 = 260. */
-    const viewMinX = -16;
-    const viewOuterWidth = 276;
-    const viewHeight = 144;
-    const xTickY = 140;
+    /* Plot right edge x=260; viewBox x runs viewMinX .. viewMinX+viewOuterWidth. */
+    const viewMinX = -46;
+    const viewOuterWidth = 306;
+    const viewHeight = 156;
+    const xTickY = 138;
+    const xAxisTitleY = 152;
     const plot = { left: 10, right: 260, top: 20, bottom: 126 };
+    const plotMidX = (plot.left + plot.right) / 2;
+    const plotMidY = (plot.top + plot.bottom) / 2;
     const yTickLabelX = 0;
+    const yAxisTitleX = -23;
     const plotWidth = plot.right - plot.left;
     const plotHeight = plot.bottom - plot.top;
 
@@ -5365,6 +5363,9 @@
       const y = scaleY(value).toFixed(2);
       return `<text x="${yTickLabelX}" y="${(+y + 2.5).toFixed(2)}" text-anchor="end" font-family="${FONT_MONO}" font-size="8" font-weight="400" fill="${TICK_SOFT}">${formatBpmTick(value)}</text>`;
     }).join('');
+
+    const yAxisTitle = `<text transform="rotate(-90, ${yAxisTitleX}, ${plotMidY})" x="${yAxisTitleX}" y="${plotMidY}" text-anchor="middle" dominant-baseline="middle" font-family="${FONT_MONO}" font-size="8" font-weight="600" letter-spacing="0.14em" fill="${TICK_SOFT}">NEXT-DAY RHR</text>`;
+    const xAxisTitle = `<text x="${plotMidX}" y="${xAxisTitleY}" text-anchor="middle" font-family="${FONT_MONO}" font-size="8" font-weight="600" letter-spacing="0.1em" fill="${TICK}">Training Intensity</text>`;
 
     const regressionLine = `
       <line
@@ -5394,14 +5395,16 @@
     svg.innerHTML = `
       <defs>${pointShadowFilter}${plotClip}</defs>
       <title>Next-day resting heart rate versus same-day training intensity.</title>
-      <desc>Scatter of training intensity versus next-day resting heart rate from Garmin export.</desc>
+      <desc>Scatter of training intensity versus next-day resting heart rate from Garmin export. Y-axis: next-day RHR (bpm). X-axis: training intensity.</desc>
       <g clip-path="url(#focusScatterPlotClip)">
         ${horizontalGrid}
         ${regressionLine}
         ${circles}
       </g>
+      ${yAxisTitle}
       ${yLabels}
       ${xLabels}
+      ${xAxisTitle}
     `;
 
     svg.setAttribute('viewBox', `${viewMinX} 0 ${viewOuterWidth} ${viewHeight}`);
