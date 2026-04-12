@@ -2154,7 +2154,17 @@
       border-bottom: none;
     }
     #focus-card-2 .fc2-accent {
-      display: none;
+      height: 3px;
+      width: 100%;
+      flex-shrink: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 2, 7, 0.03) 7%,
+        rgba(0, 113, 227, 0.2) 50%,
+        rgba(0, 2, 7, 0.03) 93%,
+        rgba(0, 0, 0, 0) 100%
+      );
     }
     #focus-card-2 .fc2-body {
       position: relative;
@@ -2785,6 +2795,7 @@
         0 12px 20px rgba(15, 23, 42, 0.07);
     }
     #focus-card-1 .fc1-accent,
+    #focus-card-2 .fc2-accent,
     #focus-card-3 .fc3-accent,
     #focus-card-4 .fc4-accent {
       height: 2px;
@@ -4314,7 +4325,7 @@
             </div>
         </div>
 
-        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation">
+        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
             <div class="focus-card__stage">
               <div class="fc2-accent" aria-hidden="true"></div>
               <div class="fc2-body">
