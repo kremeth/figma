@@ -5133,10 +5133,7 @@
       let started = false;
       for (let i = 0; i < 30; i += 1) {
         const v = vals[i];
-        if (v == null || !Number.isFinite(v)) {
-          started = false;
-          continue;
-        }
+        if (v == null || !Number.isFinite(v)) continue;
         const x = scaleX(i);
         const y = clampY(scaleY(v));
         d += started ? ` L${x.toFixed(2)},${y.toFixed(2)}` : `M${x.toFixed(2)},${y.toFixed(2)}`;
