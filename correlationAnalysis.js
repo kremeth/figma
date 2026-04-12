@@ -737,6 +737,13 @@ function ageBand(age) {
   return "66+";
 }
 
+/** Bracket value from normative_metrics: number, or object with p50 (e.g. rem_sleep percentiles). */
+function normativeBracketValue(v) {
+  if (v == null) return v;
+  if (typeof v === "object" && Number.isFinite(+v.p50)) return +v.p50;
+  return v;
+}
+
 function meanFromSeriesDict(seriesDict) {
   const vals = Object.values(seriesDict || {}).filter(
     (v) => v !== null && v !== undefined && !Number.isNaN(Number(v))
@@ -784,7 +791,7 @@ function computeMetricPriorityRows(rawData, normative) {
   const meta = viz.meta || {};
   const gender = meta.gender === "female" ? "female" : "male";
   const band = ageBand(Number(meta.age) || 30);
-  const norm = (k) => normative?.[k]?.[gender]?.[band];
+  const norm = (k) => normativeBracketValue(normative?.[k]?.[gender]?.[band]);
 
   const totalSleepSecAvg = meanFromSeriesDict(metrics.sleep_time || {});
   const totalSleepHours = totalSleepSecAvg == null ? null : totalSleepSecAvg / 3600;
@@ -907,7 +914,7 @@ function buildGlobalMetricPriority(rawData, normative, top10) {
   const meta = viz.meta || {};
   const gender = meta.gender === "female" ? "female" : "male";
   const band = ageBand(Number(meta.age) || 30);
-  const norm = (k) => normative?.[k]?.[gender]?.[band];
+  const norm = (k) => normativeBracketValue(normative?.[k]?.[gender]?.[band]);
   const p90 = (k) => top10?.[k]?.[gender]?.[band];
 
   const { analyzeSeries: analyzeVar } = require(require("path").join(__dirname, "varianceRules.js"));

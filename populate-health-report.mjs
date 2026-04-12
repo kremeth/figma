@@ -39,7 +39,12 @@ function ageBand(age) {
 
 const gender = meta.gender === 'female' ? 'female' : 'male';
 const band = ageBand(meta.age ?? 30);
-const g = (obj) => obj?.[gender]?.[band];
+/** Normative bracket: plain number, or { p50, p30, p60, p90 } (REM); cohort code uses p50 as reference. */
+const g = (obj) => {
+  const v = obj?.[gender]?.[band];
+  if (v != null && typeof v === 'object' && Number.isFinite(+v.p50)) return +v.p50;
+  return v;
+};
 
 function seriesMean(series) {
   if (!series || typeof series !== 'object') return null;
