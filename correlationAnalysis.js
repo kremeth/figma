@@ -1051,10 +1051,10 @@ function buildPriorityFallbackRow(priority, rank) {
   let title = `Priority ${rank + 1}: ${priority.metricDisplay}`;
   let howText = "No significant correlation met the threshold for a unique intervention in this priority area.";
   if (priority.targetMetric === "REM") {
-    title = "Boost your REM Sleep";
+    title = "Boost REM Sleep";
     howText = "REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.";
   } else if (priority.targetMetric === "LightSleep") {
-    title = "Lower Light Sleep Duration";
+    title = "Lower Light Sleep";
     howText = "Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.";
   }
   return {

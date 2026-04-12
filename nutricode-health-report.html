@@ -1266,7 +1266,7 @@
       min-width: 0;
       margin-right: auto;
       font-family: var(--font-ui);
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: var(--ls-10-caps);
       line-height: 1.25;
@@ -1720,7 +1720,7 @@
     }
     #focus-card-1 .fc1-body {
       position: relative;
-      padding: 36px 34px 32px;
+      padding: 36px 34px 26px;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -1904,7 +1904,7 @@
     }
     @media (max-width: 760px) {
       #focus-card-1.focus-card__shell { border-radius: 12px; }
-      #focus-card-1 .fc1-body { padding: 30px 22px 26px; }
+      #focus-card-1 .fc1-body { padding: 30px 22px 20px; }
       #focus-card-1 .fc1-title { font-size: 18px; }
       #focus-card-1 .fc1-summary { margin-bottom: 22px; }
       #focus-card-1 .fc1-legend { gap: 20px; padding: 16px 0 14px; }
@@ -1943,7 +1943,7 @@
     }
     #focus-card-3 .fc3-body {
       position: relative;
-      padding: 36px 34px 32px;
+      padding: 36px 34px 26px;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -2125,7 +2125,7 @@
     }
     @media (max-width: 760px) {
       #focus-card-3.focus-card__shell { border-radius: 12px; }
-      #focus-card-3 .fc3-body { padding: 30px 22px 26px; }
+      #focus-card-3 .fc3-body { padding: 30px 22px 20px; }
       #focus-card-3 .fc3-title { font-size: 18px; }
       #focus-card-3 .fc3-summary { margin-bottom: 22px; }
       #focus-card-3 .fc3-legend { gap: 20px; padding: 16px 0 14px; }
@@ -2154,7 +2154,7 @@
     }
     #focus-card-2 .fc2-body {
       position: relative;
-      padding: 38px 34px 32px;
+      padding: 38px 34px 26px;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -2376,7 +2376,7 @@
     }
     @media (max-width: 760px) {
       #focus-card-2.focus-card__shell { border-radius: 12px; }
-      #focus-card-2 .fc2-body { padding: 34px 26px 28px; }
+      #focus-card-2 .fc2-body { padding: 34px 26px 22px; }
       #focus-card-2 .fc2-title { font-size: 20px; max-width: none; margin-bottom: 18px; }
       #focus-card-2 .fc2-summary { max-width: none; }
       #focus-card-2 .fc2-legend { gap: 18px; padding: 16px 0 18px; }
@@ -2504,7 +2504,7 @@
     }
     #focus-card-4 .fc4-body {
       position: relative;
-      padding: 36px 34px 32px;
+      padding: 36px 34px 26px;
       display: flex;
       flex-direction: column;
       min-width: 0;
@@ -2530,6 +2530,9 @@
       letter-spacing: var(--ls-15);
       margin: 0 0 26px 0;
     }
+    #focus-card-1 .fc1-summary strong,
+    #focus-card-2 .fc2-summary strong,
+    #focus-card-3 .fc3-summary strong,
     #focus-card-4 .fc4-summary strong {
       font-weight: 600;
       color: #1d1d1f;
@@ -2669,11 +2672,6 @@
       line-height: 1.62;
       letter-spacing: var(--ls-14);
     }
-    #focus-card-4 .fc4-why-accent {
-      font-weight: 600;
-      color: #0071e3;
-    }
-
     @media (max-width: 760px) {
       .focus-section-header {
         grid-template-columns: 1fr;
@@ -2690,7 +2688,7 @@
         max-width: none;
       }
       #focus-card-4.focus-card__shell { border-radius: 12px; }
-      #focus-card-4 .fc4-body { padding: 30px 22px 26px; }
+      #focus-card-4 .fc4-body { padding: 30px 22px 20px; }
       #focus-card-4 .fc4-title { font-size: 18px; }
       #focus-card-4 .fc4-summary { margin-bottom: 22px; }
       #focus-card-4 .fc4-legend { gap: 16px 28px; padding: 14px 0 12px; }
@@ -2741,7 +2739,7 @@
       align-items: center;
     }
     #recRhrCount {
-      font-size: 9px;
+      font-size: 12px;
       letter-spacing: 0.12em;
       padding-bottom: 4px;
       color: #9ca0a8;
@@ -2822,7 +2820,7 @@
       align-items: start;
       column-gap: 0;
       row-gap: 16px;
-      padding: clamp(38px, 4.5vw, 52px);
+      padding: clamp(38px, 4.5vw, 52px) clamp(38px, 4.5vw, 52px) clamp(30px, 3.8vw, 44px);
       min-width: 0;
       background: linear-gradient(to bottom, #ffffff 0%, #fcfcfd 100%);
     }
@@ -3069,7 +3067,7 @@
         display: flex;
         flex-direction: column;
         gap: 0;
-        padding: clamp(28px, 6vw, 34px) clamp(20px, 4vw, 26px);
+        padding: clamp(28px, 6vw, 34px) clamp(20px, 4vw, 26px) clamp(22px, 5vw, 28px);
       }
       #focus-card-1 .fc1-title,
       #focus-card-2 .fc2-title,
@@ -3090,7 +3088,7 @@
       #focus-card-3 .fc3-sep,
       #focus-card-4 .fc4-sep {
         width: 100%;
-        margin-top: 22px;
+        margin-top: 12px;
       }
       #focus-card-1 .fc1-legend,
       #focus-card-2 .fc2-legend,
@@ -3124,7 +3122,7 @@
       #focus-card-3 .fc3-chart-panel,
       #focus-card-4 .fc4-chart-panel {
         padding: 10px;
-        margin-top: 22px;
+        margin-top: 12px;
         justify-content: center;
         align-items: center;
       }
@@ -4289,8 +4287,8 @@
               <div class="fc1-accent" aria-hidden="true"></div>
               <div class="fc1-body">
                 <div class="focus-card__head">
-                  <h3 class="fc1-title">Boost your REM Sleep</h3>
-                  <p class="fc1-summary">Your REM Sleep is 49% below your demographic average (11% vs 21%).</p>
+                  <h3 class="fc1-title">Boost REM Sleep</h3>
+                  <p class="fc1-summary">Your REM Sleep is <strong>49%</strong> below your demographic average (<strong>11%</strong> <strong>vs</strong> <strong>21%</strong>).</p>
                 </div>
                 <div class="fc1-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -4325,8 +4323,8 @@
               <div class="fc2-accent" aria-hidden="true"></div>
               <div class="fc2-body">
                 <div class="focus-card__head">
-                  <h3 class="fc2-title">Protect deep sleep after training</h3>
-                  <p class="fc2-summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
+                  <h3 class="fc2-title">Protect Deep Sleep</h3>
+                  <p class="fc2-summary">When your 7-day training intensity stayed above <strong>1.84</strong>, Deep Sleep usually stayed below <strong>0.7 hours</strong>.</p>
                 </div>
                 <div class="fc2-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -4365,8 +4363,8 @@
               <div class="fc3-accent" aria-hidden="true"></div>
               <div class="fc3-body">
                 <div class="focus-card__head">
-                  <h3 class="fc3-title">Lower Light Sleep Duration</h3>
-                  <p class="fc3-summary">Your Light Sleep is 21% above your demographic average (69% vs 57%).</p>
+                  <h3 class="fc3-title">Lower Light Sleep</h3>
+                  <p class="fc3-summary">Your Light Sleep is <strong>21%</strong> above your demographic average (<strong>69%</strong> <strong>vs</strong> <strong>57%</strong>).</p>
                 </div>
                 <div class="fc3-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -4447,7 +4445,7 @@
               <div class="fc4-accent" aria-hidden="true"></div>
               <div class="fc4-body">
                 <div class="focus-card__head">
-                  <h3 class="fc4-title">Recover better after hard training</h3>
+                  <h3 class="fc4-title">Recover Better</h3>
                   <p class="fc4-summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
                 </div>
                 <div class="fc4-sep" aria-hidden="true"></div>
@@ -4473,7 +4471,7 @@
                         <span class="fc4-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc4-why-panel">The upward direction of the <span class="fc4-why-accent">regression line</span> suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+                    <p class="fc4-why-panel">The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
                   </details>
                 </div>
               </div>
@@ -4952,10 +4950,10 @@
     };
 
     const remFillForCohortPct = (pct, p30, p60, p90) => {
-      if (pct < p30) return '#ff3b30';
-      if (pct < p60) return '#ffd60a';
+      if (pct < p30) return '#ff0000';
+      if (pct < p60) return '#ff9f0a';
       if (pct < p90) return '#34c759';
-      return '#0071e3';
+      return '#5da9c8';
     };
 
     const remBandDesc = (pct, p30, p60, p90) => {
@@ -5095,7 +5093,7 @@
         if (h < 0.5) return '';
         const fill = remFillForCohortPct(pct, rp30, rp60, rp90);
         const band = remBandDesc(pct, rp30, rp60, rp90);
-        return `<rect x="${x.toFixed(2)}" y="${yTop.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.2" fill="${fill}"><title>Day ${i + 1} · ${(+pct).toFixed(1)}% REM of sleep · ${band}</title></rect>`;
+        return `<rect x="${x.toFixed(2)}" y="${yTop.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.2" fill="${fill}" fill-opacity="0.5"><title>Day ${i + 1} · ${(+pct).toFixed(1)}% REM of sleep · ${band}</title></rect>`;
       })
       .join('');
 
