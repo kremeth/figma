@@ -2853,7 +2853,7 @@
       grid-area: sep;
       width: 100%;
       max-width: none;
-      margin: 2px 0 0;
+      margin: 12px 0 0;
       background: rgba(15, 23, 42, 0.055);
       opacity: 1;
     }
@@ -3088,7 +3088,7 @@
       #focus-card-3 .fc3-sep,
       #focus-card-4 .fc4-sep {
         width: 100%;
-        margin-top: 12px;
+        margin-top: 22px;
       }
       #focus-card-1 .fc1-legend,
       #focus-card-2 .fc2-legend,
@@ -5093,7 +5093,7 @@
         if (h < 0.5) return '';
         const fill = remFillForCohortPct(pct, rp30, rp60, rp90);
         const band = remBandDesc(pct, rp30, rp60, rp90);
-        return `<rect x="${x.toFixed(2)}" y="${yTop.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.2" fill="${fill}" fill-opacity="0.5"><title>Day ${i + 1} · ${(+pct).toFixed(1)}% REM of sleep · ${band}</title></rect>`;
+        return `<rect x="${x.toFixed(2)}" y="${yTop.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.2" fill="${fill}"><title>Day ${i + 1} · ${(+pct).toFixed(1)}% REM of sleep · ${band}</title></rect>`;
       })
       .join('');
 
