@@ -144,7 +144,7 @@ function badgeFor(ratio) {
   if (ratio >= 0.6) return { cls: 'optimal', text: 'Optimal' }; // green
   if (ratio > 0.3) {
     if (ratio >= 0.4) return { cls: 'below', text: 'Normal' }; // orange
-    return { cls: 'below', text: 'Below average' }; // orange
+    return { cls: 'below', text: 'Limited' }; // orange
   }
   return { cls: 'low', text: 'Low' }; // red
 }
