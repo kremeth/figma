@@ -552,6 +552,11 @@
     .snap-ft--flat { color: var(--ink-4); }
     .snap-ft--neg  { color: var(--red); }
     .snap-ft--pos  { color: var(--green); }
+    .snap-ft--warn { color: var(--amber); }
+    /* Snapshot tile footers: keep copy bands in markup but always show neutral subtext */
+    .snapshot-tile .snap-ft {
+      color: var(--ink-4);
+    }
     .snap-ft-icon { flex-shrink: 0; display: flex; align-items: center; color: inherit; }
     .snapshot-grid--3 {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -947,9 +952,14 @@
     .bio-ref-key__swatch {
       display: inline-block; width: 10px; height: 10px; border-radius: 1px; flex-shrink: 0;
     }
-    .bio-ref-key__swatch--cohort { background: rgba(0,0,0,0.32); width: 2px; height: 10px; border-radius: 0; }
+    .bio-ref-key__swatch--cohort { background: rgba(0,0,0,0.32); width: 1px; height: 10px; border-radius: 0; }
     .bio-ref-key__swatch--avg {
-      width: 0; height: 12px; border-left: 2px dashed var(--ink-3); opacity: 0.75; background: none;
+      width: 0;
+      height: 12px;
+      border-left: 2px dotted var(--ink-3);
+      opacity: 0.75;
+      background: none;
+      border-radius: 0;
     }
     .bio-ref-key__swatch--you {
       width: 8px; height: 8px; border-radius: 50%;
@@ -1058,6 +1068,8 @@
     }
     .bio-bench-fill--green { background: linear-gradient(90deg, #2ecc69 0%, #34c759 100%); }
     .bio-bench-fill--amber { background: linear-gradient(90deg, #f0920a 0%, #ff9f0a 100%); }
+    .bio-bench-fill--red { background: linear-gradient(90deg, #e53935 0%, #ff0000 100%); }
+    .bio-bench-fill--blue { background: linear-gradient(90deg, #4a9ebd 0%, #5da9c8 100%); }
     /* Thin reference notches */
     .bio-bench-tick {
       position: absolute;
@@ -3463,28 +3475,28 @@
           <li class="limiting-row">
             <div class="limiting-left">
               <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
+              <span class="limiting-name">REM sleep</span>
+      </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--red">48% below avg</span>
+      </div>
+          </li>
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
+              <span class="limiting-name">Light sleep</span>
+      </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--red">21% above avg</span>
+      </div>
+          </li>
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
               <span class="limiting-name">Deep sleep</span>
       </div>
             <div class="limiting-right">
               <span class="limiting-badge limiting-badge--red">27% below avg</span>
-      </div>
-          </li>
-          <li class="limiting-row">
-            <div class="limiting-left">
-              <span class="limiting-dot limiting-dot--amber" aria-hidden="true"></span>
-              <span class="limiting-name">Sleep score</span>
-      </div>
-            <div class="limiting-right">
-              <span class="limiting-badge limiting-badge--amber">Below target</span>
-      </div>
-          </li>
-          <li class="limiting-row">
-            <div class="limiting-left">
-              <span class="limiting-dot limiting-dot--amber" aria-hidden="true"></span>
-              <span class="limiting-name">Recovery variance</span>
-      </div>
-            <div class="limiting-right">
-              <span class="limiting-badge limiting-badge--amber">Monitor trend</span>
       </div>
           </li>
         </ul>
@@ -3504,35 +3516,38 @@
       <div class="snap-tile-hd">
         <p class="snap-name">Avg Recovery</p>
       </div>
-      <div class="snap-tile-value">
+      <div class="snap-tile-value snap-tile-value--row">
         <p class="snap-val">70<span class="snap-unit"> %</span></p>
-        </div>
+        <span class="snap-tag snap-tag--easy">High</span>
+      </div>
       <div class="snap-tile-sep" aria-hidden="true"></div>
-      <div class="snap-ft snap-ft--flat">
+      <div class="snap-ft snap-ft--pos">
         <span class="snap-ft-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="7" cy="7" r="5.75" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M4.5 7h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M4.5 6l1.5 1.5 1.5-3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </span>
-        <span>Moderate range</span>
+        <span>Recovery looks good</span>
         </div>
       </div>
     <div class="snapshot-tile reveal d2">
       <div class="snap-tile-hd">
         <p class="snap-name">Sleep Performance</p>
     </div>
-      <div class="snap-tile-value">
+      <div class="snap-tile-value snap-tile-value--row">
         <p class="snap-val">64<span class="snap-unit"> %</span></p>
+        <span class="snap-tag snap-tag--vhard">Poor</span>
       </div>
       <div class="snap-tile-sep" aria-hidden="true"></div>
-      <div class="snap-ft snap-ft--flat">
+      <div class="snap-ft snap-ft--neg">
         <span class="snap-ft-icon" aria-hidden="true">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 2v7M2.75 6.25L6 9.5l3.25-3.25" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7" cy="7" r="5.75" stroke="currentColor" stroke-width="1"/>
+            <path d="M4.5 7h5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+        </svg>
         </span>
-        <span>Stable range</span>
+        <span>Sleep is too low.</span>
       </div>
     </div>
     <div class="snapshot-tile reveal d3">
@@ -3552,13 +3567,13 @@
         <span class="snap-tag snap-tag--moderate">Moderate</span>
       </div>
       <div class="snap-tile-sep" aria-hidden="true"></div>
-      <div class="snap-ft snap-ft--flat">
+      <div class="snap-ft snap-ft--warn">
         <span class="snap-ft-icon" aria-hidden="true">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 10V3M2.75 5.75L6 2.5l3.25 3.25" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 10V3M2.75 5.75L6 2.5l3.25 3.25" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
-        <span>Moderate training load</span>
+        <span>Training load can increase</span>
       </div>
     </div>
   </div>
@@ -3778,7 +3793,7 @@
       <text x="373" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">5:00</text>
       <text x="438" y="246" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">6:00</text>
       <text x="243" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>
-                        <!-- Good next day recovery -->
+                                                                              <!-- Good next day recovery -->
       <circle cx="170" cy="151" r="4.5" fill="#22c55e"/>
       <circle cx="171" cy="127" r="4.5" fill="#22c55e"/>
       <circle cx="109" cy="199" r="4.5" fill="#22c55e"/>
@@ -3884,7 +3899,7 @@
 ═══════════════════════════════════════ -->
 <div class="inner page-section">
   <p class="section-label reveal section-label--caps section-label--bio">Biometric Health</p>
-  <p class="bio-panel-note reveal">Reference numbers under each bar are cohort benchmarks for <strong>men aged 26–35</strong> (aligned to 28–30): left = <strong>bottom 10%</strong> (worse), center = <strong>average</strong>, right = <strong>top 10%</strong> (better). Every bar reads <strong>left = worse, right = better</strong>; the scale endpoints match that. The <strong>dot</strong> is your value on that same worse→better axis.</p>
+  <p class="bio-panel-note reveal">Reference numbers under each bar are cohort benchmarks for <strong>men aged 26–35</strong>.</p>
   <p class="bio-ref-key reveal" aria-hidden="true">
     <span class="bio-ref-key__i"><span class="bio-ref-key__swatch bio-ref-key__swatch--cohort"></span> Bottom 10% &amp; top 10% marks</span>
     <span class="bio-ref-key__i"><span class="bio-ref-key__swatch bio-ref-key__swatch--avg"></span> Average</span>
@@ -3914,7 +3929,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--green" style="width:90.7%;background:#5da9c8;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--blue" style="width:90.7%;background:#5da9c8;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -3944,7 +3959,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:96%;background:#5da9c8;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--blue" style="width:96%;background:#5da9c8;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -3974,7 +3989,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--green" style="width:8.5%;background:#5da9c8;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--blue" style="width:8.5%;background:#5da9c8;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -4075,7 +4090,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:28.1%;background:#34c759;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--green" style="width:28.1%;background:#34c759;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -4114,7 +4129,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:6.1%;background:#ff0000;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--red" style="width:6.1%;background:#ff0000;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -4176,7 +4191,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--green" style="width:78.2%;background:#ff0000;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--red" style="width:78.2%;background:#ff0000;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>
@@ -4207,7 +4222,7 @@
               <div class="bio-bench-track-wrap bio-bench-track-wrap--higher">
                 <div class="bio-bench-track-row" aria-hidden="true">
                   <div class="bio-bench-track">
-                    <div class="bio-bench-fill bio-bench-fill--green" style="width:55.7%;background:#ff9f0a;"></div>
+                    <div class="bio-bench-fill bio-bench-fill--amber" style="width:55.7%;background:#ff9f0a;"></div>
                   </div>
                   <span class="bio-bench-tick bio-bench-tick--p10"></span>
                   <span class="bio-bench-tick bio-bench-tick--avg" title="Average (fixed at bar center)"></span>

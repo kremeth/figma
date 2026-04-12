@@ -76,12 +76,13 @@ function formatDuration(sec) {
 }
 
 function trimpLabel(x) {
-  if (x == null || !Number.isFinite(x)) return { tag: '—', foot: 'No intensity data', cls: 'snap-ft--flat' };
-  if (x < 1.0) return { tag: 'Easy', foot: 'Light training load', cls: 'snap-ft--pos' };
-  if (x < 1.5) return { tag: 'Easy', foot: 'Light training load', cls: 'snap-ft--pos' };
-  if (x < 2.0) return { tag: 'Moderate', foot: 'Moderate training load', cls: 'snap-ft--flat' };
-  if (x < 2.5) return { tag: 'Hard', foot: 'High training load', cls: 'snap-ft--neg' };
-  return { tag: 'Very hard', foot: 'Very high training load', cls: 'snap-ft--neg' };
+  if (x == null || !Number.isFinite(x))
+    return { tag: '—', foot: 'Training load is limited', cls: 'snap-ft--neg' };
+  if (x < 1.0) return { tag: 'Easy', foot: 'Training load looks good', cls: 'snap-ft--pos' };
+  if (x < 1.5) return { tag: 'Easy', foot: 'Training load looks good', cls: 'snap-ft--pos' };
+  if (x < 2.0) return { tag: 'Moderate', foot: 'Training load can increase', cls: 'snap-ft--warn' };
+  if (x < 2.5) return { tag: 'Hard', foot: 'Training load is limited', cls: 'snap-ft--neg' };
+  return { tag: 'Very hard', foot: 'Training load is limited', cls: 'snap-ft--neg' };
 }
 
 /**
@@ -239,6 +240,27 @@ function trimpTagClass(tag) {
   return 'snap-tag--hard';
 }
 
+/** Footer glyph follows pill tag band; stroke uses currentColor (neutral grey on .snapshot-tile .snap-ft). */
+const SNAP_FT_ICON_RED = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7" cy="7" r="5.75" stroke="currentColor" stroke-width="1"/>
+            <path d="M4.5 7h5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+        </svg>`;
+
+const SNAP_FT_ICON_YELLOW = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 10V3M2.75 5.75L6 2.5l3.25 3.25" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+
+const SNAP_FT_ICON_GREEN = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M4.5 6l1.5 1.5 1.5-3" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>`;
+
+function snapFtIconSvg(tagCls) {
+  if (tagCls === 'snap-tag--easy') return SNAP_FT_ICON_GREEN;
+  if (tagCls === 'snap-tag--vhard') return SNAP_FT_ICON_RED;
+  return SNAP_FT_ICON_YELLOW;
+}
+
 function trimpXFromDurationSec(sec) {
   const minX = 48;
   const maxX = 438;
@@ -391,15 +413,25 @@ function fmtBench(n, dec = 1) {
   return Number.isInteger(r) ? String(r) : r.toFixed(1);
 }
 
+/** Matches cohort bar inline fill so modifier class is not wrong vs background. */
+function bioBenchFillMod(fillColor) {
+  if (fillColor === '#ff0000') return 'bio-bench-fill--red';
+  if (fillColor === '#ff9f0a') return 'bio-bench-fill--amber';
+  if (fillColor === '#5da9c8') return 'bio-bench-fill--blue';
+  return 'bio-bench-fill--green';
+}
+
 function bioBlock(vo, unit, lower, triple, userVal, dec = 0) {
   const sortedBench = [Number(triple.L), Number(triple.M), Number(triple.R)]
     .filter((x) => Number.isFinite(x))
     .sort((a, b) => a - b);
   if (sortedBench.length < 3) {
+    const fillColor = '#34c759';
     return {
       wrapLow: 'bio-bench-track-wrap--higher',
       width: '50%',
-      fillColor: '#34c759',
+      fillColor,
+      fillMod: bioBenchFillMod(fillColor),
       dotLeft: '50%',
       m1: '—',
       m2: '—',
@@ -428,6 +460,7 @@ function bioBlock(vo, unit, lower, triple, userVal, dec = 0) {
     wrapLow,
     width: pctStr,
     fillColor,
+    fillMod: bioBenchFillMod(fillColor),
     dotLeft: pctStr,
     m1: fmtBench(b1, 1),
     m2: fmtBench(b2, 1),
@@ -452,34 +485,84 @@ const bio = {
   awake: bioBlock(false, '%', true, c.awake, awakeP, 0),
 };
 
-// Sleep tile footnote
-let sleepFoot = 'Stable range';
-let sleepFootCls = 'snap-ft--flat';
+// Sleep tile footnote — green ≥85%, yellow 70–84%, red &lt;70% (same bands as pill labels)
+let sleepFoot = 'Sleep is too low.';
+let sleepFootCls = 'snap-ft--neg';
+let sleepTag = { cls: 'snap-tag--moderate', text: 'Sufficient' };
 if (sleepScoreAvg != null) {
-  if (sleepScoreAvg >= 75) {
-    sleepFoot = 'Strong sleep scores';
+  if (sleepScoreAvg >= 85) {
+    sleepFoot = 'Sleep looks good';
     sleepFootCls = 'snap-ft--pos';
-  } else if (sleepScoreAvg < 60) {
-    sleepFoot = 'Room to improve';
+    sleepTag = { cls: 'snap-tag--easy', text: 'Optimal' };
+  } else if (sleepScoreAvg >= 70) {
+    sleepFoot = 'Sleep can improve';
+    sleepFootCls = 'snap-ft--warn';
+    sleepTag = { cls: 'snap-tag--moderate', text: 'Sufficient' };
+  } else {
+    sleepFoot = 'Sleep is too low.';
     sleepFootCls = 'snap-ft--neg';
+    sleepTag = { cls: 'snap-tag--vhard', text: 'Poor' };
   }
 }
 
-// Limiting metrics (simple vs normative)
-const limits = [];
-if (hrvAvg != null && hrvAvg < c.hrv.M) {
-  const pctB = Math.round(((c.hrv.M - hrvAvg) / c.hrv.M) * 100);
-  limits.push({ name: 'HRV', badge: `${pctB}% below avg`, dot: 'red' });
+// Limiting metrics: top 3 worst by health-score rank (lowest sub-scores first), with cohort-context badges
+const metricLimitMeta = {
+  hrv: { name: 'HRV', higherBetter: true, user: () => hrvAvg, cohort: () => c.hrv },
+  vo2: { name: 'VO₂ max', higherBetter: true, user: () => vo2Avg, cohort: () => c.vo2 },
+  rhr: { name: 'Resting HR', higherBetter: false, user: () => rhrAvg, cohort: () => c.rhr },
+  deep: { name: 'Deep sleep', higherBetter: true, user: () => deepP, cohort: () => c.deep },
+  eff: { name: 'Sleep efficiency', higherBetter: true, user: () => effPct, cohort: () => c.eff },
+  dis: { name: 'Disruptions', higherBetter: false, user: () => disturbPerHr, cohort: () => c.dis },
+  rem: { name: 'REM sleep', higherBetter: true, user: () => remP, cohort: () => c.rem },
+  sleep: { name: 'Total sleep', higherBetter: true, user: () => hoursSleep, cohort: () => c.sleepH },
+  awake: { name: 'Awake time', higherBetter: false, user: () => awakeP, cohort: () => c.awake },
+  light: { name: 'Light sleep', higherBetter: false, user: () => lightP, cohort: () => c.light },
+};
+
+function limitingRowFromMetric(def) {
+  const meta = metricLimitMeta[def.key];
+  if (!meta) return null;
+  const user = meta.user();
+  const M = meta.cohort()?.M;
+  const score = def.score;
+  const badness = 100 - score;
+  let badge = 'Below target';
+  let dot = 'amber';
+  if (score != null && score < 40) dot = 'red';
+  else if (score != null && score < 55) dot = 'amber';
+
+  if (user != null && Number.isFinite(user) && M != null && Number.isFinite(M) && Math.abs(M) > 1e-9) {
+    if (meta.higherBetter) {
+      if (user < M) {
+        badge = `${Math.round(((M - user) / Math.abs(M)) * 100)}% below avg`;
+      } else if (badness > 50) {
+        badge = 'Needs attention';
+        dot = 'red';
+      }
+    } else if (user > M) {
+      badge = `${Math.round(((user - M) / Math.abs(M)) * 100)}% above avg`;
+    } else if (badness > 50) {
+      badge = 'Needs attention';
+      dot = 'red';
+    }
+  } else if (score != null && score < 45) {
+    badge = 'Needs attention';
+    dot = 'red';
+  }
+
+  return { name: meta.name, badge, dot, badness };
 }
-if (deepP != null && deepP < c.deep.M) {
-  const pctB = Math.round(((c.deep.M - deepP) / c.deep.M) * 100);
-  limits.push({ name: 'Deep sleep', badge: `${pctB}% below avg`, dot: 'red' });
-}
-if (sleepScoreAvg != null && sleepScoreAvg < 65) {
-  limits.push({ name: 'Sleep score', badge: 'Below target', dot: 'amber' });
-}
+
+let limits = metricDefs
+  .filter((d) => d.score != null && Number.isFinite(d.score))
+  .map((d) => limitingRowFromMetric(d))
+  .filter(Boolean)
+  .sort((a, b) => b.badness - a.badness)
+  .slice(0, 3)
+  .map(({ name, badge, dot }) => ({ name, badge, dot }));
+
 while (limits.length < 3) {
-  limits.push({ name: 'Recovery variance', badge: 'Monitor trend', dot: 'amber' });
+  limits.push({ name: '—', badge: 'No data', dot: 'amber' });
 }
 
 const cohortAge =
@@ -497,10 +580,20 @@ const cohortAge =
 const cohortLabel = `${gender === 'female' ? 'women' : 'men'} aged ${cohortAge}`;
 const metaLine = `${fmtRange(meta.start_date, meta.end_date)} · ${deviceLabel(meta.device)} · ${gender === 'female' ? 'Women' : 'Men'} · ${cohortAge}`;
 
-let recFoot = { text: 'Moderate range', cls: 'snap-ft--flat' };
+// Same bands as recovery donut legend: green ≥67%, yellow 34–66%, red &lt;34%
+let recFoot = { text: 'Recovery is limited', cls: 'snap-ft--neg' };
+let recTag = { cls: 'snap-tag--moderate', text: 'Moderate' };
 if (recoveryAvg != null) {
-  if (recoveryAvg >= 75) recFoot = { text: 'Strong recovery', cls: 'snap-ft--pos' };
-  else if (recoveryAvg < 55) recFoot = { text: 'Below optimal', cls: 'snap-ft--neg' };
+  if (recoveryAvg >= 67) {
+    recFoot = { text: 'Recovery looks good', cls: 'snap-ft--pos' };
+    recTag = { cls: 'snap-tag--easy', text: 'High' };
+  } else if (recoveryAvg < 34) {
+    recFoot = { text: 'Recovery is limited', cls: 'snap-ft--neg' };
+    recTag = { cls: 'snap-tag--vhard', text: 'Low' };
+  } else {
+    recFoot = { text: 'Recovery can improve', cls: 'snap-ft--warn' };
+    recTag = { cls: 'snap-tag--moderate', text: 'Moderate' };
+  }
 }
 
 let html = fs.readFileSync(path.join(root, 'nutricode-health-report.html'), 'utf8');
@@ -558,22 +651,22 @@ const limHtml = limits
   .join('\n          ');
 rep(/<ul class="limiting-list"[^>]*>[\s\S]*?<\/ul>/, `<ul class="limiting-list" aria-label="Metrics needing attention">\n          ${limHtml}\n        </ul>`);
 
-// Snapshot tiles
+// Snapshot tiles — value row + pill tag (matches training-intensity tile pattern)
 rep(
-  /<p class="snap-val">\d+<span class="snap-unit"> %<\/span><\/p>/,
-  `<p class="snap-val">${Math.round(recoveryAvg ?? 0)}<span class="snap-unit"> %</span></p>`,
+  /(<p class="snap-name">Avg Recovery<\/p>[\s\S]*?<div class="snap-tile-value(?: snap-tile-value--row)?">\s*<p class="snap-val">)\d+(<span class="snap-unit"> %<\/span><\/p>)(?:\s*<span class="snap-tag[^"]*">[^<]*<\/span>)?\s*<\/div>/,
+  `$1${Math.round(recoveryAvg ?? 0)}$2\n        <span class="snap-tag ${recTag.cls}">${recTag.text.replace(/</g, '&lt;')}</span>\n      </div>`,
 );
 rep(
-  /(<p class="snap-name">Sleep Performance<\/p>[\s\S]*?<p class="snap-val">)\d+(<span class="snap-unit"> %<\/span><\/p>)/,
-  `$1${Math.round(sleepScoreAvg ?? 0)}$2`,
+  /(<p class="snap-name">Avg Recovery<\/p>[\s\S]*?<div class=")snap-ft snap-ft--(?:flat|pos|neg|warn)(")([\s\S]*?<span>)[^<]*(<\/span>)/,
+  `$1snap-ft ${recFoot.cls}$2>\n        <span class="snap-ft-icon" aria-hidden="true">\n          ${snapFtIconSvg(recTag.cls)}\n        </span>\n        <span>${recFoot.text.replace(/</g, '&lt;')}$4`,
 );
 rep(
-  /(<p class="snap-name">Avg Recovery<\/p>[\s\S]*?<div class="snap-ft )snap-ft--(?:flat|pos|neg)([\s\S]*?<span>)[^<]*(<\/span>)/,
-  `$1${recFoot.cls}$2${recFoot.text.replace(/</g, '&lt;')}$3`,
+  /(<p class="snap-name">Sleep Performance<\/p>[\s\S]*?<div class="snap-tile-value(?: snap-tile-value--row)?">\s*<p class="snap-val">)\d+(<span class="snap-unit"> %<\/span><\/p>)(?:\s*<span class="snap-tag[^"]*">[^<]*<\/span>)?\s*<\/div>/,
+  `$1${Math.round(sleepScoreAvg ?? 0)}$2\n        <span class="snap-tag ${sleepTag.cls}">${sleepTag.text.replace(/</g, '&lt;')}</span>\n      </div>`,
 );
 rep(
-  /(<p class="snap-name">Sleep Performance<\/p>[\s\S]*?<div class="snap-ft )snap-ft--(?:flat|pos|neg)([\s\S]*?<span>)[^<]*(<\/span>\s*<\/div>\s*<\/div>\s*<div class="snapshot-tile)/,
-  `$1${sleepFootCls}$2${sleepFoot.replace(/</g, '&lt;')}$3`,
+  /(<p class="snap-name">Sleep Performance<\/p>[\s\S]*?<div class=")snap-ft snap-ft--(?:flat|pos|neg|warn)(")([\s\S]*?<span>)[^<]*(<\/span>\s*<\/div>\s*<\/div>\s*<div class="snapshot-tile)/,
+  `$1snap-ft ${sleepFootCls}$2>\n        <span class="snap-ft-icon" aria-hidden="true">\n          ${snapFtIconSvg(sleepTag.cls)}\n        </span>\n        <span>${sleepFoot.replace(/</g, '&lt;')}$4`,
 );
 
 rep(
@@ -583,8 +676,8 @@ rep(
         <span class="snap-tag ${trimpTagClass(tr.tag)}">${tr.tag}</span>`,
 );
 rep(
-  /(<p class="snap-name">Avg Training Intensity<\/p>[\s\S]*?<div class="snap-ft )snap-ft--(?:flat|pos|neg)([\s\S]*?<span>)[^<]*(<\/span>\s*<\/div>\s*<\/div>\s*<\/div>\s*<dialog)/,
-  `$1${tr.cls}$2${tr.foot.replace(/</g, '&lt;')}$3`,
+  /(<p class="snap-name">Avg Training Intensity<\/p>[\s\S]*?<div class=")snap-ft snap-ft--(?:flat|pos|neg|warn)(")([\s\S]*?<span>)[^<]*(<\/span>\s*<\/div>\s*<\/div>\s*<\/div>\s*<dialog)/,
+  `$1snap-ft ${tr.cls}$2>\n        <span class="snap-ft-icon" aria-hidden="true">\n          ${snapFtIconSvg(trimpTagClass(tr.tag))}\n        </span>\n        <span>${tr.foot.replace(/</g, '&lt;')}$4`,
 );
 
 // Recovery donut
@@ -743,16 +836,16 @@ ${hrzHtml}
 
 // Bio cohort note
 rep(
-  /Reference numbers under each bar are cohort benchmarks for <strong>[^<]+<\/strong>/,
-  `Reference numbers under each bar are cohort benchmarks for <strong>${cohortLabel}</strong>`,
+  /Reference numbers under each bar are cohort benchmarks for <strong>[^<]+<\/strong>\./,
+  `Reference numbers under each bar are cohort benchmarks for <strong>${cohortLabel}</strong>.`,
 );
 
 function replaceBioRow(label, b) {
   const re = new RegExp(
-    `(<span class="bio-row-name">${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/span>[\\s\\S]*?<div class="bio-bench-track-wrap )bio-bench-track-wrap--(?:higher|lower)([\\s\\S]*?<div class="bio-bench-fill [^"]+" style="width:)[^"]+`,
+    `(<span class="bio-row-name">${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/span>[\\s\\S]*?<div class="bio-bench-track-wrap )bio-bench-track-wrap--(?:higher|lower)([\\s\\S]*?<div class="bio-bench-fill )bio-bench-fill--(?:green|amber|red|blue)(" style="width:)[^"]+`,
     'm',
   );
-  html = html.replace(re, `$1${b.wrapLow}$2${b.width};background:${b.fillColor};`);
+  html = html.replace(re, `$1${b.wrapLow}$2${b.fillMod}$3${b.width};background:${b.fillColor};`);
 
   const reDot = new RegExp(
     `(<span class="bio-row-name">${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/span>[\\s\\S]*?<span class="bio-bench-dot" style="left:)[^%]+%`,
