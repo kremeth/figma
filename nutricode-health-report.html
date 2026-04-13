@@ -1186,7 +1186,7 @@
 
     /* ─────────────────────── Focus section band ─────────────────────── */
     .focus-section-band {
-      --focus-shell-max: 1080px;
+      --focus-shell-max: 450px;
       width: calc(100% + var(--focus-bleed-l) + var(--focus-bleed-r));
       max-width: none;
       margin-left: calc(-1 * var(--focus-bleed-l));
@@ -2154,17 +2154,7 @@
       border-bottom: none;
     }
     #focus-card-2 .fc2-accent {
-      height: 3px;
-      width: 100%;
-      flex-shrink: 0;
-      background: linear-gradient(
-        90deg,
-        rgba(0, 0, 0, 0) 0%,
-        rgba(0, 2, 7, 0.03) 7%,
-        rgba(0, 113, 227, 0.2) 50%,
-        rgba(0, 2, 7, 0.03) 93%,
-        rgba(0, 0, 0, 0) 100%
-      );
+      display: none;
     }
     #focus-card-2 .fc2-body {
       position: relative;
@@ -2717,7 +2707,7 @@
       gap: clamp(28px, 3.5vw, 40px);
     }
     .focus-section-header {
-      align-items: end;
+      align-items: start;
       gap: clamp(24px, 4vw, 44px);
       padding: 0 2px 28px;
       border-bottom: 1px solid rgba(15, 23, 42, 0.09);
@@ -2725,7 +2715,7 @@
     .focus-section-header__copy {
       display: grid;
       gap: 10px;
-      max-width: 560px;
+      max-width: none;
     }
     .focus-section-band #focus-heading {
       margin-bottom: 0;
@@ -2794,8 +2784,43 @@
         0 2px 7px rgba(15, 23, 42, 0.04),
         0 12px 20px rgba(15, 23, 42, 0.07);
     }
+    @media (min-width: 901px) {
+      .focus-section-band {
+        --focus-carousel-max: min(980px, calc(100vw - 2 * var(--page-edge)));
+        --focus-carousel-inset-extra: max(
+          0px,
+          calc(
+            (100vw - var(--focus-bleed-l) - var(--focus-bleed-r) - var(--focus-carousel-max)) / 2
+          )
+        );
+      }
+      .focus-carousel {
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: calc(var(--focus-bleed-l) + var(--focus-carousel-inset-extra));
+        padding-right: calc(var(--focus-bleed-r) + var(--focus-carousel-inset-extra));
+        scroll-padding-left: calc(var(--focus-bleed-l) + var(--focus-carousel-inset-extra));
+        scroll-padding-right: calc(var(--focus-bleed-r) + var(--focus-carousel-inset-extra));
+        gap: calc(2 * var(--page-edge));
+        padding-top: 8px;
+        padding-bottom: 28px;
+      }
+      .focus-carousel > .focus-card.focus-card__shell {
+        flex: 0 0 min(var(--focus-carousel-max), calc(100vw - 2 * var(--page-edge)));
+        width: min(var(--focus-carousel-max), calc(100vw - 2 * var(--page-edge)));
+        max-width: none;
+        min-width: 0;
+        opacity: 0.22;
+        transform: translateY(10px);
+      }
+      .focus-carousel > .focus-card.focus-card__shell.is-active {
+        opacity: 1;
+        transform: none;
+      }
+    }
     #focus-card-1 .fc1-accent,
-    #focus-card-2 .fc2-accent,
     #focus-card-3 .fc3-accent,
     #focus-card-4 .fc4-accent {
       height: 2px;
@@ -3473,7 +3498,7 @@
             <span class="phase-of">of 2</span>
             </div>
           <p class="score-headline">Strong foundation</p>
-          <p class="score-context">You’re already ahead of 62% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.</p>
+          <p class="score-context">You're already ahead of 60% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.</p>
         </div>
 
     </div>
@@ -3804,7 +3829,7 @@
       <text x="373" y="246" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">5:00</text>
       <text x="438" y="246" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">6:00</text>
       <text x="243" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>
-                                                                              <!-- Good next day recovery -->
+                                                                                                      <!-- Good next day recovery -->
       <circle cx="170" cy="151" r="4.5" fill="#22c55e"/>
       <circle cx="171" cy="127" r="4.5" fill="#22c55e"/>
       <circle cx="109" cy="199" r="4.5" fill="#22c55e"/>
@@ -4282,6 +4307,10 @@
               <button type="button" class="rec-rhr-dot" aria-label="Deep Sleep" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Deep Sleep</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Light Sleep" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Light Sleep</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Recovery" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Recovery</span></button>
+            
+            
+            
+            
             </div>
           </div>
         </div>
@@ -4295,7 +4324,7 @@
               <div class="fc1-body">
                 <div class="focus-card__head">
                   <h3 class="fc1-title">Boost REM Sleep</h3>
-                  <p class="fc1-summary">Your REM Sleep is <strong>49%</strong> below your demographic average (<strong>11%</strong> <strong>vs</strong> <strong>21%</strong>).</p>
+                  <p class="fc1-summary">Your REM Sleep is <strong>48%</strong> below your demographic average (<strong>11%</strong> <strong>vs</strong> <strong>21%</strong>).</p>
                 </div>
                 <div class="fc1-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -4325,13 +4354,13 @@
             </div>
         </div>
 
-        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
+        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation">
             <div class="focus-card__stage">
               <div class="fc2-accent" aria-hidden="true"></div>
               <div class="fc2-body">
                 <div class="focus-card__head">
-                  <h3 class="fc2-title">Protect Deep Sleep</h3>
-                  <p class="fc2-summary">When your 7-day training intensity stayed above <strong>1.84</strong>, Deep Sleep usually stayed below <strong>0.7 hours</strong>.</p>
+                  <h3 class="fc2-title">Protect Deep Sleep as training load rises</h3>
+                  <p class="fc2-summary">When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.</p>
                 </div>
                 <div class="fc2-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -4358,7 +4387,7 @@
                         <span class="fc2-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc2-why-panel">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most. Keeping intensity in check on most days helps preserve deep sleep and long-term adaptation.</p>
+                    <p class="fc2-why-panel">Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most.</p>
                   </details>
                 </div>
               </div>
@@ -4377,53 +4406,7 @@
                 <div class="focus-card__mid">
                   <p class="fc3-cap">Nightly HRV (RMSSD)</p>
                   <div class="fc3-chart-panel">
-                  <svg viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Nightly HRV over 28 nights; shaded band 100 to 110 ms; blue dots inside band, grey dots outside">
-                    <defs>
-                      <filter id="fc3HrvPtSh" x="-100%" y="-100%" width="300%" height="300%">
-                        <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.12"/>
-                        <feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="#000000" flood-opacity="0.08"/>
-                      </filter>
-                    </defs>
-                    <!-- Y-axis: 130,120,110,100,90,78 ms at same y-rhythm as fc1 bars; 90→78 is 12 ms. -->
-                    <rect x="42" y="84.4" width="237" height="19.2" rx="1.2" fill="rgba(59, 130, 246, 0.18)"/>
-                    <line x1="42" y1="46" x2="279" y2="46" stroke="#f0f0f2" stroke-width="1"/>
-                    <line x1="42" y1="65.2" x2="279" y2="65.2" stroke="#f0f0f2" stroke-width="1"/>
-                    <line x1="42" y1="84.4" x2="279" y2="84.4" stroke="#f0f0f2" stroke-width="1"/>
-                    <line x1="42" y1="103.6" x2="279" y2="103.6" stroke="#f0f0f2" stroke-width="1"/>
-                    <line x1="42" y1="122.8" x2="279" y2="122.8" stroke="#f0f0f2" stroke-width="1"/>
-                    <line x1="42" y1="142" x2="279" y2="142" stroke="#f0f0f2" stroke-width="1"/>
-                    <text x="30" y="46" font-size="8" fill="#b7bcc6" text-anchor="end">130ms</text>
-                    <text x="30" y="65.2" font-size="8" fill="#b7bcc6" text-anchor="end">120ms</text>
-                    <text x="30" y="84.4" font-size="8" fill="#b7bcc6" text-anchor="end">110ms</text>
-                    <text x="30" y="103.6" font-size="8" fill="#b7bcc6" text-anchor="end">100ms</text>
-                    <text x="30" y="122.8" font-size="8" fill="#b7bcc6" text-anchor="end">90ms</text>
-                    <text x="30" y="142" font-size="8" fill="#b7bcc6" text-anchor="end">78ms</text>
-                    <text x="42" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">01</text>
-                    <text x="75.86" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">05</text>
-                    <text x="109.71" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">09</text>
-                    <text x="143.57" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">13</text>
-                    <text x="177.43" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">17</text>
-                    <text x="211.29" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">21</text>
-                    <text x="245.14" y="170" font-size="8" fill="#9ca3af" text-anchor="middle">25</text>
-                    <text x="279" y="170" font-size="8" fill="#9ca3af" text-anchor="end">29</text>
-                    <!-- Dots: blue when cy in [84.4, 103.6] (shaded 100–110 ms band); grey fill outside band, white ring retained -->
-                    <circle cx="42" cy="57.52" r="3" fill="#aeaeb2" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="50.46" cy="67.12" r="3" fill="#aeaeb2" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="58.93" cy="76.72" r="3" fill="#aeaeb2" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="75.86" cy="86.32" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="92.79" cy="92.08" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="109.71" cy="80.56" r="3" fill="#aeaeb2" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="126.64" cy="90.16" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="143.57" cy="84.4" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="160.5" cy="94" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="177.43" cy="88.24" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="194.36" cy="95.92" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="211.29" cy="92.08" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="228.21" cy="97.84" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="245.14" cy="101.68" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="262.07" cy="105.52" r="3" fill="#aeaeb2" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                    <circle cx="279" cy="103.6" r="3" fill="#0071e3" stroke="#ffffff" stroke-width="2" filter="url(#fc3HrvPtSh)"/>
-                  </svg>
+                    <svg id="fc3-hrv-chart" viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Nightly HRV; shaded target band; blue dots in band"></svg>
                 </div>
                   <div class="fc3-legend" aria-hidden="true">
                     <div class="fc3-legend__item">
@@ -4440,7 +4423,7 @@
                         <span class="fc3-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc3-why-panel">Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.</p>
+                    <p class="fc3-why-panel">Your Light Sleep is rising during harder training weeks, reducing recovery time when your body needs it most.</p>
                   </details>
                 </div>
               </div>
@@ -4452,14 +4435,14 @@
               <div class="fc4-accent" aria-hidden="true"></div>
               <div class="fc4-body">
                 <div class="focus-card__head">
-                  <h3 class="fc4-title">Recover Better</h3>
-                  <p class="fc4-summary">On days when your training intensity reached <strong>2.05</strong>, your next-day RHR tended to rise above <strong>50 bpm</strong>.</p>
+                  <h3 class="fc4-title">Recover better after hard training for higher next-day RHR</h3>
+                  <p class="fc4-summary">On days when your training intensity reached 2.05, your next-day RHR tended to rise above 50 bpm.</p>
                 </div>
                 <div class="fc4-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
                   <p class="fc4-cap">Intensity vs Next-Day Resting Heart Rate</p>
                   <div class="fc4-chart-panel">
-                    <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-60 0 320 156" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate from Garmin export">
+                    <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-60 0 320 156" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate">
                       <title>Next-day resting heart rate versus same-day training intensity.</title>
                     </svg>
                   </div>
@@ -4478,7 +4461,7 @@
                         <span class="fc4-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc4-why-panel">The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
+                    <p class="fc4-why-panel">This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.</p>
                   </details>
                 </div>
               </div>
@@ -4911,8 +4894,13 @@
     });
   })();
 
-  /* ── Focus card 1: REM % of sleep vs demographic average (raw_data.json + normative_metrics.json) ── */
-  (async function buildFocusRemBarsFromRaw() {
+  const FC1_REM_DATA = {"numDays":30,"dailyPct":[13.402061855670103,9.615384615384615,9.090909090909092,14.457831325301205,null,5.330964015992892,null,11.63895486935867,0,null,11.206896551724139,9.863013698630137,null,16.95906432748538,null,null,31.51260504201681,null,4.487179487179487,null,27.84090909090909,null,null,15.294117647058824,0,9.946236559139784,null,0,8.974358974358974,12.837837837837839],"remPctiles":{"p50":21,"p30":18.2,"p60":22.2,"p90":26},"demographicPct":21,"metaGender":"male","metaAge":30};
+  const FC2_DEEP_INT_DATA = {"deepDaily":[14.02061855670103,6.868131868131868,15.404040404040405,9.397590361445783,null,18.954538723530284,null,15.914489311163896,21.487603305785125,null,9.482758620689655,16.71232876712329,null,13.060428849902534,null,null,9.663865546218487,null,17.628205128205128,null,5.681818181818182,null,null,9.411764705882353,6.79973678438254,13.440860215053764,null,7.163323782234957,7.17948717948718,31.756756756756758],"intensityDaily":[null,2.008811850937629,null,1.572154418641303,1.5223719838912244,null,1.737717825668914,2.0028363892607626,1.0914927579657647,1.7300632413081234,null,2.048610961885356,1.274187989917574,null,0.6925253174949391,1.7054108643302823,1.7349633444157821,null,null,2.4675332146221676,null,null,1.7137702975399367,2.072137769706851,2.1334119060708256,2.0021701728513857,1.8520573034861083,1.7893292496547124,null,null]};
+  const FC3_HRV_DATA = {"numDays":30,"hrvByDay":[128,148,116,115,null,null,null,129,123,null,127,132,null,138,null,null,114,null,147,null,null,null,null,null,118,107,null,107,137,null],"targetMin":57,"targetMax":73};
+  const FC4_SCATTER_DATA = {"points":[{"x":1.5223719838912244,"y":46},{"x":1.737717825668914,"y":48},{"x":2.0028363892607626,"y":48},{"x":1.7300632413081234,"y":45},{"x":2.4675332146221676,"y":48},{"x":1.7137702975399367,"y":46},{"x":2.072137769706851,"y":49},{"x":2.1334119060708256,"y":52},{"x":1.8520573034861083,"y":51},{"x":1.7893292496547124,"y":47}]};
+
+  /* ── Focus card 1: REM % of sleep vs demographic average (inlined FC1_REM_DATA) ── */
+  (function buildFocusRemBarsFromRaw() {
     const svg = document.getElementById('fc1-rem-chart');
     if (!svg) return;
 
@@ -4986,63 +4974,16 @@
       };
     };
 
-    let numDays = 28;
-    let dailyPct = [];
-    let remPctiles = deriveRemPercentilesFromP50(21);
-    let demographicPct = remPctiles.p50;
-    let metaGender = 'male';
-    let metaAge = 30;
-
-    try {
-      const [rawRes, normRes] = await Promise.all([
-        fetch('raw_data.json', { credentials: 'same-origin' }),
-        fetch('normative_metrics.json', { credentials: 'same-origin' }),
-      ]);
-      if (!rawRes.ok) throw new Error(rawRes.statusText);
-      const data = await rawRes.json();
-      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
-      if (!vis?.metrics) throw new Error('visualization shape');
-      const meta = vis.meta || {};
-      numDays = Math.max(1, Math.min(31, +meta.num_days || 30));
-      metaGender = meta.gender === 'female' ? 'female' : 'male';
-      metaAge = meta.age;
-
-      const m = vis.metrics;
-      const rem = m.rem_sleep || {};
-      const st = m.sleep_time || {};
-
-      dailyPct = Array.from({ length: numDays }, (_, i) => {
-        const k = String(i + 1);
-        const secR = rem[k];
-        const secS = st[k];
-        if (secS == null || !Number.isFinite(+secS) || +secS <= 0) return null;
-        if (secR == null || !Number.isFinite(+secR)) return null;
-        return (100 * +secR) / +secS;
-      });
-
-      if (normRes.ok) {
-        const norms = await normRes.json();
-        const bracket = ageToRemBracket(metaAge);
-        const g = norms?.rem_sleep?.[metaGender]?.[bracket];
-        if (g != null && typeof g === 'object' && Number.isFinite(+g.p50)) {
-          remPctiles = {
-            p50: +g.p50,
-            p30: +g.p30,
-            p60: +g.p60,
-            p90: +g.p90,
-          };
-          demographicPct = remPctiles.p50;
-        } else if (typeof g === 'number' && Number.isFinite(g)) {
-          remPctiles = deriveRemPercentilesFromP50(g);
-          demographicPct = remPctiles.p50;
-        }
-      }
-    } catch (e) {
-      console.warn(
-        'fc1-rem-chart: raw_data.json / normative_metrics.json not loaded (serve report from repo root)',
-        e,
-      );
-    }
+    const _fc1 = typeof FC1_REM_DATA !== 'undefined' ? FC1_REM_DATA : {};
+    let numDays = Math.max(1, Math.min(31, +_fc1.numDays || 30));
+    let dailyPct = Array.isArray(_fc1.dailyPct) ? _fc1.dailyPct.slice() : [];
+    let remPctiles = _fc1.remPctiles && typeof _fc1.remPctiles === 'object'
+      ? { ...deriveRemPercentilesFromP50(21), ..._fc1.remPctiles }
+      : deriveRemPercentilesFromP50(21);
+    let demographicPct = +_fc1.demographicPct || remPctiles.p50;
+    let metaGender = _fc1.metaGender === 'female' ? 'female' : 'male';
+    let metaAge = +_fc1.metaAge;
+    if (!Number.isFinite(metaAge)) metaAge = 30;
 
     let validPct = dailyPct.filter(v => v != null && Number.isFinite(v));
     if (validPct.length < 2) {
@@ -5145,7 +5086,7 @@
   })();
 
   /* ── Focus card 2: dual-axis daily deep sleep % vs training intensity — Figma 23741:6453 ── */
-  (async function buildFocusDualDeepIntensityFromRaw() {
+  (function buildFocusDualDeepIntensityFromRaw() {
     const svg = document.getElementById('c-dual-deep-intensity');
     if (!svg) return;
 
@@ -5179,34 +5120,13 @@
       };
     };
 
-    let deepDaily = Array(30).fill(null);
-    let intensityDaily = Array(30).fill(null);
-
-    try {
-      const res = await fetch('raw_data.json', { credentials: 'same-origin' });
-      if (!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
-      if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
-      const m = vis.metrics;
-      const act = vis.daily_activity;
-      for (let d = 1; d <= 30; d += 1) {
-        const k = String(d);
-        const ai = act[k]?.average_intensity;
-        if (ai != null && Number.isFinite(+ai) && +ai > 0) intensityDaily[d - 1] = +ai;
-        const st = m.sleep_time?.[k];
-        const deep = m.deep_sleep?.[k];
-        /* skip days where deep sleep was 0 or not recorded (invalid/missing nights) */
-        if (st != null && +st > 0 && deep != null && Number.isFinite(+deep) && +deep > 0) {
-          deepDaily[d - 1] = (100 * +deep) / +st;
-        }
-      }
-    } catch (e) {
-      console.warn(
-        'c-dual-deep-intensity: raw_data.json not loaded (serve report over http(s) from repo root)',
-        e,
-      );
-    }
+    const _fc2 = typeof FC2_DEEP_INT_DATA !== 'undefined' ? FC2_DEEP_INT_DATA : {};
+    let deepDaily = Array.isArray(_fc2.deepDaily) ? _fc2.deepDaily.map((v) => (v == null ? null : +v)) : Array(30).fill(null);
+    let intensityDaily = Array.isArray(_fc2.intensityDaily) ? _fc2.intensityDaily.map((v) => (v == null ? null : +v)) : Array(30).fill(null);
+    while (deepDaily.length < 30) deepDaily.push(null);
+    while (intensityDaily.length < 30) intensityDaily.push(null);
+    deepDaily = deepDaily.slice(0, 30);
+    intensityDaily = intensityDaily.slice(0, 30);
 
     const rng = seed(29);
     const hasDeep = deepDaily.some(v => v != null && Number.isFinite(v));
@@ -5369,8 +5289,99 @@
     scheduleEqualizeFocusCorrelationSections();
   })();
 
-  /* ── Focus card: training intensity vs next-day RHR (raw_data.json) — matches Figma Nutricode frame ── */
-  (async function buildFocusScatterFromRaw() {
+  /* ── Focus card 3: nightly HRV from FC3_HRV_DATA ── */
+  (function buildFocusHrvFromData() {
+    const svg = document.getElementById('fc3-hrv-chart');
+    if (!svg) return;
+
+    const d = typeof FC3_HRV_DATA !== 'undefined' ? FC3_HRV_DATA : {};
+    const numDays = Math.max(1, Math.min(31, +d.numDays || 30));
+    const hrvByDay = Array.isArray(d.hrvByDay) ? d.hrvByDay : [];
+    let targetMin = +d.targetMin;
+    let targetMax = +d.targetMax;
+    if (!Number.isFinite(targetMin)) targetMin = 100;
+    if (!Number.isFinite(targetMax)) targetMax = 110;
+    if (targetMin > targetMax) { const t = targetMin; targetMin = targetMax; targetMax = t; }
+
+    const FONT = "'JetBrains Mono', ui-monospace, monospace";
+    const plotLeft = 42;
+    const plotRight = 279;
+    const plotTop = 42;
+    const plotBottom = 158;
+    const yLabelX = 30;
+    const xDayLabelY = 170;
+    const plotW = plotRight - plotLeft;
+    const plotH = plotBottom - plotTop;
+
+    const vals = hrvByDay.slice(0, numDays).filter((v) => v != null && Number.isFinite(+v)).map((v) => +v);
+    let yMin = Math.min(targetMin, ...(vals.length ? vals : [targetMin]));
+    let yMax = Math.max(targetMax, ...(vals.length ? vals : [targetMax]));
+    const pad = Math.max(4, (yMax - yMin) * 0.12);
+    yMin = Math.max(0, yMin - pad);
+    yMax = yMax + pad;
+    if (yMax - yMin < 12) {
+      const mid = (yMax + yMin) / 2;
+      yMin = mid - 6;
+      yMax = mid + 6;
+    }
+    const ySpan = Math.max(1e-6, yMax - yMin);
+    const scaleY = (ms) => plotBottom - ((ms - yMin) / ySpan) * plotH;
+
+    const gridCount = 6;
+    const gridMs = [];
+    for (let g = 0; g < gridCount; g++) {
+      gridMs.push(yMax - (g / (gridCount - 1)) * (yMax - yMin));
+    }
+
+    const bandTop = Math.min(scaleY(targetMin), scaleY(targetMax));
+    const bandH = Math.abs(scaleY(targetMax) - scaleY(targetMin));
+    const bandY = bandTop;
+
+    const filterId = 'fc3HrvPtSh';
+    let out = `<defs><filter id="${filterId}" x="-100%" y="-100%" width="300%" height="300%"><feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#000000" flood-opacity="0.12"/><feDropShadow dx="0" dy="0.5" stdDeviation="0.5" flood-color="#000000" flood-opacity="0.08"/></filter></defs>`;
+    out += `<rect x="${plotLeft}" y="${bandY.toFixed(2)}" width="${plotW}" height="${Math.max(bandH, 1).toFixed(2)}" rx="1.2" fill="rgba(59, 130, 246, 0.18)"/>`;
+    gridMs.forEach((ms) => {
+      const yy = scaleY(ms);
+      out += `<line x1="${plotLeft}" y1="${yy.toFixed(2)}" x2="${plotRight}" y2="${yy.toFixed(2)}" stroke="#f0f0f2" stroke-width="1"/>`;
+    });
+    gridMs.forEach((ms) => {
+      const yy = scaleY(ms);
+      out += `<text x="${yLabelX}" y="${(yy + 3).toFixed(2)}" font-size="8" fill="#b7bcc6" text-anchor="end" font-family="${FONT}">${Math.round(ms)}ms</text>`;
+    });
+
+    const slotW = plotW / numDays;
+    for (let i = 0; i < numDays; i++) {
+      const v = hrvByDay[i];
+      if (v == null || !Number.isFinite(+v)) continue;
+      const hrv = +v;
+      const cx = plotLeft + i * slotW + slotW / 2;
+      const cy = scaleY(hrv);
+      const inBand = hrv >= targetMin && hrv <= targetMax;
+      const fill = inBand ? '#0071e3' : '#aeaeb2';
+      out += `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="3" fill="${fill}" stroke="#ffffff" stroke-width="2" filter="url(#${filterId})"><title>Day ${i + 1} · HRV ${Math.round(hrv)} ms</title></circle>`;
+    }
+
+    const tickStep = Math.max(1, Math.ceil(numDays / 10));
+    const xDayIndices = [];
+    for (let day = 1; day <= numDays; day += tickStep) xDayIndices.push(day);
+    if (xDayIndices[xDayIndices.length - 1] !== numDays) xDayIndices.push(numDays);
+    xDayIndices.forEach((day) => {
+      const i = day - 1;
+      const cx = plotLeft + (i + 0.5) * slotW;
+      out += `<text x="${cx.toFixed(2)}" y="${xDayLabelY}" font-size="8" fill="#9ca3af" text-anchor="middle" font-family="${FONT}">${String(day).padStart(2, '0')}</text>`;
+    });
+
+    svg.setAttribute(
+      'aria-label',
+      `Nightly HRV over ${numDays} nights; target ${Math.round(targetMin)}–${Math.round(targetMax)} ms`,
+    );
+    svg.innerHTML = `<title>Nightly HRV (RMSSD)</title><desc>Shaded band: target range. Blue dots in band.</desc>${out}`;
+    svg.setAttribute('viewBox', '14 38 269 140');
+    scheduleEqualizeFocusCorrelationSections();
+  })();
+
+  /* ── Focus card: training intensity vs next-day RHR (inlined FC4_SCATTER_DATA) ── */
+  (function buildFocusScatterFromRaw() {
     const svg = document.getElementById('c-scatter');
     if (!svg) return;
 
@@ -5415,25 +5426,12 @@
     const formatIntensity = value => value.toFixed(1);
     const formatBpmTick = value => `${Math.round(value)}`;
 
-    let pts = [];
-    try {
-      const res = await fetch('raw_data.json', { credentials: 'same-origin' });
-      if (!res.ok) throw new Error(res.statusText);
-      const data = await res.json();
-      const vis = data?.connect_device_recommendation?.metric_analysis?.visualization;
-      if (!vis?.metrics || !vis.daily_activity) throw new Error('visualization shape');
-      const { metrics, daily_activity: activity } = vis;
-      const rhr = metrics.RHR;
-      for (let d = 1; d < 30; d += 1) {
-        const today = activity[String(d)];
-        const x = today?.average_intensity;
-        const yRaw = rhr[String(d + 1)];
-        if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
-        pts.push({ x: +Number(x).toFixed(4), y: +Number(yRaw).toFixed(2) });
-      }
-    } catch (e) {
-      console.warn('c-scatter (health report): raw_data.json not loaded (serve report over http(s) from repo root)', e);
-    }
+    const _fc4 = typeof FC4_SCATTER_DATA !== 'undefined' ? FC4_SCATTER_DATA : {};
+    let pts = Array.isArray(_fc4.points)
+      ? _fc4.points
+          .filter((p) => p && Number.isFinite(+p.x) && Number.isFinite(+p.y))
+          .map((p) => ({ x: +Number(p.x).toFixed(4), y: +Number(p.y).toFixed(2) }))
+      : [];
 
     if (pts.length < 2) {
       const rng = seed(7);

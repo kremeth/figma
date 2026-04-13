@@ -1,0 +1,865 @@
+{
+  "meta": {
+    "date_range": "Aug 2–Aug 31, 2024 · Garmin · Men · 26–35",
+    "device": "garmin",
+    "gender": "male",
+    "age_band": "26-35",
+    "cohort_label": "men aged 26–35",
+    "num_days": 30
+  },
+  "health_score": {
+    "score": 74,
+    "headline": "Strong foundation",
+    "context": "You're already ahead of 60% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.",
+    "phase_current": 1,
+    "phase_total": 2,
+    "ring_circumference": 314.16,
+    "ring_dash": 232.48,
+    "ring_dash_gap": 81.68
+  },
+  "limiting_metrics": [
+    {
+      "name": "REM sleep",
+      "badge": "48% below avg",
+      "dot": "red"
+    },
+    {
+      "name": "Light sleep",
+      "badge": "21% above avg",
+      "dot": "red"
+    },
+    {
+      "name": "Deep sleep",
+      "badge": "27% below avg",
+      "dot": "red"
+    }
+  ],
+  "snapshot": {
+    "avg_recovery": {
+      "value": 70,
+      "tag": "High",
+      "tag_cls": "snap-tag--easy",
+      "foot_text": "Recovery looks good"
+    },
+    "sleep_performance": {
+      "value": 64,
+      "tag": "Poor",
+      "tag_cls": "snap-tag--vhard",
+      "foot_text": "Sleep is too low."
+    },
+    "avg_training_intensity": {
+      "value": 1.7,
+      "tag": "Moderate",
+      "tag_cls": "snap-tag--moderate",
+      "foot_text": "Training load can increase"
+    }
+  },
+  "recovery_donut": {
+    "average_pct": 70,
+    "high_days": 19,
+    "moderate_days": 8,
+    "low_days": 3,
+    "legend_high_range": "67%+",
+    "legend_moderate_range": "34–66%",
+    "legend_low_range": "0–33%"
+  },
+  "sleep_breakdown": {
+    "avg_rem_pct": 11,
+    "avg_deep_pct": 12,
+    "avg_light_pct": 69,
+    "avg_awake_pct": 8,
+    "nights": [
+      [
+        8,
+        67,
+        13,
+        12
+      ],
+      [
+        3,
+        81,
+        7,
+        9
+      ],
+      [
+        4,
+        70,
+        16,
+        9
+      ],
+      [
+        8,
+        68,
+        10,
+        15
+      ],
+      null,
+      [
+        4,
+        69,
+        21,
+        6
+      ],
+      null,
+      [
+        8,
+        66,
+        15,
+        11
+      ],
+      [
+        30,
+        54,
+        16,
+        0
+      ],
+      null,
+      [
+        8,
+        73,
+        9,
+        10
+      ],
+      [
+        17,
+        60,
+        14,
+        9
+      ],
+      null,
+      [
+        10,
+        61,
+        13,
+        16
+      ],
+      null,
+      null,
+      [
+        9,
+        53,
+        9,
+        29
+      ],
+      null,
+      [
+        4,
+        74,
+        18,
+        4
+      ],
+      null,
+      [
+        4,
+        64,
+        5,
+        27
+      ],
+      null,
+      null,
+      [
+        4,
+        72,
+        9,
+        15
+      ],
+      [
+        8,
+        85,
+        6,
+        0
+      ],
+      [
+        7,
+        71,
+        13,
+        9
+      ],
+      null,
+      [
+        5,
+        88,
+        7,
+        0
+      ],
+      [
+        8,
+        77,
+        7,
+        8
+      ],
+      [
+        8,
+        51,
+        29,
+        12
+      ]
+    ]
+  },
+  "training_intensity_vs_next_day_recovery": {
+    "points": [
+      {
+        "day": 2,
+        "duration_sec": 12445,
+        "average_intensity": 2.008811850937629,
+        "next_day_recovery": 43,
+        "chart_x": 273,
+        "chart_y": 97,
+        "color_hex": "#f59e0b",
+        "recovery_band": "moderate"
+      },
+      {
+        "day": 4,
+        "duration_sec": 3550,
+        "average_intensity": 1.572154418641303,
+        "next_day_recovery": 64,
+        "chart_x": 112,
+        "chart_y": 146,
+        "color_hex": "#f59e0b",
+        "recovery_band": "moderate"
+      },
+      {
+        "day": 5,
+        "duration_sec": 6766,
+        "average_intensity": 1.5223719838912244,
+        "next_day_recovery": 75,
+        "chart_x": 170,
+        "chart_y": 151,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 7,
+        "duration_sec": 6811,
+        "average_intensity": 1.737717825668914,
+        "next_day_recovery": 84,
+        "chart_x": 171,
+        "chart_y": 127,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 8,
+        "duration_sec": 1315,
+        "average_intensity": 2.0028363892607626,
+        "next_day_recovery": 28,
+        "chart_x": 72,
+        "chart_y": 98,
+        "color_hex": "#ef4444",
+        "recovery_band": "poor"
+      },
+      {
+        "day": 9,
+        "duration_sec": 3374,
+        "average_intensity": 1.0914927579657647,
+        "next_day_recovery": 75,
+        "chart_x": 109,
+        "chart_y": 199,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 10,
+        "duration_sec": 4392,
+        "average_intensity": 1.7300632413081234,
+        "next_day_recovery": 95,
+        "chart_x": 127,
+        "chart_y": 128,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 12,
+        "duration_sec": 7129,
+        "average_intensity": 2.048610961885356,
+        "next_day_recovery": 79,
+        "chart_x": 177,
+        "chart_y": 93,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 13,
+        "duration_sec": 10902,
+        "average_intensity": 1.274187989917574,
+        "next_day_recovery": 69,
+        "chart_x": 245,
+        "chart_y": 179,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 15,
+        "duration_sec": 9531,
+        "average_intensity": 0.6925253174949391,
+        "next_day_recovery": 79,
+        "chart_x": 220,
+        "chart_y": 231,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 16,
+        "duration_sec": 8307,
+        "average_intensity": 1.7054108643302823,
+        "next_day_recovery": 90,
+        "chart_x": 198,
+        "chart_y": 131,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 17,
+        "duration_sec": 974,
+        "average_intensity": 1.7349633444157821,
+        "next_day_recovery": 52,
+        "chart_x": 66,
+        "chart_y": 128,
+        "color_hex": "#f59e0b",
+        "recovery_band": "moderate"
+      },
+      {
+        "day": 20,
+        "duration_sec": 5286,
+        "average_intensity": 2.4675332146221676,
+        "next_day_recovery": 86,
+        "chart_x": 143,
+        "chart_y": 47,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 23,
+        "duration_sec": 6140,
+        "average_intensity": 1.7137702975399367,
+        "next_day_recovery": 83,
+        "chart_x": 159,
+        "chart_y": 130,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 24,
+        "duration_sec": 2723,
+        "average_intensity": 2.072137769706851,
+        "next_day_recovery": 79,
+        "chart_x": 97,
+        "chart_y": 90,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 25,
+        "duration_sec": 3627,
+        "average_intensity": 2.1334119060708256,
+        "next_day_recovery": 58,
+        "chart_x": 113,
+        "chart_y": 84,
+        "color_hex": "#f59e0b",
+        "recovery_band": "moderate"
+      },
+      {
+        "day": 26,
+        "duration_sec": 3188,
+        "average_intensity": 2.0021701728513857,
+        "next_day_recovery": 69,
+        "chart_x": 106,
+        "chart_y": 98,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 27,
+        "duration_sec": 4444,
+        "average_intensity": 1.8520573034861083,
+        "next_day_recovery": 57,
+        "chart_x": 128,
+        "chart_y": 115,
+        "color_hex": "#f59e0b",
+        "recovery_band": "moderate"
+      },
+      {
+        "day": 28,
+        "duration_sec": 5014,
+        "average_intensity": 1.7893292496547124,
+        "next_day_recovery": 81,
+        "chart_x": 139,
+        "chart_y": 122,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      }
+    ]
+  },
+  "activities": {
+    "total_count": 24,
+    "total_duration_sec": 107178,
+    "total_duration_fmt": "29:46",
+    "by_sport": [
+      {
+        "key": "running",
+        "display_name": "Running",
+        "session_count": 16,
+        "duration_sec": 63123,
+        "duration_fmt": "17:32"
+      },
+      {
+        "key": "trail_running",
+        "display_name": "Trail Running",
+        "session_count": 7,
+        "duration_sec": 43635,
+        "duration_fmt": "12:07"
+      },
+      {
+        "key": "strength_training",
+        "display_name": "Strength Training",
+        "session_count": 1,
+        "duration_sec": 420,
+        "duration_fmt": "0:07"
+      }
+    ]
+  },
+  "heart_rate_zones": [
+    {
+      "zone_label": "90–100%",
+      "seconds": 1260,
+      "time_fmt": "0:21",
+      "bar_width_pct": 2.59,
+      "color": "#ef4444"
+    },
+    {
+      "zone_label": "80–89%",
+      "seconds": 34492.5,
+      "time_fmt": "9:34",
+      "bar_width_pct": 70.83,
+      "color": "#f59e0b"
+    },
+    {
+      "zone_label": "70–79%",
+      "seconds": 48697.5,
+      "time_fmt": "13:31",
+      "bar_width_pct": 100,
+      "color": "#22c55e"
+    },
+    {
+      "zone_label": "60–69%",
+      "seconds": 9615,
+      "time_fmt": "2:40",
+      "bar_width_pct": 19.74,
+      "color": "#60a5fa"
+    },
+    {
+      "zone_label": "50–59%",
+      "seconds": 4522.5,
+      "time_fmt": "1:15",
+      "bar_width_pct": 9.29,
+      "color": "#93c5fd"
+    },
+    {
+      "zone_label": "0–49%",
+      "seconds": 26002.5,
+      "time_fmt": "7:13",
+      "bar_width_pct": 53.4,
+      "color": "#d1d5db"
+    }
+  ],
+  "biometric_health": {
+    "cardiovascular": {
+      "vo2_max": {
+        "value_display": "58",
+        "unit": "ml/kg/min",
+        "bar_width": "90.7%",
+        "dot_position": "90.7%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "26.5",
+        "bench_average": "42",
+        "bench_top10": "57",
+        "badge_cls": "elite",
+        "badge_text": "Elite"
+      },
+      "hrv": {
+        "value_display": "126",
+        "unit": "ms",
+        "bar_width": "96%",
+        "dot_position": "96%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "23",
+        "bench_average": "65",
+        "bench_top10": "100",
+        "badge_cls": "elite",
+        "badge_text": "Elite"
+      },
+      "resting_hr": {
+        "value_display": "47",
+        "unit": "bpm",
+        "bar_width": "8.5%",
+        "dot_position": "8.5%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "49",
+        "bench_average": "65",
+        "bench_top10": "88",
+        "badge_cls": "elite",
+        "badge_text": "Elite"
+      }
+    },
+    "sleep_quality": {
+      "total_sleep": {
+        "value_display": "6.5",
+        "unit": "h",
+        "bar_width": "36.1%",
+        "dot_position": "36.1%",
+        "fill_hex": "#ff9f0a",
+        "bench_bottom10": "5.4",
+        "bench_average": "7.1",
+        "bench_top10": "8.5",
+        "badge_cls": "below",
+        "badge_text": "Limited"
+      },
+      "sleep_efficiency": {
+        "value_display": "92",
+        "unit": "%",
+        "bar_width": "63.2%",
+        "dot_position": "63.2%",
+        "fill_hex": "#34c759",
+        "bench_bottom10": "72",
+        "bench_average": "90",
+        "bench_top10": "96",
+        "badge_cls": "optimal",
+        "badge_text": "Optimal"
+      },
+      "disruptions_per_hour": {
+        "value_display": "0.7",
+        "unit": "/h",
+        "bar_width": "28.1%",
+        "dot_position": "28.1%",
+        "fill_hex": "#34c759",
+        "bench_bottom10": "0.3",
+        "bench_average": "1.1",
+        "bench_top10": "3",
+        "badge_cls": "optimal",
+        "badge_text": "Optimal"
+      }
+    },
+    "sleep_stages": {
+      "rem_pct": {
+        "value_display": "11",
+        "unit": "%",
+        "bar_width": "6.1%",
+        "dot_position": "6.1%",
+        "fill_hex": "#ff0000",
+        "bench_bottom10": "13.5",
+        "bench_average": "21",
+        "bench_top10": "27.5",
+        "badge_cls": "low",
+        "badge_text": "Low"
+      },
+      "deep_pct": {
+        "value_display": "12",
+        "unit": "%",
+        "bar_width": "31.1%",
+        "dot_position": "31.1%",
+        "fill_hex": "#ff9f0a",
+        "bench_bottom10": "7",
+        "bench_average": "16.5",
+        "bench_top10": "24",
+        "badge_cls": "below",
+        "badge_text": "Limited"
+      },
+      "light_pct": {
+        "value_display": "69",
+        "unit": "%",
+        "bar_width": "78.2%",
+        "dot_position": "78.2%",
+        "fill_hex": "#ff0000",
+        "bench_bottom10": "45",
+        "bench_average": "57",
+        "bench_top10": "74",
+        "badge_cls": "low",
+        "badge_text": "Low"
+      },
+      "awake_pct": {
+        "value_display": "8",
+        "unit": "%",
+        "bar_width": "55.7%",
+        "dot_position": "55.7%",
+        "fill_hex": "#ff9f0a",
+        "bench_bottom10": "3",
+        "bench_average": "7",
+        "bench_top10": "14",
+        "badge_cls": "below",
+        "badge_text": "Normal"
+      }
+    }
+  },
+  "focus_section": {
+    "heading_template": "How you move from 74 to 90+",
+    "tab_order": [
+      {
+        "priority": 1,
+        "metric": "REM",
+        "tab_label": "REM Sleep"
+      },
+      {
+        "priority": 2,
+        "metric": "DeepSleep",
+        "tab_label": "Deep Sleep"
+      },
+      {
+        "priority": 3,
+        "metric": "LightSleep",
+        "tab_label": "Light Sleep"
+      },
+      {
+        "priority": 4,
+        "metric": "HRV",
+        "tab_label": "Recovery"
+      }
+    ],
+    "cards": [
+      {
+        "slot": 1,
+        "dom_id": "focus-card-1",
+        "chart_type": "rem_bars",
+        "tab_label": "REM Sleep",
+        "title": "Boost REM Sleep",
+        "summary_html": "Your REM Sleep is <strong>48%</strong> below your demographic average (<strong>11%</strong> <strong>vs</strong> <strong>21%</strong>).",
+        "chart_caption": "Daily REM sleep vs demographic average",
+        "why_panel": "REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.",
+        "chart_data": {
+          "numDays": 30,
+          "dailyPct": [
+            13.402061855670103,
+            9.615384615384615,
+            9.090909090909092,
+            14.457831325301205,
+            null,
+            5.330964015992892,
+            null,
+            11.63895486935867,
+            0,
+            null,
+            11.206896551724139,
+            9.863013698630137,
+            null,
+            16.95906432748538,
+            null,
+            null,
+            31.51260504201681,
+            null,
+            4.487179487179487,
+            null,
+            27.84090909090909,
+            null,
+            null,
+            15.294117647058824,
+            0,
+            9.946236559139784,
+            null,
+            0,
+            8.974358974358974,
+            12.837837837837839
+          ],
+          "remPctiles": {
+            "p50": 21,
+            "p30": 18.2,
+            "p60": 22.2,
+            "p90": 26
+          },
+          "demographicPct": 21,
+          "metaGender": "male",
+          "metaAge": 30
+        }
+      },
+      {
+        "slot": 2,
+        "dom_id": "focus-card-2",
+        "chart_type": "deep_sleep_vs_intensity_dual",
+        "tab_label": "Deep Sleep",
+        "title": "Protect Deep Sleep as training load rises",
+        "summary_html": "When your 7-day average training intensity stayed above 1.84, your 7-day average Deep Sleep tended to remain below 0.7 hours.",
+        "chart_caption": "Deep sleep % vs training intensity",
+        "why_panel": "Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most.",
+        "chart_data": {
+          "deepDaily": [
+            14.02061855670103,
+            6.868131868131868,
+            15.404040404040405,
+            9.397590361445783,
+            null,
+            18.954538723530284,
+            null,
+            15.914489311163896,
+            21.487603305785125,
+            null,
+            9.482758620689655,
+            16.71232876712329,
+            null,
+            13.060428849902534,
+            null,
+            null,
+            9.663865546218487,
+            null,
+            17.628205128205128,
+            null,
+            5.681818181818182,
+            null,
+            null,
+            9.411764705882353,
+            6.79973678438254,
+            13.440860215053764,
+            null,
+            7.163323782234957,
+            7.17948717948718,
+            31.756756756756758
+          ],
+          "intensityDaily": [
+            null,
+            2.008811850937629,
+            null,
+            1.572154418641303,
+            1.5223719838912244,
+            null,
+            1.737717825668914,
+            2.0028363892607626,
+            1.0914927579657647,
+            1.7300632413081234,
+            null,
+            2.048610961885356,
+            1.274187989917574,
+            null,
+            0.6925253174949391,
+            1.7054108643302823,
+            1.7349633444157821,
+            null,
+            null,
+            2.4675332146221676,
+            null,
+            null,
+            1.7137702975399367,
+            2.072137769706851,
+            2.1334119060708256,
+            2.0021701728513857,
+            1.8520573034861083,
+            1.7893292496547124,
+            null,
+            null
+          ]
+        },
+        "correlation": {
+          "label": "DeepSleep rolling mean ~ Training Intensity rolling mean",
+          "marginScore": 0.35000000000000003,
+          "csvKey": "DeepSleep rolling mean (7-day)|Training Intensity rolling mean (7-day)"
+        }
+      },
+      {
+        "slot": 3,
+        "dom_id": "focus-card-3",
+        "chart_type": "hrv_nightly",
+        "tab_label": "Light Sleep",
+        "title": "Lower Light Sleep",
+        "summary_html": "Your Light Sleep is <strong>21%</strong> above your demographic average (<strong>69%</strong> <strong>vs</strong> <strong>57%</strong>).",
+        "chart_caption": "Nightly HRV (RMSSD)",
+        "why_panel": "Your Light Sleep is rising during harder training weeks, reducing recovery time when your body needs it most.",
+        "chart_data": {
+          "numDays": 30,
+          "hrvByDay": [
+            128,
+            148,
+            116,
+            115,
+            null,
+            null,
+            null,
+            129,
+            123,
+            null,
+            127,
+            132,
+            null,
+            138,
+            null,
+            null,
+            114,
+            null,
+            147,
+            null,
+            null,
+            null,
+            null,
+            null,
+            118,
+            107,
+            null,
+            107,
+            137,
+            null
+          ],
+          "targetMin": 57,
+          "targetMax": 73
+        },
+        "correlation_light_load": {
+          "label": "LightSleep rolling mean ~ Training Intensity rolling mean",
+          "marginScore": 0.362
+        }
+      },
+      {
+        "slot": 4,
+        "dom_id": "focus-card-4",
+        "chart_type": "intensity_vs_next_day_rhr_scatter",
+        "tab_label": "Recovery",
+        "title": "Recover better after hard training for higher next-day RHR",
+        "summary_html": "On days when your training intensity reached 2.05, your next-day RHR tended to rise above 50 bpm.",
+        "chart_caption": "Intensity vs Next-Day Resting Heart Rate",
+        "why_panel": "This suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.",
+        "chart_data": {
+          "points": [
+            {
+              "x": 1.5223719838912244,
+              "y": 46
+            },
+            {
+              "x": 1.737717825668914,
+              "y": 48
+            },
+            {
+              "x": 2.0028363892607626,
+              "y": 48
+            },
+            {
+              "x": 1.7300632413081234,
+              "y": 45
+            },
+            {
+              "x": 2.4675332146221676,
+              "y": 48
+            },
+            {
+              "x": 1.7137702975399367,
+              "y": 46
+            },
+            {
+              "x": 2.072137769706851,
+              "y": 49
+            },
+            {
+              "x": 2.1334119060708256,
+              "y": 52
+            },
+            {
+              "x": 1.8520573034861083,
+              "y": 51
+            },
+            {
+              "x": 1.7893292496547124,
+              "y": 47
+            }
+          ]
+        },
+        "correlation": {
+          "label": "RHR ~ Training Intensity(t-1)",
+          "marginScore": 0.10099999999999998,
+          "csvKey": "RHR(t)|Training Intensity(t-1)"
+        }
+      }
+    ]
+  }
+}

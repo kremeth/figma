@@ -17,6 +17,19 @@ const bottom10 = readJson('bottom10_percent.json');
 const normative = readJson('normative_metrics.json');
 const top10 = readJson('top10_percent.json');
 
+let correlationCardsResolved = [];
+let focusMetricsTags = [];
+try {
+  correlationCardsResolved = readJson('correlation_cards_resolved.json');
+} catch {
+  console.warn('correlation_cards_resolved.json not found; focus card copy uses fallbacks');
+}
+try {
+  focusMetricsTags = readJson('focus_metrics_tags_supplements.json');
+} catch {
+  console.warn('focus_metrics_tags_supplements.json not found; using default focus order');
+}
+
 const viz = raw?.connect_device_recommendation?.metric_analysis?.visualization;
 if (!viz) {
   console.error('Missing connect_device_recommendation.metric_analysis.visualization in raw_data.json');
@@ -280,6 +293,8 @@ function trimpYFromIntensity(i) {
 }
 
 const trimpPts = [];
+/** Rich rows for report_data.json (same filter as trimpPts). */
+const trimpReportRows = [];
 for (let d = 1; d <= (meta.num_days || 30); d++) {
   const row = dailyAct?.[String(d)];
   const dur = row?.total_duration;
@@ -290,6 +305,16 @@ for (let d = 1; d <= (meta.num_days || 30); d++) {
   const y = trimpYFromIntensity(ai);
   const color = nextRecovery >= 67 ? '#22c55e' : nextRecovery >= 34 ? '#f59e0b' : '#ef4444';
   trimpPts.push({ x, y, color });
+  trimpReportRows.push({
+    day: d,
+    duration_sec: dur,
+    average_intensity: +ai,
+    next_day_recovery: +nextRecovery,
+    chart_x: x,
+    chart_y: y,
+    color_hex: color,
+    recovery_band: nextRecovery >= 67 ? 'good' : nextRecovery >= 34 ? 'moderate' : 'poor',
+  });
 }
 
 // Recovery donut
@@ -596,6 +621,400 @@ if (recoveryAvg != null) {
   }
 }
 
+// ── Plug-and-play: score copy, focus payloads, focus stack HTML ──
+function ageToRemBracket(age) {
+  if (age == null || !Number.isFinite(+age)) return '26-35';
+  const a = +age;
+  if (a <= 25) return '18-25';
+  if (a <= 35) return '26-35';
+  if (a <= 45) return '36-45';
+  if (a <= 55) return '46-55';
+  if (a <= 65) return '56-65';
+  return '66+';
+}
+function deriveRemPercentilesFromP50(p50) {
+  const p50n = +p50;
+  if (!Number.isFinite(p50n)) return { p50: 21, p30: 18.2, p60: 22.2, p90: 26.0 };
+  return {
+    p50: p50n,
+    p30: Math.max(5, Math.round((p50n - 2.8) * 10) / 10),
+    p60: Math.min(50, Math.round((p50n + 1.2) * 10) / 10),
+    p90: Math.min(50, Math.round((p50n + 5.0) * 10) / 10),
+  };
+}
+
+const remBracketKey = ageToRemBracket(meta.age ?? 30);
+let remPctilesFC = deriveRemPercentilesFromP50(21);
+const gRemNorm = normative?.rem_sleep?.[gender]?.[remBracketKey];
+if (gRemNorm != null && typeof gRemNorm === 'object' && Number.isFinite(+gRemNorm.p50)) {
+  remPctilesFC = {
+    p50: +gRemNorm.p50,
+    p30: +gRemNorm.p30,
+    p60: +gRemNorm.p60,
+    p90: +gRemNorm.p90,
+  };
+} else if (typeof gRemNorm === 'number' && Number.isFinite(gRemNorm)) {
+  remPctilesFC = deriveRemPercentilesFromP50(gRemNorm);
+}
+const demographicRemPct = remPctilesFC.p50;
+
+const numDaysFc = Math.max(1, Math.min(31, +(meta.num_days || 30)));
+const dailyRemPct = Array.from({ length: numDaysFc }, (_, i) => {
+  const k = String(i + 1);
+  const secR = m.rem_sleep?.[k];
+  const secS = m.sleep_time?.[k];
+  if (secS == null || !Number.isFinite(+secS) || +secS <= 0) return null;
+  if (secR == null || !Number.isFinite(+secR)) return null;
+  return (100 * +secR) / +secS;
+});
+
+const deepDailyFC = Array(30).fill(null);
+const intensityDailyFC = Array(30).fill(null);
+for (let d = 1; d <= 30; d += 1) {
+  const k = String(d);
+  const ai = dailyAct?.[k]?.average_intensity;
+  if (ai != null && Number.isFinite(+ai) && +ai > 0) intensityDailyFC[d - 1] = +ai;
+  const st = m.sleep_time?.[k];
+  const deep = m.deep_sleep?.[k];
+  if (st != null && +st > 0 && deep != null && Number.isFinite(+deep) && +deep > 0) {
+    deepDailyFC[d - 1] = (100 * +deep) / +st;
+  }
+}
+
+const hrvByDayFC = Array.from({ length: numDaysFc }, (_, i) => {
+  const v = m.HRV?.[String(i + 1)];
+  if (v == null || !Number.isFinite(+v)) return null;
+  return +v;
+});
+const hrvNormM = g(normative.hrv);
+let targetHrvMin = Number.isFinite(hrvNormM) ? Math.max(20, Math.round(hrvNormM * 0.88)) : 100;
+let targetHrvMax = Number.isFinite(hrvNormM) ? Math.max(targetHrvMin + 5, Math.round(hrvNormM * 1.12)) : 110;
+if (targetHrvMin > targetHrvMax) {
+  const t = targetHrvMin;
+  targetHrvMin = targetHrvMax;
+  targetHrvMax = t;
+}
+
+const scatterPtsFC = [];
+for (let day = 1; day < numDaysFc; day += 1) {
+  const today = dailyAct?.[String(day)];
+  const x = today?.average_intensity;
+  const yRaw = m.RHR?.[String(day + 1)];
+  if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
+  scatterPtsFC.push({ x: +x, y: +yRaw });
+}
+
+function pickBestCorr(cards, pred) {
+  const matches = (Array.isArray(cards) ? cards : []).filter(pred);
+  if (!matches.length) return null;
+  return matches.reduce((a, b) =>
+    +(b.marginScore ?? -999) > +(a.marginScore ?? -999) ? b : a,
+  );
+}
+
+const deepSleepCorr = pickBestCorr(
+  correlationCardsResolved,
+  (c) =>
+    c.targetMetric === 'DeepSleep' &&
+    String(c.label || '').includes('rolling') &&
+    String(c.label || '').includes('Training Intensity'),
+);
+const rhrNextDayCorr = pickBestCorr(
+  correlationCardsResolved,
+  (c) =>
+    c.targetMetric === 'RHR' &&
+    String(c.csvKey || '').includes('RHR(t)') &&
+    String(c.csvKey || '').includes('Training Intensity(t-1)'),
+);
+const lightRollingCorr = pickBestCorr(
+  correlationCardsResolved,
+  (c) =>
+    c.targetMetric === 'LightSleep' &&
+    String(c.label || '').includes('rolling') &&
+    String(c.label || '').includes('Training Intensity'),
+);
+
+function escapeCorrText(t) {
+  if (t == null) return '';
+  return String(t)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+function escAttr(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;');
+}
+
+const lightCohortRaw = g(normative.light_sleep);
+const lightCohortPct =
+  typeof lightCohortRaw === 'number' && Number.isFinite(lightCohortRaw) ? lightCohortRaw : 57;
+
+let remSummaryHtml = '';
+if (remP < demographicRemPct - 0.05 && demographicRemPct > 0) {
+  const pct = Math.round(((demographicRemPct - remP) / demographicRemPct) * 100);
+  remSummaryHtml = `Your REM Sleep is <strong>${pct}%</strong> below your demographic average (<strong>${remP}%</strong> <strong>vs</strong> <strong>${Math.round(demographicRemPct)}%</strong>).`;
+} else if (remP > demographicRemPct + 0.05 && demographicRemPct > 0) {
+  const pct = Math.round(((remP - demographicRemPct) / demographicRemPct) * 100);
+  remSummaryHtml = `Your REM Sleep is <strong>${pct}%</strong> above your demographic average (<strong>${remP}%</strong> <strong>vs</strong> <strong>${Math.round(demographicRemPct)}%</strong>).`;
+} else {
+  remSummaryHtml = `Your REM Sleep is near your demographic average (<strong>${remP}%</strong> <strong>vs</strong> <strong>${Math.round(demographicRemPct)}%</strong>).`;
+}
+
+let lightSummaryHtml = '';
+if (lightP > lightCohortPct + 0.5) {
+  const pct = Math.round(((lightP - lightCohortPct) / lightCohortPct) * 100);
+  lightSummaryHtml = `Your Light Sleep is <strong>${pct}%</strong> above your demographic average (<strong>${lightP}%</strong> <strong>vs</strong> <strong>${Math.round(lightCohortPct)}%</strong>).`;
+} else if (lightP < lightCohortPct - 0.5) {
+  const pct = Math.round(((lightCohortPct - lightP) / lightCohortPct) * 100);
+  lightSummaryHtml = `Your Light Sleep is <strong>${pct}%</strong> below your demographic average (<strong>${lightP}%</strong> <strong>vs</strong> <strong>${Math.round(lightCohortPct)}%</strong>).`;
+} else {
+  lightSummaryHtml = `Your Light Sleep is near your demographic average (<strong>${lightP}%</strong> <strong>vs</strong> <strong>${Math.round(lightCohortPct)}%</strong>).`;
+}
+
+const fc1Title = 'Boost REM Sleep';
+const fc1Cap = 'Daily REM sleep vs demographic average';
+const fc1WhyPanel =
+  'REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.';
+
+const fc2Title = deepSleepCorr?.title ? escapeCorrText(deepSleepCorr.title) : 'Protect Deep Sleep';
+const fc2Summary = deepSleepCorr?.body
+  ? escapeCorrText(deepSleepCorr.body)
+  : 'When training load runs high for several days in a row, deep sleep often compresses—timing recovery becomes important.';
+const fc2Cap = 'Deep sleep % vs training intensity';
+const fc2WhyPanel = deepSleepCorr?.how_it_works
+  ? escapeCorrText(deepSleepCorr.how_it_works)
+  : 'Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most. Keeping intensity in check on most days helps preserve deep sleep and long-term adaptation.';
+
+const fc3Title = 'Lower Light Sleep';
+const fc3Summary = lightSummaryHtml;
+const fc3Cap = 'Nightly HRV (RMSSD)';
+const fc3WhyPanel = lightRollingCorr?.how_it_works
+  ? escapeCorrText(lightRollingCorr.how_it_works)
+  : 'Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.';
+
+const fc4Title = rhrNextDayCorr?.title ? escapeCorrText(rhrNextDayCorr.title) : 'Recover Better';
+const fc4Summary = rhrNextDayCorr?.body
+  ? escapeCorrText(rhrNextDayCorr.body)
+  : 'On harder training days, next-day resting heart rate often runs higher—recovery and sleep quality matter.';
+const fc4Cap = 'Intensity vs Next-Day Resting Heart Rate';
+const fc4WhyPanel = rhrNextDayCorr?.how_it_works
+  ? escapeCorrText(rhrNextDayCorr.how_it_works)
+  : 'The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.';
+
+let scoreHeadline = 'Building base';
+if (healthScore >= 85) scoreHeadline = 'High performer';
+else if (healthScore >= 75) scoreHeadline = 'Good progress';
+else if (healthScore >= 60) scoreHeadline = 'Strong foundation';
+
+const aheadPct = Math.min(94, Math.max(8, Math.round(healthScore * 0.65 + 12)));
+const yourPeople = gender === 'female' ? 'women' : 'men';
+const scoreContext = `You're already ahead of ${aheadPct}% of ${yourPeople} your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.`;
+
+let sortedFocusMetrics = [...focusMetricsTags].sort((a, b) => (a.order || 0) - (b.order || 0));
+if (sortedFocusMetrics.length < 4) {
+  sortedFocusMetrics = [
+    { order: 1, metric: 'REM' },
+    { order: 2, metric: 'DeepSleep' },
+    { order: 3, metric: 'LightSleep' },
+    { order: 4, metric: 'HRV' },
+  ];
+}
+function metricDotLabel(metric) {
+  if (metric === 'REM') return 'REM Sleep';
+  if (metric === 'DeepSleep') return 'Deep Sleep';
+  if (metric === 'LightSleep') return 'Light Sleep';
+  if (metric === 'HRV') return 'Recovery';
+  return String(metric || 'Priority');
+}
+const dotsButtonsHtml = sortedFocusMetrics
+  .map((fm, idx) => {
+    const lbl = metricDotLabel(fm.metric);
+    const active = idx === 0 ? ' active' : '';
+    const sel = idx === 0 ? 'true' : 'false';
+    const tab = idx === 0 ? '0' : '-1';
+    return `              <button type="button" class="rec-rhr-dot${active}" aria-label="${escAttr(lbl)}" role="tab" aria-selected="${sel}" aria-controls="focus-card-${idx + 1}" tabindex="${tab}"><span class="rec-rhr-dot__label" aria-hidden="true">${lbl}</span></button>`;
+  })
+  .join('\n');
+
+const fc1Payload = {
+  numDays: numDaysFc,
+  dailyPct: dailyRemPct,
+  remPctiles: remPctilesFC,
+  demographicPct: demographicRemPct,
+  metaGender: gender,
+  metaAge: meta.age ?? 30,
+};
+const fc2Payload = { deepDaily: deepDailyFC, intensityDaily: intensityDailyFC };
+const fc3Payload = {
+  numDays: numDaysFc,
+  hrvByDay: hrvByDayFC,
+  targetMin: targetHrvMin,
+  targetMax: targetHrvMax,
+};
+const fc4Payload = { points: scatterPtsFC };
+
+const injectBlock = `  const FC1_REM_DATA = ${JSON.stringify(fc1Payload)};
+  const FC2_DEEP_INT_DATA = ${JSON.stringify(fc2Payload)};
+  const FC3_HRV_DATA = ${JSON.stringify(fc3Payload)};
+  const FC4_SCATTER_DATA = ${JSON.stringify(fc4Payload)};`;
+
+const focusStackHtml = `<!-- FOCUS_STACK_CORRELATION_START -->
+
+        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
+            <div class="focus-card__stage">
+              <div class="fc1-accent" aria-hidden="true"></div>
+              <div class="fc1-body">
+                <div class="focus-card__head">
+                  <h3 class="fc1-title">${fc1Title}</h3>
+                  <p class="fc1-summary">${remSummaryHtml}</p>
+                </div>
+                <div class="fc1-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="fc1-cap">${fc1Cap}</p>
+                  <div class="fc1-chart-panel">
+                    <svg id="fc1-rem-chart" viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily REM sleep percent; bars colored by cohort percentile band (red through blue)"></svg>
+                  </div>
+                  <div class="fc1-legend" aria-hidden="true">
+                    <div class="fc1-legend__item">
+                      <span class="fc1-legend__swatch fc1-legend__swatch--avg"></span>
+                      <span class="fc1-legend__label">Demographic Avg.</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fc1-footer">
+                  <details class="fc1-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="fc1-why-label">Why it matters</span>
+                        <span class="fc1-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="fc1-why-panel">${fc1WhyPanel}</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation">
+            <div class="focus-card__stage">
+              <div class="fc2-accent" aria-hidden="true"></div>
+              <div class="fc2-body">
+                <div class="focus-card__head">
+                  <h3 class="fc2-title">${fc2Title}</h3>
+                  <p class="fc2-summary">${fc2Summary}</p>
+                </div>
+                <div class="fc2-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="fc2-cap">${fc2Cap}</p>
+                  <div class="fc2-chart-panel">
+                    <svg id="c-dual-deep-intensity" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage (blue dots and line) and training intensity (yellow dots and line) over 30 days"></svg>
+                  </div>
+                  <div class="fc2-legend" aria-hidden="true">
+                    <div class="fc2-legend__item">
+                      <span class="fc2-legend__swatch fc2-legend__swatch--deep"></span>
+                      <span class="fc2-legend__label">Deep Sleep %</span>
+                    </div>
+                    <div class="fc2-legend__item">
+                      <span class="fc2-legend__swatch fc2-legend__swatch--load"></span>
+                      <span class="fc2-legend__label">Training Load</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fc2-footer">
+                  <details class="fc2-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="fc2-why-label">Why it matters</span>
+                        <span class="fc2-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="fc2-why-panel">${fc2WhyPanel}</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="focus-card focus-card__shell" id="focus-card-3" data-focus-index="2" role="article" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
+            <div class="focus-card__stage">
+              <div class="fc3-accent" aria-hidden="true"></div>
+              <div class="fc3-body">
+                <div class="focus-card__head">
+                  <h3 class="fc3-title">${fc3Title}</h3>
+                  <p class="fc3-summary">${fc3Summary}</p>
+                </div>
+                <div class="fc3-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="fc3-cap">${fc3Cap}</p>
+                  <div class="fc3-chart-panel">
+                    <svg id="fc3-hrv-chart" viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Nightly HRV; shaded target band; blue dots in band"></svg>
+                </div>
+                  <div class="fc3-legend" aria-hidden="true">
+                    <div class="fc3-legend__item">
+                      <span class="fc3-legend__swatch fc3-legend__swatch--target-range"></span>
+                      <span class="fc3-legend__label">Target range</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fc3-footer">
+                  <details class="fc3-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="fc3-why-label">Why it matters</span>
+                        <span class="fc3-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="fc3-why-panel">${fc3WhyPanel}</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
+            <div class="focus-card__stage">
+              <div class="fc4-accent" aria-hidden="true"></div>
+              <div class="fc4-body">
+                <div class="focus-card__head">
+                  <h3 class="fc4-title">${fc4Title}</h3>
+                  <p class="fc4-summary">${fc4Summary}</p>
+                </div>
+                <div class="fc4-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="fc4-cap">${fc4Cap}</p>
+                  <div class="fc4-chart-panel">
+                    <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-60 0 320 156" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate">
+                      <title>Next-day resting heart rate versus same-day training intensity.</title>
+                    </svg>
+                  </div>
+                  <div class="fc4-legend" aria-hidden="true">
+                    <div class="fc4-legend__item">
+                      <span class="fc4-legend__swatch fc4-legend__swatch--reg" aria-hidden="true"></span>
+                      <span class="fc4-legend__label">Regression Line</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fc4-footer">
+                  <details class="fc4-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="fc4-why-label">Why it matters</span>
+                        <span class="fc4-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="fc4-why-panel">${fc4WhyPanel}</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>
+<!-- FOCUS_STACK_CORRELATION_END -->`;
+
 let html = fs.readFileSync(path.join(root, 'nutricode-health-report.html'), 'utf8');
 
 function rep(re, fn) {
@@ -603,6 +1022,41 @@ function rep(re, fn) {
   html = typeof fn === 'string' ? html.replace(re, fn) : html.replace(re, fn);
   if (html === before && !before.match(re)) console.warn('Pattern missed:', re);
 }
+
+rep(
+  /(?:[ \t]*\/\/ REPORT_INJECT_FOCUS_DATA\s*\r?\n|  const FC1_REM_DATA = .*\r?\n  const FC2_DEEP_INT_DATA = .*\r?\n  const FC3_HRV_DATA = .*\r?\n  const FC4_SCATTER_DATA = .*\r?\n)/,
+  `${injectBlock}\n`,
+);
+rep(
+  /<!-- FOCUS_STACK_CORRELATION_START -->[\s\S]*?<!-- FOCUS_STACK_CORRELATION_END -->/,
+  focusStackHtml,
+);
+rep(
+  /(<div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">)\s*[\s\S]*?(\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<div class="focus-carousel reveal d1" id="focusCarousel")/,
+  `$1\n${dotsButtonsHtml}\n            $2`,
+);
+rep(/<p class="score-headline">[^<]*<\/p>/, `<p class="score-headline">${scoreHeadline}</p>`);
+rep(/<p class="score-context">[^<]*<\/p>/, `<p class="score-context">${scoreContext}</p>`);
+rep(
+  /<h2 class="section-label section-label--caps" id="focus-heading">[\s\S]*?<\/h2>/,
+  `<h2 class="section-label section-label--caps" id="focus-heading">How you move from<br />${healthScore} to 90+</h2>`,
+);
+rep(
+  /aria-label="Health score rises from \d+ toward 90/,
+  `aria-label="Health score rises from ${healthScore} toward 90`,
+);
+rep(
+  /<title>Projection: score from \d+ toward 90\+ then sustained<\/title>/,
+  `<title>Projection: score from ${healthScore} toward 90+ then sustained</title>`,
+);
+rep(
+  /<!-- Points: start \(\d+\), transition/,
+  `<!-- Points: start (${healthScore}), transition`,
+);
+rep(
+  /(<text x="10" y="112" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="10" fill="rgba\(0,0,0,0\.5\)">)\d+(<\/text>)/,
+  `$1${healthScore}$2`,
+);
 
 html = html.replace(/bio-bench-fill--bio-bench-fill--(green|amber)/g, 'bio-bench-fill--$1');
 
@@ -917,9 +1371,182 @@ rep(
       });`,
 );
 
-// Projection "Now" milestone
-rep(/<p class="proj-val">67<\/p>\s*<p class="proj-lbl">Now<\/p>/, `<p class="proj-val">${healthScore}</p>
-        <p class="proj-lbl">Now</p>`);
+function bioJson(b) {
+  return {
+    value_display: b.val,
+    unit: b.unit,
+    bar_width: b.width,
+    dot_position: b.dotLeft,
+    fill_hex: b.fillColor,
+    bench_bottom10: b.m1,
+    bench_average: b.m2,
+    bench_top10: b.m3,
+    badge_cls: b.badgeCls,
+    badge_text: b.badgeText,
+  };
+}
 
+const reportData = {
+  meta: {
+    date_range: metaLine,
+    device: meta.device ?? null,
+    gender,
+    age_band: band,
+    cohort_label: cohortLabel,
+    num_days: numDaysFc,
+  },
+  health_score: {
+    score: healthScore,
+    headline: scoreHeadline,
+    context: scoreContext,
+    phase_current: 1,
+    phase_total: 2,
+    ring_circumference: C,
+    ring_dash: +dash.toFixed(2),
+    ring_dash_gap: +dashRest.toFixed(2),
+  },
+  limiting_metrics: limits.map((l) => ({ name: l.name, badge: l.badge, dot: l.dot })),
+  snapshot: {
+    avg_recovery: {
+      value: recoveryAvg != null ? Math.round(recoveryAvg) : null,
+      tag: recTag.text,
+      tag_cls: recTag.cls,
+      foot_text: recFoot.text,
+    },
+    sleep_performance: {
+      value: sleepScoreAvg != null ? Math.round(sleepScoreAvg) : null,
+      tag: sleepTag.text,
+      tag_cls: sleepTag.cls,
+      foot_text: sleepFoot,
+    },
+    avg_training_intensity: {
+      value: trimpAvg != null ? +trimpAvg.toFixed(1) : null,
+      tag: tr.tag,
+      tag_cls: trimpTagClass(tr.tag),
+      foot_text: tr.foot,
+    },
+  },
+  recovery_donut: {
+    average_pct: recoveryDonutAvg,
+    high_days: hi,
+    moderate_days: med,
+    low_days: lo,
+    legend_high_range: '67%+',
+    legend_moderate_range: '34–66%',
+    legend_low_range: '0–33%',
+  },
+  sleep_breakdown: {
+    avg_rem_pct: remP,
+    avg_deep_pct: deepP,
+    avg_light_pct: lightP,
+    avg_awake_pct: awakeP,
+    nights,
+  },
+  training_intensity_vs_next_day_recovery: {
+    points: trimpReportRows,
+  },
+  activities: {
+    total_count: activityCount,
+    total_duration_sec: activityDurTotal,
+    total_duration_fmt: formatDuration(activityDurTotal),
+    by_sport: sports.map((s) => ({
+      key: s.name,
+      display_name: sportTitle(s.name),
+      session_count: s.total,
+      duration_sec: s.dur,
+      duration_fmt: formatDuration(s.dur),
+    })),
+  },
+  heart_rate_zones: zoneRows.map((z) => ({
+    zone_label: z.lbl,
+    seconds: z.sec,
+    time_fmt: formatDuration(z.sec),
+    bar_width_pct: +z.w.toFixed(2),
+    color: z.color,
+  })),
+  biometric_health: {
+    cardiovascular: {
+      vo2_max: bioJson(bio.vo2),
+      hrv: bioJson(bio.hrv),
+      resting_hr: bioJson(bio.rhr),
+    },
+    sleep_quality: {
+      total_sleep: bioJson(bio.sleepH),
+      sleep_efficiency: bioJson(bio.eff),
+      disruptions_per_hour: bioJson(bio.dis),
+    },
+    sleep_stages: {
+      rem_pct: bioJson(bio.rem),
+      deep_pct: bioJson(bio.deep),
+      light_pct: bioJson(bio.light),
+      awake_pct: bioJson(bio.awake),
+    },
+  },
+  focus_section: {
+    heading_template: `How you move from ${healthScore} to 90+`,
+    tab_order: sortedFocusMetrics.map((fm, idx) => ({
+      priority: idx + 1,
+      metric: fm.metric,
+      tab_label: metricDotLabel(fm.metric),
+    })),
+    cards: [
+      {
+        slot: 1,
+        dom_id: 'focus-card-1',
+        chart_type: 'rem_bars',
+        tab_label: 'REM Sleep',
+        title: fc1Title,
+        summary_html: remSummaryHtml,
+        chart_caption: fc1Cap,
+        why_panel: fc1WhyPanel,
+        chart_data: fc1Payload,
+      },
+      {
+        slot: 2,
+        dom_id: 'focus-card-2',
+        chart_type: 'deep_sleep_vs_intensity_dual',
+        tab_label: 'Deep Sleep',
+        title: fc2Title,
+        summary_html: fc2Summary,
+        chart_caption: fc2Cap,
+        why_panel: fc2WhyPanel,
+        chart_data: fc2Payload,
+        correlation: deepSleepCorr
+          ? { label: deepSleepCorr.label, marginScore: deepSleepCorr.marginScore, csvKey: deepSleepCorr.csvKey }
+          : null,
+      },
+      {
+        slot: 3,
+        dom_id: 'focus-card-3',
+        chart_type: 'hrv_nightly',
+        tab_label: 'Light Sleep',
+        title: fc3Title,
+        summary_html: fc3Summary,
+        chart_caption: fc3Cap,
+        why_panel: fc3WhyPanel,
+        chart_data: fc3Payload,
+        correlation_light_load: lightRollingCorr
+          ? { label: lightRollingCorr.label, marginScore: lightRollingCorr.marginScore }
+          : null,
+      },
+      {
+        slot: 4,
+        dom_id: 'focus-card-4',
+        chart_type: 'intensity_vs_next_day_rhr_scatter',
+        tab_label: 'Recovery',
+        title: fc4Title,
+        summary_html: fc4Summary,
+        chart_caption: fc4Cap,
+        why_panel: fc4WhyPanel,
+        chart_data: fc4Payload,
+        correlation: rhrNextDayCorr
+          ? { label: rhrNextDayCorr.label, marginScore: rhrNextDayCorr.marginScore, csvKey: rhrNextDayCorr.csvKey }
+          : null,
+      },
+    ],
+  },
+};
+
+fs.writeFileSync(path.join(root, 'report_data.json'), `${JSON.stringify(reportData, null, 2)}\n`, 'utf8');
 fs.writeFileSync(path.join(root, 'nutricode-health-report.html'), html, 'utf8');
-console.log('Updated nutricode-health-report.html from raw_data.json');
+console.log('Updated nutricode-health-report.html and report_data.json from raw_data.json');
