@@ -1102,15 +1102,6 @@
       color: var(--ink-3);
     }
 
-    .metric-phase-after-title {
-      margin: -8px 0 20px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(167, 180, 196, 0.72);
-    }
-
     .chart-category > .metric-chart-block + .metric-chart-block {
       margin-top: 14px;
     }
@@ -1248,6 +1239,17 @@
       padding: 16px 12px 12px;
       overflow: hidden;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .deep-chart-wrap__title {
+      margin: 0 0 12px;
+      padding: 0 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      line-height: 1.35;
     }
 
     .deep-chart-wrap svg {
@@ -1434,127 +1436,298 @@
       border-color: rgba(159, 197, 255, 0.2);
     }
 
+    /* ─── Proposed swap card ─── */
     .matrix-card--proposed {
       position: relative;
       padding: 0;
       overflow: hidden;
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: var(--card-shadow);
     }
 
-    .matrix-card--proposed::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 2px;
-      background: linear-gradient(
-        90deg,
-        rgba(59, 130, 246, 0.75),
-        rgba(245, 158, 11, 0.55) 100%
-      );
-      pointer-events: none;
+    .matrix-card--proposed::before { display: none; }
+
+    .matrix-proposed__top {
+      padding: 28px 28px 24px;
+      border-bottom: 1px solid var(--sep);
     }
 
-    .matrix-card--proposed .matrix-card__title {
-      padding: 22px 20px 0;
-      margin-bottom: 6px;
-      letter-spacing: -0.035em;
-    }
-
-    .matrix-card--proposed .matrix-card__body {
-      padding: 0 20px;
-      margin-bottom: 0;
-      padding-bottom: 16px;
-      color: var(--ink-3);
-    }
-
-    .matrix-card--proposed .matrix-card__body .mono {
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.055);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.88em;
-      font-weight: 500;
-      color: var(--ink-2);
-      white-space: nowrap;
-    }
-
-    .matrix-scroll--proposed {
+    .matrix-card--proposed .matrix-card__title,
+    .matrix-proposed__title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--ink);
       margin: 0;
-      padding: 14px 16px 18px;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 22%),
-        rgba(0, 0, 0, 0.08);
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 0 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px);
+      line-height: 1.15;
+      padding: 0;
     }
 
-    .matrix-table--proposed {
-      min-width: 500px;
-    }
-
-    .matrix-table--proposed thead th {
-      padding: 4px 10px 16px;
-      vertical-align: bottom;
-    }
-
-    .matrix-table--proposed thead th + th {
-      border-left: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .matrix-table--proposed .matrix-col-head {
-      gap: 8px;
-      padding: 4px 0 2px;
-    }
-
-    .matrix-table--proposed .matrix-col-name {
-      display: block;
+    .matrix-proposed__eyebrow {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.11em;
-      color: var(--ink-2);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin: 0 0 9px;
+      line-height: 1.3;
     }
 
-    .matrix-table--proposed .matrix-col-tag {
-      padding: 4px 10px;
-      font-size: 8.5px;
-      letter-spacing: 0.11em;
+    .matrix-proposed__intro {
+      margin: 12px 0 0;
+      padding: 0;
+      background: none;
+      border: none;
+      box-shadow: none;
     }
 
-    .matrix-table--proposed thead th:first-child {
-      background: rgba(11, 15, 23, 0.97);
+    .matrix-proposed__intro-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink-4);
+      margin: 0;
+      font-weight: 400;
+      font-style: italic;
     }
 
-    .matrix-table--proposed tbody th,
-    .matrix-table--proposed tbody td {
-      padding: 13px 10px;
+    .matrix-proposed__choices { padding: 0; }
+
+    .matrix-proposed__section-label { display: none; }
+
+    .matrix-proposed__section-label--table {
+      display: block;
+      padding: 20px 28px 14px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      margin: 0;
     }
 
-    .matrix-table--proposed tbody td + td {
-      border-left: 1px solid rgba(255, 255, 255, 0.05);
+    .matrix-proposed__data {
+      border-top: 1px solid var(--sep);
+      padding: 0;
     }
 
-    .matrix-table--proposed tbody th {
-      background: rgba(11, 15, 23, 0.97);
+    .matrix-proposed__data .matrix-proposed__section-label--table {
+      padding: 20px 28px 14px;
+      margin: 0;
+    }
+
+    /* Choice grid */
+    .matrix-swap-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
+
+    @media (max-width: 680px) {
+      .matrix-swap-choice-grid { grid-template-columns: 1fr; }
+    }
+
+    .matrix-swap-choice {
+      padding: 26px 28px 28px;
+      background: none;
+      box-shadow: none;
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+    }
+
+    .matrix-swap-choice--b { border-left: 1px solid var(--sep); }
+
+    @media (max-width: 680px) {
+      .matrix-swap-choice--b { border-left: none; border-top: 1px solid var(--sep); }
+      .matrix-swap-choice { padding-left: 18px; padding-right: 18px; }
+    }
+
+    .matrix-swap-choice::before { display: none; }
+
+    .matrix-swap-choice__inner {
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      margin: 0;
+      background: none;
+    }
+
+    .matrix-swap-choice__head {
+      display: block;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .matrix-swap-choice__index { display: none; }
+
+    .matrix-swap-choice__head-text { min-width: 0; }
+
+    .matrix-swap-choice__kicker {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin: 0 0 7px;
+      line-height: 1.3;
+      color: rgba(96, 165, 250, 0.65);
+    }
+
+    .matrix-swap-choice__name {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin: 0 0 15px;
+      line-height: 1.15;
+    }
+
+    .matrix-swap-choice__lead {
       font-size: 13px;
       font-weight: 600;
       color: var(--ink-2);
+      margin: 0 0 10px;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
     }
 
-    .matrix-table--proposed tbody tr:nth-child(even) td {
-      background: rgba(255, 255, 255, 0.025);
+    .matrix-swap-choice__body {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--ink-4);
+      margin: 0;
     }
 
-    .matrix-table--proposed tbody tr:nth-child(even) th {
-      background: rgba(12, 16, 25, 0.98);
+    /* Proposed table */
+    .matrix-scroll--proposed {
+      overflow-x: auto;
+      padding: 0 0 26px;
+      background: none;
+      border: none;
+      border-radius: 0;
+      margin: 0;
     }
 
+    .matrix-proposed__data .matrix-scroll--proposed {
+      border-radius: 0;
+      margin: 0;
+      border: none;
+    }
+
+    @media (max-width: 680px) {
+      .matrix-proposed__top,
+      .matrix-proposed__choices { padding-left: 18px; padding-right: 18px; }
+      .matrix-proposed__data .matrix-proposed__section-label--table { padding-left: 18px; padding-right: 18px; }
+    }
+
+    .matrix-table--proposed {
+      min-width: 480px;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .matrix-table--proposed thead th {
+      padding: 0 12px 14px;
+      vertical-align: bottom;
+      text-align: center;
+    }
+
+    .matrix-table--proposed thead th:first-child {
+      width: 30%;
+      padding: 0 14px 18px 22px;
+      text-align: left;
+      vertical-align: bottom;
+      background: var(--card);
+      border-right: 1px solid var(--sep);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-4);
+      white-space: nowrap;
+    }
+
+    .matrix-table--proposed thead th + th {
+      width: 23.333%;
+    }
+
+    /* Metric column uses border-right; avoid double line before column 2 */
+    .matrix-table--proposed thead th:nth-child(3),
+    .matrix-table--proposed thead th:nth-child(4) {
+      border-left: 1px solid var(--sep);
+    }
+
+    .matrix-table--proposed .matrix-col-head {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      padding: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .matrix-table--proposed .matrix-col-name {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--ink-2);
+      display: block;
+      text-transform: none;
+      text-align: center;
+      width: 100%;
+    }
+
+    .matrix-table--proposed .matrix-col-tag {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+
+    .matrix-table--proposed tbody th {
+      padding: 17px 14px 17px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      text-align: left;
+      vertical-align: middle;
+      background: var(--card);
+      border-right: 1px solid var(--sep);
+    }
+
+    .matrix-table--proposed tbody td {
+      padding: 17px 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .matrix-table--proposed tbody td + td { border-left: 1px solid var(--sep); }
+
+    .matrix-table--proposed tbody tr { border-bottom: 1px solid var(--sep); }
+    .matrix-table--proposed tbody tr:last-child { border-bottom: none; }
+
+    /* Text-only tier indicators — no pill background */
     .matrix-table--proposed .matrix-pill {
-      min-height: 28px;
-      padding: 5px 10px;
-      font-size: 9.5px;
-      letter-spacing: 0.07em;
+      display: inline-block;
+      background: none;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      min-height: 0;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      text-align: center;
+      vertical-align: middle;
     }
+
+    .matrix-table--proposed .matrix-pill--support-vh { color: rgba(134, 239, 172, 0.88); }
+    .matrix-table--proposed .matrix-pill--support-h  { color: var(--ink-2); }
+    .matrix-table--proposed .matrix-pill--support-m  { color: var(--ink-4); }
+    .matrix-table--proposed .matrix-pill--support-na,
+    .matrix-table--proposed .matrix-pill--support-dash { color: rgba(111, 123, 140, 0.28); }
 
     .matrix-table tbody th,
     .matrix-table tbody td {
@@ -1582,6 +1755,11 @@
       background: var(--card);
       z-index: 1;
       box-shadow: 8px 0 12px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Proposed swap table: metric column needs explicit inset (base th uses padding-left: 0) */
+    .matrix-table.matrix-table--proposed tbody th {
+      padding-left: 22px;
     }
 
     .matrix-table tbody td {
@@ -2335,7 +2513,7 @@
       <h1 class="report-name">Supplement Impact Report</h1>
 
       <p class="report-context">
-        <strong>Observed impact, not proof of causality.</strong> This report shows where the stack seems to have helped, where the response was limited, and where broader recovery constraints still look stronger than supplementation. The goal is a clear read, not a hard claim.
+        <strong>Observed impact, not proof of causality.</strong> This report shows where the stack seems to be helping, where the effect still looks limited, and where broader recovery factors may be stronger than what the supplements can counteract on their own. <strong>The goal is to give a clear read of the data, not to overstate it.</strong>
       </p>
 
       <div class="header-grid" aria-label="Review overview">
@@ -2352,7 +2530,7 @@
         <div class="header-stat">
           <div class="header-stat__label">Training Load</div>
           <div class="header-stat__value mono">16 days</div>
-          <div class="header-stat__sub">9.0 total hours logged / lighter activity in window</div>
+          <div class="header-stat__sub">9.0 total hours logged</div>
         </div>
       </div>
 
@@ -2873,7 +3051,6 @@
 
     <section class="page-section" aria-labelledby="metric-change-heading">
       <p class="section-label" id="metric-change-heading">1. Deep dive into your metric changes</p>
-      <p class="metric-phase-after-title">After Nutricode</p>
 
       <div class="chart-category">
         <h2 class="chart-category__title" id="metrics-training">Training &amp; workout effort</h2>
@@ -2884,7 +3061,8 @@
             <svg id="intensity-chart" viewBox="0 0 720 280" role="img" aria-label="Average training intensity over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(59,130,246,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2893,7 +3071,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is a day with logged activity: <strong>average_intensity</strong> from the Garmin export, shown on a 0–100% scale (device index × 100). Rest days with no activity data are omitted. The amber line is OLS regression across days 1–50.</p>
+            <p class="sleep-card__body">Each point is an active day: <strong>average_intensity</strong> from the Garmin export on a 0 – 100 % scale (device index × 100). Rest days and days with no activity data are omitted. Grey dots mark days before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn across active days 1 – 50.</p>
           </details>
         </div>
 
@@ -2903,7 +3081,8 @@
             <svg id="training-time-chart" viewBox="0 0 720 280" role="img" aria-label="Training duration in minutes per day with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(45,212,191,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2912,7 +3091,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is <strong>total_duration</strong> from the Garmin export for that day (recorded activity only), in minutes. Days with no logged activity are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">Each point is <strong>total activity duration</strong> (<code>total_duration</code> from the Garmin export), in minutes. Days with no logged activity are omitted. Grey dots mark days before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn across active days 1 – 50.</p>
           </details>
         </div>
 
@@ -2922,7 +3101,8 @@
             <svg id="trimp-chart" viewBox="0 0 720 280" role="img" aria-label="Daily TRIMP proxy load over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(249,115,22,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2931,7 +3111,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">This extract does not include heart-rate–based Banister TRIMP. Each point is a <strong>daily load proxy</strong>: <strong>training minutes × Garmin average intensity</strong> on a 0–100% scale (same fields as the training charts: duration and average intensity in the daily activity export). It rises with both longer sessions and higher average intensity. Rest days with no activity are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">This extract does not include heart-rate – based Banister TRIMP. Each point is a <strong>load proxy</strong>: <strong>training minutes × average intensity (%)</strong> (same fields as the duration and intensity charts above). It scales with both session length and effort level—a proxy for total training stress. Rest days and days without activity data are omitted. Grey dots mark days before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn across active days 1 – 50.</p>
           </details>
         </div>
       </div><div class="chart-category">
@@ -2943,7 +3123,8 @@
             <svg id="rhr-chart" viewBox="0 0 720 280" role="img" aria-label="Resting heart rate in beats per minute over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(251,113,133,0.95);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2952,17 +3133,18 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is one day with a non-null RHR value from the Garmin export. Gaps are days without RHR in this extract. The amber line is ordinary least-squares regression on all plotted days (day index 1–50).</p>
+            <p class="sleep-card__body">Each point is one day with a non-null <strong>resting heart rate</strong> value from the Garmin export. Gaps are days with no RHR in the extract. A downward slope indicates cardiovascular adaptation; Omega-3 is the current stack's strongest mechanism for RHR reduction (anti-inflammatory). Grey dots mark days before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
         <div class="metric-chart-block card" aria-labelledby="vo2-max-trend-heading">
           <h3 class="metric-chart-block__title" id="vo2-max-trend-heading">VO₂ max</h3>
           <div class="deep-chart-wrap">
+            <p class="deep-chart-wrap__title">After Nutricode</p>
             <svg id="vo2-max-chart" viewBox="0 0 720 280" role="img" aria-label="VO2 max in milliliters per kilogram per minute over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(16,185,129,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> Daily data point</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2971,7 +3153,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is the daily <strong>VO2 max</strong> series from this extract (mL/kg/min, as stored—device or pipeline estimate when the watch has no direct reading). Many early days are empty in this window. Days without a value are omitted. The horizontal axis spans the first and last extract days with a reading; the amber line is OLS on extract-day index, drawn across that visible range.</p>
+            <p class="sleep-card__body">Each point is the daily <strong>VO₂ max</strong> estimate from the Garmin device (mL/kg/min). All 50 days before day 30 are null in this extract, so every plotted dot falls in the post-Nutricode period (day 30 +); no grey baseline dots appear. The horizontal axis spans the first and last days with a reading. The amber line is OLS regression across the visible data range. CoQ10 is the current stack's primary mechanism for VO₂ max support (mitochondrial efficiency).</p>
           </details>
         </div>
       </div><div class="chart-category">
@@ -2983,7 +3165,8 @@
             <svg id="deep-sleep-chart" viewBox="0 0 720 280" role="img" aria-label="Deep sleep percent of sleep time per night with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:#818cf8;border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -2992,7 +3175,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is one night: deep sleep ÷ (REM + deep + light + awake) × 100, matching the stage-mix definition used above. Nights are omitted if any of those four stages are missing in the export. The line is ordinary least-squares regression on all plotted nights (day index 1–50).</p>
+            <p class="sleep-card__body">Each point is one night: <strong>deep sleep ÷ (REM + deep + light + awake) × 100</strong>, matching the stage-mix definition used in the biometric panel. Nights are omitted if any of the four stages are missing in the export. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3002,7 +3185,8 @@
             <svg id="deep-time-chart" viewBox="0 0 720 280" role="img" aria-label="Total minutes of deep sleep per night over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(129,140,248,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3011,7 +3195,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is nightly <strong>deep sleep duration</strong> from the Garmin export, in <strong>minutes</strong> (source values are seconds in the extract; we round to whole minutes). This is absolute time in deep sleep, not a percentage of the night. Nights without deep sleep data are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">Each point is nightly <strong>deep sleep duration</strong> from the Garmin export, in <strong>minutes</strong> (source values are in seconds; rounded to whole minutes). This is absolute time in deep sleep, not a percentage of the night. Nights without deep sleep data are omitted. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3021,7 +3205,8 @@
             <svg id="rem-sleep-chart" viewBox="0 0 720 280" role="img" aria-label="REM sleep percent of sleep time per night with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:#c084fc;border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3030,7 +3215,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Same denominator as the deep chart: REM ÷ (REM + deep + light + awake) × 100. Nights are omitted if any stage is missing. The line is OLS regression on all plotted nights (day index 1–50).</p>
+            <p class="sleep-card__body">Same denominator as the deep chart: <strong>REM ÷ (REM + deep + light + awake) × 100</strong>. Nights are omitted if any of the four stages are missing. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3040,7 +3225,8 @@
             <svg id="rem-time-chart" viewBox="0 0 720 280" role="img" aria-label="Total minutes of REM sleep per night over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(192,132,252,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3049,7 +3235,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is nightly <strong>REM sleep duration</strong> from the Garmin export, in <strong>minutes</strong> (source values are seconds in the extract; we round to whole minutes). This is absolute time in REM, not a percentage of the night. Nights without REM data are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">Each point is nightly <strong>REM sleep duration</strong> from the Garmin export, in <strong>minutes</strong> (source values are in seconds; rounded to whole minutes). Absolute time in REM, not a percentage of the night. Nights without REM data are omitted. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3059,7 +3245,8 @@
             <svg id="restorative-time-chart" viewBox="0 0 720 280" role="img" aria-label="Total minutes of deep plus REM sleep per night over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(124,58,237,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3068,7 +3255,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is <strong>deep sleep + REM</strong> for that night, in <strong>minutes</strong> (seconds from the export summed, then rounded to whole minutes). Nights where either stage is missing are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">Each point is <strong>deep + REM sleep</strong> for that night, in <strong>minutes</strong> (raw seconds from the export summed, then rounded). Nights where either stage is missing are omitted. This is the primary restorative-sleep duration metric. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3078,7 +3265,8 @@
             <svg id="restorative-pct-chart" viewBox="0 0 720 280" role="img" aria-label="Restorative sleep percent of recorded sleep time per night with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(147,51,234,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3087,7 +3275,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is <strong>(deep + REM) ÷ (REM + deep + light + awake) × 100</strong>—the same four-stage denominator as the deep and REM percentage charts. It is the fraction of the scored sleep session spent in restorative stages. Nights are omitted if any of the four stages are missing. The line is OLS regression on all plotted nights (day index 1–50).</p>
+            <p class="sleep-card__body">Each point is <strong>(deep + REM) ÷ (REM + deep + light + awake) × 100</strong>—the fraction of the scored sleep session spent in restorative stages. Same four-stage denominator as the individual percentage charts. Nights are omitted if any stage is missing. Target range is 40 – 45 %; the 50-day window averaged ≈ 34 %. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
       </div><div class="chart-category">
@@ -3099,7 +3287,8 @@
             <svg id="disturbances-chart" viewBox="0 0 720 280" role="img" aria-label="Sleep disturbances per night over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(251,191,36,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3108,7 +3297,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is the nightly <strong>disturbance count</strong> from the Garmin sleep export (as provided in this dataset—typically awakenings or similar events per sleep session). Nights without a value are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class="sleep-card__body">Each point is the nightly <strong>disturbance count</strong> from the Garmin sleep export (awakenings and brief arousals recorded per sleep session). Lower is better; the cohort median is around 1 – 2 per night. Nights without a value are omitted. Grey dots mark nights before Nutricode (days 1 – 26); the coloured dots start at day 27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day 26), drawn day 1 – 50.</p>
           </details>
         </div>
 
@@ -3118,7 +3307,8 @@
             <svg id="disturbances-per-hour-chart" viewBox="0 0 720 280" role="img" aria-label="Sleep disturbances per hour of sleep over time with regression trend line"></svg>
           </div>
           <div class="metric-chart-legend" aria-label="Legend">
-            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" aria-hidden="true"></span> Daily data point</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(152,162,178,0.9);border-color:rgba(255,255,255,0.22);" aria-hidden="true"></span> Before Nutricode</span>
+            <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--point" style="background:rgba(56,189,248,0.92);border-color:rgba(255,255,255,0.35);" aria-hidden="true"></span> After Nutricode</span>
             <span class="metric-chart-legend__item"><span class="metric-chart-legend__swatch metric-chart-legend__swatch--line" aria-hidden="true"></span> Regression line (OLS)</span>
           </div>
           <div class="deep-chart-caption">
@@ -3127,7 +3317,7 @@
           </div>
           <details class="metric-chart-method">
             <summary>Definitions &amp; method</summary>
-            <p class="sleep-card__body">Each point is <strong>nightly disturbance count ÷ sleep duration in hours</strong>, using Garmin <strong>sleep_time</strong> (seconds in the export) as the denominator—same basis as the bio benchmark “disruptions per hour” in the health report pipeline. Nights missing disturbances or sleep time are omitted. The amber line is OLS regression from day 1 to day 50.</p>
+            <p class=”sleep-card__body”>Each point is <strong>nightly disturbance count ÷ sleep duration in hours</strong>, using Garmin <code>sleep_time</code> (seconds in the export, converted) as the denominator—the same rate-normalised metric used in the biometric panel. Nights missing either value are omitted. Grey dots mark nights before Nutricode (days&#8239;1&#8239;–&#8239;26); the coloured dots start at day&#8239;27 when the stack began. The amber line is a <strong>piecewise hinge regression</strong> (two-segment OLS, continuous at the breakpoint, day&#8239;26), drawn day&#8239;1&#8239;–&#8239;50.</p>
           </details>
         </div>
       </div></section>
@@ -3172,21 +3362,21 @@
                 <tr>
                   <th>Deep Sleep</th>
                   <td><span class="matrix-pill matrix-pill--impact-nt">Not targeted</span></td>
-                  <td><span class="matrix-pill matrix-pill--impact-unclear">Limited</span></td>
                   <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
-                  <td><span class="matrix-pill matrix-pill--impact-unclear">Limited</span></td>
+                  <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
+                  <td><span class="matrix-pill matrix-pill--impact-promising">Partial signal</span></td>
                 </tr>
                 <tr>
                   <th>REM Sleep</th>
                   <td><span class="matrix-pill matrix-pill--impact-nt">Not targeted</span></td>
-                  <td><span class="matrix-pill matrix-pill--impact-promising">Early signal</span></td>
+                  <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
                   <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
                   <td><span class="matrix-pill matrix-pill--impact-unclear">Limited</span></td>
                 </tr>
                 <tr>
                   <th>Sleep Quality</th>
                   <td><span class="matrix-pill matrix-pill--impact-nt">Not targeted</span></td>
-                  <td><span class="matrix-pill matrix-pill--impact-unclear">Limited</span></td>
+                  <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
                   <td><span class="matrix-pill matrix-pill--impact-limited">Too early</span></td>
                   <td><span class="matrix-pill matrix-pill--impact-unclear">Limited</span></td>
                 </tr>
@@ -3233,13 +3423,8 @@
             </div>
             <div class="supp-card__confidence">Higher confidence</div>
           </div>
-          <div class="signal-tags" aria-label="Observed areas of alignment for CoQ10">
-            <span class="signal-tag">Recovery resilience</span>
-            <span class="signal-tag">VO2 maintenance</span>
-            <span class="signal-tag">Higher workout intensity</span>
-          </div>
-          <p class="supp-card__body">This is the clearest keep. Recovery was higher by week 4, VO2 Max improved in the late-window comparison, and average workout intensity also ran higher later in the month. That makes CoQ10 look most aligned with workload tolerance and performance capacity rather than sleep support.</p>
-          <p class="supp-card__foot"><strong>Best read:</strong> it&#x2019;s a strong match with very significant improvements on all the metrics it&#x2019;s meant to support.</p>
+          <p class="supp-card__body">Recovery improved and workout intensity rose by roughly 43% in the supplement window — conditions that normally suppress recovery scores. CoQ10&#x2019;s targets are workload tolerance and performance capacity, and both moved in the right direction under meaningful training pressure.</p>
+          <p class="supp-card__foot"><strong>Best read:</strong> recovery improving against a harder training load is a stronger signal than recovery improving against an easy one. That is what happened here.</p>
         </div>
 
         <div class="supp-card card">
@@ -3250,13 +3435,8 @@
             </div>
             <div class="supp-card__confidence">Early signal</div>
           </div>
-          <div class="signal-tags" aria-label="Observed areas of alignment for Omega-3">
-            <span class="signal-tag">RHR improvement</span>
-            <span class="signal-tag">Recovery support</span>
-            <span class="signal-tag">Inflammation fit</span>
-          </div>
-          <p class="supp-card__body">The strongest fit here is the drop in resting heart rate. Recovery also improved, but the sleep response was still limited, so Omega-3 looks supportive rather than transformative in this window.</p>
-          <p class="supp-card__foot"><strong>Best read:</strong> underperforming in sleep architecture, but strong improvements in recovery—most likely driven by strong improvements in RHR.</p>
+          <p class="supp-card__body">The RHR improvement is real, but most of the drop happened before day 26 — before supplementation began. Omega-3 cannot be credited for that move. The real case for keeping it is that anti-inflammatory and sleep effects need 8–12 weeks to fully build. You&#x2019;re not far enough in to see them yet. No signal at 30 days isn&#x2019;t the same as no effect.</p>
+          <p class="supp-card__foot"><strong>Best read:</strong> too early to judge — Omega-3 operates on a longer timeline than 30 days. Keep and evaluate at day 60.</p>
         </div>
 
         <div class="supp-card card">
@@ -3267,13 +3447,8 @@
             </div>
             <div class="supp-card__confidence">Early signal</div>
           </div>
-          <div class="signal-tags" aria-label="Observed areas of alignment for Probiotics">
-            <span class="signal-tag">Early REM signals</span>
-            <span class="signal-tag">Sleep pathway</span>
-            <span class="signal-tag">Slower-acting lever</span>
-          </div>
-          <p class="supp-card__body">This still looks plausible, but the evidence is thin after 30 days. There were a few early REM signals, yet they were not strong or consistent enough to count as a clear response across the month.</p>
-          <p class="supp-card__foot"><strong>Best read:</strong> too early to rule out, with some early REM movement, but not strong enough yet to call a win.</p>
+          <p class="supp-card__body">REM reversed direction after day 26, which is the opposite of what Probiotics targets. However, gut-brain axis effects on sleep architecture consistently require 8–12 weeks minimum — evaluating Probiotics at 30 days is measuring before it reaches therapeutic effect. The absence of a signal here is not evidence of failure. It is consistent with expected timing.</p>
+          <p class="supp-card__foot"><strong>Best read:</strong> 30 days is not enough time to fairly evaluate this one. No positive signal yet, but not enough time to call it a miss. Review at day 60.</p>
         </div>
 
         <div class="supp-card card">
@@ -3284,38 +3459,68 @@
             </div>
             <div class="supp-card__confidence">Underperforming</div>
           </div>
-          <div class="signal-tags" aria-label="Observed areas of alignment for Magnesium">
-            <span class="signal-tag">Swap candidate</span>
-            <span class="signal-tag">Deep sleep still weak</span>
-            <span class="signal-tag">Missed main target</span>
-          </div>
-          <p class="supp-card__body">This should be the first swap. The outcomes Magnesium was meant to support did not improve enough, especially deep sleep, so there is not a strong case to keep it in the same role for another month.</p>
-          <p class="supp-card__foot"><strong>Best read:</strong> replace it with a better-fit option for the remaining sleep bottleneck.</p>
+          <p class="supp-card__body">The deep sleep decline slowed after day 26. That could be a partial Magnesium contribution. But the metrics that worsened most point to cortisol-driven fragmentation from the training load increase, and Magnesium targets GABA-mediated relaxation, not cortisol. The case for swapping is not that it clearly failed — it is that a different mechanism is now the better fit for what the data shows.</p>
+          <p class="supp-card__foot"><strong>Best read:</strong> may have partially braked the deep sleep decline, but the pattern of deterioration has shifted toward a mechanism it cannot target.</p>
         </div>
 
         <div class="matrix-card matrix-card--proposed card supp-grid__full" aria-labelledby="proposed-change-heading">
-          <h3 class="matrix-card__title" id="proposed-change-heading">Recommended swap</h3>
-          <p class="matrix-card__body">If you change only one part of the stack, this is the cleanest place to do it. If the remaining sleep issue feels tied to higher workout stress and training intensity, Ashwagandha is the better next move. If it feels more like a deeper circadian-pattern problem, Vitamin D is the better fit.</p>
-          <div class="matrix-scroll matrix-scroll--proposed">
+          <header class="matrix-proposed__top">
+            <p class="matrix-proposed__eyebrow">Magnesium replacement</p>
+            <h3 class="matrix-card__title matrix-proposed__title" id="proposed-change-heading">Recommended swap</h3>
+            <div class="matrix-proposed__intro" role="note">
+              <p class="matrix-proposed__intro-text">The data can&#x2019;t tell you which one is right. Only you know which of these sounds like you. That&#x2019;s what makes the call.</p>
+            </div>
+          </header>
+          <div class="matrix-proposed__choices">
+            <div class="matrix-swap-choice-grid" role="group" aria-label="Choosing between Ashwagandha and Vitamin D">
+              <article class="matrix-swap-choice matrix-swap-choice--a">
+                <div class="matrix-swap-choice__inner">
+                  <div class="matrix-swap-choice__head">
+                    <div class="matrix-swap-choice__head-text">
+                      <p class="matrix-swap-choice__kicker">Option A</p>
+                      <p class="matrix-swap-choice__name">Ashwagandha</p>
+                    </div>
+                  </div>
+                  <p class="matrix-swap-choice__lead">If your sleep feels restless and wired</p>
+                  <p class="matrix-swap-choice__body">You wake up tired but activated &#x2014; like your brain didn&#x2019;t fully switch off. Sleep feels broken and light rather than just too short. That&#x2019;s usually a stress response; cortisol staying elevated overnight from hard training days. Ashwagandha is well studied for exactly that pattern.</p>
+                </div>
+              </article>
+              <article class="matrix-swap-choice matrix-swap-choice--b">
+                <div class="matrix-swap-choice__inner">
+                  <div class="matrix-swap-choice__head">
+                    <div class="matrix-swap-choice__head-text">
+                      <p class="matrix-swap-choice__kicker">Option B</p>
+                      <p class="matrix-swap-choice__name">Vitamin D</p>
+                    </div>
+                  </div>
+                  <p class="matrix-swap-choice__lead">If your sleep feels shallow, even on easy days</p>
+                  <p class="matrix-swap-choice__body">You can&#x2019;t seem to reach deep sleep regardless of how tired you are. You wake at roughly the same time every night. That points to a circadian signal problem &#x2014; your body losing the cue for when to actually rest. Vitamin D has the strongest evidence in the database for deep sleep, REM, and disruptions.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+          <div class="matrix-proposed__data">
+            <h4 class="matrix-proposed__section-label matrix-proposed__section-label--table">Literature alignment by metric</h4>
+            <div class="matrix-scroll matrix-scroll--proposed">
             <table class="matrix-table matrix-table--proposed" aria-label="Proposed monthly impact, qualitative tiers (Mg, Ashwagandha, Vitamin D)">
               <thead>
                 <tr>
                   <th>Metric</th>
                   <th scope="col">
-                      <span class="matrix-col-head">
+                    <span class="matrix-col-head">
                       <span class="matrix-col-tag matrix-col-tag--swap">Swap out</span>
                       <span class="matrix-col-name">Magnesium</span>
                     </span>
                   </th>
                   <th scope="col">
                     <span class="matrix-col-head">
-                      <span class="matrix-col-tag matrix-col-tag--option">Option 1</span>
+                      <span class="matrix-col-tag matrix-col-tag--option">Option A</span>
                       <span class="matrix-col-name">Ashwagandha</span>
                     </span>
                   </th>
                   <th scope="col">
                     <span class="matrix-col-head">
-                      <span class="matrix-col-tag matrix-col-tag--option">Option 2</span>
+                      <span class="matrix-col-tag matrix-col-tag--option">Option B</span>
                       <span class="matrix-col-name">Vitamin D</span>
                     </span>
                   </th>
@@ -3354,13 +3559,13 @@
                 </tr>
                 <tr>
                   <th>Workout Effort</th>
-                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">—</span></td>
+                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">&#x2014;</span></td>
                   <td><span class="matrix-pill matrix-pill--support-vh">Very high</span></td>
                   <td><span class="matrix-pill matrix-pill--support-m">Moderate</span></td>
                 </tr>
                 <tr>
-                  <th>VO2 Max</th>
-                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">—</span></td>
+                  <th>VO&#x2082; Max</th>
+                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">&#x2014;</span></td>
                   <td><span class="matrix-pill matrix-pill--support-vh">Very high</span></td>
                   <td><span class="matrix-pill matrix-pill--support-m">Moderate</span></td>
                 </tr>
@@ -3368,10 +3573,11 @@
                   <th>HRV</th>
                   <td><span class="matrix-pill matrix-pill--support-h">High</span></td>
                   <td><span class="matrix-pill matrix-pill--support-m">Moderate</span></td>
-                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">—</span></td>
+                  <td><span class="matrix-pill matrix-pill--support-na matrix-pill--support-dash" aria-label="No data">&#x2014;</span></td>
                 </tr>
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </div>
@@ -3383,21 +3589,21 @@
       <div class="target-card card">
         <div class="target-card__intro">
           <p class="target-card__eyebrow">Month 2 targets</p>
-          <p class="target-card__body">These are the clearest targets for the next 30 days. If they still do not move, the main constraint is probably broader than the supplement stack alone.</p>
+          <p class="target-card__body">These two metrics deteriorated most in month 1 and are the primary test for the Ashwagandha swap. If neither moves after another 30 days, the constraint is likely structural — broader than any supplement can address.</p>
         </div>
         <div class="target-grid" role="list">
           <div class="target-item" role="listitem">
             <span class="target-item__index mono" aria-hidden="true">01</span>
             <div class="target-item__main">
               <div class="target-item__value mono">17%+</div>
-              <div class="target-item__label">Deep sleep share moving back toward cohort average (currently 13%)</div>
+              <div class="target-item__label">Deep sleep share back toward cohort average — rate of decline slowed in month 1, now needs to reverse</div>
             </div>
           </div>
           <div class="target-item" role="listitem">
             <span class="target-item__index mono" aria-hidden="true">02</span>
             <div class="target-item__main">
               <div class="target-item__value mono">21%+</div>
-              <div class="target-item__label">REM share moving back to cohort average, not just total sleep time rising</div>
+              <div class="target-item__label">REM share back to cohort average — currently trending down after day 26, needs to stabilise first</div>
             </div>
           </div>
         </div>
@@ -3409,10 +3615,10 @@
           <h3 class="final-card__title">Performance markers moved up fast. Now the next unlock is sleep quality.</h3>
         </div>
         <div class="final-card__body">
-          <p>This month brought some very encouraging progress. Recovery improved, VO&#x2082; max moved up, workout effort increased strongly, and resting heart rate moved lower. That is a strong pattern overall, and it suggests the stack is already creating meaningful momentum. <strong>CoQ10 and Omega-3</strong> in particular look well aligned with the gains showing up on the cardiovascular and performance side.</p>
-          <p><strong>The main constraint now</strong> is that sleep-stage quality did not improve enough. Deep sleep needs to move up, REM has not improved enough relative to total sleep, and light sleep is still taking up too much of the night. In practical terms, that means the next intervention should be judged primarily on whether it can improve sleep architecture rather than on whether it can add more cardiovascular upside.</p>
-          <p>From a stack decision point of view, CoQ10 and Omega-3 still look correctly placed and should be given more time to compound. Magnesium is the least convincing part of the current stack because, by this stage, you would usually want to see a clearer sleep-related signal if it were the right lever. That makes it the <strong>most logical candidate to change first</strong>.</p>
-          <p>So the month 2 procedure is straightforward: keep the ingredients that are already aligned with the observed cardiovascular response, change the part of the stack that has not translated into enough sleep-stage improvement, and evaluate the next cycle primarily against deep sleep, REM share, and light sleep share. If those move in the right direction, your overall metric health score will be a natural reflection of that.</p>
+          <p>Recovery improved and workout intensity rose significantly — conditions that typically push recovery scores down. They went up instead. That is the most meaningful signal in the report, and it points to CoQ10 doing exactly what it is supposed to do. VO2 Max edged up on limited data. <strong>The performance and cardiovascular side of the stack is working.</strong></p>
+          <p><strong>The main constraint is sleep fragmentation, not sleep depth alone.</strong> Awake time doubled from 4% to 8% of total sleep. Disturbances increased from 3 to around 5 per night. REM reversed direction after day 26. These are signatures of cortisol-driven arousal under elevated training load — a mechanism no supplement in the current stack directly targets.</p>
+          <p>The Magnesium swap is not about clear failure. The deep sleep decline actually slowed in the supplement window — from −0.22 to −0.02 pp/day — which may be a partial signal. But the pattern that worsened most points to cortisol-driven fragmentation, and Magnesium does not address that. Ashwagandha targets it by reducing cortisol directly. Vitamin D targets it by reinforcing the circadian signal that tells your body when to enter restorative sleep. Which one fits depends on how the broken sleep actually feels to you.</p>
+          <p>Month 2 is a targeted test: CoQ10 and Omega-3 keep running, Probiotics gets its full evaluation window, and Ashwagandha takes on the sleep fragmentation problem directly. Judge month 2 primarily on awake time, disturbances per night, and deep sleep share. If those three move in the right direction, the overall score follows naturally.</p>
         </div>
       </div>
     </section>
