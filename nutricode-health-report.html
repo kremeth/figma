@@ -32,6 +32,7 @@
       --amber-accent: #f59e0b;
       --red-accent:   #ef4444;
       --blue-accent:  #3b82f6;
+      --score-electric: #5b8fd8;
       /* Tinted backgrounds */
       --red-bg:   rgba(181,28,28,0.07);
       --amber-bg: rgba(153,80,0,0.08);
@@ -310,6 +311,17 @@
       letter-spacing: var(--ls-13);
       line-height: 1.45;
     }
+    /* Phase 2 (score ≥ 90): blue ring + track */
+    .score-ring-wrap--phase2 #score-ring-arc {
+      stroke: var(--score-electric);
+    }
+    .phase-badge--phase2-active {
+      background: rgba(91, 143, 216, 0.12);
+      color: #3b6fbf;
+      border: 1px solid rgba(91, 143, 216, 0.28);
+    }
+    .phase-seg--done { background: rgba(91, 143, 216, 0.35); }
+    .phase-seg--active { background: var(--score-electric); }
     .metric-health-sep { height: 1px; background: var(--sep); margin: var(--space-3) 0; }
     .limiting-label {
       font-family: var(--font-ui);
@@ -4370,9 +4382,9 @@
               <span class="phase-seg"></span>
             </div>
             <span class="phase-of">of 2</span>
-            </div>
+          </div>
           <p class="score-headline">Good progress</p>
-          <p class="score-context">You're already ahead of 70% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.</p>
+          <p class="score-context">You're in the 82nd percentile for health metrics among men your age. In phase 1, the focus is on improving the limiting metrics that will move your score to 90+, where phase 2 begins and the focus shifts to longevity.</p>
         </div>
 
     </div>
@@ -4380,7 +4392,7 @@
       <div class="metric-health-sep" aria-hidden="true"></div>
 
       <div class="metric-health-limiting">
-        <p class="limiting-label">Limiting metrics</p>
+        <p class="limiting-label">LIMITING METRICS</p>
         <ul class="limiting-list" aria-label="Metrics needing attention">
           <li class="limiting-row">
             <div class="limiting-left">
@@ -4388,25 +4400,25 @@
               <span class="limiting-name">HRV</span>
       </div>
             <div class="limiting-right">
-              <span class="limiting-badge limiting-badge--red">27% below avg</span>
+              <span class="limiting-badge limiting-badge--red">below average</span>
+      </div>
+          </li>
+          <li class="limiting-row">
+            <div class="limiting-left">
+              <span class="limiting-dot limiting-dot--red" aria-hidden="true"></span>
+              <span class="limiting-name">Sleep disruptions</span>
+      </div>
+            <div class="limiting-right">
+              <span class="limiting-badge limiting-badge--red">above average</span>
       </div>
           </li>
           <li class="limiting-row">
             <div class="limiting-left">
               <span class="limiting-dot limiting-dot--amber" aria-hidden="true"></span>
-              <span class="limiting-name">Total sleep</span>
+              <span class="limiting-name">Overnight awake time</span>
       </div>
             <div class="limiting-right">
-              <span class="limiting-badge limiting-badge--amber">Below target</span>
-      </div>
-          </li>
-          <li class="limiting-row">
-            <div class="limiting-left">
-              <span class="limiting-dot limiting-dot--amber" aria-hidden="true"></span>
-              <span class="limiting-name">Awake time</span>
-      </div>
-            <div class="limiting-right">
-              <span class="limiting-badge limiting-badge--amber">Below target</span>
+              <span class="limiting-badge limiting-badge--amber">above target</span>
       </div>
           </li>
         </ul>
@@ -4697,7 +4709,7 @@
       <text x="438" y="246" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">2:00</text>
       <text x="243" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>
 <!-- TRIMP_CHART_AXES_END -->
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!-- Good next day recovery -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <!-- Good next day recovery -->
       <circle cx="145" cy="231" r="4.5" fill="#22c55e"/>
       <circle cx="357" cy="159" r="4.5" fill="#22c55e"/>
       <circle cx="355" cy="142" r="4.5" fill="#22c55e"/>
@@ -5282,6 +5294,28 @@
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             </div>
           </div>
         </div>
@@ -5410,7 +5444,7 @@
                 </div>
                 <div class="fc4-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
-                  <p class="fc4-cap">Personalized longevity stack</p>
+                  <p class="fc4-cap">HEALTHSPAN WITH PROACTIVE SUPPORT</p>
                   <div class="fc4-chart-panel">
                     <svg id="focus-chart-4" class="focus-healthspan-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lifespan versus healthspan: illustrative Normal trajectory and With Protocol trajectory (Nutricode design).">
                       <defs>
@@ -5446,11 +5480,11 @@
                   <div class="fc4-legend" aria-hidden="true">
                     <div class="fc4-legend__item">
                       <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #6b7280;border-radius:0;background:transparent;"></span>
-                      <span class="fc4-legend__label">Normal</span>
+                      <span class="fc4-legend__label">Passive</span>
                     </div>
                     <div class="fc4-legend__item">
                       <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
-                      <span class="fc4-legend__label">With Protocol</span>
+                      <span class="fc4-legend__label">Proactive</span>
                     </div>
                   </div>
                 </div>
@@ -5478,7 +5512,7 @@
                 </div>
                 <div class="fc5-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
-                  <p class="fc5-cap">System decline over lifespan</p>
+                  <p class="fc5-cap">SYSTEM FUNCTION VS LIFESPAN</p>
                   <div class="fc5-chart-panel">
                     <svg id="focus-chart-5" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="System function vs lifespan: Gut health, Immunity, Metabolism, Musculoskeletal illustrative decline curves.">
                       <defs><linearGradient id="exg-5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
@@ -5534,7 +5568,7 @@
                 </div>
                 <div class="fc6-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
-                  <p class="fc6-cap">Energy levels over age</p>
+                  <p class="fc6-cap">ENERGY VS AGE</p>
                   <div class="fc6-chart-panel">
                     <svg id="focus-chart-6" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Energy levels across age; illustrative curve.">
                       <defs><linearGradient id="exe-6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
@@ -5550,7 +5584,7 @@
                   <div class="fc6-legend" aria-hidden="true">
                     <div class="fc6-legend__item">
                       <span class="fc6-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
-                      <span class="fc6-legend__label">Energy trend</span>
+                      <span class="fc6-legend__label">Energy level</span>
                     </div>
                   </div>
                 </div>
@@ -5599,7 +5633,12 @@
                       <text x="163.0" y="173" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="6.5" fill="#6b7280">Inflammation/Oxidative Stress</text>
                     </svg>
                   </div>
-                  
+                  <div class="fc7-legend" aria-hidden="true">
+                    <div class="fc7-legend__item">
+                      <span class="fc7-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+                      <span class="fc7-legend__label">Longevity outlook</span>
+                    </div>
+                  </div>
                 </div>
                 <div class="fc7-footer">
                   <details class="fc7-why-details">
@@ -5938,16 +5977,19 @@
     }
   })();
 
-  /* ── Score ring arc colour by score band (0–30 / 31–60 / 61–90 / 91+) ── */
+  /* ── Score ring arc: Phase 2 (≥90) = blue; else band colour (must match populate-health-report.mjs) ── */
   (function () {
     const wrap = document.querySelector('.score-ring-wrap[data-score]');
     const arc = document.getElementById('score-ring-arc');
     if (!wrap || !arc) return;
     const s = parseInt(wrap.getAttribute('data-score'), 10);
     if (Number.isNaN(s)) return;
+    if (s >= 90) {
+      arc.setAttribute('stroke', '#5b8fd8');
+      return;
+    }
     let c = '#ef4444';
-    if (s > 90) c = '#22c55e';
-    else if (s > 60) c = '#22c55e';
+    if (s > 60) c = '#22c55e';
     else if (s > 30) c = '#f59e0b';
     arc.setAttribute('stroke', c);
   })();
@@ -6261,7 +6303,7 @@
     });
   })();
 
-                                                                                                                                              // REPORT_INJECT_FOCUS_DATA
+                                                                                                                                                                                          // REPORT_INJECT_FOCUS_DATA
   const FOCUS_SLOTS = [{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[46.278416,43.315247,49.84873,56.96931,null,49.892483,45.60042,46.207653,46.77598,46.151344,46.94552,42.345974,43.618034,null,null,51.240124,null,57.374928,46.99453,43.03888,43.18898,48.256687,55.54408,48.503765,43.24861,52.8369,49.906597,42.0221,44.134567,43.18766],"remPctiles":{"p50":65,"p30":23,"p60":65,"p90":100},"demographicPct":65,"metaGender":"male","metaAge":29,"metricLabel":"HRV","baselineLabel":"cohort median","unitLabel":"ms","lowerIsBetter":false}},{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[0.1778568252556692,0.8468595624558928,1.162290142057684,0.8683766181555037,null,1.6952222262469665,1.4579728286881926,2.0641412790030964,1.1021392216141748,0.8509967693641163,1.069995541685243,1.0286816444619067,0.9158307893589184,1.3157894736842106,1.3025544540125913,1.1819263758361718,0.9719972228650775,1.8023569282908418,0.6030403283219565,1.3623978201634879,0.783289817232376,1.125195346414308,0.8423304475716148,1.706409975935244,0.8454342635719597,1.5854956508973466,1.5978695073235687,0.530543069781151,0.7903113680436135,1.8570691639220667],"remPctiles":{"p50":1.1,"p30":0.3,"p60":1.1,"p90":3},"demographicPct":1.1,"metaGender":"male","metaAge":29,"metricLabel":"Disruptions","baselineLabel":"cohort median","unitLabel":"/h","lowerIsBetter":true}},{"graph_type":"7day_average","data":{"metricDaily":[51,53,51,46,null,48,49,48,48,50,48,51,51,null,null,50,null,47,51,54,53,51,48,51,53,49,50,54,54,52],"intensityDaily":[0.38269807839823516,1.0684431095156932,null,null,null,0.42228205998421375,null,0.4222820599842138,0.9487968468328299,null,1.3590856356954715,1.0132167127168217,0.542033479967598,null,null,1.5345662829095599,null,1.5691796765803205,0.4949636370664113,1.3522337658514372,0.8028034158684105,0.34517451578486036,1.4556878563987488,0.9633540412394223,1.6073276344943326,null,1.2445040657466562,0.8357428714953976,0.25335841610093124,null],"metricLabel":"Resting Heart Rate","leftUnit":"bpm"}},{"graph_type":null,"data":null},{"graph_type":null,"data":null},{"graph_type":null,"data":null},{"graph_type":null,"data":null}];
   /*NUTRICODE_FOCUS_CHART_SNIPPET_V1*/
 /**

@@ -106,6 +106,219 @@ function ageBand(age) {
 
 const gender = meta.gender === 'female' ? 'female' : 'male';
 const band = ageBand(meta.age ?? 30);
+
+// ─── Overall health score card (single source of truth) ───────────────────────
+
+const RING_STROKE_PHASE1 = '#17FF00';
+const RING_STROKE_PHASE2 = '#5b8fd8';
+
+function menWomenFromGender(g) {
+  return g === 'female' ? 'women' : 'men';
+}
+
+/**
+ * Demographic mean μ for the Nutricode composite (0–100), by age band (and sex).
+ * **Source of truth today:** inline calibration table (not yet in normative_metrics.json).
+ * If you add published cohort means by sex, replace the body of this function to read them.
+ */
+function demographicCompositeScoreMean(ageBandKey, genderKey) {
+  const byBand = {
+    '18-25': 65,
+    '26-35': 64,
+    '36-45': 63,
+    '46-55': 62,
+    '56-65': 61,
+    '66+': 60,
+  };
+  let mu = byBand[ageBandKey];
+  if (mu == null) mu = 63;
+  if (genderKey === 'female') mu -= 0.5;
+  return mu;
+}
+
+/** Fixed σ for normal approximation of composite score (not in JSON — tune with cohort data). */
+const COMPOSITE_SCORE_SD = 14;
+
+/** Standard normal CDF Φ(z), Abramowitz & Stegun (symmetric in z). */
+function normalCdf(z) {
+  if (!Number.isFinite(z)) return 0.5;
+  const x = Math.abs(z);
+  const t = 1 / (1 + 0.2316419 * x);
+  const d = 0.3989423 * Math.exp(-0.5 * x * x);
+  const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  return z >= 0 ? 1 - p : p;
+}
+
+/** Ordinal for "You're in the [P]th percentile" → replaces "[P]th" with e.g. "71st". */
+function ordinalEnglish(n) {
+  const k = Math.round(Number(n));
+  if (!Number.isFinite(k)) return `${n}th`;
+  const x = Math.abs(k) % 100;
+  const y = x % 10;
+  if (x >= 11 && x <= 13) return `${k}th`;
+  if (y === 1) return `${k}st`;
+  if (y === 2) return `${k}nd`;
+  if (y === 3) return `${k}rd`;
+  return `${k}th`;
+}
+
+/**
+ * Approximate percentile P (1–99) of composite score vs cohort mean μ for age/sex.
+ * Model: Φ((score−μ)/σ) with σ = COMPOSITE_SCORE_SD. This is **not** a vendor-supplied
+ * percentile; swap `healthScorePercentileP` for real distribution data when available.
+ */
+function healthScorePercentileP(score, ageBandKey, genderKey) {
+  const mu = demographicCompositeScoreMean(ageBandKey, genderKey);
+  const s = Number(score);
+  if (!Number.isFinite(s) || !Number.isFinite(mu)) return 50;
+  const z = (s - mu) / COMPOSITE_SCORE_SD;
+  const p = normalCdf(z) * 100;
+  return Math.min(99, Math.max(1, Math.round(p)));
+}
+
+function scoreBandIdFromScore(score) {
+  const s = +score;
+  if (s >= 95) return '95-100';
+  if (s >= 90) return '90-94';
+  if (s >= 85) return '85-89';
+  if (s >= 80) return '80-84';
+  if (s >= 70) return '70-79';
+  if (s >= 60) return '60-69';
+  if (s >= 50) return '50-59';
+  return 'below-50';
+}
+
+/** Exact title + copy templates (placeholders: [P]th, [men/women]). */
+const OVERALL_HEALTH_SCORE_BANDS = {
+  '95-100': {
+    title: 'Exceptional baseline',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. You're already in phase 2, where we work on longevity from an already strong baseline.",
+  },
+  '90-94': {
+    title: 'Phase 2 unlocked',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. You've entered phase 2, where we refine the last weak points and begin working on longevity.",
+  },
+  '85-89': {
+    title: 'Final push',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. In phase 1, the focus is on refining the remaining limiting metrics so your score reaches 90+, where phase 2 begins and the focus shifts to longevity.",
+  },
+  '80-84': {
+    title: 'Strong base',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. You already have a strong base. In phase 1, the focus is to bring your score to 90+. In phase 2, the focus shifts to longevity.",
+  },
+  '70-79': {
+    title: 'Good progress',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. In phase 1, the focus is on improving the limiting metrics that will move your score to 90+, where phase 2 begins and the focus shifts to longevity.",
+  },
+  '60-69': {
+    title: 'Promising base',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. Phase 1 focuses on moving your score toward 90+. Phase 2 then shifts to longevity.",
+  },
+  '50-59': {
+    title: 'Build momentum',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. Phase 1 is about moving your score toward 90+, where phase 2 begins and the focus shifts to longevity.",
+  },
+  'below-50': {
+    title: 'Build the foundation',
+    copy: "You're in the [P]th percentile for health metrics among [men/women] your age. Phase 1 is about moving your score toward 90+, where phase 2 begins and the focus shifts to longevity.",
+  },
+};
+
+function hydrateOverallHealthCopy(template, P, people) {
+  return template.replace('[men/women]', people).replace('[P]th', ordinalEnglish(P));
+}
+
+/**
+ * Single source of truth for the metric-health score card.
+ * @param {number|null} percentileOverride — if set (e.g. tests), skip internal P model.
+ */
+function getOverallHealthScoreState(score, genderKey, ageBandKey, percentileOverride = null) {
+  const bandId = scoreBandIdFromScore(score);
+  const def = OVERALL_HEALTH_SCORE_BANDS[bandId];
+  const people = menWomenFromGender(genderKey);
+  const P =
+    percentileOverride != null && Number.isFinite(+percentileOverride)
+      ? Math.min(99, Math.max(1, Math.round(+percentileOverride)))
+      : healthScorePercentileP(score, ageBandKey, genderKey);
+  const copy = hydrateOverallHealthCopy(def.copy, P, people);
+  const phase = +score >= 90 ? 'phase2' : 'phase1';
+  const circleColor = +score >= 90 ? RING_STROKE_PHASE2 : RING_STROKE_PHASE1;
+  return {
+    bandId,
+    title: def.title,
+    copy,
+    phase,
+    circleColor,
+    percentile: P,
+    demographicMean: demographicCompositeScoreMean(ageBandKey, genderKey),
+  };
+}
+
+/** Maps getOverallHealthScoreState → populate/HTML fields (phase 1|2 as number). */
+function scorePhaseFromOverallState(state) {
+  const n = state.phase === 'phase2' ? 2 : 1;
+  return {
+    bandId: state.bandId,
+    title: state.title,
+    contextCopy: state.copy,
+    phase: n,
+    ringStroke: state.circleColor,
+    scoreRingWrapClass: n >= 2 ? 'score-ring-wrap score-ring-wrap--phase2' : 'score-ring-wrap',
+  };
+}
+
+function metricHealthPhaseRowHtml(phase) {
+  if (phase >= 2) {
+    return `<div class="metric-health-phase-row">
+            <span class="phase-badge phase-badge--phase2-active">Phase 2</span>
+            <div class="phase-track" role="img" aria-label="Phase 2 of 2">
+              <span class="phase-seg phase-seg--done"></span>
+              <span class="phase-seg phase-seg--active"></span>
+            </div>
+            <span class="phase-of">of 2</span>
+          </div>`;
+  }
+  return `<div class="metric-health-phase-row">
+            <span class="phase-badge">Phase 1</span>
+            <div class="phase-track" role="img" aria-label="Phase 1 of 2">
+              <span class="phase-seg phase-seg--on"></span>
+              <span class="phase-seg"></span>
+            </div>
+            <span class="phase-of">of 2</span>
+          </div>`;
+}
+
+/** CLI: node populate-health-report.mjs --validate-health-score-phases */
+function logHealthScorePhaseValidation() {
+  const testScores = [49, 55, 64, 74, 82, 87, 92, 97];
+  const g = 'male';
+  const b = '26-35';
+  const mean = demographicCompositeScoreMean(b, g);
+  console.log(
+    '\n--- Overall health score card validation (gender=male, band=26-35, μ=%s, σ=%s, P=Φ((score−μ)/σ)) ---\n',
+    mean,
+    COMPOSITE_SCORE_SD,
+  );
+  for (const s of testScores) {
+    const st = getOverallHealthScoreState(s, g, b);
+    console.log(
+      JSON.stringify(
+        {
+          score: s,
+          title: st.title,
+          copy: st.copy,
+          phase: st.phase,
+          circleColor: st.circleColor,
+          gender_placeholder_used: menWomenFromGender(g),
+        },
+        null,
+        2,
+      ),
+    );
+    console.log('');
+  }
+}
+
 /** Normative bracket: plain number, or { p50, p30, p60, p90 } (REM); cohort code uses p50 as reference. */
 const g = (obj) => {
   const v = obj?.[gender]?.[band];
@@ -339,6 +552,14 @@ function trimpYFromIntensity(i) {
   return Math.round(minY - t * (minY - maxY));
 }
 
+/** Projection roadmap graph variant shown in "Your path to longevity". */
+function projectionBandFromScore(score) {
+  if (score >= 90) return 'blue';
+  if (score >= 75) return 'green';
+  if (score >= 50) return 'yellow';
+  return 'red';
+}
+
 /** X-axis span: max observed workout duration rounded up to whole hours; default 6h when no points. */
 const trimpRawRows = [];
 for (let d = 1; d <= (meta.num_days || 30); d++) {
@@ -480,6 +701,12 @@ if (available.length >= 3) {
 const C = 314.16;
 const dash = (healthScore / 100) * C;
 const dashRest = C - dash;
+
+const overallHealthScoreState = getOverallHealthScoreState(healthScore, gender, band);
+const scorePhase = scorePhaseFromOverallState(overallHealthScoreState);
+const scoreHeadline = scorePhase.title;
+const scoreContext = scorePhase.contextCopy;
+const projectionBand = projectionBandFromScore(healthScore);
 
 // HR zones from total_activity
 const zoneSecs = [0, 0, 0, 0, 0, 0];
@@ -654,64 +881,221 @@ if (sleepScoreAvg != null) {
   }
 }
 
-// Limiting metrics: top 3 worst by health-score rank (lowest sub-scores first), with cohort-context badges
+// Limiting metrics: issue-first selection (below avg → below target → unstable → variable),
+// ranked by severity, fallback to longevity priorities if no Tier 1–4 issues exist.
 const metricLimitMeta = {
-  hrv: { name: 'HRV', higherBetter: true, user: () => hrvAvg, cohort: () => c.hrv },
-  vo2: { name: 'VO₂ max', higherBetter: true, user: () => vo2Avg, cohort: () => c.vo2 },
-  rhr: { name: 'Resting HR', higherBetter: false, user: () => rhrAvg, cohort: () => c.rhr },
-  deep: { name: 'Deep sleep', higherBetter: true, user: () => deepP, cohort: () => c.deep },
-  eff: { name: 'Sleep efficiency', higherBetter: true, user: () => effPct, cohort: () => c.eff },
-  dis: { name: 'Disruptions', higherBetter: false, user: () => disturbPerHr, cohort: () => c.dis },
-  rem: { name: 'REM sleep', higherBetter: true, user: () => remP, cohort: () => c.rem },
-  sleep: { name: 'Total sleep', higherBetter: true, user: () => hoursSleep, cohort: () => c.sleepH },
-  awake: { name: 'Awake time', higherBetter: false, user: () => awakeP, cohort: () => c.awake },
-  light: { name: 'Light sleep', higherBetter: false, user: () => lightP, cohort: () => c.light },
+  hrv: { name: 'HRV', higherBetter: true, user: () => hrvAvg, cohort: () => c.hrv, varianceMetricId: 'HRV' },
+  vo2: { name: 'VO₂ max', higherBetter: true, user: () => vo2Avg, cohort: () => c.vo2, varianceMetricId: null },
+  rhr: { name: 'Resting HR', higherBetter: false, user: () => rhrAvg, cohort: () => c.rhr, varianceMetricId: 'RHR' },
+  deep: { name: 'Deep sleep', higherBetter: true, user: () => deepP, cohort: () => c.deep, varianceMetricId: 'DeepSleep' },
+  eff: { name: 'Sleep efficiency', higherBetter: true, user: () => effPct, cohort: () => c.eff, varianceMetricId: null },
+  dis: { name: 'Sleep disruptions', higherBetter: false, user: () => disturbPerHr, cohort: () => c.dis, varianceMetricId: 'Disruptions' },
+  rem: { name: 'REM sleep', higherBetter: true, user: () => remP, cohort: () => c.rem, varianceMetricId: 'REM' },
+  sleep: { name: 'Total sleep', higherBetter: true, user: () => hoursSleep, cohort: () => c.sleepH, varianceMetricId: 'TotalSleep' },
+  awake: { name: 'Overnight awake time', higherBetter: false, user: () => awakeP, cohort: () => c.awake, varianceMetricId: 'Awake' },
+  light: { name: 'Light sleep', higherBetter: false, user: () => lightP, cohort: () => c.light, varianceMetricId: 'LightSleep' },
 };
 
-function limitingRowFromMetric(def) {
+function pctDeficitVsBenchmark(user, bench, higherBetter) {
+  if (user == null || bench == null || !Number.isFinite(+user) || !Number.isFinite(+bench) || Math.abs(+bench) < 1e-9) {
+    return null;
+  }
+  if (higherBetter) {
+    if (+user >= +bench) return 0;
+    return Math.round((100 * (+bench - +user)) / Math.abs(+bench));
+  }
+  if (+user <= +bench) return 0;
+  return Math.round((100 * (+user - +bench)) / Math.abs(+bench));
+}
+
+function deficitLabelFromBenchmark(pctDeficit, higherBetter, baselineKind) {
+  if (pctDeficit == null || pctDeficit <= 0) return '';
+  const dirWord = higherBetter ? 'below' : 'above';
+  const baselineWord = baselineKind === 'average' ? 'average' : 'target';
+  return `${dirWord} ${baselineWord}`;
+}
+
+/** Match bio-bar semantics: avg is center of sorted triplet; target is best side by direction. */
+function canonicalBenchmarksFromTriplet(triple, higherBetter) {
+  const vals = [triple?.L, triple?.M, triple?.R].map((v) => Number(v)).filter((v) => Number.isFinite(v));
+  if (vals.length < 3) return { avg: null, target: null, sorted: vals };
+  vals.sort((a, b) => a - b);
+  const avg = vals[1];
+  const target = higherBetter ? vals[2] : vals[0];
+  return { avg, target, sorted: vals };
+}
+
+function varianceIssueSeries(metricId) {
+  const days = Math.max(1, Math.min(31, +(meta.num_days || 30)));
+  return Array.from({ length: days }, (_, i) => {
+    const k = String(i + 1);
+    if (metricId === 'HRV') {
+      const v = m.HRV?.[k];
+      return v == null || !Number.isFinite(+v) ? null : +v;
+    }
+    if (metricId === 'RHR') {
+      const v = m.RHR?.[k];
+      return v == null || !Number.isFinite(+v) ? null : +v;
+    }
+    if (metricId === 'TotalSleep') {
+      const sec = m.sleep_time?.[k];
+      return sec == null || !Number.isFinite(+sec) || +sec <= 0 ? null : +sec / 3600;
+    }
+    if (metricId === 'Disruptions') {
+      const d = m.disturbances?.[k];
+      const s = m.sleep_time?.[k];
+      if (d == null || s == null || !Number.isFinite(+d) || !Number.isFinite(+s) || +s <= 0) return null;
+      return +d / (+s / 3600);
+    }
+    const secByMetric = {
+      REM: m.rem_sleep,
+      DeepSleep: m.deep_sleep,
+      LightSleep: m.light_sleep,
+      Awake: m.awake_time,
+    }[metricId];
+    if (!secByMetric) return null;
+    const secMetric = secByMetric?.[k];
+    const secSleep = m.sleep_time?.[k];
+    if (secMetric == null || secSleep == null || !Number.isFinite(+secMetric) || !Number.isFinite(+secSleep) || +secSleep <= 0) {
+      return null;
+    }
+    return (100 * +secMetric) / +secSleep;
+  });
+}
+
+/**
+ * Single helper for limiting-card issue logic.
+ * Priority per metric:
+ * 1) below_average
+ * 2) below_target
+ * 3) unstable
+ * 4) variable
+ */
+function determineMetricIssue(def) {
   const meta = metricLimitMeta[def.key];
   if (!meta) return null;
   const user = meta.user();
-  const M = meta.cohort()?.M;
-  const score = def.score;
-  const badness = 100 - score;
-  let badge = 'Below target';
-  let dot = 'amber';
-  if (score != null && score < 40) dot = 'red';
-  else if (score != null && score < 55) dot = 'amber';
+  const cohort = meta.cohort() || {};
+  const bench = canonicalBenchmarksFromTriplet(cohort, meta.higherBetter);
+  const avg = bench.avg;
+  const target = bench.target;
 
-  if (user != null && Number.isFinite(user) && M != null && Number.isFinite(M) && Math.abs(M) > 1e-9) {
-    if (meta.higherBetter) {
-      if (user < M) {
-        badge = `${Math.round(((M - user) / Math.abs(M)) * 100)}% below avg`;
-      } else if (badness > 50) {
-        badge = 'Needs attention';
-        dot = 'red';
-      }
-    } else if (user > M) {
-      badge = `${Math.round(((user - M) / Math.abs(M)) * 100)}% above avg`;
-    } else if (badness > 50) {
-      badge = 'Needs attention';
-      dot = 'red';
+  const pctBelowAvg = pctDeficitVsBenchmark(user, avg, meta.higherBetter);
+  const pctBelowTarget = pctDeficitVsBenchmark(user, target, meta.higherBetter);
+
+  let issueType = null;
+  let label = '';
+  let severityScore = 0;
+
+  if (pctBelowAvg != null && pctBelowAvg > 0) {
+    issueType = 'below_average';
+    label = deficitLabelFromBenchmark(pctBelowAvg, meta.higherBetter, 'average');
+    severityScore = 4000 + pctBelowAvg; // always rank above below_target
+  } else if (pctBelowTarget != null && pctBelowTarget > 0) {
+    issueType = 'below_target';
+    label = deficitLabelFromBenchmark(pctBelowTarget, meta.higherBetter, 'target');
+    severityScore = 3000 + pctBelowTarget;
+  } else {
+    let stability = null;
+    if (meta.varianceMetricId) {
+      const series = varianceIssueSeries(meta.varianceMetricId)
+        .filter((v) => v != null && Number.isFinite(+v))
+        .map(Number);
+      stability = varianceAnalyzeSeries(series, meta.varianceMetricId);
     }
-  } else if (score != null && score < 45) {
-    badge = 'Needs attention';
-    dot = 'red';
+    const outsidePct =
+      stability && Number.isFinite(stability.daysInRangePct)
+        ? Math.max(0, Math.min(100, Math.round(100 - stability.daysInRangePct)))
+        : 0;
+    if (stability?.tier === 'unstable') {
+      issueType = 'unstable';
+      label = 'unstable';
+      severityScore = 2000 + outsidePct;
+    } else if (stability?.tier === 'variable') {
+      issueType = 'variable';
+      label = 'variable';
+      severityScore = 1000 + outsidePct;
+    }
   }
 
-  return { name: meta.name, badge, dot, badness };
+  return {
+    key: def.key,
+    name: meta.name,
+    directionType: meta.higherBetter ? 'higher_is_better' : 'lower_is_better',
+    higherBetter: meta.higherBetter,
+    userValue: user != null && Number.isFinite(+user) ? +user : null,
+    averageValue: avg != null && Number.isFinite(+avg) ? +avg : null,
+    targetValue: target != null && Number.isFinite(+target) ? +target : null,
+    issueType, // below_average | below_target | unstable | variable | null
+    label,
+    severityScore,
+    selected: false,
+    dot: issueType === 'below_average' ? 'red' : issueType ? 'amber' : 'amber',
+  };
 }
 
-let limits = metricDefs
+const metricIssueRows = metricDefs
   .filter((d) => d.score != null && Number.isFinite(d.score))
-  .map((d) => limitingRowFromMetric(d))
-  .filter(Boolean)
-  .sort((a, b) => b.badness - a.badness)
-  .slice(0, 3)
-  .map(({ name, badge, dot }) => ({ name, badge, dot }));
+  .map((d) => determineMetricIssue(d))
+  .filter(Boolean);
+
+const problemRows = metricIssueRows
+  .filter((r) => r.issueType != null)
+  .sort((a, b) => b.severityScore - a.severityScore);
+
+const hasTierProblems = problemRows.length > 0;
+
+const LONGEVITY_PRIORITY_FALLBACK = [
+  { name: 'Healthspan', label: 'Foundational', dot: 'amber' },
+  { name: 'Systems', label: 'Essential', dot: 'amber' },
+  { name: 'Energy', label: 'Capacity', dot: 'amber' },
+  { name: 'Inflammation', label: 'Cellular', dot: 'amber' },
+];
+
+let limits;
+let limitingSectionTitle;
+if (hasTierProblems) {
+  limits = problemRows.slice(0, 3).map((r) => {
+    r.selected = true;
+    return { name: r.name, badge: r.label, dot: r.dot, issueType: r.issueType, severityScore: r.severityScore };
+  });
+  limitingSectionTitle = 'LIMITING METRICS';
+} else {
+  limits = LONGEVITY_PRIORITY_FALLBACK.slice(0, 3).map((r) => ({
+    name: r.name,
+    badge: r.label,
+    dot: r.dot,
+    issueType: null,
+    severityScore: 0,
+  }));
+  limitingSectionTitle = 'Longevity priorities';
+}
 
 while (limits.length < 3) {
-  limits.push({ name: '—', badge: 'No data', dot: 'amber' });
+  limits.push({ name: '—', badge: 'No data', dot: 'amber', issueType: null, severityScore: 0 });
+}
+
+function logLimitingMetricsDebug() {
+  console.log('\n--- Limiting metrics debug (all candidates) ---\n');
+  const selectedNames = new Set(limits.slice(0, 3).map((x) => x.name));
+  const rows = metricIssueRows.map((r) => ({
+    metric: r.name,
+    directionType: r.directionType,
+    userValue: r.userValue,
+    demographicAverage: r.averageValue,
+    targetValue: r.targetValue,
+    issueType: r.issueType,
+    displayLabel: r.label,
+    severityScore: r.severityScore,
+    selected: selectedNames.has(r.name),
+  }));
+  console.table(rows);
+  console.log('\nFinal section title:', limitingSectionTitle);
+  console.log(
+    'Final selected cards:',
+    limits.slice(0, 3).map((x) => `${x.name} (${x.badge})`).join(' | '),
+  );
+  console.log('');
 }
 
 const cohortAge =
@@ -1009,14 +1393,6 @@ if (lightP > lightCohortPct + 0.5) {
 
 const remWhyFallback =
   'REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.';
-
-let scoreHeadline = 'Building base';
-if (healthScore >= 85) scoreHeadline = 'High performer';
-else if (healthScore >= 75) scoreHeadline = 'Good progress';
-else if (healthScore >= 60) scoreHeadline = 'Strong foundation';
-
-const yourPeople = gender === 'female' ? 'women' : 'men';
-const scoreContext = `You're already ahead of ${aheadPct}% of ${yourPeople} your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.`;
 
 let sortedFocusMetrics = [...focusMetricsTags].sort((a, b) => (a.order || 0) - (b.order || 0));
 if (sortedFocusMetrics.length < 4) {
@@ -1555,11 +1931,11 @@ function focusCaptionForGraphType(graphType, metric) {
     case 'single_correlation':
       return `Training intensity vs ${metricChartLabel(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV')}`;
     case 'healthspan':
-      return 'Personalized longevity stack';
+      return 'HEALTHSPAN WITH PROACTIVE SUPPORT';
     case 'extension_system_decline':
-      return 'System decline over lifespan';
+      return 'SYSTEM FUNCTION VS LIFESPAN';
     case 'extension_energy_age':
-      return 'Energy levels over age';
+      return 'ENERGY VS AGE';
     case 'extension_inflammation':
       return 'Impact of inflammation on longevity';
     default:
@@ -1636,11 +2012,11 @@ function focusLegendInner(fc, graphType, metric) {
     return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #6b7280;border-radius:0;background:transparent;"></span>
-                      <span class="${fc}-legend__label">Normal</span>
+                      <span class="${fc}-legend__label">Passive</span>
                     </div>
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
-                      <span class="${fc}-legend__label">With Protocol</span>
+                      <span class="${fc}-legend__label">Proactive</span>
                     </div>
                   </div>`;
   }
@@ -1668,12 +2044,17 @@ function focusLegendInner(fc, graphType, metric) {
     return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
-                      <span class="${fc}-legend__label">Energy trend</span>
+                      <span class="${fc}-legend__label">Energy level</span>
                     </div>
                   </div>`;
   }
   if (graphType === 'extension_inflammation') {
-    return '';
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Longevity outlook</span>
+                    </div>
+                  </div>`;
   }
   return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
@@ -1748,7 +2129,7 @@ const focusExtensionSlots = [
     dotLabel: 'Systems',
     title:   escapeHtmlText(_extSystems.title),
     summary: _extSystems.summary,
-    cap:     'System decline over lifespan',
+    cap:     'SYSTEM FUNCTION VS LIFESPAN',
     why:     _extSystems.why,
   },
   {
@@ -1760,7 +2141,7 @@ const focusExtensionSlots = [
     dotLabel: 'Energy',
     title:   escapeHtmlText(_extEnergy.title),
     summary: _extEnergy.summary,
-    cap:     'Energy levels over age',
+    cap:     'ENERGY VS AGE',
     why:     _extEnergy.why,
   },
   {
@@ -2167,8 +2548,14 @@ rep(
   /<span id="recRhrCount"[^>]*>PRIORITY · 1 of \d+<\/span>/,
   `<span id="recRhrCount" aria-live="polite">PRIORITY · 1 of ${focusStackSlots.length}</span>`,
 );
-rep(/<p class="score-headline">[^<]*<\/p>/, `<p class="score-headline">${scoreHeadline}</p>`);
-rep(/<p class="score-context">[^<]*<\/p>/, `<p class="score-context">${scoreContext}</p>`);
+rep(
+  /<p class="score-headline">[^<]*<\/p>/,
+  `<p class="score-headline">${escapeHtmlText(scoreHeadline)}</p>`,
+);
+rep(
+  /<p class="score-context">[^<]*<\/p>/,
+  `<p class="score-context">${escapeHtmlText(scoreContext)}</p>`,
+);
 rep(
   /<h2 class="section-label section-label--caps" id="focus-heading">[\s\S]*?<\/h2>/,
   `<h2 class="section-label section-label--caps" id="focus-heading">How you move from ${healthScore} to 90+</h2>`,
@@ -2207,22 +2594,38 @@ rep(
     .bio-badge.needs-imp { background: var(--amber-bg); color: var(--amber); }`,
 );
 
-// Score ring
-rep(/data-score="[^"]*"/, `data-score="${healthScore}"`);
+// Score ring + phase row (metric health card — single source: scorePhase)
+rep(
+  /<div class="score-ring-wrap" data-score="/,
+  `<div class="${scorePhase.scoreRingWrapClass}" data-score="`,
+);
+rep(/data-score="\d+"/, `data-score="${healthScore}"`);
 rep(
   /(<text x="0" y="-6" text-anchor="middle"\s*font-size="28"[^>]*>)\d+(<\/text>)/,
   `$1${healthScore}$2`,
 );
 rep(
-  /stroke-dasharray="[^"]+"/,
-  `stroke-dasharray="${dash.toFixed(2)} ${dashRest.toFixed(2)}"`,
+  /(id="score-ring-arc"[\s\S]*?stroke=")(#[0-9A-Fa-f]+)/,
+  `$1${scorePhase.ringStroke}`,
+);
+rep(
+  /(id="score-ring-arc"[\s\S]*?stroke-dasharray=")[\d.]+ [\d.]+/,
+  `$1${dash.toFixed(2)} ${dashRest.toFixed(2)}`,
 );
 rep(
   /aria-label="Health score: \d+ out of 100"/,
   `aria-label="Health score: ${healthScore} out of 100"`,
 );
+rep(
+  /<div class="metric-health-phase-row">[\s\S]*?<span class="phase-of">of 2<\/span>\s*<\/div>\s*<p class="score-headline">/,
+  `${metricHealthPhaseRowHtml(scorePhase.phase)}\n          <p class="score-headline">`,
+);
 
 // Limiting list
+rep(
+  /<p class="limiting-label">[\s\S]*?<\/p>/,
+  `<p class="limiting-label">${escapeHtmlText(limitingSectionTitle)}</p>`,
+);
 const limHtml = limits
   .slice(0, 3)
   .map(
@@ -2539,17 +2942,35 @@ const reportData = {
     score: healthScore,
     headline: scoreHeadline,
     context: scoreContext,
+    score_band_id: scorePhase.bandId,
+    phase_current: scorePhase.phase,
+    phase_label: overallHealthScoreState.phase,
+    phase_total: 2,
+    ring_stroke_hex: scorePhase.ringStroke,
+    health_metrics_percentile: overallHealthScoreState.percentile,
+    demographic_composite_mean: overallHealthScoreState.demographicMean,
+    percentile_model: 'normal_cdf_vs_demographicCompositeScoreMean',
+    percentile_sigma: COMPOSITE_SCORE_SD,
     ahead_of_peer_pct: aheadPct,
     ahead_of_peer_pct_basis:
       bioStandingSamples.length > 0 ? 'biometric_standing_mean' : 'health_score_fallback',
     ahead_of_peer_metrics_count: bioStandingSamples.length,
-    phase_current: 1,
-    phase_total: 2,
     ring_circumference: C,
     ring_dash: +dash.toFixed(2),
     ring_dash_gap: +dashRest.toFixed(2),
   },
-  limiting_metrics: limits.map((l) => ({ name: l.name, badge: l.badge, dot: l.dot })),
+  longevity_path: {
+    selected_graph: projectionBand,
+    selected_card_class: `proj-card--${projectionBand}`,
+  },
+  limiting_section_title: limitingSectionTitle,
+  limiting_metrics: limits.map((l) => ({
+    name: l.name,
+    badge: l.badge,
+    dot: l.dot,
+    issue_type: l.issueType ?? null,
+    severity_score: l.severityScore ?? 0,
+  })),
   snapshot: {
     avg_recovery: {
       value: recoveryAvg != null ? Math.round(recoveryAvg) : null,
@@ -2657,6 +3078,13 @@ const reportData = {
     })),
   },
 };
+
+if (process.argv.includes('--validate-health-score-phases')) {
+  logHealthScorePhaseValidation();
+}
+if (process.argv.includes('--debug-limiting-metrics')) {
+  logLimitingMetricsDebug();
+}
 
 fs.writeFileSync(path.join(root, 'report_data.json'), `${JSON.stringify(reportData, null, 2)}\n`, 'utf8');
 fs.writeFileSync(path.join(root, 'nutricode-health-report.html'), html, 'utf8');

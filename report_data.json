@@ -11,31 +11,49 @@
   "health_score": {
     "score": 77,
     "headline": "Good progress",
-    "context": "You're already ahead of 70% of men your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.",
+    "context": "You're in the 82nd percentile for health metrics among men your age. In phase 1, the focus is on improving the limiting metrics that will move your score to 90+, where phase 2 begins and the focus shifts to longevity.",
+    "score_band_id": "70-79",
+    "phase_current": 1,
+    "phase_label": "phase1",
+    "phase_total": 2,
+    "ring_stroke_hex": "#17FF00",
+    "health_metrics_percentile": 82,
+    "demographic_composite_mean": 64,
+    "percentile_model": "normal_cdf_vs_demographicCompositeScoreMean",
+    "percentile_sigma": 14,
     "ahead_of_peer_pct": 70,
     "ahead_of_peer_pct_basis": "biometric_standing_mean",
     "ahead_of_peer_metrics_count": 10,
-    "phase_current": 1,
-    "phase_total": 2,
     "ring_circumference": 314.16,
     "ring_dash": 241.9,
     "ring_dash_gap": 72.26
   },
+  "longevity_path": {
+    "selected_graph": "green",
+    "selected_card_class": "proj-card--green"
+  },
+  "limiting_section_title": "LIMITING METRICS",
   "limiting_metrics": [
     {
       "name": "HRV",
-      "badge": "27% below avg",
-      "dot": "red"
+      "badge": "below average",
+      "dot": "red",
+      "issue_type": "below_average",
+      "severity_score": 4027
     },
     {
-      "name": "Total sleep",
-      "badge": "Below target",
-      "dot": "amber"
+      "name": "Sleep disruptions",
+      "badge": "above average",
+      "dot": "red",
+      "issue_type": "below_average",
+      "severity_score": 4005
     },
     {
-      "name": "Awake time",
-      "badge": "Below target",
-      "dot": "amber"
+      "name": "Overnight awake time",
+      "badge": "above target",
+      "dot": "amber",
+      "issue_type": "below_target",
+      "severity_score": 3133
     }
   ],
   "snapshot": {
@@ -906,7 +924,7 @@
         "tab_label": "Healthspan",
         "title": "Protect long-term healthspan",
         "summary_html": "Healthspan declines with age, which reduces physical function, resilience, and day-to-day capacity over time.",
-        "chart_caption": "Personalized longevity stack",
+        "chart_caption": "HEALTHSPAN WITH PROACTIVE SUPPORT",
         "why_panel": "This graph shows that, at the same age, a more proactive approach helps preserve more healthspan for longer.",
         "chart_data": null,
         "correlation": null
@@ -919,7 +937,7 @@
         "tab_label": "Systems",
         "title": "Preserve whole-body function",
         "summary_html": "The body’s main systems also decline with age, though not all at the same rate, which can gradually weaken overall function and resilience.",
-        "chart_caption": "System decline over lifespan",
+        "chart_caption": "SYSTEM FUNCTION VS LIFESPAN",
         "why_panel": "This graph shows how the body’s main systems all decline over the lifespan, which is why preserving function longer matters for healthier aging.",
         "chart_data": null,
         "correlation": null
@@ -932,7 +950,7 @@
         "tab_label": "Energy",
         "title": "Protect long-term energy",
         "summary_html": "Available energy declines with age, making it harder to sustain the same level of daily activity, performance, and recovery over time.",
-        "chart_caption": "Energy levels over age",
+        "chart_caption": "ENERGY VS AGE",
         "why_panel": "This graph shows how energy gradually falls with age, which is why supporting it early is important for preserving day-to-day capacity.",
         "chart_data": null,
         "correlation": null
