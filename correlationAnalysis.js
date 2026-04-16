@@ -2098,15 +2098,35 @@ function injectFocusStackHtml(htmlPath, fragment) {
 if (typeof module !== "undefined" && require.main === module) {
   const fs   = require("fs");
   const path = require("path");
-  const filePath = process.argv[2];
 
-  if (!filePath) {
-    console.error("Usage: node correlationAnalysis.js <path_to_raw_data.json> [correlation_cards_path]");
+  /** Same idea as populate-health-report.mjs: inputs relative to this script’s folder. */
+  const ROOT = __dirname;
+  const DEFAULT_RAW_FILE = "raw_data2.json";
+
+  const argRaw = process.argv[2];
+  let resolvedRaw;
+  let baseDir;
+  if (!argRaw) {
+    resolvedRaw = path.join(ROOT, DEFAULT_RAW_FILE);
+    baseDir = ROOT;
+  } else if (path.isAbsolute(argRaw)) {
+    resolvedRaw = path.resolve(argRaw);
+    baseDir = path.dirname(resolvedRaw);
+  } else {
+    resolvedRaw = path.join(ROOT, argRaw);
+    baseDir = ROOT;
+  }
+
+  if (!fs.existsSync(resolvedRaw)) {
+    console.error(`Raw data not found: ${resolvedRaw}`);
+    console.error(
+      "Usage: node correlationAnalysis.js [raw_data.json] [correlation_cards_path]\n" +
+        `  (default raw file: ${path.join(ROOT, DEFAULT_RAW_FILE)})`,
+    );
     process.exit(1);
   }
 
-  const resolvedRaw = path.resolve(filePath);
-  const baseDir = path.dirname(resolvedRaw);
+  console.log(`Using raw data: ${resolvedRaw}`);
   const csvPath = process.argv[3] || path.join(baseDir, "correlation_cards - correlation_cards-2.csv");
   const normativePath = path.join(baseDir, "normative_metrics.json");
   const top10Path = path.join(baseDir, "top10_percent.json");
@@ -2198,13 +2218,29 @@ if (typeof module !== "undefined" && require.main === module) {
       suppRecs = assignSupplementsToFocusCards(focusPicks, researchData, tiers);
     }
 
+    function classifyFocusGraphType(pick) {
+      const key = `${pick?.csvKey || ""} ${pick?.label || ""}`.toLowerCase();
+      const tier = pick?._tier ?? null;
+      // 1) Replace with 7-day average correlation if matched row is rolling
+      if (/rolling mean|7-day|rolling/.test(key)) return "7day_average";
+      // 2) Replace with single correlation for direct (t)/(t-1) relations
+      if (/\(t-1\)|\(t\)/.test(key)) return "single_correlation";
+      // 3) Default by tier
+      if (tier === 3 || tier === 4) return "variance";
+      if (tier === 5) return "healthspan";
+      return "cohort"; // tiers 1/2 (and fallback)
+    }
+
     const focusMetricsTagsSupplements = focusPicks.map((pick, i) => {
       const tm = pick.targetMetric;
+      const graphType = classifyFocusGraphType(pick);
       const row = {
         order: i + 1,
         metric: tm,
         tag: pick._tag ?? null,
         tier: pick._tier ?? null,
+        graph_type: graphType,
+        correlation_source: pick.csvKey || pick.label || null,
         researchKey:
           researchData && tm
             ? researchKeyForSupplementLookup(pick._tag, tm, researchData)

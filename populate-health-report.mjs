@@ -6,13 +6,21 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = __dirname;
 
+const require = createRequire(import.meta.url);
+const {
+  optimalBand: varianceOptimalBand,
+  meanOf: varianceMeanOf,
+  analyzeSeries: varianceAnalyzeSeries,
+} = require('./varianceRules.js');
+
 const readJson = (f) => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
 
-const raw = readJson('raw_data.json');
+const raw = readJson('raw_data2.json');
 const bottom10 = readJson('bottom10_percent.json');
 const normative = readJson('normative_metrics.json');
 const top10 = readJson('top10_percent.json');
@@ -29,6 +37,52 @@ try {
 } catch {
   console.warn('focus_metrics_tags_supplements.json not found; using default focus order');
 }
+
+/** Minimal RFC-4180 CSV parser that handles quoted fields (including embedded commas/newlines). */
+function parseCsvRow(line) {
+  const fields = [];
+  let cur = '';
+  let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      fields.push(cur.trim()); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  fields.push(cur.trim());
+  return fields;
+}
+
+function parseCsv(text) {
+  const rawLines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const rows = [];
+  let current = '';
+  let inQ = false;
+  for (let i = 0; i < rawLines.length; i++) {
+    const ch = rawLines[i];
+    if (ch === '"') inQ = !inQ;
+    if (ch === '\n' && !inQ) { rows.push(current); current = ''; }
+    else current += ch;
+  }
+  if (current.trim()) rows.push(current);
+  const [headerLine, ...dataLines] = rows.filter(r => r.trim());
+  const headers = parseCsvRow(headerLine);
+  return dataLines.map(line => {
+    const vals = parseCsvRow(line);
+    const obj = {};
+    headers.forEach((h, i) => { obj[h.trim()] = (vals[i] ?? '').trim(); });
+    return obj;
+  });
+}
+
+const mainCardsRows = parseCsv(
+  fs.readFileSync(path.join(root, 'correlation_cards - main_cards.csv'), 'utf8')
+);
 
 const viz = raw?.connect_device_recommendation?.metric_analysis?.visualization;
 if (!viz) {
@@ -91,11 +145,12 @@ function formatDuration(sec) {
 function trimpLabel(x) {
   if (x == null || !Number.isFinite(x))
     return { tag: '—', foot: 'Training load is limited', cls: 'snap-ft--neg' };
-  if (x < 1.0) return { tag: 'Easy', foot: 'Training load looks good', cls: 'snap-ft--pos' };
-  if (x < 1.5) return { tag: 'Easy', foot: 'Training load looks good', cls: 'snap-ft--pos' };
-  if (x < 2.0) return { tag: 'Moderate', foot: 'Training load can increase', cls: 'snap-ft--warn' };
-  if (x < 2.5) return { tag: 'Hard', foot: 'Training load is limited', cls: 'snap-ft--neg' };
-  return { tag: 'Very hard', foot: 'Training load is limited', cls: 'snap-ft--neg' };
+  // Colour bands: low → red, moderate → amber, high → green (footer + pill match recovery/sleep pattern).
+  if (x < 1.0) return { tag: 'Easy', foot: 'Low VO2 Max stimulus', cls: 'snap-ft--neg' };
+  if (x < 1.5) return { tag: 'Easy', foot: 'Low VO2 Max stimulus', cls: 'snap-ft--neg' };
+  if (x < 2.0) return { tag: 'Moderate', foot: 'Moderate VO2 Max stimulus', cls: 'snap-ft--warn' };
+  if (x < 2.5) return { tag: 'Hard', foot: 'High VO2 Max stimulus', cls: 'snap-ft--pos' };
+  return { tag: 'Very hard', foot: 'High VO2 Max stimulus', cls: 'snap-ft--pos' };
 }
 
 /**
@@ -247,10 +302,10 @@ const trimpAvg = intensities.length ? intensities.reduce((a, b) => a + b, 0) / i
 const tr = trimpLabel(trimpAvg);
 
 function trimpTagClass(tag) {
-  if (tag === 'Easy') return 'snap-tag--easy';
+  if (tag === 'Easy') return 'snap-tag--vhard'; // low intensity → red
   if (tag === 'Moderate') return 'snap-tag--moderate';
-  if (tag === 'Very hard') return 'snap-tag--vhard';
-  return 'snap-tag--hard';
+  if (tag === 'Hard' || tag === 'Very hard') return 'snap-tag--easy'; // high intensity → green
+  return 'snap-tag--vhard';
 }
 
 /** Footer glyph follows pill tag band; stroke uses currentColor (neutral grey on .snapshot-tile .snap-ft). */
@@ -274,14 +329,6 @@ function snapFtIconSvg(tagCls) {
   return SNAP_FT_ICON_YELLOW;
 }
 
-function trimpXFromDurationSec(sec) {
-  const minX = 48;
-  const maxX = 438;
-  const maxSec = 6 * 3600;
-  const t = clamp(sec / maxSec, 0, 1);
-  return Math.round(minX + t * (maxX - minX));
-}
-
 function trimpYFromIntensity(i) {
   // Chart Y: higher intensity is higher (smaller y)
   const minY = 231;
@@ -292,15 +339,74 @@ function trimpYFromIntensity(i) {
   return Math.round(minY - t * (minY - maxY));
 }
 
-const trimpPts = [];
-/** Rich rows for report_data.json (same filter as trimpPts). */
-const trimpReportRows = [];
+/** X-axis span: max observed workout duration rounded up to whole hours; default 6h when no points. */
+const trimpRawRows = [];
 for (let d = 1; d <= (meta.num_days || 30); d++) {
   const row = dailyAct?.[String(d)];
   const dur = row?.total_duration;
   const ai = row?.average_intensity;
   const nextRecovery = m.recovery?.[String(d + 1)];
   if (!Number.isFinite(dur) || !Number.isFinite(ai) || !Number.isFinite(nextRecovery)) continue;
+  trimpRawRows.push({ d, dur, ai, nextRecovery });
+}
+let trimpChartMaxDurationSec = 6 * 3600;
+if (trimpRawRows.length > 0) {
+  const maxDur = Math.max(...trimpRawRows.map((r) => r.dur));
+  trimpChartMaxDurationSec = Math.max(3600, Math.ceil(maxDur / 3600) * 3600);
+}
+
+function trimpXFromDurationSec(sec) {
+  const minX = 48;
+  const maxX = 438;
+  const maxSec = trimpChartMaxDurationSec;
+  const t = Math.min(1, Math.max(0, sec / maxSec));
+  return Math.round(minX + t * (maxX - minX));
+}
+
+function buildTrimpChartAxesSvg(maxDurationSec) {
+  const minX = 48;
+  const maxX = 438;
+  const plotTop = 10;
+  const plotBottom = 231;
+  const hourCount = Math.max(1, Math.round(maxDurationSec / 3600));
+  const tickXs = [];
+  for (let h = 0; h <= hourCount; h++) {
+    tickXs.push(Math.round(minX + (h / hourCount) * (maxX - minX)));
+  }
+  const innerVerticals = tickXs
+    .slice(1, -1)
+    .map((x) => `        <line x1="${x}" y1="${plotTop}" x2="${x}" y2="${plotBottom}"/>`)
+    .join('\n');
+  const bottomLabels = tickXs
+    .map((x, idx) => {
+      const label = `${idx}:00`;
+      const anchor = idx === 0 ? 'middle' : idx === hourCount ? 'end' : 'middle';
+      return `      <text x="${x}" y="246" text-anchor="${anchor}" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">${label}</text>`;
+    })
+    .join('\n');
+  const innerBlock = innerVerticals ? `${innerVerticals}\n` : '';
+  return `      <line x1="${minX}" y1="${plotTop}" x2="${minX}" y2="${plotBottom}" stroke="#e9e8e3" stroke-width="1"/>
+      <g stroke="#eeece7" stroke-width="1">
+${innerBlock}        <line x1="${minX}" y1="136" x2="${maxX}" y2="136"/>
+        <line x1="${minX}" y1="83" x2="${maxX}" y2="83"/>
+        <line x1="${minX}" y1="41" x2="${maxX}" y2="41"/>
+        <line x1="${minX}" y1="${plotTop}" x2="${maxX}" y2="${plotTop}"/>
+      </g>
+      <line x1="${minX}" y1="${plotBottom}" x2="${maxX}" y2="${plotBottom}" stroke="#e9e8e3" stroke-width="1"/>
+      <text x="44" y="188" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">EASY</text>
+      <text x="44" y="112" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">MODERATE</text>
+      <text x="44" y="64" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">HARD</text>
+      <text x="44" y="27" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#d1d5db" letter-spacing="0.05em">VERY HARD</text>
+${bottomLabels}
+      <text x="243" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>`;
+}
+
+const trimpChartAxesSvg = buildTrimpChartAxesSvg(trimpChartMaxDurationSec);
+
+const trimpPts = [];
+/** Rich rows for report_data.json (same filter as trimpPts). */
+const trimpReportRows = [];
+for (const { d, dur, ai, nextRecovery } of trimpRawRows) {
   const x = trimpXFromDurationSec(dur);
   const y = trimpYFromIntensity(ai);
   const color = nextRecovery >= 67 ? '#22c55e' : nextRecovery >= 34 ? '#f59e0b' : '#ef4444';
@@ -465,6 +571,7 @@ function bioBlock(vo, unit, lower, triple, userVal, dec = 0) {
       unit,
       badgeCls: 'normal',
       badgeText: 'Normal',
+      standingPct: null,
     };
   }
 
@@ -481,6 +588,9 @@ function bioBlock(vo, unit, lower, triple, userVal, dec = 0) {
   else if (scoreRatio > 0.9) fillColor = '#5da9c8';
   const wrapLow = 'bio-bench-track-wrap--higher';
   const valStr = userVal == null ? '—' : dec === 0 ? String(Math.round(userVal)) : round1(userVal).toFixed(dec);
+  const hasUser = userVal != null && Number.isFinite(userVal);
+  /** ~peer percentile (higher = better vs cohort); used for score-context headline. */
+  const standingPct = hasUser ? round1(scoreRatio * 100) : null;
   return {
     wrapLow,
     width: pctStr,
@@ -494,6 +604,7 @@ function bioBlock(vo, unit, lower, triple, userVal, dec = 0) {
     unit,
     badgeCls: b.cls,
     badgeText: b.text,
+    standingPct,
   };
 }
 
@@ -509,6 +620,19 @@ const bio = {
   light: bioBlock(false, '%', true, c.light, lightP, 0),
   awake: bioBlock(false, '%', true, c.awake, awakeP, 0),
 };
+
+/** Mean cohort standing (0–100) across biometric rows with valid data; drives "ahead of X%". */
+const bioStandingSamples = Object.values(bio)
+  .map((row) => row.standingPct)
+  .filter((x) => x != null && Number.isFinite(x));
+const aheadPctFallback = Math.min(94, Math.max(8, Math.round(healthScore * 0.65 + 12)));
+const aheadPct =
+  bioStandingSamples.length > 0
+    ? Math.min(
+        94,
+        Math.max(8, Math.round(bioStandingSamples.reduce((a, b) => a + b, 0) / bioStandingSamples.length)),
+      )
+    : aheadPctFallback;
 
 // Sleep tile footnote — green ≥85%, yellow 70–84%, red &lt;70% (same bands as pill labels)
 let sleepFoot = 'Sleep is too low.';
@@ -695,44 +819,19 @@ if (targetHrvMin > targetHrvMax) {
   targetHrvMax = t;
 }
 
-const scatterPtsFC = [];
-for (let day = 1; day < numDaysFc; day += 1) {
-  const today = dailyAct?.[String(day)];
-  const x = today?.average_intensity;
-  const yRaw = m.RHR?.[String(day + 1)];
-  if (x == null || yRaw == null || !Number.isFinite(+x) || !Number.isFinite(+yRaw)) continue;
-  scatterPtsFC.push({ x: +x, y: +yRaw });
-}
-
-function pickBestCorr(cards, pred) {
-  const matches = (Array.isArray(cards) ? cards : []).filter(pred);
-  if (!matches.length) return null;
-  return matches.reduce((a, b) =>
-    +(b.marginScore ?? -999) > +(a.marginScore ?? -999) ? b : a,
-  );
-}
-
-const deepSleepCorr = pickBestCorr(
-  correlationCardsResolved,
-  (c) =>
-    c.targetMetric === 'DeepSleep' &&
-    String(c.label || '').includes('rolling') &&
-    String(c.label || '').includes('Training Intensity'),
-);
-const rhrNextDayCorr = pickBestCorr(
-  correlationCardsResolved,
-  (c) =>
-    c.targetMetric === 'RHR' &&
-    String(c.csvKey || '').includes('RHR(t)') &&
-    String(c.csvKey || '').includes('Training Intensity(t-1)'),
-);
-const lightRollingCorr = pickBestCorr(
-  correlationCardsResolved,
-  (c) =>
-    c.targetMetric === 'LightSleep' &&
-    String(c.label || '').includes('rolling') &&
-    String(c.label || '').includes('Training Intensity'),
-);
+const dailySleepHoursFC = Array.from({ length: numDaysFc }, (_, i) => {
+  const sec = m.sleep_time?.[String(i + 1)];
+  if (sec == null || !Number.isFinite(+sec) || +sec <= 0) return null;
+  return Math.round((+sec / 3600) * 100) / 100;
+});
+const dailyDisturbFC = Array.from({ length: numDaysFc }, (_, i) => {
+  const v = m.disturbances?.[String(i + 1)];
+  return v == null || !Number.isFinite(+v) ? null : +v;
+});
+const cohortSleepHoursRef =
+  c.sleepH?.M != null && Number.isFinite(+c.sleepH.M) ? +c.sleepH.M : hoursSleep ?? null;
+const cohortDisruptRef =
+  c.dis?.M != null && Number.isFinite(+c.dis.M) ? +c.dis.M : disturbPerHr ?? null;
 
 function escapeCorrText(t) {
   if (t == null) return '';
@@ -747,6 +846,139 @@ function escAttr(s) {
     .replace(/&/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;');
+}
+
+// ─── main_cards.csv lookup helpers ───────────────────────────────────────────
+
+/** Map from code-side metric names to main_cards.csv `metric` column values. */
+const METRIC_TO_CSV_METRIC = {
+  HRV:          'hrv',
+  RHR:          'rhr',
+  Disruptions:  'sleep_disruptions',
+  REM:          'rem_sleep',
+  DeepSleep:    'deep_sleep',
+  healthspan:   'healthspan',
+};
+
+/**
+ * Fetch title/copy/how_it_works from main_cards.csv.
+ * Throws an explicit error if no matching row is found — silent fallback is not allowed.
+ */
+function mainCardText(csvMetric, csvGraph, csvVersion, cardIndex) {
+  const row = mainCardsRows.find(
+    r => r.metric === csvMetric && r.graph === csvGraph && r.version === csvVersion,
+  );
+  if (!row) {
+    throw new Error(
+      `[Card ${cardIndex}] mainCardText lookup failed — no row matched ` +
+      `metric="${csvMetric}" graph="${csvGraph}" version="${csvVersion}" in main_cards.csv`,
+    );
+  }
+  return { title: row.title, summary: row.copy, why: row.how_it_works };
+}
+
+// ─── Tier 5 supplement priority ───────────────────────────────────────────────
+
+/**
+ * Maps the CSV `graph` key used in main_cards.csv to the supplement-slot key
+ * used in the Tier 5 priority table.  These are intentionally kept distinct.
+ */
+const TIER5_SUPPLEMENT_SLOT_KEY = {
+  healthspan:   'healthspan',
+  systems:      'systems',
+  energy:       'energy',
+  inflammation: 'oxidative_stress',  // CSV graph key → supplement slot key
+};
+
+const TIER5_SUPPLEMENT_PRIORITY = [
+  { supplement: 'Magnesium',          slots: ['healthspan', 'oxidative_stress'] },
+  { supplement: 'Vitamin B12',        slots: ['healthspan', 'systems'] },
+  { supplement: 'Probiotics',         slots: ['healthspan', 'systems'] },
+  { supplement: 'Ashwagandha',        slots: ['healthspan', 'oxidative_stress'] },
+  { supplement: 'CoQ10',              slots: ['healthspan', 'energy'] },
+  { supplement: 'Resveratrol',        slots: ['healthspan', 'energy'] },
+  { supplement: 'Acetyl L-Carnitine', slots: ['healthspan', 'energy'] },
+  { supplement: 'Omega 3',            slots: ['healthspan', 'oxidative_stress'] },
+  { supplement: 'Vitamin D',          slots: ['healthspan', 'systems'] },
+];
+
+/**
+ * Assigns one supplement to each Tier 5 slot using the fixed priority order.
+ * Each slot must have a `csvGraph` property (the main_cards.csv graph column value).
+ * Mutates each slot by adding `assignedSupplement`.
+ */
+function assignTier5Supplements(tier5Slots) {
+  for (const slot of tier5Slots) slot.assignedSupplement = null;
+  const takenSlotKeys  = new Set();
+  const takenSupplements = new Set();
+  for (const { supplement, slots: preferred } of TIER5_SUPPLEMENT_PRIORITY) {
+    if (takenSupplements.has(supplement)) continue;
+    for (const prefSlotKey of preferred) {
+      if (takenSlotKeys.has(prefSlotKey)) continue;
+      const slot = tier5Slots.find(
+        s => TIER5_SUPPLEMENT_SLOT_KEY[s.csvGraph] === prefSlotKey,
+      );
+      if (!slot) continue;
+      slot.assignedSupplement = supplement;
+      takenSlotKeys.add(prefSlotKey);
+      takenSupplements.add(supplement);
+      break;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Best resolved correlation row for a focus metric (prefers significant). */
+function pickCorrForResolvedMetric(cards, metric) {
+  if (!metric || metric === 'healthspan') return null;
+  const matches = (Array.isArray(cards) ? cards : []).filter((c) => c.targetMetric === metric);
+  if (!matches.length) return null;
+  const sig = matches.filter((c) => c.significant);
+  const pool = sig.length ? sig : matches;
+  return pool.reduce((a, b) => (+(b.marginScore ?? -999) > +(a.marginScore ?? -999) ? b : a));
+}
+
+/** Safe for HTML text nodes (e.g. inside <h1>). */
+function escapeHtmlText(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/** Root `info` or `metric_analysis.info` (e.g. Whoop exports). */
+function firstNameFromRaw(raw) {
+  const candidates = [
+    raw?.info?.first_name,
+    raw?.connect_device_recommendation?.metric_analysis?.info?.first_name,
+  ];
+  for (const fn of candidates) {
+    if (fn != null && typeof fn === 'string') {
+      const t = fn.trim();
+      if (t) return t;
+    }
+  }
+  return null;
+}
+
+/**
+ * Possessive subject + " Report": "Your Report" or "Mathieu's Report".
+ * HTML wraps the subject in .report-name__subject for styling.
+ */
+function reportTitleParts(raw) {
+  const t = firstNameFromRaw(raw);
+  if (!t) {
+    return {
+      plain: 'Your Report',
+      html: '<span class="report-name__subject">Your</span> Report',
+    };
+  }
+  const plain = `${t}'s Report`;
+  return {
+    plain,
+    html: `<span class="report-name__subject">${escapeHtmlText(t)}'s</span> Report`,
+  };
 }
 
 const lightCohortRaw = g(normative.light_sleep);
@@ -775,42 +1007,14 @@ if (lightP > lightCohortPct + 0.5) {
   lightSummaryHtml = `Your Light Sleep is near your demographic average (<strong>${lightP}%</strong> <strong>vs</strong> <strong>${Math.round(lightCohortPct)}%</strong>).`;
 }
 
-const fc1Title = 'Boost REM Sleep';
-const fc1Cap = 'Daily REM sleep vs demographic average';
-const fc1WhyPanel =
+const remWhyFallback =
   'REM sleep is essential for memory consolidation, emotional regulation, stress resilience, and neural recovery. Persistently low REM can reduce cognitive performance, increase perceived stress, and blunt adaptation to training. Raising REM helps your overnight recovery translate into better next-day readiness.';
-
-const fc2Title = deepSleepCorr?.title ? escapeCorrText(deepSleepCorr.title) : 'Protect Deep Sleep';
-const fc2Summary = deepSleepCorr?.body
-  ? escapeCorrText(deepSleepCorr.body)
-  : 'When training load runs high for several days in a row, deep sleep often compresses—timing recovery becomes important.';
-const fc2Cap = 'Deep sleep % vs training intensity';
-const fc2WhyPanel = deepSleepCorr?.how_it_works
-  ? escapeCorrText(deepSleepCorr.how_it_works)
-  : 'Your Deep Sleep is dropping during harder training weeks, reducing recovery time when your body needs it most. Keeping intensity in check on most days helps preserve deep sleep and long-term adaptation.';
-
-const fc3Title = 'Lower Light Sleep';
-const fc3Summary = lightSummaryHtml;
-const fc3Cap = 'Nightly HRV (RMSSD)';
-const fc3WhyPanel = lightRollingCorr?.how_it_works
-  ? escapeCorrText(lightRollingCorr.how_it_works)
-  : 'Excess light sleep often means your night is not progressing deeply enough into restorative deep and REM phases. If light sleep stays high, total sleep may look adequate while recovery quality remains suboptimal. Reducing light-sleep share supports better sleep architecture and improves physical and cognitive restoration.';
-
-const fc4Title = rhrNextDayCorr?.title ? escapeCorrText(rhrNextDayCorr.title) : 'Recover Better';
-const fc4Summary = rhrNextDayCorr?.body
-  ? escapeCorrText(rhrNextDayCorr.body)
-  : 'On harder training days, next-day resting heart rate often runs higher—recovery and sleep quality matter.';
-const fc4Cap = 'Intensity vs Next-Day Resting Heart Rate';
-const fc4WhyPanel = rhrNextDayCorr?.how_it_works
-  ? escapeCorrText(rhrNextDayCorr.how_it_works)
-  : 'The upward direction of the regression line suggests that harder sessions are currently creating more recovery stress, making post-training recovery especially important for protecting next-day RHR.';
 
 let scoreHeadline = 'Building base';
 if (healthScore >= 85) scoreHeadline = 'High performer';
 else if (healthScore >= 75) scoreHeadline = 'Good progress';
 else if (healthScore >= 60) scoreHeadline = 'Strong foundation';
 
-const aheadPct = Math.min(94, Math.max(8, Math.round(healthScore * 0.65 + 12)));
 const yourPeople = gender === 'female' ? 'women' : 'men';
 const scoreContext = `You're already ahead of ${aheadPct}% of ${yourPeople} your age. In phase 1, we bring your metric health to 90+. In phase 2, we build long-term longevity from that stronger baseline.`;
 
@@ -828,17 +1032,100 @@ function metricDotLabel(metric) {
   if (metric === 'DeepSleep') return 'Deep Sleep';
   if (metric === 'LightSleep') return 'Light Sleep';
   if (metric === 'HRV') return 'Recovery';
+  if (metric === 'RHR') return 'Resting HR';
+  if (metric === 'TotalSleep') return 'Total sleep';
+  if (metric === 'Disruptions') return 'Disruptions';
+  if (metric === 'healthspan') return 'Healthspan';
   return String(metric || 'Priority');
 }
-const dotsButtonsHtml = sortedFocusMetrics
-  .map((fm, idx) => {
-    const lbl = metricDotLabel(fm.metric);
-    const active = idx === 0 ? ' active' : '';
-    const sel = idx === 0 ? 'true' : 'false';
-    const tab = idx === 0 ? '0' : '-1';
-    return `              <button type="button" class="rec-rhr-dot${active}" aria-label="${escAttr(lbl)}" role="tab" aria-selected="${sel}" aria-controls="focus-card-${idx + 1}" tabindex="${tab}"><span class="rec-rhr-dot__label" aria-hidden="true">${lbl}</span></button>`;
-  })
-  .join('\n');
+function tagDisplayLabel(tag) {
+  const t = String(tag || '').toLowerCase().trim();
+  const map = {
+    healthspan: 'Healthspan',
+    hrv: 'HRV',
+    recovery: 'Recovery',
+    sleep_quality: 'Sleep Quality',
+    sleep_disruptions: 'Disruptions',
+    deep_sleep: 'Deep Sleep',
+    rem_sleep: 'REM Sleep',
+    rhr: 'RHR',
+  };
+  if (map[t]) return map[t];
+  return t
+    .split('_')
+    .filter(Boolean)
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ''))
+    .join(' ') || 'Priority';
+}
+function metricChartLabel(metric) {
+  if (metric === 'HRV') return 'HRV';
+  if (metric === 'RHR') return 'Resting Heart Rate';
+  if (metric === 'REM') return 'REM Sleep';
+  if (metric === 'DeepSleep') return 'Deep Sleep';
+  if (metric === 'LightSleep') return 'Light Sleep';
+  if (metric === 'TotalSleep') return 'Total Sleep';
+  if (metric === 'Disruptions') return 'Disruptions';
+  if (metric === 'Awake') return 'Awake Time';
+  return metricDotLabel(metric);
+}
+function metricUnit(metric) {
+  if (metric === 'HRV') return 'ms';
+  if (metric === 'RHR') return 'bpm';
+  if (metric === 'TotalSleep') return 'h';
+  if (metric === 'Disruptions') return '/h';
+  if (metric === 'REM' || metric === 'DeepSleep' || metric === 'LightSleep' || metric === 'Awake') return '%';
+  return '';
+}
+function isLowerBetterMetric(metric) {
+  return metric === 'RHR' || metric === 'Disruptions' || metric === 'LightSleep' || metric === 'Awake';
+}
+function metricTriple(metric) {
+  if (metric === 'HRV') return c.hrv;
+  if (metric === 'RHR') return c.rhr;
+  if (metric === 'TotalSleep') return c.sleepH;
+  if (metric === 'Disruptions') return c.dis;
+  if (metric === 'REM') return c.rem;
+  if (metric === 'DeepSleep') return c.deep;
+  if (metric === 'LightSleep') return c.light;
+  if (metric === 'Awake') return c.awake;
+  return null;
+}
+function metricDailySeries(metric) {
+  return Array.from({ length: numDaysFc }, (_, i) => {
+    const k = String(i + 1);
+    if (metric === 'HRV') {
+      const v = m.HRV?.[k];
+      return v == null || !Number.isFinite(+v) ? null : +v;
+    }
+    if (metric === 'RHR') {
+      const v = m.RHR?.[k];
+      return v == null || !Number.isFinite(+v) ? null : +v;
+    }
+    if (metric === 'TotalSleep') {
+      const sec = m.sleep_time?.[k];
+      return sec == null || !Number.isFinite(+sec) || +sec <= 0 ? null : +sec / 3600;
+    }
+    if (metric === 'Disruptions') {
+      const d = m.disturbances?.[k];
+      const s = m.sleep_time?.[k];
+      if (d == null || s == null || !Number.isFinite(+d) || !Number.isFinite(+s) || +s <= 0) return null;
+      return +d / (+s / 3600);
+    }
+    const secByMetric = {
+      REM: m.rem_sleep,
+      DeepSleep: m.deep_sleep,
+      LightSleep: m.light_sleep,
+      Awake: m.awake_time,
+    }[metric];
+    if (!secByMetric) return null;
+    const secMetric = secByMetric?.[k];
+    const secSleep = m.sleep_time?.[k];
+    if (secMetric == null || secSleep == null || !Number.isFinite(+secMetric) || !Number.isFinite(+secSleep) || +secSleep <= 0) {
+      return null;
+    }
+    return (100 * +secMetric) / +secSleep;
+  });
+}
 
 const fc1Payload = {
   numDays: numDaysFc,
@@ -855,164 +1142,1005 @@ const fc3Payload = {
   targetMin: targetHrvMin,
   targetMax: targetHrvMax,
 };
-const fc4Payload = { points: scatterPtsFC };
 
-const injectBlock = `  const FC1_REM_DATA = ${JSON.stringify(fc1Payload)};
-  const FC2_DEEP_INT_DATA = ${JSON.stringify(fc2Payload)};
-  const FC3_HRV_DATA = ${JSON.stringify(fc3Payload)};
-  const FC4_SCATTER_DATA = ${JSON.stringify(fc4Payload)};`;
+const fcSleepHoursPayload = {
+  numDays: numDaysFc,
+  dailyHours: dailySleepHoursFC,
+  refHours: cohortSleepHoursRef,
+};
+const fcDisturbPayload = {
+  numDays: numDaysFc,
+  counts: dailyDisturbFC,
+  refCount: cohortDisruptRef,
+};
+
+const rhrCohortMed =
+  c.rhr?.M != null && Number.isFinite(+c.rhr.M) ? Math.round(+c.rhr.M) : null;
+const hrvSummaryFallback = `Your average HRV is <strong>${hrvAvg != null ? Math.round(hrvAvg) : '—'}</strong> ms; cohort-informed target band <strong>${targetHrvMin}–${targetHrvMax}</strong> ms.`;
+const rhrSummaryFallback = `Your average resting heart rate is <strong>${rhrAvg != null ? Math.round(rhrAvg) : '—'}</strong> bpm${
+  rhrCohortMed != null ? ` vs cohort median <strong>${rhrCohortMed}</strong> bpm` : ''
+}.`;
+let totalSleepSummaryFallback = 'Your total sleep is being tracked against cohort norms.';
+if (hoursSleep != null && Number.isFinite(hoursSleep) && cohortSleepHoursRef != null && Number.isFinite(cohortSleepHoursRef)) {
+  const hs = hoursSleep.toFixed(1);
+  const cr = cohortSleepHoursRef.toFixed(1);
+  totalSleepSummaryFallback = `Your average total sleep is <strong>${hs}</strong> h vs cohort median near <strong>${cr}</strong> h.`;
+}
+let disruptSummaryFallback = 'Night-time disruptions are tracked against cohort norms.';
+if (disturbPerHr != null && Number.isFinite(disturbPerHr) && cohortDisruptRef != null && Number.isFinite(cohortDisruptRef)) {
+  disruptSummaryFallback = `You average about <strong>${disturbPerHr.toFixed(1)}</strong> disruptions per hour of sleep vs cohort median near <strong>${cohortDisruptRef.toFixed(1)}</strong>.`;
+}
+
+function metricPercentSeries(metric) {
+  const secByMetric = {
+    REM: m.rem_sleep,
+    DeepSleep: m.deep_sleep,
+    LightSleep: m.light_sleep,
+    Awake: m.awake_time,
+  }[metric];
+  if (!secByMetric) return null;
+  return Array.from({ length: numDaysFc }, (_, i) => {
+    const k = String(i + 1);
+    const secMetric = secByMetric?.[k];
+    const secSleep = m.sleep_time?.[k];
+    if (secMetric == null || secSleep == null || !Number.isFinite(+secMetric) || !Number.isFinite(+secSleep) || +secSleep <= 0) {
+      return null;
+    }
+    return (100 * +secMetric) / +secSleep;
+  });
+}
+
+function remLikePayloadForMetric(metric) {
+  const pct = metricDailySeries(metric);
+  const tri = metricTriple(metric);
+  const triVals = [tri?.L, tri?.M, tri?.R].map((v) => Number(v)).filter((v) => Number.isFinite(v)).sort((a, b) => a - b);
+  const fallbackP50 = tri?.M ?? (metric === 'DeepSleep' ? deepP : metric === 'LightSleep' ? lightP : metric === 'Awake' ? awakeP : remP);
+  const p50 = Number.isFinite(+fallbackP50) ? +fallbackP50 : remPctilesFC.p50;
+  const fallbackBands = deriveRemPercentilesFromP50(p50);
+  return {
+    numDays: numDaysFc,
+    dailyPct: pct,
+    remPctiles:
+      triVals.length === 3
+        ? { p50, p30: triVals[0], p60: triVals[1], p90: triVals[2] }
+        : fallbackBands,
+    demographicPct: p50,
+    metaGender: gender,
+    metaAge: meta.age ?? 30,
+    metricLabel: metricChartLabel(metric),
+    baselineLabel: 'cohort median',
+    unitLabel: metricUnit(metric) || '%',
+    lowerIsBetter: isLowerBetterMetric(metric),
+  };
+}
+
+/** Normative REM row (p30 / p50 / p90) for the user's age bracket, if present. */
+function normRemBracketObj() {
+  const v = normative?.rem_sleep?.[gender]?.[band];
+  if (v != null && typeof v === 'object' && Number.isFinite(+v.p50)) return v;
+  return null;
+}
+
+const FOCUS_VARIANCE_METRICS = new Set([
+  'HRV',
+  'RHR',
+  'TotalSleep',
+  'Disruptions',
+  'REM',
+  'DeepSleep',
+  'LightSleep',
+  'Awake',
+]);
+
+/**
+ * Nightly band chart payload for any focus metric (graph_type "variance").
+ * Shaded target band uses variance_rules.json via varianceRules.js (band around
+ * the window mean of nightly values), same semantics as stability analysis.
+ */
+function variancePayloadForMetric(metric) {
+  const mKey = FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV';
+  const series = metricDailySeries(mKey).map((v) => (v == null || !Number.isFinite(+v) ? null : +v));
+  const unit = metricUnit(mKey) || '';
+  const label = metricChartLabel(mKey);
+  const lower = isLowerBetterMetric(mKey);
+
+  const vals = series.filter((v) => v != null && Number.isFinite(+v)).map((v) => +v);
+  const mu = varianceMeanOf(vals);
+  const rulesBand =
+    mu != null && Number.isFinite(+mu) ? varianceOptimalBand(+mu, mKey) : null;
+
+  let targetMin = 0;
+  let targetMax = 100;
+  if (
+    rulesBand &&
+    Number.isFinite(rulesBand.low) &&
+    Number.isFinite(rulesBand.high) &&
+    rulesBand.high > rulesBand.low
+  ) {
+    targetMin = rulesBand.low;
+    targetMax = rulesBand.high;
+  } else {
+    switch (mKey) {
+      case 'HRV': {
+        const hM = g(normative.hrv);
+        targetMin = Number.isFinite(hM) ? Math.max(20, Math.round(hM * 0.88)) : 40;
+        targetMax = Number.isFinite(hM) ? Math.max(targetMin + 5, Math.round(hM * 1.12)) : targetMin + 30;
+        break;
+      }
+      case 'RHR': {
+        targetMin =
+          c.rhr?.R != null && Number.isFinite(+c.rhr.R) ? +c.rhr.R : Math.max(35, Math.round((rhrAvg ?? 50) - 4));
+        targetMax = c.rhr?.M != null && Number.isFinite(+c.rhr.M) ? +c.rhr.M : Math.round((rhrAvg ?? 50) + 2);
+        break;
+      }
+      case 'TotalSleep': {
+        const M = c.sleepH?.M ?? hoursSleep ?? 7;
+        const hi = c.sleepH?.R ?? M * 1.12;
+        targetMin = round1(Math.max(4, M * 0.9));
+        targetMax = round1(Math.min(12, hi));
+        break;
+      }
+      case 'Disruptions': {
+        targetMin = 0;
+        const M = c.dis?.M ?? 1;
+        targetMax = round1(Math.max(0.12, M * 1.35));
+        break;
+      }
+      case 'REM': {
+        const o = normRemBracketObj();
+        if (o && Number.isFinite(+o.p30) && Number.isFinite(+o.p90)) {
+          targetMin = Math.round(+o.p30);
+          targetMax = Math.round(+o.p90);
+        } else {
+          const p50 = g(normative.rem_sleep) ?? 21;
+          targetMin = Math.max(5, Math.round(p50 * 0.88));
+          targetMax = Math.min(50, Math.round(p50 * 1.12));
+        }
+        break;
+      }
+      case 'DeepSleep': {
+        const lo = c.deep?.L ?? 5;
+        const hi = c.deep?.R ?? 24;
+        targetMin = Math.round(Math.max(3, lo));
+        targetMax = Math.round(Math.min(45, hi));
+        break;
+      }
+      case 'LightSleep': {
+        targetMin = 0;
+        targetMax = round1(c.light?.M ?? 57);
+        break;
+      }
+      case 'Awake': {
+        targetMin = 0;
+        targetMax = round1(Math.max(2, (c.awake?.M ?? 7) * 1.25));
+        break;
+      }
+      default: {
+        targetMin = 0;
+        targetMax = 100;
+      }
+    }
+  }
+
+  const yAxisLabel = mKey === 'HRV' ? 'HRV' : mKey === 'RHR' ? 'RESTING HR' : label.toUpperCase();
+
+  if (targetMin > targetMax) {
+    const t = targetMin;
+    targetMin = targetMax;
+    targetMax = t;
+  }
+
+  const titleSuffix = mKey === 'HRV' ? ' (RMSSD)' : '';
+  const titleLabel = `Nightly ${label}${titleSuffix}`;
+
+  return {
+    numDays: numDaysFc,
+    seriesByDay: series,
+    hrvByDay: series,
+    targetMin,
+    targetMax,
+    metricLabel: label,
+    unitLabel: unit,
+    yAxisLabel,
+    titleLabel,
+    lowerIsBetter: lower,
+  };
+}
+
+/** main_cards.csv `graph` column has no `7day_average` row — cohort copy still applies. */
+function mainCardsCsvGraph(graphType) {
+  if (graphType === '7day_average') return 'cohort';
+  return graphType;
+}
+
+/**
+ * main_cards.csv `version`: NA | baseline | top 10% | unstable | variable
+ * (Cohort version from bio standing; variance version from stability tiers.)
+ */
+function mainCardsCsvVersion(graphType, metric) {
+  if (graphType === 'healthspan') return 'NA';
+  const eff = mainCardsCsvGraph(graphType);
+  if (eff === 'cohort') {
+    const BIO_KEY = {
+      HRV: 'hrv',
+      RHR: 'rhr',
+      Disruptions: 'dis',
+      REM: 'rem',
+      DeepSleep: 'deep',
+      TotalSleep: 'sleepH',
+      LightSleep: 'light',
+      Awake: 'awake',
+    };
+    const key = BIO_KEY[metric];
+    const standing = key && bio[key] ? bio[key].standingPct : null;
+    return standing != null && standing >= 50 ? 'top 10%' : 'baseline';
+  }
+  if (eff === 'variance') {
+    const mKey = FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV';
+    const series = metricDailySeries(mKey);
+    const vals = series.filter((v) => v != null && Number.isFinite(+v)).map(Number);
+    const a = varianceAnalyzeSeries(vals, mKey);
+    if (!a || a.tier == null) return 'unstable';
+    if (a.tier === 'unstable') return 'unstable';
+    return 'variable';
+  }
+  return 'baseline';
+}
+
+function pctDiffVsReference(a, b) {
+  if (a == null || b == null || !Number.isFinite(+a) || !Number.isFinite(+b)) return null;
+  const B = Math.abs(+b);
+  if (B < 1e-9) return null;
+  return Math.round((Math.abs(+a - +b) / B) * 100);
+}
+
+/** Expected nightly minutes for a sleep stage from normative % and typical sleep duration (hours). */
+function normStageMinutesFromPct(normPct, sleepHoursNorm) {
+  if (normPct == null || sleepHoursNorm == null || !Number.isFinite(+normPct) || !Number.isFinite(+sleepHoursNorm)) {
+    return null;
+  }
+  return (+normPct / 100) * (+sleepHoursNorm * 60);
+}
+
+function fmtMainCardNumber(csvMetric, raw) {
+  if (raw == null || !Number.isFinite(+raw)) return '—';
+  const v = +raw;
+  if (csvMetric === 'sleep_disruptions') return round1(v).toFixed(1);
+  if (csvMetric === 'hrv' || csvMetric === 'rhr') return String(Math.round(v));
+  if (csvMetric === 'rem_sleep' || csvMetric === 'deep_sleep') {
+    const x = Math.round(v * 10) / 10;
+    return Number.isInteger(x) ? String(x) : x.toFixed(1);
+  }
+  return String(v);
+}
+
+/**
+ * Replace [X], [A], [B] in main_cards copy using the same window means and L/M/R cohort
+ * triples as the bio bench (normative + top10_percent JSON).
+ */
+function interpolateMainCardCopy(text, metric, csvMetric, csvGraph, csvVersion) {
+  if (!text || (!text.includes('[X]') && !text.includes('[A]') && !text.includes('[B]'))) return text;
+
+  if (csvGraph === 'variance' && (csvVersion === 'unstable' || csvVersion === 'variable')) {
+    const mKey = FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV';
+    const series = metricDailySeries(mKey);
+    const vals = series.filter((v) => v != null && Number.isFinite(+v)).map(Number);
+    const a = varianceAnalyzeSeries(vals, mKey);
+    const outsidePct =
+      a != null && Number.isFinite(a.daysInRangePct)
+        ? Math.max(0, Math.min(100, Math.round(100 - a.daysInRangePct)))
+        : null;
+    let s = text;
+    if (s.includes('[X]')) s = s.split('[X]').join(outsidePct == null ? '—' : String(outsidePct));
+    return s;
+  }
+
+  if (csvGraph !== 'cohort' || (csvVersion !== 'baseline' && csvVersion !== 'top 10%')) return text;
+
+  const sleepHoursNorm = g(normative.total_sleep);
+
+  let rawA = null;
+  let rawB = null;
+  let rawX = null;
+
+  if (csvMetric === 'sleep_disruptions') {
+    rawA = disturbPerHr;
+    rawB = csvVersion === 'baseline' ? c.dis?.M : c.dis?.R;
+  } else if (csvMetric === 'hrv') {
+    rawA = hrvAvg;
+    rawB = csvVersion === 'baseline' ? c.hrv?.M : c.hrv?.R;
+  } else if (csvMetric === 'rhr') {
+    rawA = rhrAvg;
+    rawB = csvVersion === 'baseline' ? c.rhr?.M : c.rhr?.R;
+  } else if (csvMetric === 'rem_sleep') {
+    rawA = remAvgS != null && Number.isFinite(+remAvgS) ? +remAvgS / 60 : null;
+    const normPct = g(normative.rem_sleep);
+    const topPct = g(top10.rem_sleep);
+    if (csvVersion === 'baseline') {
+      rawB = normStageMinutesFromPct(normPct, sleepHoursNorm);
+    } else {
+      rawB = normStageMinutesFromPct(topPct, sleepHoursNorm);
+    }
+  } else if (csvMetric === 'deep_sleep') {
+    rawA = deepAvgS != null && Number.isFinite(+deepAvgS) ? +deepAvgS / 60 : null;
+    const normPct = g(normative.deep_sleep);
+    const topPct = g(top10.deep_sleep);
+    rawB =
+      csvVersion === 'baseline'
+        ? normStageMinutesFromPct(normPct, sleepHoursNorm)
+        : normStageMinutesFromPct(topPct, sleepHoursNorm);
+  } else {
+    return text;
+  }
+
+  if (csvVersion === 'baseline') {
+    rawX = pctDiffVsReference(rawA, rawB);
+  }
+
+  const strA = fmtMainCardNumber(csvMetric, rawA);
+  const strB = fmtMainCardNumber(csvMetric, rawB);
+  const strX = rawX == null || !Number.isFinite(+rawX) ? '—' : String(rawX);
+
+  let s = text;
+  if (s.includes('[X]')) s = s.split('[X]').join(strX);
+  if (s.includes('[A]')) s = s.split('[A]').join(strA);
+  if (s.includes('[B]')) s = s.split('[B]').join(strB);
+  return s;
+}
+
+/** Same-day training intensity (x) vs nightly metric (y). */
+function scatterPointsForMetric(metric) {
+  const mKey = FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV';
+  const ySeries = metricDailySeries(mKey);
+  const pts = [];
+  for (let day = 1; day <= numDaysFc; day += 1) {
+    const x = dailyAct?.[String(day)]?.average_intensity;
+    const yi = ySeries[day - 1];
+    if (x == null || yi == null) continue;
+    if (!Number.isFinite(+x) || !Number.isFinite(+yi)) continue;
+    pts.push({ x: +x, y: +yi });
+  }
+  return pts;
+}
+
+function defaultGraphTypeFromTier(tier) {
+  if (tier === 1 || tier === 2) return 'cohort';
+  if (tier === 3 || tier === 4) return 'variance';
+  if (tier === 5) return 'healthspan';
+  return 'cohort';
+}
+
+function focusChartDataForGraphType(graphType, metric) {
+  switch (graphType) {
+    case 'cohort':
+      return remLikePayloadForMetric(metric);
+    case '7day_average':
+      return {
+        metricDaily: metricDailySeries(metric),
+        intensityDaily: fc2Payload.intensityDaily,
+        metricLabel: metricChartLabel(metric),
+        leftUnit: metricUnit(metric) || '',
+      };
+    case 'variance':
+      return variancePayloadForMetric(metric);
+    case 'single_correlation': {
+      const mKey = FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV';
+      return {
+        points: scatterPointsForMetric(mKey),
+        yAxisLabel: metricChartLabel(mKey).toUpperCase(),
+        xAxisLabel: 'Training Intensity',
+        yUnit: metricUnit(mKey) || '',
+        pointYLabel: metricChartLabel(mKey),
+      };
+    }
+    case 'healthspan':
+      return null;
+    case 'extension_system_decline':
+    case 'extension_energy_age':
+    case 'extension_inflammation':
+      return null;
+    default:
+      return variancePayloadForMetric(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV');
+  }
+}
+
+function focusCaptionForGraphType(graphType, metric) {
+  switch (graphType) {
+    case 'cohort':
+      return `Daily ${metricChartLabel(metric)} vs demographic average`;
+    case '7day_average':
+      return `${metricChartLabel(metric)} (7-day trend) vs training intensity`;
+    case 'variance':
+      return variancePayloadForMetric(metric).titleLabel;
+    case 'single_correlation':
+      return `Training intensity vs ${metricChartLabel(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV')}`;
+    case 'healthspan':
+      return 'Personalized longevity stack';
+    case 'extension_system_decline':
+      return 'System decline over lifespan';
+    case 'extension_energy_age':
+      return 'Energy levels over age';
+    case 'extension_inflammation':
+      return 'Impact of inflammation on longevity';
+    default:
+      return 'Metric trend';
+  }
+}
+
+function focusChartAria(graphType, metric) {
+  switch (graphType) {
+    case 'cohort':
+      return `Daily ${metricChartLabel(metric)}; bars colored by cohort percentile band (red through blue)`;
+    case '7day_average':
+      return `${metricChartLabel(metric)} trend and training intensity over 30 days`;
+    case 'variance': {
+      const v = variancePayloadForMetric(metric);
+      const dec = v.unitLabel === 'h' ? 1 : 2;
+      const lo =
+        v.unitLabel === '/h' || v.unitLabel === 'h'
+          ? `${Number(v.targetMin).toFixed(dec)}`
+          : `${Math.round(v.targetMin)}`;
+      const hi =
+        v.unitLabel === '/h' || v.unitLabel === 'h'
+          ? `${Number(v.targetMax).toFixed(dec)}`
+          : `${Math.round(v.targetMax)}`;
+      return `Nightly ${v.metricLabel}; target ${lo}–${hi} ${v.unitLabel}; blue dots within target band`;
+    }
+    case 'single_correlation': {
+      const lab = metricChartLabel(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV');
+      return `Scatter of same-day training intensity versus ${lab}`;
+    }
+    case 'healthspan':
+      return 'Lifespan versus healthspan schematic: Normal and With Protocol curves';
+    case 'extension_system_decline':
+      return 'System function vs lifespan: gut, immunity, metabolism, musculoskeletal illustrative curves';
+    case 'extension_energy_age':
+      return 'Energy vs age illustrative curve';
+    case 'extension_inflammation':
+      return 'Longevity expectation vs inflammation load illustrative curve';
+    default:
+      return 'Focus chart';
+  }
+}
+
+function focusLegendInner(fc, graphType, metric) {
+  if (graphType === 'cohort') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch ${fc}-legend__swatch--avg" style="display:inline-block;width:22px;height:0;border-top:1px dashed #9ca3af;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Demographic Avg.</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === '7day_average') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch ${fc}-legend__swatch--deep" style="display:inline-block;width:22px;height:0;border-top:2px solid #0071e3;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">${escapeHtmlText(metricChartLabel(metric))}</span>
+                    </div>
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch ${fc}-legend__swatch--load" style="display:inline-block;width:22px;height:0;border-top:2px solid #ffd60a;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Training Load</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === 'single_correlation') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch ${fc}-legend__swatch--reg" aria-hidden="true"></span>
+                      <span class="${fc}-legend__label">Regression Line</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === 'healthspan') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #6b7280;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Normal</span>
+                    </div>
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">With Protocol</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === 'extension_system_decline') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #ef4444;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Gut health</span>
+                    </div>
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Immunity</span>
+                    </div>
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #8b5cf6;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Metabolism</span>
+                    </div>
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Musculoskeletal</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === 'extension_energy_age') {
+    return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
+                      <span class="${fc}-legend__label">Energy trend</span>
+                    </div>
+                  </div>`;
+  }
+  if (graphType === 'extension_inflammation') {
+    return '';
+  }
+  return `<div class="${fc}-legend" aria-hidden="true">
+                    <div class="${fc}-legend__item">
+                      <span class="${fc}-legend__swatch ${fc}-legend__swatch--target-range"></span>
+                      <span class="${fc}-legend__label">Target range</span>
+                    </div>
+                  </div>`;
+}
+
+function buildFocusSlotFromFm(fm, cardIndex) {
+  const metric = fm.metric;
+  const corr = pickCorrForResolvedMetric(correlationCardsResolved, metric);
+  const graphType = fm.graph_type || defaultGraphTypeFromTier(fm.tier);
+  const data = graphType === 'healthspan' ? null : focusChartDataForGraphType(graphType, metric);
+  const useCorr = Boolean(corr && corr.significant && corr.title);
+  const cap = focusCaptionForGraphType(graphType, metric);
+  const csvGraph = mainCardsCsvGraph(graphType);
+
+  let title;
+  let summary;
+  let why;
+
+  if (useCorr) {
+    // Correlation cards → text from correlationCardsResolved (derived from correlation_cards-2.csv).
+    title = escapeCorrText(corr.title);
+    summary = escapeCorrText(corr.body || '');
+    why = escapeCorrText(corr.how_it_works || '');
+  } else {
+    // All non-correlation cards → text from main_cards.csv.
+    const csvMetric = METRIC_TO_CSV_METRIC[metric];
+    if (!csvMetric) {
+      throw new Error(
+        `[Card ${cardIndex}] buildFocusSlotFromFm: no METRIC_TO_CSV_METRIC entry for metric="${metric}"`,
+      );
+    }
+    const csvVersion = (metric === 'healthspan' || fm.tier === 5)
+      ? 'NA'
+      : mainCardsCsvVersion(graphType, metric);
+    const csvText = mainCardText(csvMetric, csvGraph, csvVersion, cardIndex);
+    title = escapeHtmlText(csvText.title);
+    summary = interpolateMainCardCopy(csvText.summary, metric, csvMetric, csvGraph, csvVersion);
+    why = interpolateMainCardCopy(csvText.why, metric, csvMetric, csvGraph, csvVersion);
+  }
+
+  return { metric, graphType, csvGraph, data, title, summary, cap, why, corr: useCorr ? corr : null };
+}
+
+const focusSlotsResolved = sortedFocusMetrics.slice(0, 4).map((fm, idx) => buildFocusSlotFromFm(fm, idx + 1));
+
+function focusDotLabelForStackIndex(idx, stackSlot) {
+  if (idx < sortedFocusMetrics.length) {
+    const fm = sortedFocusMetrics[idx];
+    return fm?.tag ? tagDisplayLabel(fm.tag) : metricDotLabel(fm.metric);
+  }
+  return stackSlot?.dotLabel || stackSlot?.cap || `Slide ${idx + 1}`;
+}
+
+/** Static extension slides after priority 1–4 (Figma Nutricode 23838:18813, 18865, 18898). */
+// Text (title/summary/why) — Layer A: main_cards.csv keyed by csvGraph.
+// Supplement — Layer B: assigned separately via assignTier5Supplements(); never influences text.
+const _extSystems = mainCardText('healthspan', 'systems',      'NA', 5);
+const _extEnergy  = mainCardText('healthspan', 'energy',       'NA', 6);
+const _extInflam  = mainCardText('healthspan', 'inflammation', 'NA', 7);
+
+const focusExtensionSlots = [
+  {
+    metric: 'extension_system_decline',
+    graphType: 'extension_system_decline',
+    csvGraph: 'systems',      // Layer A key (main_cards.csv `graph` column)
+    data: null,
+    corr: null,
+    dotLabel: 'Systems',
+    title:   escapeHtmlText(_extSystems.title),
+    summary: _extSystems.summary,
+    cap:     'System decline over lifespan',
+    why:     _extSystems.why,
+  },
+  {
+    metric: 'extension_energy_age',
+    graphType: 'extension_energy_age',
+    csvGraph: 'energy',       // Layer A key
+    data: null,
+    corr: null,
+    dotLabel: 'Energy',
+    title:   escapeHtmlText(_extEnergy.title),
+    summary: _extEnergy.summary,
+    cap:     'Energy levels over age',
+    why:     _extEnergy.why,
+  },
+  {
+    metric: 'extension_inflammation',
+    graphType: 'extension_inflammation',
+    csvGraph: 'inflammation', // Layer A key; Layer B slot key = 'oxidative_stress' via TIER5_SUPPLEMENT_SLOT_KEY
+    data: null,
+    corr: null,
+    dotLabel: 'Inflammation',
+    title:   escapeHtmlText(_extInflam.title),
+    summary: _extInflam.summary,
+    cap:     'Impact of inflammation on longevity',
+    why:     _extInflam.why,
+  },
+];
+
+// ── Tier 5 supplement assignment (Layer B) ────────────────────────────────────
+// Collect all Tier 5 slots: the healthspan slot from focusSlotsResolved + the three extension slots.
+const tier5Slots = [
+  ...focusSlotsResolved.filter(s => s.metric === 'healthspan' || s.graphType === 'healthspan'),
+  ...focusExtensionSlots,
+];
+assignTier5Supplements(tier5Slots);
+// ─────────────────────────────────────────────────────────────────────────────
+
+const focusStackSlots = [...focusSlotsResolved, ...focusExtensionSlots];
+
+const focusSlotChartSpecs = focusStackSlots.map((s) =>
+  s.graphType === 'healthspan' ||
+    s.graphType === 'extension_system_decline' ||
+    s.graphType === 'extension_energy_age' ||
+    s.graphType === 'extension_inflammation'
+    ? { graph_type: null, data: null }
+    : { graph_type: s.graphType, data: s.data },
+);
+
+const dotsButtonsHtml = focusStackSlots
+  .map((stackSlot, idx) => {
+    const lbl = focusDotLabelForStackIndex(idx, stackSlot);
+    const active = idx === 0 ? ' active' : '';
+    const sel = idx === 0 ? 'true' : 'false';
+    const tab = idx === 0 ? '0' : '-1';
+    return `              <button type="button" class="rec-rhr-dot${active}" aria-label="${escAttr(lbl)}" role="tab" aria-selected="${sel}" aria-controls="focus-card-${idx + 1}" tabindex="${tab}"><span class="rec-rhr-dot__label" aria-hidden="true">${lbl}</span></button>`;
+  })
+  .join('\n');
+
+/** Matches Figma Nutricode → LongevityHealthspanChart (node 23835:10191): Normal vs With Protocol. */
+const FONT_HS = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+
+function healthspanLifespanVsHealthspanSvg(slotNumber) {
+  const VB = '4 38 279 140';
+  // Keep y-label column at fixed x positions and shift plot right to match.
+  const XL = 52;
+  const XR = 274;
+  const YT = 48;
+  const YB = 150;
+  const W = XR - XL;
+  const H = YB - YT;
+  /** t ∈ [0,1] = lifespan 20→100 (axis ticks). */
+  const xOf = (t) => XL + t * W;
+  /** p ∈ [0,1] = healthspan 0% (bottom) → 100% (top). */
+  const yOf = (p) => YB - p * H;
+
+  function fnNormal(t) {
+    if (t <= 0.2) return 1;
+    if (t >= 1) return 0.06;
+    const u = (t - 0.2) / 0.8;
+    return 1 - 0.94 * (u * u * (3 - 2 * u));
+  }
+  function fnProtocol(t) {
+    // Keep a long high plateau, then a late, steep decline.
+    if (t <= 0.62) return 1;
+    if (t >= 1) return 0.08;
+    const u = (t - 0.62) / 0.38;
+    return 1 - 0.92 * Math.pow(u, 6.2);
+  }
+
+  function samplePath(fn, steps = 64) {
+    const pts = [];
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      let p = Math.max(0, Math.min(1, fn(t)));
+      pts.push({ x: xOf(t), y: yOf(p) });
+    }
+    const head = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    if (pts.length === 1) return head;
+    return `${head} L ${pts
+      .slice(1)
+      .map((q) => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`)
+      .join(' L ')}`;
+  }
+
+  const dNormal = samplePath(fnNormal);
+  const dProtocol = samplePath(fnProtocol);
+
+  const yTicks = [
+    { p: 1, lab: '100%' },
+    { p: 0.75, lab: '75%' },
+    { p: 0.5, lab: '50%' },
+    { p: 0.25, lab: '25%' },
+  ];
+  const yTickSvg = yTicks
+    .map(({ p, lab }) => {
+      const y = yOf(p);
+      return `<line x1="${XL}" y1="${y.toFixed(1)}" x2="${XR}" y2="${y.toFixed(1)}" stroke="#f0f0f2" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                      <text x="40" y="${(y + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" font-weight="400" fill="#b7bcc6">${lab}</text>`;
+    })
+    .join('\n                      ');
+
+  const ages = [20, 40, 60, 80, 100];
+  const xTickSvg = ages
+    .map((age) => {
+      const t = (age - 20) / 80;
+      const x = xOf(t);
+      return `<text x="${x.toFixed(1)}" y="${YB + 12}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" font-weight="400" fill="#9ca3af">${age}</text>`;
+    })
+    .join('\n                      ');
+
+  const aria = escAttr(
+    'Lifespan versus healthspan: illustrative Normal trajectory and With Protocol trajectory (Nutricode design).',
+  );
+
+  return `                    <svg id="focus-chart-${slotNumber}" class="focus-healthspan-svg" viewBox="${VB}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${aria}">
+                      <defs>
+                        <linearGradient id="hsGrad-${slotNumber}" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/>
+                          <stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      <title>Longevity: healthspan over lifespan</title>
+                      <desc>Normal (gray) versus With Protocol (green). Schematic chart aligned to Nutricode Figma LongevityHealthspanChart.</desc>
+                      <rect x="${XL}" y="${YT}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" rx="0" fill="url(#hsGrad-${slotNumber})"/>
+                      ${yTickSvg}
+                      <line x1="${XL}" y1="${YT}" x2="${XL}" y2="${YB}" stroke="#e5e7eb" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                      <line x1="${XL}" y1="${YB}" x2="${XR}" y2="${YB}" stroke="#e5e7eb" stroke-width="1" vector-effect="non-scaling-stroke"/>
+                      <text transform="translate(20 ${((YT + YB) / 2).toFixed(1)}) rotate(-90)" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" font-weight="400" fill="#6b7280">Healthspan</text>
+                      <path d="${dNormal}" stroke="#6b7280" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                      <path d="${dProtocol}" stroke="#10b981" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                      ${xTickSvg}
+                      <text x="${((XL + XR) / 2).toFixed(1)}" y="${YB + 22}" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" font-weight="400" fill="#6b7280">Lifespan</text>
+                    </svg>`;
+}
+
+function extChartPlotBox() {
+  return { VB: '4 38 279 140', XL: 52, XR: 262, YT: 50, YB: 151 };
+}
+
+function extPathFromFn(xOf, yOf, fn, steps = 56) {
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const p = Math.max(0, Math.min(1, fn(t)));
+    pts.push({ x: xOf(t), y: yOf(p) });
+  }
+  const head = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+  if (pts.length === 1) return head;
+  return `${head} L ${pts
+    .slice(1)
+    .map((q) => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`)
+    .join(' L ')}`;
+}
+
+/** Figma 23838:18813 — four system trajectories vs lifespan. */
+function extensionSystemDeclineSvg(slotNumber) {
+  const { VB, XL, YT, YB } = extChartPlotBox();
+  const XR = 274;
+  const W = XR - XL;
+  const H = YB - YT;
+  const xOf = (t) => XL + t * W;
+  const yOf = (p) => YB - p * H;
+  const decline = (t, start, span, floor) => {
+    if (t <= start) return 1;
+    if (t >= 1) return floor;
+    const u = Math.min(1, Math.max(0, (t - start) / span));
+    const s = u * u * (3 - 2 * u);
+    return 1 - (1 - floor) * s;
+  };
+  const series = [
+    { c: '#ef4444', fn: (t) => decline(t, 0.08, 0.72, 0.08) },
+    { c: '#3b82f6', fn: (t) => decline(t, 0.14, 0.78, 0.12) },
+    { c: '#8b5cf6', fn: (t) => decline(t, 0.2, 0.82, 0.14) },
+    { c: '#10b981', fn: (t) => decline(t, 0.26, 0.86, 0.18) },
+  ];
+  const paths = series.map((s) => `<path d="${extPathFromFn(xOf, yOf, s.fn)}" stroke="${s.c}" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`);
+  const yLabs = [1, 0.75, 0.5, 0.25].map(
+    (p, i) =>
+      `<line x1="${XL}" y1="${yOf(p).toFixed(1)}" x2="${XR}" y2="${yOf(p).toFixed(1)}" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="${(yOf(p) + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" fill="#b7bcc6">${[100, 75, 50, 25][i]}%</text>`,
+  );
+  const ages = [20, 40, 60, 80, 100];
+  const xLabs = ages.map((a) => {
+    const t = (a - 20) / 80;
+    return `<text x="${xOf(t).toFixed(1)}" y="${YB + 11}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#9ca3af">${a}</text>`;
+  });
+  const aria = escAttr(
+    'System function vs lifespan: Gut health, Immunity, Metabolism, Musculoskeletal illustrative decline curves.',
+  );
+  return `                    <svg id="focus-chart-${slotNumber}" class="focus-extension-svg" viewBox="${VB}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${aria}">
+                      <defs><linearGradient id="exg-${slotNumber}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
+                      <rect x="${XL}" y="${YT}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="url(#exg-${slotNumber})"/>
+                      ${yLabs.join('')}
+                      <line x1="${XL}" y1="${YT}" x2="${XL}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/><line x1="${XL}" y1="${YB}" x2="${XR}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/>
+                      <text transform="translate(20 ${((YT + YB) / 2).toFixed(1)}) rotate(-90)" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" fill="#6b7280">System Function</text>
+                      ${paths.join('')}
+                      ${xLabs.join('')}
+                      <text x="${((XL + XR) / 2).toFixed(1)}" y="${YB + 21}" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" fill="#6b7280">Lifespan</text>
+                    </svg>`;
+}
+
+/** Figma 23838:18865 — energy vs age. */
+function extensionEnergyOverAgeSvg(slotNumber) {
+  const { VB, XL, YT, YB } = extChartPlotBox();
+  const XR = 274;
+  const W = XR - XL;
+  const H = YB - YT;
+  const xOf = (t) => XL + t * W;
+  const yOf = (p) => YB - p * H;
+  const fnEnergy = (t) => {
+    // Smooth, monotonic decline across age.
+    const u = Math.max(0, Math.min(1, t));
+    return 1 - 0.7 * Math.pow(u, 1.55);
+  };
+  const d = extPathFromFn(xOf, yOf, fnEnergy, 64);
+  const yLabs = [1, 0.75, 0.5, 0.25].map(
+    (p, i) =>
+      `<line x1="${XL}" y1="${yOf(p).toFixed(1)}" x2="${XR}" y2="${yOf(p).toFixed(1)}" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="${(yOf(p) + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" fill="#b7bcc6">${[100, 75, 50, 25][i]}%</text>`,
+  );
+  const ages = [20, 40, 60, 80, 100];
+  const xLabs = ages.map((a) => {
+    const t = (a - 20) / 80;
+    return `<text x="${xOf(t).toFixed(1)}" y="${YB + 11}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#9ca3af">${a}</text>`;
+  });
+  const aria = escAttr('Energy levels across age; illustrative curve.');
+  return `                    <svg id="focus-chart-${slotNumber}" class="focus-extension-svg" viewBox="${VB}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${aria}">
+                      <defs><linearGradient id="exe-${slotNumber}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
+                      <rect x="${XL}" y="${YT}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="url(#exe-${slotNumber})"/>
+                      ${yLabs.join('')}
+                      <line x1="${XL}" y1="${YT}" x2="${XL}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/><line x1="${XL}" y1="${YB}" x2="${XR}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/>
+                      <text transform="translate(20 ${((YT + YB) / 2).toFixed(1)}) rotate(-90)" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" fill="#6b7280">Energy</text>
+                      <path d="${d}" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                      ${xLabs.join('')}
+                      <text x="${((XL + XR) / 2).toFixed(1)}" y="${YB + 21}" text-anchor="middle" font-family="${FONT_HS}" font-size="7.5" fill="#6b7280">Age</text>
+                    </svg>`;
+}
+
+/** Figma 23838:18898 — longevity expectation vs inflammation (ordinal axes). */
+function extensionInflammationLongevitySvg(slotNumber) {
+  const { VB, XL, YT, YB } = extChartPlotBox();
+  const XR = 274;
+  const W = XR - XL;
+  const H = YB - YT;
+  const xLow = XL + W * 0.12;
+  const xMed = XL + W * 0.5;
+  const xHigh = XL + W * 0.88;
+  const yHi = YB - H * 0.88;
+  const yMd = YB - H * 0.5;
+  const yLo = YB - H * 0.12;
+  const xSep1 = (xLow + xMed) / 2;
+  const xSep2 = (xMed + xHigh) / 2;
+  const ySep1 = (yHi + yMd) / 2;
+  const ySep2 = (yMd + yLo) / 2;
+  const aria = escAttr(
+    'Longevity expectation vs inflammation load: illustrative downward relationship.',
+  );
+  // Flipped-log decline: gentle start, steeper fall near the right end.
+  const k = 3.4;
+  const pts = [];
+  const n = 32;
+  for (let i = 0; i <= n; i++) {
+    const u = i / n;
+    const x = xLow + (xHigh - xLow) * u;
+    const eased = (Math.exp(k * u) - 1) / (Math.exp(k) - 1);
+    const y = yHi + (yLo - yHi) * eased;
+    pts.push({ x, y });
+  }
+  const d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)} L ${pts
+    .slice(1)
+    .map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+    .join(' L ')}`;
+  return `                    <svg id="focus-chart-${slotNumber}" class="focus-extension-svg" viewBox="${VB}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${aria}">
+                      <defs><linearGradient id="exi-${slotNumber}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
+                      <rect x="${XL}" y="${YT}" width="${W.toFixed(1)}" height="${H.toFixed(1)}" fill="url(#exi-${slotNumber})"/>
+                      <line x1="${xSep1.toFixed(1)}" y1="${YT}" x2="${xSep1.toFixed(1)}" y2="${YB}" stroke="#f0f0f2" stroke-width="1"/>
+                      <line x1="${xSep2.toFixed(1)}" y1="${YT}" x2="${xSep2.toFixed(1)}" y2="${YB}" stroke="#f0f0f2" stroke-width="1"/>
+                      <line x1="${XL}" y1="${ySep1.toFixed(1)}" x2="${XR}" y2="${ySep1.toFixed(1)}" stroke="#f0f0f2" stroke-width="1"/>
+                      <line x1="${XL}" y1="${ySep2.toFixed(1)}" x2="${XR}" y2="${ySep2.toFixed(1)}" stroke="#f0f0f2" stroke-width="1"/>
+                      <line x1="${XL}" y1="${YT}" x2="${XL}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/><line x1="${XL}" y1="${YB}" x2="${XR}" y2="${YB}" stroke="#e5e7eb" stroke-width="1"/>
+                      <text x="40" y="${(yHi + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" fill="#b7bcc6">High</text>
+                      <text x="40" y="${(yMd + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" fill="#b7bcc6">Med</text>
+                      <text x="40" y="${(yLo + 3).toFixed(1)}" text-anchor="end" font-family="${FONT_HS}" font-size="7" fill="#b7bcc6">Low</text>
+                      <text transform="translate(20 ${((YT + YB) / 2).toFixed(1)}) rotate(-90)" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#6b7280">Longevity Expectation</text>
+                      <path d="${d}" stroke="#0f766e" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                      <text x="${xLow.toFixed(1)}" y="${YB + 11}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#9ca3af">Low</text>
+                      <text x="${xMed.toFixed(1)}" y="${YB + 11}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#9ca3af">Med</text>
+                      <text x="${xHigh.toFixed(1)}" y="${YB + 11}" text-anchor="middle" font-family="${FONT_HS}" font-size="7" fill="#9ca3af">High</text>
+                      <text x="${((XL + XR) / 2).toFixed(1)}" y="${YB + 22}" text-anchor="middle" font-family="${FONT_HS}" font-size="6.5" fill="#6b7280">Inflammation/Oxidative Stress</text>
+                    </svg>`;
+}
+
+function renderFocusCardShell(slotIdx, s) {
+  const n = slotIdx + 1;
+  const fc = `fc${n}`;
+  const activeCls = slotIdx === 0 ? ' is-active' : '';
+  const style =
+    slotIdx === 0 || slotIdx === 2 || slotIdx === 3 || slotIdx >= 4
+      ? ' style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;"'
+      : '';
+  const vb =
+    s.graphType === 'single_correlation'
+      ? '-60 0 320 156'
+      : s.graphType === '7day_average'
+        ? '0 0 400 210'
+        : s.graphType === 'variance'
+          ? '4 38 279 140'
+          : '14 38 269 140';
+  const isHealthspanChart = s.graphType === 'healthspan';
+  const isExtSystem = s.graphType === 'extension_system_decline';
+  const isExtEnergy = s.graphType === 'extension_energy_age';
+  const isExtInflam = s.graphType === 'extension_inflammation';
+  const scatterExtra =
+    s.graphType === 'single_correlation'
+      ? ' class="trimp-chart focus-scatter-svg" overflow="visible"'
+      : '';
+  const titleExtra =
+    s.graphType === 'single_correlation'
+      ? `
+                      <title>Next-day resting heart rate versus same-day training intensity.</title>`
+      : '';
+  let chartInner;
+  if (isHealthspanChart) chartInner = healthspanLifespanVsHealthspanSvg(n);
+  else if (isExtSystem) chartInner = extensionSystemDeclineSvg(n);
+  else if (isExtEnergy) chartInner = extensionEnergyOverAgeSvg(n);
+  else if (isExtInflam) chartInner = extensionInflammationLongevitySvg(n);
+  else {
+    chartInner = `                    <svg id="focus-chart-${n}" viewBox="${vb}" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${escAttr(focusChartAria(s.graphType, s.metric))}"${scatterExtra}>${titleExtra}
+                    </svg>`;
+  }
+  const legendHtml = focusLegendInner(fc, s.graphType, s.metric);
+
+  return `        <div class="focus-card focus-card__shell${activeCls}" id="focus-card-${n}" data-focus-index="${slotIdx}" role="article" aria-label="Priority ${n} recommendation"${style}>
+            <div class="focus-card__stage">
+              <div class="${fc}-accent" aria-hidden="true"></div>
+              <div class="${fc}-body">
+                <div class="focus-card__head">
+                  <h3 class="${fc}-title">${s.title}</h3>
+                  <p class="${fc}-summary">${s.summary}</p>
+                </div>
+                <div class="${fc}-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="${fc}-cap">${s.cap}</p>
+                  <div class="${fc}-chart-panel">
+${chartInner}
+                  </div>
+                  ${legendHtml}
+                </div>
+                <div class="${fc}-footer">
+                  <details class="${fc}-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="${fc}-why-label">Why it matters</span>
+                        <span class="${fc}-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="${fc}-why-panel">${s.why}</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>`;
+}
+
+const focusChartsSnippet = fs.readFileSync(path.join(root, 'focus-charts-inline-snippet.js'), 'utf8');
+const focusChartBundle = `  // REPORT_INJECT_FOCUS_DATA
+  const FOCUS_SLOTS = ${JSON.stringify(focusSlotChartSpecs)};
+  /*NUTRICODE_FOCUS_CHART_SNIPPET_V1*/
+${focusChartsSnippet}
+  /*END_NUTRICODE_FOCUS_CHART_SNIPPET_V1*/
+`;
 
 const focusStackHtml = `<!-- FOCUS_STACK_CORRELATION_START -->
-
-        <div class="focus-card focus-card__shell is-active" id="focus-card-1" data-focus-index="0" role="article" aria-label="Priority 1 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc1-accent" aria-hidden="true"></div>
-              <div class="fc1-body">
-                <div class="focus-card__head">
-                  <h3 class="fc1-title">${fc1Title}</h3>
-                  <p class="fc1-summary">${remSummaryHtml}</p>
-                </div>
-                <div class="fc1-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc1-cap">${fc1Cap}</p>
-                  <div class="fc1-chart-panel">
-                    <svg id="fc1-rem-chart" viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily REM sleep percent; bars colored by cohort percentile band (red through blue)"></svg>
-                  </div>
-                  <div class="fc1-legend" aria-hidden="true">
-                    <div class="fc1-legend__item">
-                      <span class="fc1-legend__swatch fc1-legend__swatch--avg"></span>
-                      <span class="fc1-legend__label">Demographic Avg.</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc1-footer">
-                  <details class="fc1-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc1-why-label">Why it matters</span>
-                        <span class="fc1-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc1-why-panel">${fc1WhyPanel}</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        <div class="focus-card focus-card__shell" id="focus-card-2" data-focus-index="1" role="article" aria-label="Priority 2 recommendation">
-            <div class="focus-card__stage">
-              <div class="fc2-accent" aria-hidden="true"></div>
-              <div class="fc2-body">
-                <div class="focus-card__head">
-                  <h3 class="fc2-title">${fc2Title}</h3>
-                  <p class="fc2-summary">${fc2Summary}</p>
-                </div>
-                <div class="fc2-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc2-cap">${fc2Cap}</p>
-                  <div class="fc2-chart-panel">
-                    <svg id="c-dual-deep-intensity" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Daily deep sleep percentage (blue dots and line) and training intensity (yellow dots and line) over 30 days"></svg>
-                  </div>
-                  <div class="fc2-legend" aria-hidden="true">
-                    <div class="fc2-legend__item">
-                      <span class="fc2-legend__swatch fc2-legend__swatch--deep"></span>
-                      <span class="fc2-legend__label">Deep Sleep %</span>
-                    </div>
-                    <div class="fc2-legend__item">
-                      <span class="fc2-legend__swatch fc2-legend__swatch--load"></span>
-                      <span class="fc2-legend__label">Training Load</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc2-footer">
-                  <details class="fc2-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc2-why-label">Why it matters</span>
-                        <span class="fc2-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc2-why-panel">${fc2WhyPanel}</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        <div class="focus-card focus-card__shell" id="focus-card-3" data-focus-index="2" role="article" aria-label="Priority 3 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc3-accent" aria-hidden="true"></div>
-              <div class="fc3-body">
-                <div class="focus-card__head">
-                  <h3 class="fc3-title">${fc3Title}</h3>
-                  <p class="fc3-summary">${fc3Summary}</p>
-                </div>
-                <div class="fc3-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc3-cap">${fc3Cap}</p>
-                  <div class="fc3-chart-panel">
-                    <svg id="fc3-hrv-chart" viewBox="14 38 269 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Nightly HRV; shaded target band; blue dots in band"></svg>
-                </div>
-                  <div class="fc3-legend" aria-hidden="true">
-                    <div class="fc3-legend__item">
-                      <span class="fc3-legend__swatch fc3-legend__swatch--target-range"></span>
-                      <span class="fc3-legend__label">Target range</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc3-footer">
-                  <details class="fc3-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc3-why-label">Why it matters</span>
-                        <span class="fc3-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc3-why-panel">${fc3WhyPanel}</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc4-accent" aria-hidden="true"></div>
-              <div class="fc4-body">
-                <div class="focus-card__head">
-                  <h3 class="fc4-title">${fc4Title}</h3>
-                  <p class="fc4-summary">${fc4Summary}</p>
-                </div>
-                <div class="fc4-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc4-cap">${fc4Cap}</p>
-                  <div class="fc4-chart-panel">
-                    <svg id="c-scatter" class="trimp-chart focus-scatter-svg" viewBox="-60 0 320 156" overflow="visible" fill="none" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Scatter of training intensity versus next-day resting heart rate">
-                      <title>Next-day resting heart rate versus same-day training intensity.</title>
-                    </svg>
-                  </div>
-                  <div class="fc4-legend" aria-hidden="true">
-                    <div class="fc4-legend__item">
-                      <span class="fc4-legend__swatch fc4-legend__swatch--reg" aria-hidden="true"></span>
-                      <span class="fc4-legend__label">Regression Line</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc4-footer">
-                  <details class="fc4-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc4-why-label">Why it matters</span>
-                        <span class="fc4-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc4-why-panel">${fc4WhyPanel}</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
+${focusStackSlots.map((s, i) => renderFocusCardShell(i, s)).join('\n')}
 <!-- FOCUS_STACK_CORRELATION_END -->`;
 
 let html = fs.readFileSync(path.join(root, 'nutricode-health-report.html'), 'utf8');
@@ -1024,8 +2152,8 @@ function rep(re, fn) {
 }
 
 rep(
-  /(?:[ \t]*\/\/ REPORT_INJECT_FOCUS_DATA\s*\r?\n|  const FC1_REM_DATA = .*\r?\n  const FC2_DEEP_INT_DATA = .*\r?\n  const FC3_HRV_DATA = .*\r?\n  const FC4_SCATTER_DATA = .*\r?\n)/,
-  `${injectBlock}\n`,
+  /\/\/ REPORT_INJECT_FOCUS_DATA[\s\S]*?\/\*END_NUTRICODE_FOCUS_CHART_SNIPPET_V1\*\/\s*\n|  const FC1_REM_DATA = [\s\S]*?buildFocusScatterFromRaw\(\) \{[\s\S]*?scheduleEqualizeFocusCorrelationSections\(\);\n  \}\)\(\);\n/,
+  focusChartBundle,
 );
 rep(
   /<!-- FOCUS_STACK_CORRELATION_START -->[\s\S]*?<!-- FOCUS_STACK_CORRELATION_END -->/,
@@ -1035,11 +2163,15 @@ rep(
   /(<div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">)\s*[\s\S]*?(\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<div class="focus-carousel reveal d1" id="focusCarousel")/,
   `$1\n${dotsButtonsHtml}\n            $2`,
 );
+rep(
+  /<span id="recRhrCount"[^>]*>PRIORITY · 1 of \d+<\/span>/,
+  `<span id="recRhrCount" aria-live="polite">PRIORITY · 1 of ${focusStackSlots.length}</span>`,
+);
 rep(/<p class="score-headline">[^<]*<\/p>/, `<p class="score-headline">${scoreHeadline}</p>`);
 rep(/<p class="score-context">[^<]*<\/p>/, `<p class="score-context">${scoreContext}</p>`);
 rep(
   /<h2 class="section-label section-label--caps" id="focus-heading">[\s\S]*?<\/h2>/,
-  `<h2 class="section-label section-label--caps" id="focus-heading">How you move from<br />${healthScore} to 90+</h2>`,
+  `<h2 class="section-label section-label--caps" id="focus-heading">How you move from ${healthScore} to 90+</h2>`,
 );
 rep(
   /aria-label="Health score rises from \d+ toward 90/,
@@ -1061,6 +2193,8 @@ rep(
 html = html.replace(/bio-bench-fill--bio-bench-fill--(green|amber)/g, 'bio-bench-fill--$1');
 
 // Header
+const reportTitle = reportTitleParts(raw);
+rep(/<h1 class="report-name">[\s\S]*?<\/h1>/, `<h1 class="report-name">${reportTitle.html}</h1>`);
 rep(/<p class="report-meta-line">[^<]*<\/p>/, `<p class="report-meta-line">${metaLine}</p>`);
 rep(/<span class="header-sync-text">[^<]*<\/span>/, `<span class="header-sync-text">${meta.num_days ?? 30} days synced</span>`);
 rep(
@@ -1124,7 +2258,7 @@ rep(
 );
 
 rep(
-  /<div class="snap-tile-value snap-tile-value--row">\s*<p class="snap-val">[\d.]+<\/p>\s*<span class="snap-tag snap-tag--[-\w]+">[^<]*<\/span>/,
+  /<div class="snap-tile-value snap-tile-value--row">\s*<p class="snap-val">(?:[\d.]+|\u2014|\u2013|-)<\/p>\s*<span class="snap-tag snap-tag--[-\w]+">[^<]*<\/span>/,
   `<div class="snap-tile-value snap-tile-value--row">
         <p class="snap-val">${trimpAvg != null ? trimpAvg.toFixed(1) : '—'}</p>
         <span class="snap-tag ${trimpTagClass(tr.tag)}">${tr.tag}</span>`,
@@ -1226,6 +2360,10 @@ ${trGood || '      <!-- none -->'}
 ${trMod || '      <!-- none -->'}
       <!-- Poor next day recovery -->
 ${trPoor || '      <!-- none -->'}`;
+rep(
+  /<!-- TRIMP_CHART_AXES_START -->[\s\S]*?<!-- TRIMP_CHART_AXES_END -->/,
+  `<!-- TRIMP_CHART_AXES_START -->\n${trimpChartAxesSvg}\n<!-- TRIMP_CHART_AXES_END -->`,
+);
 rep(
   /<!-- Good next day recovery -->[\s\S]*?<!-- Poor next day recovery -->[\s\S]*?(?=\s*<\/svg>)/,
   trimpCircles,
@@ -1383,6 +2521,7 @@ function bioJson(b) {
     bench_top10: b.m3,
     badge_cls: b.badgeCls,
     badge_text: b.badgeText,
+    cohort_standing_pct: b.standingPct ?? null,
   };
 }
 
@@ -1394,11 +2533,16 @@ const reportData = {
     age_band: band,
     cohort_label: cohortLabel,
     num_days: numDaysFc,
+    report_title: reportTitle.plain,
   },
   health_score: {
     score: healthScore,
     headline: scoreHeadline,
     context: scoreContext,
+    ahead_of_peer_pct: aheadPct,
+    ahead_of_peer_pct_basis:
+      bioStandingSamples.length > 0 ? 'biometric_standing_mean' : 'health_score_fallback',
+    ahead_of_peer_metrics_count: bioStandingSamples.length,
     phase_current: 1,
     phase_total: 2,
     ring_circumference: C,
@@ -1444,6 +2588,8 @@ const reportData = {
   },
   training_intensity_vs_next_day_recovery: {
     points: trimpReportRows,
+    duration_axis_max_seconds: trimpChartMaxDurationSec,
+    duration_axis_max_hours: Math.round(trimpChartMaxDurationSec / 3600),
   },
   activities: {
     total_count: activityCount,
@@ -1484,69 +2630,34 @@ const reportData = {
   },
   focus_section: {
     heading_template: `How you move from ${healthScore} to 90+`,
-    tab_order: sortedFocusMetrics.map((fm, idx) => ({
+    tab_order: focusStackSlots.map((s, idx) => ({
       priority: idx + 1,
-      metric: fm.metric,
-      tab_label: metricDotLabel(fm.metric),
+      metric: s.metric,
+      tab_label: focusDotLabelForStackIndex(idx, s),
     })),
-    cards: [
-      {
-        slot: 1,
-        dom_id: 'focus-card-1',
-        chart_type: 'rem_bars',
-        tab_label: 'REM Sleep',
-        title: fc1Title,
-        summary_html: remSummaryHtml,
-        chart_caption: fc1Cap,
-        why_panel: fc1WhyPanel,
-        chart_data: fc1Payload,
-      },
-      {
-        slot: 2,
-        dom_id: 'focus-card-2',
-        chart_type: 'deep_sleep_vs_intensity_dual',
-        tab_label: 'Deep Sleep',
-        title: fc2Title,
-        summary_html: fc2Summary,
-        chart_caption: fc2Cap,
-        why_panel: fc2WhyPanel,
-        chart_data: fc2Payload,
-        correlation: deepSleepCorr
-          ? { label: deepSleepCorr.label, marginScore: deepSleepCorr.marginScore, csvKey: deepSleepCorr.csvKey }
-          : null,
-      },
-      {
-        slot: 3,
-        dom_id: 'focus-card-3',
-        chart_type: 'hrv_nightly',
-        tab_label: 'Light Sleep',
-        title: fc3Title,
-        summary_html: fc3Summary,
-        chart_caption: fc3Cap,
-        why_panel: fc3WhyPanel,
-        chart_data: fc3Payload,
-        correlation_light_load: lightRollingCorr
-          ? { label: lightRollingCorr.label, marginScore: lightRollingCorr.marginScore }
-          : null,
-      },
-      {
-        slot: 4,
-        dom_id: 'focus-card-4',
-        chart_type: 'intensity_vs_next_day_rhr_scatter',
-        tab_label: 'Recovery',
-        title: fc4Title,
-        summary_html: fc4Summary,
-        chart_caption: fc4Cap,
-        why_panel: fc4WhyPanel,
-        chart_data: fc4Payload,
-        correlation: rhrNextDayCorr
-          ? { label: rhrNextDayCorr.label, marginScore: rhrNextDayCorr.marginScore, csvKey: rhrNextDayCorr.csvKey }
-          : null,
-      },
-    ],
+    cards: focusStackSlots.map((s, i) => ({
+      slot: i + 1,
+      dom_id: `focus-card-${i + 1}`,
+      metric: s.metric,
+      chart_type: s.graphType,
+      tab_label: focusDotLabelForStackIndex(i, s),
+      title: s.title,
+      summary_html: s.summary,
+      chart_caption: s.cap,
+      why_panel: s.why,
+      chart_data: s.data,
+      correlation: s.corr
+        ? {
+            label: s.corr.label,
+            marginScore: s.corr.marginScore,
+            csvKey: s.corr.csvKey ?? null,
+            significant: s.corr.significant,
+          }
+        : null,
+    })),
   },
 };
 
 fs.writeFileSync(path.join(root, 'report_data.json'), `${JSON.stringify(reportData, null, 2)}\n`, 'utf8');
 fs.writeFileSync(path.join(root, 'nutricode-health-report.html'), html, 'utf8');
-console.log('Updated nutricode-health-report.html and report_data.json from raw_data.json');
+console.log('Updated nutricode-health-report.html and report_data.json from raw_data2.json + focus order.');

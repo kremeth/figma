@@ -2,19 +2,19 @@
   "HRV": [
     {
       "label": "HRV ~ Training Intensity(t-1)",
-      "r": -0.656,
-      "n": 10,
+      "r": 0.055,
+      "n": 18,
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
         "recovery"
       ],
-      "significant": true
+      "significant": false
     },
     {
       "label": "HRV ~ Disruptions",
-      "r": -0.112,
-      "n": 15,
+      "r": 0.261,
+      "n": 26,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
@@ -24,8 +24,8 @@
     },
     {
       "label": "HRV ~ DeepSleep",
-      "r": 0.135,
-      "n": 15,
+      "r": 0.21,
+      "n": 26,
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
@@ -35,8 +35,8 @@
     },
     {
       "label": "HRV ~ REM",
-      "r": -0.044,
-      "n": 15,
+      "r": -0.151,
+      "n": 26,
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
@@ -46,8 +46,8 @@
     },
     {
       "label": "HRV rolling mean ~ Training Intensity rolling mean",
-      "r": -0.296,
-      "n": 7,
+      "r": 0.147,
+      "n": 17,
       "direction": "negative",
       "threshold": -0.5,
       "supplements": [
@@ -57,8 +57,8 @@
     },
     {
       "label": "HRV ~ AwakePhase",
-      "r": -0.047,
-      "n": 15,
+      "r": -0.186,
+      "n": 26,
       "direction": "negative",
       "threshold": -0.3,
       "supplements": [
@@ -68,8 +68,8 @@
     },
     {
       "label": "HRV ~ HRV(t-1)",
-      "r": -0.118,
-      "n": 7,
+      "r": 0.19,
+      "n": 22,
       "direction": "positive",
       "threshold": 0.6,
       "supplements": [
@@ -81,19 +81,19 @@
   "RHR": [
     {
       "label": "RHR ~ Training Intensity(t-1)",
-      "r": 0.501,
-      "n": 10,
+      "r": 0.098,
+      "n": 18,
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
         "recovery"
       ],
-      "significant": true
+      "significant": false
     },
     {
       "label": "RHR ~ Disruptions",
-      "r": 0.227,
-      "n": 16,
+      "r": -0.361,
+      "n": 26,
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
@@ -103,8 +103,8 @@
     },
     {
       "label": "RHR ~ DeepSleep",
-      "r": -0.284,
-      "n": 16,
+      "r": -0.188,
+      "n": 26,
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
@@ -114,8 +114,8 @@
     },
     {
       "label": "RHR ~ REM",
-      "r": -0.155,
-      "n": 16,
+      "r": 0.281,
+      "n": 26,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
@@ -125,8 +125,8 @@
     },
     {
       "label": "RHR rolling mean ~ Training Intensity rolling mean",
-      "r": 0.858,
-      "n": 7,
+      "r": 0.615,
+      "n": 17,
       "direction": "positive",
       "threshold": 0.5,
       "supplements": [
@@ -136,8 +136,8 @@
     },
     {
       "label": "RHR ~ AwakePhase",
-      "r": -0.205,
-      "n": 16,
+      "r": 0.194,
+      "n": 26,
       "direction": "positive",
       "threshold": 0.3,
       "supplements": [
@@ -147,8 +147,8 @@
     },
     {
       "label": "RHR ~ RHR(t-1)",
-      "r": 0.483,
-      "n": 7,
+      "r": 0.344,
+      "n": 22,
       "direction": "positive",
       "threshold": 0.6,
       "supplements": [
@@ -160,8 +160,8 @@
   "TotalSleep": [
     {
       "label": "TotalSleep ~ Training Intensity(t-1)",
-      "r": -0.103,
-      "n": 13,
+      "r": 0.165,
+      "n": 20,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
@@ -171,8 +171,8 @@
     },
     {
       "label": "TotalSleep ~ Disruptions",
-      "r": 0.226,
-      "n": 19,
+      "r": 0.415,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
@@ -182,19 +182,19 @@
     },
     {
       "label": "TotalSleep ~ AwakePhase",
-      "r": 0.21,
-      "n": 19,
+      "r": -0.818,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
         "sleep_quality"
       ],
-      "significant": false
+      "significant": true
     },
     {
       "label": "TotalSleep rolling mean ~ Training Intensity rolling mean",
-      "r": 0.561,
-      "n": 8,
+      "r": -0.106,
+      "n": 17,
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
@@ -206,8 +206,8 @@
   "Disruptions": [
     {
       "label": "Disruptions ~ Training Intensity(t-1)",
-      "r": 0.01,
-      "n": 13,
+      "r": -0.1,
+      "n": 20,
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
@@ -217,8 +217,8 @@
     },
     {
       "label": "Disruptions rolling mean ~ Training Intensity rolling mean",
-      "r": -0.307,
-      "n": 8,
+      "r": -0.498,
+      "n": 17,
       "direction": "positive",
       "threshold": 0.45,
       "supplements": [
@@ -230,8 +230,8 @@
   "REM": [
     {
       "label": "REM ~ Training Intensity(t-1)",
-      "r": 0.038,
-      "n": 13,
+      "r": 0.186,
+      "n": 20,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
@@ -241,8 +241,8 @@
     },
     {
       "label": "REM ~ Disruptions",
-      "r": -0.118,
-      "n": 19,
+      "r": 0.191,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.4,
       "supplements": [
@@ -252,19 +252,19 @@
     },
     {
       "label": "REM ~ AwakePhase",
-      "r": 0.197,
-      "n": 19,
+      "r": -0.502,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
         "sleep_quality"
       ],
-      "significant": false
+      "significant": true
     },
     {
       "label": "REM rolling mean ~ Training Intensity rolling mean",
-      "r": 0.318,
-      "n": 8,
+      "r": 0.354,
+      "n": 17,
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
@@ -276,19 +276,19 @@
   "DeepSleep": [
     {
       "label": "DeepSleep ~ Training Intensity(t-1)",
-      "r": -0.559,
-      "n": 13,
+      "r": 0.384,
+      "n": 20,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
         "recovery"
       ],
-      "significant": true
+      "significant": false
     },
     {
       "label": "DeepSleep ~ Disruptions",
-      "r": 0.023,
-      "n": 19,
+      "r": 0.508,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
@@ -298,32 +298,32 @@
     },
     {
       "label": "DeepSleep ~ AwakePhase",
-      "r": 0.212,
-      "n": 19,
+      "r": -0.715,
+      "n": 29,
       "direction": "negative",
       "threshold": -0.35,
       "supplements": [
         "sleep_quality"
       ],
-      "significant": false
+      "significant": true
     },
     {
       "label": "DeepSleep rolling mean ~ Training Intensity rolling mean",
-      "r": -0.8,
-      "n": 8,
+      "r": -0.394,
+      "n": 17,
       "direction": "negative",
       "threshold": -0.45,
       "supplements": [
         "deep_sleep"
       ],
-      "significant": true
+      "significant": false
     }
   ],
   "LightSleep": [
     {
       "label": "LightSleep ~ Training Intensity(t-1)",
-      "r": 0.05,
-      "n": 13,
+      "r": -0.085,
+      "n": 20,
       "direction": "positive",
       "threshold": 0.3,
       "supplements": [
@@ -333,8 +333,8 @@
     },
     {
       "label": "LightSleep ~ Disruptions",
-      "r": 0.29,
-      "n": 19,
+      "r": 0.211,
+      "n": 29,
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
@@ -344,8 +344,8 @@
     },
     {
       "label": "LightSleep ~ AwakePhase",
-      "r": 0.129,
-      "n": 19,
+      "r": -0.574,
+      "n": 29,
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
@@ -355,21 +355,21 @@
     },
     {
       "label": "LightSleep rolling mean ~ Training Intensity rolling mean",
-      "r": 0.762,
-      "n": 8,
+      "r": -0.387,
+      "n": 17,
       "direction": "positive",
       "threshold": 0.4,
       "supplements": [
         "sleep_quality"
       ],
-      "significant": true
+      "significant": false
     }
   ],
   "Awake": [
     {
       "label": "Awake ~ Training Intensity(t-1)",
-      "r": -0.31,
-      "n": 13,
+      "r": -0.325,
+      "n": 20,
       "direction": "positive",
       "threshold": 0.35,
       "supplements": [
@@ -379,8 +379,8 @@
     },
     {
       "label": "Awake ~ Disruptions",
-      "r": 0.275,
-      "n": 19,
+      "r": -0.427,
+      "n": 29,
       "direction": "positive",
       "threshold": 0.5,
       "supplements": [
@@ -390,14 +390,14 @@
     },
     {
       "label": "Awake rolling mean ~ Training Intensity rolling mean",
-      "r": -0.62,
-      "n": 8,
+      "r": 0.553,
+      "n": 17,
       "direction": "positive",
       "threshold": 0.45,
       "supplements": [
         "sleep_quality"
       ],
-      "significant": false
+      "significant": true
     }
   ]
 }

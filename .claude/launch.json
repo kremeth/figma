@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "static-server",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "/Users/mathieukremeth/Desktop/figma"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "8080", "/tmp/figma-preview"],
       "port": 8080
     }
   ]

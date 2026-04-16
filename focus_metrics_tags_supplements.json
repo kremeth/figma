@@ -1,14 +1,16 @@
 [
   {
     "order": 1,
-    "metric": "REM",
-    "tag": "rem_sleep",
+    "metric": "HRV",
+    "tag": "hrv",
     "tier": 1,
-    "researchKey": "rem_sleep",
+    "graph_type": "cohort",
+    "correlation_source": "HRV fallback",
+    "researchKey": "hrv",
     "supplements": {
       "mostResearched": {
-        "supplement": "Vitamin D",
-        "score": 28,
+        "supplement": "Iron",
+        "score": 27.5,
         "impact": "Very High"
       },
       "emergingResearch": null
@@ -16,32 +18,15 @@
   },
   {
     "order": 2,
-    "metric": "DeepSleep",
-    "tag": "deep_sleep",
-    "tier": 1,
-    "researchKey": "deep_sleep",
-    "supplements": {
-      "mostResearched": {
-        "supplement": "Probiotics",
-        "score": 27.5,
-        "impact": "Very High"
-      },
-      "emergingResearch": {
-        "supplement": "Tongkat Ali",
-        "score": 24.5,
-        "impact": "High"
-      }
-    }
-  },
-  {
-    "order": 3,
-    "metric": "LightSleep",
+    "metric": "Disruptions",
     "tag": "sleep_quality",
     "tier": 1,
+    "graph_type": "cohort",
+    "correlation_source": "Disruptions fallback",
     "researchKey": "sleep_quality",
     "supplements": {
       "mostResearched": {
-        "supplement": "Zinc",
+        "supplement": "Probiotics",
         "score": 25.5,
         "impact": "High"
       },
@@ -53,10 +38,12 @@
     }
   },
   {
-    "order": 4,
-    "metric": "HRV",
+    "order": 3,
+    "metric": "RHR",
     "tag": "recovery",
     "tier": 4,
+    "graph_type": "7day_average",
+    "correlation_source": "RHR rolling mean (7-day)|Training Intensity rolling mean (7-day)",
     "researchKey": "recovery",
     "supplements": {
       "mostResearched": {
@@ -68,6 +55,27 @@
         "supplement": "Rhodiola Rosea",
         "score": 28,
         "impact": "Very High"
+      }
+    }
+  },
+  {
+    "order": 4,
+    "metric": "healthspan",
+    "tag": "healthspan",
+    "tier": 5,
+    "graph_type": "healthspan",
+    "correlation_source": "healthspan fallback",
+    "researchKey": "healthspan",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Magnesium",
+        "score": 28.5,
+        "impact": "Very High"
+      },
+      "emergingResearch": {
+        "supplement": "Acetyl L-Carnitine",
+        "score": 23.5,
+        "impact": "High"
       }
     }
   }
