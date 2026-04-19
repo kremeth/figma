@@ -70,7 +70,7 @@ const viz = {
     vo2_max: mapSeries(() => 56),
   },
   daily_activity: Object.fromEntries(
-    keys.map((k) => [k, { total_duration: 3600, average_intensity: 1.45 }]),
+    keys.map((k) => [k, { total: { total_duration: 3600, average_intensity: 1.45 } }]),
   ),
   total_activity: {
     running: {

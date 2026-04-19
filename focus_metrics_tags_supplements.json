@@ -39,27 +39,6 @@
   },
   {
     "order": 3,
-    "metric": "RHR",
-    "tag": "recovery",
-    "tier": 4,
-    "graph_type": "7day_average",
-    "correlation_source": "RHR rolling mean (7-day)|Training Intensity rolling mean (7-day)",
-    "researchKey": "recovery",
-    "supplements": {
-      "mostResearched": {
-        "supplement": "Vitamin E",
-        "score": 28.5,
-        "impact": "Very High"
-      },
-      "emergingResearch": {
-        "supplement": "Rhodiola Rosea",
-        "score": 28,
-        "impact": "Very High"
-      }
-    }
-  },
-  {
-    "order": 4,
     "metric": "healthspan",
     "tag": "healthspan",
     "tier": 5,
@@ -73,10 +52,27 @@
         "impact": "Very High"
       },
       "emergingResearch": {
-        "supplement": "Acetyl L-Carnitine",
+        "supplement": "Vitamin B12",
+        "score": 28.5,
+        "impact": "Very High"
+      }
+    }
+  },
+  {
+    "order": 4,
+    "metric": "healthspan",
+    "tag": "healthspan",
+    "tier": 5,
+    "graph_type": "systems",
+    "correlation_source": "healthspan fallback",
+    "researchKey": "healthspan",
+    "supplements": {
+      "mostResearched": {
+        "supplement": "Vitamin D",
         "score": 23.5,
         "impact": "High"
-      }
+      },
+      "emergingResearch": null
     }
   }
 ]

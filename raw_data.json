@@ -576,124 +576,184 @@
                 },
                 "daily_activity": {
                     "1": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "2": {
-                        "total_duration": 12445,
-                        "average_intensity": 2.008811850937629
+                        "total": {
+                            "total_duration": 12445,
+                            "average_intensity": 2.008811850937629
+                        }
                     },
                     "3": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "4": {
-                        "total_duration": 3550,
-                        "average_intensity": 1.572154418641303
+                        "total": {
+                            "total_duration": 3550,
+                            "average_intensity": 1.572154418641303
+                        }
                     },
                     "5": {
-                        "total_duration": 6766,
-                        "average_intensity": 1.5223719838912244
+                        "total": {
+                            "total_duration": 6766,
+                            "average_intensity": 1.5223719838912244
+                        }
                     },
                     "6": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "7": {
-                        "total_duration": 6811,
-                        "average_intensity": 1.737717825668914
+                        "total": {
+                            "total_duration": 6811,
+                            "average_intensity": 1.737717825668914
+                        }
                     },
                     "8": {
-                        "total_duration": 1315,
-                        "average_intensity": 2.0028363892607626
+                        "total": {
+                            "total_duration": 1315,
+                            "average_intensity": 2.0028363892607626
+                        }
                     },
                     "9": {
-                        "total_duration": 3374,
-                        "average_intensity": 1.0914927579657647
+                        "total": {
+                            "total_duration": 3374,
+                            "average_intensity": 1.0914927579657647
+                        }
                     },
                     "10": {
-                        "total_duration": 4392,
-                        "average_intensity": 1.7300632413081234
+                        "total": {
+                            "total_duration": 4392,
+                            "average_intensity": 1.7300632413081234
+                        }
                     },
                     "11": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "12": {
-                        "total_duration": 7129,
-                        "average_intensity": 2.048610961885356
+                        "total": {
+                            "total_duration": 7129,
+                            "average_intensity": 2.048610961885356
+                        }
                     },
                     "13": {
-                        "total_duration": 10902,
-                        "average_intensity": 1.274187989917574
+                        "total": {
+                            "total_duration": 10902,
+                            "average_intensity": 1.274187989917574
+                        }
                     },
                     "14": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "15": {
-                        "total_duration": 9531,
-                        "average_intensity": 0.6925253174949391
+                        "total": {
+                            "total_duration": 9531,
+                            "average_intensity": 0.6925253174949391
+                        }
                     },
                     "16": {
-                        "total_duration": 8307,
-                        "average_intensity": 1.7054108643302823
+                        "total": {
+                            "total_duration": 8307,
+                            "average_intensity": 1.7054108643302823
+                        }
                     },
                     "17": {
-                        "total_duration": 974,
-                        "average_intensity": 1.7349633444157821
+                        "total": {
+                            "total_duration": 974,
+                            "average_intensity": 1.7349633444157821
+                        }
                     },
                     "18": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "19": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "20": {
-                        "total_duration": 5286,
-                        "average_intensity": 2.4675332146221676
+                        "total": {
+                            "total_duration": 5286,
+                            "average_intensity": 2.4675332146221676
+                        }
                     },
                     "21": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "22": {
-                        "total_duration": 1260,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": 1260,
+                            "average_intensity": null
+                        }
                     },
                     "23": {
-                        "total_duration": 6140,
-                        "average_intensity": 1.7137702975399367
+                        "total": {
+                            "total_duration": 6140,
+                            "average_intensity": 1.7137702975399367
+                        }
                     },
                     "24": {
-                        "total_duration": 2723,
-                        "average_intensity": 2.072137769706851
+                        "total": {
+                            "total_duration": 2723,
+                            "average_intensity": 2.072137769706851
+                        }
                     },
                     "25": {
-                        "total_duration": 3627,
-                        "average_intensity": 2.1334119060708256
+                        "total": {
+                            "total_duration": 3627,
+                            "average_intensity": 2.1334119060708256
+                        }
                     },
                     "26": {
-                        "total_duration": 3188,
-                        "average_intensity": 2.0021701728513857
+                        "total": {
+                            "total_duration": 3188,
+                            "average_intensity": 2.0021701728513857
+                        }
                     },
                     "27": {
-                        "total_duration": 4444,
-                        "average_intensity": 1.8520573034861083
+                        "total": {
+                            "total_duration": 4444,
+                            "average_intensity": 1.8520573034861083
+                        }
                     },
                     "28": {
-                        "total_duration": 5014,
-                        "average_intensity": 1.7893292496547124
+                        "total": {
+                            "total_duration": 5014,
+                            "average_intensity": 1.7893292496547124
+                        }
                     },
                     "29": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     },
                     "30": {
-                        "total_duration": null,
-                        "average_intensity": null
+                        "total": {
+                            "total_duration": null,
+                            "average_intensity": null
+                        }
                     }
                 },
                 "total_activity": {
@@ -1310,124 +1370,184 @@
                     },
                     "daily_activity": {
                         "1": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "2": {
-                            "total_duration": 12445,
-                            "average_intensity": 2.008811850937629
+                            "total": {
+                                "total_duration": 12445,
+                                "average_intensity": 2.008811850937629
+                            }
                         },
                         "3": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "4": {
-                            "total_duration": 3550,
-                            "average_intensity": 1.572154418641303
+                            "total": {
+                                "total_duration": 3550,
+                                "average_intensity": 1.572154418641303
+                            }
                         },
                         "5": {
-                            "total_duration": 6766,
-                            "average_intensity": 1.5223719838912244
+                            "total": {
+                                "total_duration": 6766,
+                                "average_intensity": 1.5223719838912244
+                            }
                         },
                         "6": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "7": {
-                            "total_duration": 6811,
-                            "average_intensity": 1.737717825668914
+                            "total": {
+                                "total_duration": 6811,
+                                "average_intensity": 1.737717825668914
+                            }
                         },
                         "8": {
-                            "total_duration": 1315,
-                            "average_intensity": 2.0028363892607626
+                            "total": {
+                                "total_duration": 1315,
+                                "average_intensity": 2.0028363892607626
+                            }
                         },
                         "9": {
-                            "total_duration": 3374,
-                            "average_intensity": 1.0914927579657647
+                            "total": {
+                                "total_duration": 3374,
+                                "average_intensity": 1.0914927579657647
+                            }
                         },
                         "10": {
-                            "total_duration": 4392,
-                            "average_intensity": 1.7300632413081234
+                            "total": {
+                                "total_duration": 4392,
+                                "average_intensity": 1.7300632413081234
+                            }
                         },
                         "11": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "12": {
-                            "total_duration": 7129,
-                            "average_intensity": 2.048610961885356
+                            "total": {
+                                "total_duration": 7129,
+                                "average_intensity": 2.048610961885356
+                            }
                         },
                         "13": {
-                            "total_duration": 10902,
-                            "average_intensity": 1.274187989917574
+                            "total": {
+                                "total_duration": 10902,
+                                "average_intensity": 1.274187989917574
+                            }
                         },
                         "14": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "15": {
-                            "total_duration": 9531,
-                            "average_intensity": 0.6925253174949391
+                            "total": {
+                                "total_duration": 9531,
+                                "average_intensity": 0.6925253174949391
+                            }
                         },
                         "16": {
-                            "total_duration": 8307,
-                            "average_intensity": 1.7054108643302823
+                            "total": {
+                                "total_duration": 8307,
+                                "average_intensity": 1.7054108643302823
+                            }
                         },
                         "17": {
-                            "total_duration": 974,
-                            "average_intensity": 1.7349633444157821
+                            "total": {
+                                "total_duration": 974,
+                                "average_intensity": 1.7349633444157821
+                            }
                         },
                         "18": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "19": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "20": {
-                            "total_duration": 5286,
-                            "average_intensity": 2.4675332146221676
+                            "total": {
+                                "total_duration": 5286,
+                                "average_intensity": 2.4675332146221676
+                            }
                         },
                         "21": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "22": {
-                            "total_duration": 1260,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": 1260,
+                                "average_intensity": null
+                            }
                         },
                         "23": {
-                            "total_duration": 6140,
-                            "average_intensity": 1.7137702975399367
+                            "total": {
+                                "total_duration": 6140,
+                                "average_intensity": 1.7137702975399367
+                            }
                         },
                         "24": {
-                            "total_duration": 2723,
-                            "average_intensity": 2.072137769706851
+                            "total": {
+                                "total_duration": 2723,
+                                "average_intensity": 2.072137769706851
+                            }
                         },
                         "25": {
-                            "total_duration": 3627,
-                            "average_intensity": 2.1334119060708256
+                            "total": {
+                                "total_duration": 3627,
+                                "average_intensity": 2.1334119060708256
+                            }
                         },
                         "26": {
-                            "total_duration": 3188,
-                            "average_intensity": 2.0021701728513857
+                            "total": {
+                                "total_duration": 3188,
+                                "average_intensity": 2.0021701728513857
+                            }
                         },
                         "27": {
-                            "total_duration": 4444,
-                            "average_intensity": 1.8520573034861083
+                            "total": {
+                                "total_duration": 4444,
+                                "average_intensity": 1.8520573034861083
+                            }
                         },
                         "28": {
-                            "total_duration": 5014,
-                            "average_intensity": 1.7893292496547124
+                            "total": {
+                                "total_duration": 5014,
+                                "average_intensity": 1.7893292496547124
+                            }
                         },
                         "29": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         },
                         "30": {
-                            "total_duration": null,
-                            "average_intensity": null
+                            "total": {
+                                "total_duration": null,
+                                "average_intensity": null
+                            }
                         }
                     },
                     "total_activity": {

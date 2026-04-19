@@ -2132,7 +2132,8 @@
     #focus-card-1 .fc1-legend__swatch--target-range,
     #focus-card-2 .fc2-legend__swatch--target-range,
     #focus-card-3 .fc3-legend__swatch--target-range,
-    #focus-card-4 .fc4-legend__swatch--target-range {
+    #focus-card-4 .fc4-legend__swatch--target-range,
+    #focus-card-5 .fc5-legend__swatch--target-range {
       display: inline-block;
       width: 22px;
       height: 8px;
@@ -4709,7 +4710,7 @@
       <text x="438" y="246" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" fill="#9ca3af">2:00</text>
       <text x="243" y="260" text-anchor="middle" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="8" font-weight="400" fill="#9ca3af" letter-spacing="0.08em">DURATION</text>
 <!-- TRIMP_CHART_AXES_END -->
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <!-- Good next day recovery -->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <!-- Good next day recovery -->
       <circle cx="145" cy="231" r="4.5" fill="#22c55e"/>
       <circle cx="357" cy="159" r="4.5" fill="#22c55e"/>
       <circle cx="355" cy="142" r="4.5" fill="#22c55e"/>
@@ -5186,15 +5187,29 @@
         </div>
         <div class="nc-protocol-header">
           <div class="nc-protocol-nav">
-            <span id="recRhrCount" aria-live="polite">PRIORITY · 1 of 7</span>
+            <span id="recRhrCount" aria-live="polite">PRIORITY · 1 of 5</span>
             <div class="rec-rhr-dots" id="recRhrDots" role="tablist" aria-label="Choose priority recommendation">
               <button type="button" class="rec-rhr-dot active" aria-label="HRV" role="tab" aria-selected="true" aria-controls="focus-card-1" tabindex="0"><span class="rec-rhr-dot__label" aria-hidden="true">HRV</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Sleep Quality" role="tab" aria-selected="false" aria-controls="focus-card-2" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Sleep Quality</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Recovery" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Recovery</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Healthspan" role="tab" aria-selected="false" aria-controls="focus-card-3" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Healthspan</span></button>
               <button type="button" class="rec-rhr-dot" aria-label="Healthspan" role="tab" aria-selected="false" aria-controls="focus-card-4" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Healthspan</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Systems" role="tab" aria-selected="false" aria-controls="focus-card-5" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Systems</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Energy" role="tab" aria-selected="false" aria-controls="focus-card-6" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Energy</span></button>
-              <button type="button" class="rec-rhr-dot" aria-label="Inflammation" role="tab" aria-selected="false" aria-controls="focus-card-7" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Inflammation</span></button>
+              <button type="button" class="rec-rhr-dot" aria-label="Variance" role="tab" aria-selected="false" aria-controls="focus-card-5" tabindex="-1"><span class="rec-rhr-dot__label" aria-hidden="true">Variance</span></button>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             
             
@@ -5329,6 +5344,7 @@
                 <div class="focus-card__head">
                   <h3 class="fc1-title">Improve Baseline HRV</h3>
                   <p class="fc1-summary">Your HRV is 27% lower than average for your age and sex: 47 ms vs 65 ms.</p>
+                  
                 </div>
                 <div class="fc1-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -5348,7 +5364,7 @@
                   <details class="fc1-why-details">
                     <summary>
                       <span class="focus-why-summary-row">
-                        <span class="fc1-why-label">Why it matters</span>
+                        <span class="fc1-why-label">WHAT IT MEANS</span>
                         <span class="fc1-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
@@ -5365,6 +5381,7 @@
                 <div class="focus-card__head">
                   <h3 class="fc2-title">Improve Sleep Continuity</h3>
                   <p class="fc2-summary">Your sleep disruptions are 5% higher than average for your age and sex: 1.2 per hour vs 1.1 per hour.</p>
+                  
                 </div>
                 <div class="fc2-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -5384,7 +5401,7 @@
                   <details class="fc2-why-details">
                     <summary>
                       <span class="focus-why-summary-row">
-                        <span class="fc2-why-label">Why it matters</span>
+                        <span class="fc2-why-label">WHAT IT MEANS</span>
                         <span class="fc2-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
@@ -5399,63 +5416,24 @@
               <div class="fc3-accent" aria-hidden="true"></div>
               <div class="fc3-body">
                 <div class="focus-card__head">
-                  <h3 class="fc3-title">Improve Recovery Quality</h3>
-                  <p class="fc3-summary">When your 7-day average training intensity stayed above 1.06, your 7-day average RHR tended to rise above 50 bpm.</p>
+                  <h3 class="fc3-title">Protect long-term healthspan</h3>
+                  <p class="fc3-summary">Healthspan declines with age, which reduces physical function, resilience, and day-to-day capacity over time.</p>
+                  <p class="fc3-supplement" aria-label="Recommended supplement"><span class="fc3-supplement__label">Supplement</span><strong class="fc3-supplement__name">Magnesium</strong></p>
                 </div>
                 <div class="fc3-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
-                  <p class="fc3-cap">Resting Heart Rate (7-day trend) vs training intensity</p>
+                  <p class="fc3-cap">HEALTHSPAN WITH PROACTIVE SUPPORT</p>
                   <div class="fc3-chart-panel">
-                    <svg id="focus-chart-3" viewBox="0 0 400 210" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Resting Heart Rate trend and training intensity over 30 days">
-                    </svg>
-                  </div>
-                  <div class="fc3-legend" aria-hidden="true">
-                    <div class="fc3-legend__item">
-                      <span class="fc3-legend__swatch fc3-legend__swatch--deep" style="display:inline-block;width:22px;height:0;border-top:2px solid #0071e3;border-radius:0;background:transparent;"></span>
-                      <span class="fc3-legend__label">Resting Heart Rate</span>
-                    </div>
-                    <div class="fc3-legend__item">
-                      <span class="fc3-legend__swatch fc3-legend__swatch--load" style="display:inline-block;width:22px;height:0;border-top:2px solid #ffd60a;border-radius:0;background:transparent;"></span>
-                      <span class="fc3-legend__label">Training Load</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc3-footer">
-                  <details class="fc3-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc3-why-label">Why it matters</span>
-                        <span class="fc3-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc3-why-panel">This graph suggests that higher training intensity across the week was usually associated with higher baseline RHR, making sustained recovery quality especially important for protecting long-term cardiovascular recovery.</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc4-accent" aria-hidden="true"></div>
-              <div class="fc4-body">
-                <div class="focus-card__head">
-                  <h3 class="fc4-title">Protect long-term healthspan</h3>
-                  <p class="fc4-summary">Healthspan declines with age, which reduces physical function, resilience, and day-to-day capacity over time.</p>
-                </div>
-                <div class="fc4-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc4-cap">HEALTHSPAN WITH PROACTIVE SUPPORT</p>
-                  <div class="fc4-chart-panel">
-                    <svg id="focus-chart-4" class="focus-healthspan-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lifespan versus healthspan: illustrative Normal trajectory and With Protocol trajectory (Nutricode design).">
+                    <svg id="focus-chart-3" class="focus-healthspan-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lifespan versus healthspan: illustrative Normal trajectory and With Protocol trajectory (Nutricode design).">
                       <defs>
-                        <linearGradient id="hsGrad-4" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="hsGrad-3" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/>
                           <stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/>
                         </linearGradient>
                       </defs>
                       <title>Longevity: healthspan over lifespan</title>
                       <desc>Normal (gray) versus With Protocol (green). Schematic chart aligned to Nutricode Figma LongevityHealthspanChart.</desc>
-                      <rect x="52" y="48" width="222.0" height="102.0" rx="0" fill="url(#hsGrad-4)"/>
+                      <rect x="52" y="48" width="222.0" height="102.0" rx="0" fill="url(#hsGrad-3)"/>
                       <line x1="52" y1="48.0" x2="274" y2="48.0" stroke="#f0f0f2" stroke-width="1" vector-effect="non-scaling-stroke"/>
                       <text x="40" y="51.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" font-weight="400" fill="#b7bcc6">100%</text>
                       <line x1="52" y1="73.5" x2="274" y2="73.5" stroke="#f0f0f2" stroke-width="1" vector-effect="non-scaling-stroke"/>
@@ -5477,14 +5455,71 @@
                       <text x="163.0" y="172" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" font-weight="400" fill="#6b7280">Lifespan</text>
                     </svg>
                   </div>
+                  <div class="fc3-legend" aria-hidden="true">
+                    <div class="fc3-legend__item">
+                      <span class="fc3-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #6b7280;border-radius:0;background:transparent;"></span>
+                      <span class="fc3-legend__label">Passive</span>
+                    </div>
+                    <div class="fc3-legend__item">
+                      <span class="fc3-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+                      <span class="fc3-legend__label">Proactive</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="fc3-footer">
+                  <details class="fc3-why-details">
+                    <summary>
+                      <span class="focus-why-summary-row">
+                        <span class="fc3-why-label">WHAT IT MEANS</span>
+                        <span class="fc3-why-icon" aria-hidden="true"></span>
+                      </span>
+                    </summary>
+                    <p class="fc3-why-panel">This graph shows that, at the same age, a more proactive approach helps preserve more healthspan for longer.</p>
+                  </details>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="focus-card focus-card__shell" id="focus-card-4" data-focus-index="3" role="article" aria-label="Priority 4 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
+            <div class="focus-card__stage">
+              <div class="fc4-accent" aria-hidden="true"></div>
+              <div class="fc4-body">
+                <div class="focus-card__head">
+                  <h3 class="fc4-title">Preserve whole-body function</h3>
+                  <p class="fc4-summary">The body’s main systems also decline with age, though not all at the same rate, which can gradually weaken overall function and resilience.</p>
+                  <p class="fc4-supplement" aria-label="Recommended supplement"><span class="fc4-supplement__label">Supplement</span><strong class="fc4-supplement__name">Vitamin D</strong></p>
+                </div>
+                <div class="fc4-sep" aria-hidden="true"></div>
+                <div class="focus-card__mid">
+                  <p class="fc4-cap">SYSTEM FUNCTION VS LIFESPAN</p>
+                  <div class="fc4-chart-panel">
+                    <svg id="focus-chart-4" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="System function vs lifespan: Gut health, Immunity, Metabolism, Musculoskeletal illustrative decline curves.">
+                      <defs><linearGradient id="exg-4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
+                      <rect x="52" y="50" width="222.0" height="101.0" fill="url(#exg-4)"/>
+                      <line x1="52" y1="50.0" x2="274" y2="50.0" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="53.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">100%</text><line x1="52" y1="75.3" x2="274" y2="75.3" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="78.3" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">75%</text><line x1="52" y1="100.5" x2="274" y2="100.5" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="103.5" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">50%</text><line x1="52" y1="125.8" x2="274" y2="125.8" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="128.8" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">25%</text>
+                      <line x1="52" y1="50" x2="52" y2="151" stroke="#e5e7eb" stroke-width="1"/><line x1="52" y1="151" x2="274" y2="151" stroke="#e5e7eb" stroke-width="1"/>
+                      <text transform="translate(20 100.5) rotate(-90)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">System Function</text>
+                      <path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.4 L 79.8 51.0 L 83.7 52.0 L 87.7 53.2 L 91.6 54.7 L 95.6 56.5 L 99.6 58.5 L 103.5 60.7 L 107.5 63.1 L 111.5 65.7 L 115.4 68.4 L 119.4 71.3 L 123.4 74.3 L 127.3 77.5 L 131.3 80.7 L 135.3 84.0 L 139.2 87.4 L 143.2 90.8 L 147.1 94.2 L 151.1 97.7 L 155.1 101.2 L 159.0 104.6 L 163.0 108.0 L 167.0 111.3 L 170.9 114.6 L 174.9 117.7 L 178.9 120.8 L 182.8 123.7 L 186.8 126.5 L 190.8 129.1 L 194.7 131.6 L 198.7 133.8 L 202.6 135.9 L 206.6 137.7 L 210.6 139.3 L 214.5 140.6 L 218.5 141.6 L 222.5 142.4 L 226.4 142.8 L 230.4 142.9 L 234.4 142.9 L 238.3 142.9 L 242.3 142.9 L 246.3 142.9 L 250.2 142.9 L 254.2 142.9 L 258.1 142.9 L 262.1 142.9 L 266.1 142.9 L 270.0 142.9 L 274.0 142.9" stroke="#ef4444" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.2 L 91.6 50.6 L 95.6 51.3 L 99.6 52.3 L 103.5 53.4 L 107.5 54.8 L 111.5 56.4 L 115.4 58.1 L 119.4 60.1 L 123.4 62.2 L 127.3 64.4 L 131.3 66.8 L 135.3 69.3 L 139.2 72.0 L 143.2 74.7 L 147.1 77.5 L 151.1 80.4 L 155.1 83.3 L 159.0 86.3 L 163.0 89.3 L 167.0 92.4 L 170.9 95.4 L 174.9 98.5 L 178.9 101.5 L 182.8 104.5 L 186.8 107.5 L 190.8 110.4 L 194.7 113.2 L 198.7 115.9 L 202.6 118.6 L 206.6 121.2 L 210.6 123.6 L 214.5 125.9 L 218.5 128.1 L 222.5 130.1 L 226.4 131.9 L 230.4 133.5 L 234.4 135.0 L 238.3 136.2 L 242.3 137.2 L 246.3 138.0 L 250.2 138.6 L 254.2 138.8 L 258.1 138.9 L 262.1 138.9 L 266.1 138.9 L 270.0 138.9 L 274.0 138.9" stroke="#3b82f6" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.0 L 91.6 50.0 L 95.6 50.0 L 99.6 50.1 L 103.5 50.4 L 107.5 50.9 L 111.5 51.7 L 115.4 52.6 L 119.4 53.8 L 123.4 55.2 L 127.3 56.7 L 131.3 58.3 L 135.3 60.2 L 139.2 62.2 L 143.2 64.3 L 147.1 66.5 L 151.1 68.8 L 155.1 71.3 L 159.0 73.8 L 163.0 76.4 L 167.0 79.0 L 170.9 81.8 L 174.9 84.5 L 178.9 87.3 L 182.8 90.1 L 186.8 93.0 L 190.8 95.8 L 194.7 98.6 L 198.7 101.4 L 202.6 104.2 L 206.6 107.0 L 210.6 109.6 L 214.5 112.3 L 218.5 114.8 L 222.5 117.3 L 226.4 119.6 L 230.4 121.9 L 234.4 124.0 L 238.3 126.1 L 242.3 127.9 L 246.3 129.7 L 250.2 131.2 L 254.2 132.6 L 258.1 133.9 L 262.1 134.9 L 266.1 135.7 L 270.0 136.3 L 274.0 136.9" stroke="#8b5cf6" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.0 L 91.6 50.0 L 95.6 50.0 L 99.6 50.0 L 103.5 50.0 L 107.5 50.0 L 111.5 50.0 L 115.4 50.2 L 119.4 50.6 L 123.4 51.2 L 127.3 52.0 L 131.3 52.9 L 135.3 54.0 L 139.2 55.3 L 143.2 56.7 L 147.1 58.3 L 151.1 60.0 L 155.1 61.8 L 159.0 63.7 L 163.0 65.8 L 167.0 67.9 L 170.9 70.1 L 174.9 72.4 L 178.9 74.7 L 182.8 77.1 L 186.8 79.6 L 190.8 82.1 L 194.7 84.6 L 198.7 87.2 L 202.6 89.8 L 206.6 92.3 L 210.6 94.9 L 214.5 97.5 L 218.5 100.0 L 222.5 102.5 L 226.4 105.0 L 230.4 107.4 L 234.4 109.8 L 238.3 112.1 L 242.3 114.3 L 246.3 116.5 L 250.2 118.5 L 254.2 120.5 L 258.1 122.3 L 262.1 124.1 L 266.1 125.7 L 270.0 127.1 L 274.0 132.8" stroke="#10b981" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                      <text x="52.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">20</text><text x="107.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">40</text><text x="163.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">60</text><text x="218.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">80</text><text x="274.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">100</text>
+                      <text x="163.0" y="172" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">Lifespan</text>
+                    </svg>
+                  </div>
                   <div class="fc4-legend" aria-hidden="true">
                     <div class="fc4-legend__item">
-                      <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #6b7280;border-radius:0;background:transparent;"></span>
-                      <span class="fc4-legend__label">Passive</span>
+                      <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #ef4444;border-radius:0;background:transparent;"></span>
+                      <span class="fc4-legend__label">Gut health</span>
+                    </div>
+                    <div class="fc4-legend__item">
+                      <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
+                      <span class="fc4-legend__label">Immunity</span>
+                    </div>
+                    <div class="fc4-legend__item">
+                      <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #8b5cf6;border-radius:0;background:transparent;"></span>
+                      <span class="fc4-legend__label">Metabolism</span>
                     </div>
                     <div class="fc4-legend__item">
                       <span class="fc4-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
-                      <span class="fc4-legend__label">Proactive</span>
+                      <span class="fc4-legend__label">Musculoskeletal</span>
                     </div>
                   </div>
                 </div>
@@ -5492,11 +5527,11 @@
                   <details class="fc4-why-details">
                     <summary>
                       <span class="focus-why-summary-row">
-                        <span class="fc4-why-label">Why it matters</span>
+                        <span class="fc4-why-label">WHAT IT MEANS</span>
                         <span class="fc4-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc4-why-panel">This graph shows that, at the same age, a more proactive approach helps preserve more healthspan for longer.</p>
+                    <p class="fc4-why-panel">This graph shows how the body’s main systems all decline over the lifespan, which is why preserving function longer matters for healthier aging.</p>
                   </details>
                 </div>
               </div>
@@ -5507,40 +5542,21 @@
               <div class="fc5-accent" aria-hidden="true"></div>
               <div class="fc5-body">
                 <div class="focus-card__head">
-                  <h3 class="fc5-title">Preserve whole-body function</h3>
-                  <p class="fc5-summary">The body’s main systems also decline with age, though not all at the same rate, which can gradually weaken overall function and resilience.</p>
+                  <h3 class="fc5-title">Refine Baseline HRV</h3>
+                  <p class="fc5-summary">Your HRV is already elite. Only 23% of nights fall outside range. The goal is greater recovery robustness.</p>
+                  
                 </div>
                 <div class="fc5-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
-                  <p class="fc5-cap">SYSTEM FUNCTION VS LIFESPAN</p>
+                  <p class="fc5-cap">Nightly HRV (RMSSD)</p>
                   <div class="fc5-chart-panel">
-                    <svg id="focus-chart-5" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="System function vs lifespan: Gut health, Immunity, Metabolism, Musculoskeletal illustrative decline curves.">
-                      <defs><linearGradient id="exg-5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
-                      <rect x="52" y="50" width="222.0" height="101.0" fill="url(#exg-5)"/>
-                      <line x1="52" y1="50.0" x2="274" y2="50.0" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="53.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">100%</text><line x1="52" y1="75.3" x2="274" y2="75.3" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="78.3" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">75%</text><line x1="52" y1="100.5" x2="274" y2="100.5" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="103.5" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">50%</text><line x1="52" y1="125.8" x2="274" y2="125.8" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="128.8" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">25%</text>
-                      <line x1="52" y1="50" x2="52" y2="151" stroke="#e5e7eb" stroke-width="1"/><line x1="52" y1="151" x2="274" y2="151" stroke="#e5e7eb" stroke-width="1"/>
-                      <text transform="translate(20 100.5) rotate(-90)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">System Function</text>
-                      <path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.4 L 79.8 51.0 L 83.7 52.0 L 87.7 53.2 L 91.6 54.7 L 95.6 56.5 L 99.6 58.5 L 103.5 60.7 L 107.5 63.1 L 111.5 65.7 L 115.4 68.4 L 119.4 71.3 L 123.4 74.3 L 127.3 77.5 L 131.3 80.7 L 135.3 84.0 L 139.2 87.4 L 143.2 90.8 L 147.1 94.2 L 151.1 97.7 L 155.1 101.2 L 159.0 104.6 L 163.0 108.0 L 167.0 111.3 L 170.9 114.6 L 174.9 117.7 L 178.9 120.8 L 182.8 123.7 L 186.8 126.5 L 190.8 129.1 L 194.7 131.6 L 198.7 133.8 L 202.6 135.9 L 206.6 137.7 L 210.6 139.3 L 214.5 140.6 L 218.5 141.6 L 222.5 142.4 L 226.4 142.8 L 230.4 142.9 L 234.4 142.9 L 238.3 142.9 L 242.3 142.9 L 246.3 142.9 L 250.2 142.9 L 254.2 142.9 L 258.1 142.9 L 262.1 142.9 L 266.1 142.9 L 270.0 142.9 L 274.0 142.9" stroke="#ef4444" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.2 L 91.6 50.6 L 95.6 51.3 L 99.6 52.3 L 103.5 53.4 L 107.5 54.8 L 111.5 56.4 L 115.4 58.1 L 119.4 60.1 L 123.4 62.2 L 127.3 64.4 L 131.3 66.8 L 135.3 69.3 L 139.2 72.0 L 143.2 74.7 L 147.1 77.5 L 151.1 80.4 L 155.1 83.3 L 159.0 86.3 L 163.0 89.3 L 167.0 92.4 L 170.9 95.4 L 174.9 98.5 L 178.9 101.5 L 182.8 104.5 L 186.8 107.5 L 190.8 110.4 L 194.7 113.2 L 198.7 115.9 L 202.6 118.6 L 206.6 121.2 L 210.6 123.6 L 214.5 125.9 L 218.5 128.1 L 222.5 130.1 L 226.4 131.9 L 230.4 133.5 L 234.4 135.0 L 238.3 136.2 L 242.3 137.2 L 246.3 138.0 L 250.2 138.6 L 254.2 138.8 L 258.1 138.9 L 262.1 138.9 L 266.1 138.9 L 270.0 138.9 L 274.0 138.9" stroke="#3b82f6" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.0 L 91.6 50.0 L 95.6 50.0 L 99.6 50.1 L 103.5 50.4 L 107.5 50.9 L 111.5 51.7 L 115.4 52.6 L 119.4 53.8 L 123.4 55.2 L 127.3 56.7 L 131.3 58.3 L 135.3 60.2 L 139.2 62.2 L 143.2 64.3 L 147.1 66.5 L 151.1 68.8 L 155.1 71.3 L 159.0 73.8 L 163.0 76.4 L 167.0 79.0 L 170.9 81.8 L 174.9 84.5 L 178.9 87.3 L 182.8 90.1 L 186.8 93.0 L 190.8 95.8 L 194.7 98.6 L 198.7 101.4 L 202.6 104.2 L 206.6 107.0 L 210.6 109.6 L 214.5 112.3 L 218.5 114.8 L 222.5 117.3 L 226.4 119.6 L 230.4 121.9 L 234.4 124.0 L 238.3 126.1 L 242.3 127.9 L 246.3 129.7 L 250.2 131.2 L 254.2 132.6 L 258.1 133.9 L 262.1 134.9 L 266.1 135.7 L 270.0 136.3 L 274.0 136.9" stroke="#8b5cf6" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M 52.0 50.0 L 56.0 50.0 L 59.9 50.0 L 63.9 50.0 L 67.9 50.0 L 71.8 50.0 L 75.8 50.0 L 79.8 50.0 L 83.7 50.0 L 87.7 50.0 L 91.6 50.0 L 95.6 50.0 L 99.6 50.0 L 103.5 50.0 L 107.5 50.0 L 111.5 50.0 L 115.4 50.2 L 119.4 50.6 L 123.4 51.2 L 127.3 52.0 L 131.3 52.9 L 135.3 54.0 L 139.2 55.3 L 143.2 56.7 L 147.1 58.3 L 151.1 60.0 L 155.1 61.8 L 159.0 63.7 L 163.0 65.8 L 167.0 67.9 L 170.9 70.1 L 174.9 72.4 L 178.9 74.7 L 182.8 77.1 L 186.8 79.6 L 190.8 82.1 L 194.7 84.6 L 198.7 87.2 L 202.6 89.8 L 206.6 92.3 L 210.6 94.9 L 214.5 97.5 L 218.5 100.0 L 222.5 102.5 L 226.4 105.0 L 230.4 107.4 L 234.4 109.8 L 238.3 112.1 L 242.3 114.3 L 246.3 116.5 L 250.2 118.5 L 254.2 120.5 L 258.1 122.3 L 262.1 124.1 L 266.1 125.7 L 270.0 127.1 L 274.0 132.8" stroke="#10b981" stroke-width="1.6" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                      <text x="52.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">20</text><text x="107.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">40</text><text x="163.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">60</text><text x="218.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">80</text><text x="274.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">100</text>
-                      <text x="163.0" y="172" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">Lifespan</text>
+                    <svg id="focus-chart-5" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Nightly HRV; target 43–52 ms; blue dots within target band">
                     </svg>
                   </div>
                   <div class="fc5-legend" aria-hidden="true">
                     <div class="fc5-legend__item">
-                      <span class="fc5-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #ef4444;border-radius:0;background:transparent;"></span>
-                      <span class="fc5-legend__label">Gut health</span>
-                    </div>
-                    <div class="fc5-legend__item">
-                      <span class="fc5-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
-                      <span class="fc5-legend__label">Immunity</span>
-                    </div>
-                    <div class="fc5-legend__item">
-                      <span class="fc5-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #8b5cf6;border-radius:0;background:transparent;"></span>
-                      <span class="fc5-legend__label">Metabolism</span>
-                    </div>
-                    <div class="fc5-legend__item">
-                      <span class="fc5-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
-                      <span class="fc5-legend__label">Musculoskeletal</span>
+                      <span class="fc5-legend__swatch fc5-legend__swatch--target-range"></span>
+                      <span class="fc5-legend__label">Target range</span>
                     </div>
                   </div>
                 </div>
@@ -5548,107 +5564,11 @@
                   <details class="fc5-why-details">
                     <summary>
                       <span class="focus-why-summary-row">
-                        <span class="fc5-why-label">Why it matters</span>
+                        <span class="fc5-why-label">WHAT IT MEANS</span>
                         <span class="fc5-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
-                    <p class="fc5-why-panel">This graph shows how the body’s main systems all decline over the lifespan, which is why preserving function longer matters for healthier aging.</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-        <div class="focus-card focus-card__shell" id="focus-card-6" data-focus-index="5" role="article" aria-label="Priority 6 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc6-accent" aria-hidden="true"></div>
-              <div class="fc6-body">
-                <div class="focus-card__head">
-                  <h3 class="fc6-title">Protect long-term energy</h3>
-                  <p class="fc6-summary">Available energy declines with age, making it harder to sustain the same level of daily activity, performance, and recovery over time.</p>
-                </div>
-                <div class="fc6-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc6-cap">ENERGY VS AGE</p>
-                  <div class="fc6-chart-panel">
-                    <svg id="focus-chart-6" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Energy levels across age; illustrative curve.">
-                      <defs><linearGradient id="exe-6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
-                      <rect x="52" y="50" width="222.0" height="101.0" fill="url(#exe-6)"/>
-                      <line x1="52" y1="50.0" x2="274" y2="50.0" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="53.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">100%</text><line x1="52" y1="75.3" x2="274" y2="75.3" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="78.3" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">75%</text><line x1="52" y1="100.5" x2="274" y2="100.5" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="103.5" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">50%</text><line x1="52" y1="125.8" x2="274" y2="125.8" stroke="#f0f0f2" stroke-width="1"/><text x="40" y="128.8" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">25%</text>
-                      <line x1="52" y1="50" x2="52" y2="151" stroke="#e5e7eb" stroke-width="1"/><line x1="52" y1="151" x2="274" y2="151" stroke="#e5e7eb" stroke-width="1"/>
-                      <text transform="translate(20 100.5) rotate(-90)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">Energy</text>
-                      <path d="M 52.0 50.0 L 55.5 50.1 L 58.9 50.3 L 62.4 50.6 L 65.9 51.0 L 69.3 51.4 L 72.8 51.8 L 76.3 52.3 L 79.8 52.8 L 83.2 53.4 L 86.7 54.0 L 90.2 54.6 L 93.6 55.3 L 97.1 56.0 L 100.6 56.7 L 104.0 57.5 L 107.5 58.2 L 111.0 59.1 L 114.4 59.9 L 117.9 60.8 L 121.4 61.7 L 124.8 62.6 L 128.3 63.5 L 131.8 64.5 L 135.3 65.5 L 138.7 66.5 L 142.2 67.5 L 145.7 68.6 L 149.1 69.6 L 152.6 70.7 L 156.1 71.8 L 159.5 73.0 L 163.0 74.1 L 166.5 75.3 L 169.9 76.5 L 173.4 77.7 L 176.9 79.0 L 180.3 80.2 L 183.8 81.5 L 187.3 82.8 L 190.8 84.1 L 194.2 85.5 L 197.7 86.8 L 201.2 88.2 L 204.6 89.6 L 208.1 91.0 L 211.6 92.4 L 215.0 93.8 L 218.5 95.3 L 222.0 96.7 L 225.4 98.2 L 228.9 99.7 L 232.4 101.2 L 235.8 102.8 L 239.3 104.3 L 242.8 105.9 L 246.3 107.5 L 249.7 109.1 L 253.2 110.7 L 256.7 112.3 L 260.1 114.0 L 263.6 115.6 L 267.1 117.3 L 270.5 119.0 L 274.0 120.7" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                      <text x="52.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">20</text><text x="107.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">40</text><text x="163.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">60</text><text x="218.5" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">80</text><text x="274.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">100</text>
-                      <text x="163.0" y="172" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7.5" fill="#6b7280">Age</text>
-                    </svg>
-                  </div>
-                  <div class="fc6-legend" aria-hidden="true">
-                    <div class="fc6-legend__item">
-                      <span class="fc6-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
-                      <span class="fc6-legend__label">Energy level</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc6-footer">
-                  <details class="fc6-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc6-why-label">Why it matters</span>
-                        <span class="fc6-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc6-why-panel">This graph shows how energy gradually falls with age, which is why supporting it early is important for preserving day-to-day capacity.</p>
-                  </details>
-                </div>
-              </div>
-            </div>
-        </div>
-        <div class="focus-card focus-card__shell" id="focus-card-7" data-focus-index="6" role="article" aria-label="Priority 7 recommendation" style="--focus-card-accent-rgb: 0, 113, 227; --focus-card-text-color: #0a69d1;">
-            <div class="focus-card__stage">
-              <div class="fc7-accent" aria-hidden="true"></div>
-              <div class="fc7-body">
-                <div class="focus-card__head">
-                  <h3 class="fc7-title">Preserve long-term resilience</h3>
-                  <p class="fc7-summary">Chronic inflammation and oxidative stress tend to build up over time, which can gradually reduce long-term health and life expectancy.</p>
-                </div>
-                <div class="fc7-sep" aria-hidden="true"></div>
-                <div class="focus-card__mid">
-                  <p class="fc7-cap">Impact of inflammation on longevity</p>
-                  <div class="fc7-chart-panel">
-                    <svg id="focus-chart-7" class="focus-extension-svg" viewBox="4 38 279 140" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Longevity expectation vs inflammation load: illustrative downward relationship.">
-                      <defs><linearGradient id="exi-7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(15,23,42)" stop-opacity="0.02"/><stop offset="32%" stop-color="rgb(15,23,42)" stop-opacity="0"/></linearGradient></defs>
-                      <rect x="52" y="50" width="222.0" height="101.0" fill="url(#exi-7)"/>
-                      <line x1="120.8" y1="50" x2="120.8" y2="151" stroke="#f0f0f2" stroke-width="1"/>
-                      <line x1="205.2" y1="50" x2="205.2" y2="151" stroke="#f0f0f2" stroke-width="1"/>
-                      <line x1="52" y1="81.3" x2="274" y2="81.3" stroke="#f0f0f2" stroke-width="1"/>
-                      <line x1="52" y1="119.7" x2="274" y2="119.7" stroke="#f0f0f2" stroke-width="1"/>
-                      <line x1="52" y1="50" x2="52" y2="151" stroke="#e5e7eb" stroke-width="1"/><line x1="52" y1="151" x2="274" y2="151" stroke="#e5e7eb" stroke-width="1"/>
-                      <text x="40" y="65.1" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">High</text>
-                      <text x="40" y="103.5" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">Med</text>
-                      <text x="40" y="141.9" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#b7bcc6">Low</text>
-                      <text transform="translate(20 100.5) rotate(-90)" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#6b7280">Longevity Expectation</text>
-                      <path d="M 78.6 62.1 L 83.9 62.4 L 89.2 62.7 L 94.5 63.1 L 99.7 63.5 L 105.0 64.0 L 110.3 64.5 L 115.5 65.0 L 120.8 65.7 L 126.1 66.4 L 131.4 67.1 L 136.6 68.0 L 141.9 69.0 L 147.2 70.0 L 152.5 71.2 L 157.7 72.5 L 163.0 74.0 L 168.3 75.6 L 173.5 77.4 L 178.8 79.4 L 184.1 81.7 L 189.4 84.1 L 194.6 86.9 L 199.9 90.0 L 205.2 93.4 L 210.5 97.2 L 215.7 101.4 L 221.0 106.2 L 226.3 111.4 L 231.5 117.2 L 236.8 123.7 L 242.1 130.9 L 247.4 138.9" stroke="#0f766e" stroke-width="2" fill="none" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                      <text x="78.6" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">Low</text>
-                      <text x="163.0" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">Med</text>
-                      <text x="247.4" y="162" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="7" fill="#9ca3af">High</text>
-                      <text x="163.0" y="173" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="6.5" fill="#6b7280">Inflammation/Oxidative Stress</text>
-                    </svg>
-                  </div>
-                  <div class="fc7-legend" aria-hidden="true">
-                    <div class="fc7-legend__item">
-                      <span class="fc7-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
-                      <span class="fc7-legend__label">Longevity outlook</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="fc7-footer">
-                  <details class="fc7-why-details">
-                    <summary>
-                      <span class="focus-why-summary-row">
-                        <span class="fc7-why-label">Why it matters</span>
-                        <span class="fc7-why-icon" aria-hidden="true"></span>
-                      </span>
-                    </summary>
-                    <p class="fc7-why-panel">This graph shows how higher chronic inflammation and oxidative stress are associated with lower life expectancy, which is why reducing them early can support longevity.</p>
+                    <p class="fc5-why-panel">This graph shows that your HRV is already strong and mostly stays in range, with just a few nights still sitting outside it.</p>
                   </details>
                 </div>
               </div>
@@ -6303,8 +6223,8 @@
     });
   })();
 
-                                                                                                                                                                                          // REPORT_INJECT_FOCUS_DATA
-  const FOCUS_SLOTS = [{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[46.278416,43.315247,49.84873,56.96931,null,49.892483,45.60042,46.207653,46.77598,46.151344,46.94552,42.345974,43.618034,null,null,51.240124,null,57.374928,46.99453,43.03888,43.18898,48.256687,55.54408,48.503765,43.24861,52.8369,49.906597,42.0221,44.134567,43.18766],"remPctiles":{"p50":65,"p30":23,"p60":65,"p90":100},"demographicPct":65,"metaGender":"male","metaAge":29,"metricLabel":"HRV","baselineLabel":"cohort median","unitLabel":"ms","lowerIsBetter":false}},{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[0.1778568252556692,0.8468595624558928,1.162290142057684,0.8683766181555037,null,1.6952222262469665,1.4579728286881926,2.0641412790030964,1.1021392216141748,0.8509967693641163,1.069995541685243,1.0286816444619067,0.9158307893589184,1.3157894736842106,1.3025544540125913,1.1819263758361718,0.9719972228650775,1.8023569282908418,0.6030403283219565,1.3623978201634879,0.783289817232376,1.125195346414308,0.8423304475716148,1.706409975935244,0.8454342635719597,1.5854956508973466,1.5978695073235687,0.530543069781151,0.7903113680436135,1.8570691639220667],"remPctiles":{"p50":1.1,"p30":0.3,"p60":1.1,"p90":3},"demographicPct":1.1,"metaGender":"male","metaAge":29,"metricLabel":"Disruptions","baselineLabel":"cohort median","unitLabel":"/h","lowerIsBetter":true}},{"graph_type":"7day_average","data":{"metricDaily":[51,53,51,46,null,48,49,48,48,50,48,51,51,null,null,50,null,47,51,54,53,51,48,51,53,49,50,54,54,52],"intensityDaily":[0.38269807839823516,1.0684431095156932,null,null,null,0.42228205998421375,null,0.4222820599842138,0.9487968468328299,null,1.3590856356954715,1.0132167127168217,0.542033479967598,null,null,1.5345662829095599,null,1.5691796765803205,0.4949636370664113,1.3522337658514372,0.8028034158684105,0.34517451578486036,1.4556878563987488,0.9633540412394223,1.6073276344943326,null,1.2445040657466562,0.8357428714953976,0.25335841610093124,null],"metricLabel":"Resting Heart Rate","leftUnit":"bpm"}},{"graph_type":null,"data":null},{"graph_type":null,"data":null},{"graph_type":null,"data":null},{"graph_type":null,"data":null}];
+                                                                                                                                                                                                                          // REPORT_INJECT_FOCUS_DATA
+  const FOCUS_SLOTS = [{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[46.278416,43.315247,49.84873,56.96931,null,49.892483,45.60042,46.207653,46.77598,46.151344,46.94552,42.345974,43.618034,null,null,51.240124,null,57.374928,46.99453,43.03888,43.18898,48.256687,55.54408,48.503765,43.24861,52.8369,49.906597,42.0221,44.134567,43.18766],"remPctiles":{"p50":65,"p30":23,"p60":65,"p90":100},"demographicPct":65,"metaGender":"male","metaAge":29,"metricLabel":"HRV","baselineLabel":"cohort median","unitLabel":"ms","lowerIsBetter":false}},{"graph_type":"cohort","data":{"numDays":30,"dailyPct":[0.1778568252556692,0.8468595624558928,1.162290142057684,0.8683766181555037,null,1.6952222262469665,1.4579728286881926,2.0641412790030964,1.1021392216141748,0.8509967693641163,1.069995541685243,1.0286816444619067,0.9158307893589184,1.3157894736842106,1.3025544540125913,1.1819263758361718,0.9719972228650775,1.8023569282908418,0.6030403283219565,1.3623978201634879,0.783289817232376,1.125195346414308,0.8423304475716148,1.706409975935244,0.8454342635719597,1.5854956508973466,1.5978695073235687,0.530543069781151,0.7903113680436135,1.8570691639220667],"remPctiles":{"p50":1.1,"p30":0.3,"p60":1.1,"p90":3},"demographicPct":1.1,"metaGender":"male","metaAge":29,"metricLabel":"Disruptions","baselineLabel":"cohort median","unitLabel":"/h","lowerIsBetter":true}},{"graph_type":null,"data":null},{"graph_type":null,"data":null},{"graph_type":"variance","data":{"numDays":30,"seriesByDay":[46.278416,43.315247,49.84873,56.96931,null,49.892483,45.60042,46.207653,46.77598,46.151344,46.94552,42.345974,43.618034,null,null,51.240124,null,57.374928,46.99453,43.03888,43.18898,48.256687,55.54408,48.503765,43.24861,52.8369,49.906597,42.0221,44.134567,43.18766],"hrvByDay":[46.278416,43.315247,49.84873,56.96931,null,49.892483,45.60042,46.207653,46.77598,46.151344,46.94552,42.345974,43.618034,null,null,51.240124,null,57.374928,46.99453,43.03888,43.18898,48.256687,55.54408,48.503765,43.24861,52.8369,49.906597,42.0221,44.134567,43.18766],"targetMin":42.69556796538461,"targetMax":52.183471957692305,"metricLabel":"HRV","unitLabel":"ms","yAxisLabel":"HRV","titleLabel":"Nightly HRV (RMSSD)","lowerIsBetter":false}}];
   /*NUTRICODE_FOCUS_CHART_SNIPPET_V1*/
 /**
  * Focus charts — injected after `const FOCUS_SLOTS = [...]` by populate-health-report.mjs

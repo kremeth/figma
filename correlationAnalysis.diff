@@ -1,0 +1,458 @@
+diff --git a/correlationAnalysis.js b/correlationAnalysis.js
+index 632e586..6d3d7be 100644
+--- a/correlationAnalysis.js
++++ b/correlationAnalysis.js
+@@ -16,8 +16,10 @@ function getSeries(sourceDict) {
+ function getActivitySeries(activityDict, subkey) {
+   const result = {};
+   for (const [key, obj] of Object.entries(activityDict)) {
+-    if (obj && obj[subkey] !== null && obj[subkey] !== undefined) {
+-      result[parseInt(key, 10)] = obj[subkey];
++    if (!obj || typeof obj !== 'object') continue;
++    const totals = obj.total != null && typeof obj.total === 'object' ? obj.total : obj;
++    if (totals[subkey] !== null && totals[subkey] !== undefined) {
++      result[parseInt(key, 10)] = totals[subkey];
+     }
+   }
+   return result;
+@@ -903,10 +905,53 @@ const METRIC_TO_SERIES_EXTRACTOR = {
+   Awake: (m) => m.awake_time,
+ };
+ 
+-const HEALTHSPAN_FALLBACK_ORDER = [
+-  "Acetyl L-Carnitine", "Resveratrol", "Vitamin B12", "Ashwagandha",
++/**
++ * The four distinct Tier 5 graph slots, in priority order.
++ * Each carries a unique csvGraph key that maps directly to the `graph` column
++ * in main_cards.csv for text resolution (Layer A) and to the supplement-slot
++ * key table TIER5_SUPPLEMENT_SLOT_KEY in populate-health-report.mjs (Layer B).
++ */
++const TIER5_SLOT_ORDER = [
++  { csvGraph: "healthspan"   },
++  { csvGraph: "systems"      },
++  { csvGraph: "energy"       },
++  { csvGraph: "inflammation" },
+ ];
+ 
++/**
++ * CSV/text graph key (used in main_cards.csv + report text) → supplement-slot key
++ * used for Tier 5 supplement selection. Everything stays by `csvGraph` except
++ * `inflammation`, which maps to `oxidative_stress` for supplements only.
++ */
++const CSV_GRAPH_TO_SUPPLEMENT_SLOT = {
++  healthspan: "healthspan",
++  systems: "systems",
++  energy: "energy",
++  inflammation: "oxidative_stress",
++};
++
++/**
++ * Tier 5 supplement priority lists (order matters — first available wins).
++ * A supplement already chosen by Tier 1–4 (or by an earlier Tier 5 card in
++ * this run) is skipped; remaining list fills mostResearched then emergingResearch.
++ */
++const TIER5_SUPPLEMENT_PRIORITY = {
++  healthspan: [
++    "Magnesium",
++    "Vitamin B12",
++    "Probiotics",
++    "Ashwagandha",
++    "CoQ10",
++    "Resveratrol",
++    "Acetyl L-Carnitine",
++    "Omega 3",
++    "Vitamin D",
++  ],
++  oxidative_stress: ["Magnesium", "Ashwagandha", "Omega 3"],
++  systems: ["Vitamin B12", "Probiotics", "Vitamin D"],
++  energy: ["CoQ10", "Resveratrol", "Acetyl L-Carnitine"],
++};
++
+ function buildGlobalMetricPriority(rawData, normative, top10) {
+   const viz = rawData?.connect_device_recommendation?.metric_analysis?.visualization;
+   if (!viz) return [];
+@@ -1005,11 +1050,11 @@ function buildGlobalMetricPriority(rawData, normative, top10) {
+   tier3.sort((a, b) => a.daysInRangePct - b.daysInRangePct);
+   tier4.sort((a, b) => a.daysInRangePct - b.daysInRangePct);
+ 
+-  const tier5 = HEALTHSPAN_FALLBACK_ORDER.map((supp, i) => ({
++  const tier5 = TIER5_SLOT_ORDER.map((slot, i) => ({
+     metric: "healthspan",
+     tier: 5,
+     tag: "healthspan",
+-    fixedSupplement: supp,
++    csvGraph: slot.csvGraph,
+     healthspanRank: i,
+   }));
+ 
+@@ -1597,6 +1642,153 @@ function assignSupplementsToFocusCards(focusPicks, researchData, tiers) {
+   };
+ }
+ 
++/**
++ * Globally-unique supplement assignment across all focus cards.
++ *
++ * Process:
++ * 1. Tier 1–4 cards are assigned first using the existing Hungarian solver
++ *    (mostResearched + emergingResearch), keyed by per-pick `targetMetric`.
++ * 2. Every supplement picked in step 1 is added to a shared `usedSupplements`
++ *    set (guaranteeing it cannot reappear in any Tier 5 slot).
++ * 3. Tier 5 cards are then processed in their existing `csvGraph` order.
++ *    For each card, the supplement slot is resolved via CSV_GRAPH_TO_SUPPLEMENT_SLOT
++ *    (e.g. `inflammation` → `oxidative_stress`) and supplements are drawn from
++ *    TIER5_SUPPLEMENT_PRIORITY[slot], skipping any already in `usedSupplements`.
++ *    The first available supplement fills `mostResearched`; the second fills
++ *    `emergingResearch`. Each chosen supplement is added to `usedSupplements`
++ *    immediately so later Tier 5 cards cannot pick it again.
++ *
++ * Score/impact values for Tier 5 picks are looked up in
++ * `researchData.healthspan` (umbrella bucket for longevity cards); if a
++ * supplement is missing there, `score` and `impact` are `null`.
++ *
++ * @param {object[]} focusPicks   focus card rows, each with at least `targetMetric`, `_tag`, `_tier`, `_csvGraph`
++ * @param {object}   researchData parsed metrics_supplement_research JSON (may be null)
++ * @param {object}   tiers        parsed supplement_research_tiers JSON (may be null)
++ * @returns {{mostResearched: (object|null), emergingResearch: (object|null)}[]} one entry per focus pick, index-aligned with input
++ */
++function assignFocusSupplementsWithUniqueness(focusPicks, researchData, tiers) {
++  const results = focusPicks.map(() => ({ mostResearched: null, emergingResearch: null }));
++  const usedSupplements = new Set();
++
++  const t14 = [];
++  const t5 = [];
++  focusPicks.forEach((p, i) => {
++    if ((p?._tier ?? null) === 5) t5.push({ p, i });
++    else t14.push({ p, i });
++  });
++
++  // ── Step 1: Tier 1–4 via Hungarian (existing behaviour) ────────────────────
++  if (researchData && tiers && t14.length > 0) {
++    const cardKeys = t14.map(({ p }) => p.targetMetric);
++    const researchKeys = t14.map(({ p }) =>
++      researchKeyForSupplementLookup(p._tag, p.targetMetric, researchData),
++    );
++    const most = runHungarianForTier(cardKeys, researchKeys, researchData, tiers.mostResearched || []);
++    const emer = runHungarianForTier(cardKeys, researchKeys, researchData, tiers.emergingResearch || []);
++    for (const { p, i } of t14) {
++      const tm = p.targetMetric;
++      results[i].mostResearched = most[tm] ?? null;
++      results[i].emergingResearch = emer[tm] ?? null;
++    }
++  }
++
++  // Step 2: seed usedSupplements from every Tier 1–4 assignment.
++  for (const r of results) {
++    if (r.mostResearched?.supplement) usedSupplements.add(r.mostResearched.supplement);
++    if (r.emergingResearch?.supplement) usedSupplements.add(r.emergingResearch.supplement);
++  }
++
++  // ── Step 3: Tier 5 in existing csvGraph order, draining priority lists. ────
++  function lookupTier5Entry(supplementName) {
++    if (!researchData) return { supplement: supplementName, score: null, impact: null };
++    const entry = researchData.healthspan?.[supplementName];
++    if (entry && typeof entry.supplement_score === "number") {
++      return {
++        supplement: supplementName,
++        score: entry.supplement_score,
++        impact: entry.impact ?? null,
++      };
++    }
++    return { supplement: supplementName, score: null, impact: null };
++  }
++
++  for (const { p, i } of t5) {
++    const csvGraph = p._csvGraph || "healthspan";
++    const slot = CSV_GRAPH_TO_SUPPLEMENT_SLOT[csvGraph] || csvGraph;
++    const priorityList = TIER5_SUPPLEMENT_PRIORITY[slot] || [];
++    const available = priorityList.filter((s) => !usedSupplements.has(s));
++    const primary = available[0] ?? null;
++    const secondary = available[1] ?? null;
++    if (primary) {
++      results[i].mostResearched = lookupTier5Entry(primary);
++      usedSupplements.add(primary);
++    }
++    if (secondary) {
++      results[i].emergingResearch = lookupTier5Entry(secondary);
++      usedSupplements.add(secondary);
++    }
++  }
++
++  return results;
++}
++
++/**
++ * Throws an explicit error if any focus card has zero supplements (both
++ * `mostResearched.supplement` and `emergingResearch.supplement` null/empty).
++ *
++ * Applies to every tier. Tier 5 empties are filtered out upstream, so this
++ * check primarily guards Tier 1–4 where the Hungarian solver can produce a
++ * card with no supplement edges (and there is no backfill for Tier 1–4).
++ */
++function assertEveryFocusCardHasSupplements(focusMetricsTagsSupplements) {
++  focusMetricsTagsSupplements.forEach((row, idx) => {
++    const a = row.supplements?.mostResearched?.supplement;
++    const b = row.supplements?.emergingResearch?.supplement;
++    if (!a && !b) {
++      throw new Error(
++        `[focus_metrics_tags_supplements] focus card has zero supplements:\n` +
++          `  card[${idx}] order=${row.order} tier=${row.tier} metric=${row.metric} ` +
++          `graph=${row.graph_type} tag=${row.tag}`,
++      );
++    }
++  });
++}
++
++/**
++ * Throws an explicit error if any supplement is assigned to more than one card
++ * across `focus_metrics_tags_supplements.json`. Checks both mostResearched and
++ * emergingResearch slots.
++ */
++function assertNoDuplicateFocusSupplements(focusMetricsTagsSupplements) {
++  const seen = new Map();
++  focusMetricsTagsSupplements.forEach((row, idx) => {
++    const slots = [
++      ["mostResearched", row.supplements?.mostResearched],
++      ["emergingResearch", row.supplements?.emergingResearch],
++    ];
++    for (const [slot, entry] of slots) {
++      const name = entry?.supplement;
++      if (!name) continue;
++      if (seen.has(name)) {
++        const prev = seen.get(name);
++        throw new Error(
++          `[focus_metrics_tags_supplements] duplicate supplement "${name}":\n` +
++            `  card[${prev.idx}]: order=${prev.order} tier=${prev.tier} graph=${prev.graph} slot=${prev.slot}\n` +
++            `  card[${idx}]: order=${row.order} tier=${row.tier} graph=${row.graph_type} slot=${slot}`,
++        );
++      }
++      seen.set(name, {
++        idx,
++        order: row.order,
++        tier: row.tier,
++        graph: row.graph_type,
++        slot,
++      });
++    }
++  });
++}
++
+ // ---------------------------------------------------------------------------
+ // Phase 2 + validation loop: resolve top-4 metrics with correlation matching
+ // ---------------------------------------------------------------------------
+@@ -1665,23 +1857,35 @@ function resolveTop4WithCorrelations(globalPriority, resolvedRows, csvCardMap) {
+   let excludedMetrics = new Set();
+ 
+   for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+-    const top4 = [];
++    // Tier 1–4 candidates (capped at 4). Tier 5 is NOT capped here; the caller
++    // decides how many to actually use as backfill after supplement assignment
++    // (cards that can't receive any supplement are skipped downstream).
++    const realEntries = [];
+     for (const entry of globalPriority) {
+-      if (top4.length >= 4) break;
+-      if (entry.tier === 5) {
+-        top4.push(entry);
+-        continue;
+-      }
++      if (realEntries.length >= 4) break;
++      if (entry.tier === 5) continue;
+       if (excludedMetrics.has(entry.metric)) continue;
+-      top4.push(entry);
++      realEntries.push(entry);
+     }
+-
+-    const healthspanEntries = top4.filter((e) => e.tier === 5);
+-    const realEntries = top4.filter((e) => e.tier !== 5);
++    const healthspanEntries = globalPriority.filter((e) => e.tier === 5);
+     const realMetricNames = new Set(realEntries.map((e) => e.metric));
+ 
+     if (realEntries.length === 0) {
+-      return { picks: healthspanEntries.slice(0, 4), tagMap: {} };
++      const picks = [];
++      const seen = new Set();
++      for (const entry of healthspanEntries) {
++        const dedupeKey = entry.csvGraph || entry.metric;
++        if (seen.has(dedupeKey)) continue;
++        seen.add(dedupeKey);
++        picks.push({
++          metric: entry.metric,
++          tag: entry.tag,
++          tier: entry.tier,
++          csvGraph: entry.csvGraph,
++          matchedRow: null,
++        });
++      }
++      return { picks, tagMap: {} };
+     }
+ 
+     const relevantSig = allSignificant.filter((r) => realMetricNames.has(r.targetMetric));
+@@ -1705,7 +1909,7 @@ function resolveTop4WithCorrelations(globalPriority, resolvedRows, csvCardMap) {
+     for (const s7 of surviving7d) {
+       const s7Edge = s7Edges.find((e) => e.metric === s7.metric && e.iv === s7.iv);
+       if (!s7Edge) continue;
+-      const combined = [...sdEdges, s7Edge];
++      const combined = [s7Edge, ...sdEdges]; // rolling edge first → preferred in HK DFS
+       const matchBi = runHKOnEdges(combined);
+       const absR = s7Edge.row ? Math.abs(Number(s7Edge.row.r) || 0) : 0;
+       candidates.push({ picks: matchBi, has7d: true, sevenDayR: absR });
+@@ -1780,24 +1984,33 @@ function resolveTop4WithCorrelations(globalPriority, resolvedRows, csvCardMap) {
+         matchedRow: matched ? matched.row : null,
+       });
+     }
++    const seenTier5Graphs = new Set();
+     for (const entry of healthspanEntries) {
++      // Dedupe by csvGraph: each tier5 slot type (healthspan/systems/energy/inflammation)
++      // maps to a distinct main_cards.csv row (different text), so uniqueness is per graph key.
++      const dedupeKey = entry.csvGraph || entry.metric;
++      if (seenTier5Graphs.has(dedupeKey)) continue;
++      seenTier5Graphs.add(dedupeKey);
+       finalPicks.push({
+         metric: entry.metric,
+         tag: entry.tag,
+         tier: entry.tier,
+-        fixedSupplement: entry.fixedSupplement,
++        csvGraph: entry.csvGraph,
+         matchedRow: null,
+       });
+     }
+ 
+-    return { picks: finalPicks.slice(0, 4), tagMap };
++    // No .slice(0, 4): return all valid real picks + all Tier 5 candidates.
++    // Caller filters empty Tier 5 cards and caps the final card count.
++    return { picks: finalPicks, tagMap };
+   }
+ 
+-  // Safety: if we exhaust iterations, return whatever we have
+-  const fallback = globalPriority.slice(0, 4).map((e) => ({
++  // Safety: if we exhaust iterations, return whatever we have.
++  const fallback = globalPriority.map((e) => ({
+     metric: e.metric,
+     tag: e.tag || DEFAULT_TAG[e.metric] || e.metric.toLowerCase(),
+     tier: e.tier,
++    csvGraph: e.csvGraph,
+     matchedRow: null,
+   }));
+   return { picks: fallback, tagMap: {} };
+@@ -2101,7 +2314,7 @@ if (typeof module !== "undefined" && require.main === module) {
+ 
+   /** Same idea as populate-health-report.mjs: inputs relative to this script’s folder. */
+   const ROOT = __dirname;
+-  const DEFAULT_RAW_FILE = "raw_data2.json";
++  const DEFAULT_RAW_FILE = "raw_data5.json";
+ 
+   const argRaw = process.argv[2];
+   let resolvedRaw;
+@@ -2189,7 +2402,7 @@ if (typeof module !== "undefined" && require.main === module) {
+       if (p.matchedRow) {
+         return { ...p.matchedRow, targetMetric: p.metric, _tag: p.tag, _tier: p.tier };
+       }
+-      const fallbackIv = p.fixedSupplement || DEFAULT_TAG[p.metric] || p.tag;
++      const fallbackIv = DEFAULT_TAG[p.metric] || p.tag;
+       return {
+         label: `${p.metric} fallback`,
+         targetMetric: p.metric,
+@@ -2198,24 +2411,25 @@ if (typeof module !== "undefined" && require.main === module) {
+         supplements: [fallbackIv],
+         significant: false,
+         marginScore: -1e9,
+-        title: p.tier === 5 ? `Improve your healthspan with ${p.fixedSupplement}` : `Improve your ${p.metric}`,
++        title: `Improve your ${p.metric}`,
+         body: "",
+         how_it_works: "",
+         xRaw: null, yRaw: null, xStr: "—", yStr: "—",
+         csvKey: null,
+         _tag: p.tag,
+         _tier: p.tier,
++        _csvGraph: p.csvGraph,
+       };
+     });
+ 
+     const researchPath = path.join(baseDir, "metrics_supplement_research copy 5.json");
+     const tiersPath = path.join(baseDir, "supplement_research_tiers.json");
+-    let suppRecs = { mostResearched: {}, emergingResearch: {} };
+     let researchData = null;
++    let perPickSupplements = focusPicks.map(() => ({ mostResearched: null, emergingResearch: null }));
+     if (fs.existsSync(researchPath) && fs.existsSync(tiersPath)) {
+       researchData = JSON.parse(fs.readFileSync(researchPath, "utf8"));
+       const tiers = JSON.parse(fs.readFileSync(tiersPath, "utf8"));
+-      suppRecs = assignSupplementsToFocusCards(focusPicks, researchData, tiers);
++      perPickSupplements = assignFocusSupplementsWithUniqueness(focusPicks, researchData, tiers);
+     }
+ 
+     function classifyFocusGraphType(pick) {
+@@ -2225,17 +2439,38 @@ if (typeof module !== "undefined" && require.main === module) {
+       if (/rolling mean|7-day|rolling/.test(key)) return "7day_average";
+       // 2) Replace with single correlation for direct (t)/(t-1) relations
+       if (/\(t-1\)|\(t\)/.test(key)) return "single_correlation";
+-      // 3) Default by tier
++      // 3) Default by tier — Tier 5 uses its specific graph slot key from TIER5_SLOT_ORDER
+       if (tier === 3 || tier === 4) return "variance";
+-      if (tier === 5) return "healthspan";
++      if (tier === 5) return pick._csvGraph || "healthspan";
+       return "cohort"; // tiers 1/2 (and fallback)
+     }
+ 
+-    const focusMetricsTagsSupplements = focusPicks.map((pick, i) => {
++    // Filter and cap rules (apply before writing JSON):
++    //   - A Tier 5 pick with no assignable supplement (both slots null) is dropped
++    //     entirely. The next Tier 5 candidate in graph order is used as backfill.
++    //   - Final card count is capped at FOCUS_CARD_LIMIT.
++    //   - Tier 1–4 picks are never skipped here (validation at the bottom throws
++    //     if a Tier 1–4 card ends up with zero supplements).
++    const FOCUS_CARD_LIMIT = 4;
++    const keptIndices = [];
++    for (let i = 0; i < focusPicks.length; i++) {
++      if (keptIndices.length >= FOCUS_CARD_LIMIT) break;
++      const pick = focusPicks[i];
++      const sup = perPickSupplements[i] || {};
++      const isTier5 = (pick._tier ?? null) === 5;
++      const hasAny = !!(
++        sup.mostResearched?.supplement || sup.emergingResearch?.supplement
++      );
++      if (isTier5 && !hasAny) continue;
++      keptIndices.push(i);
++    }
++
++    const focusMetricsTagsSupplements = keptIndices.map((srcIdx, newIdx) => {
++      const pick = focusPicks[srcIdx];
+       const tm = pick.targetMetric;
+       const graphType = classifyFocusGraphType(pick);
+-      const row = {
+-        order: i + 1,
++      return {
++        order: newIdx + 1,
+         metric: tm,
+         tag: pick._tag ?? null,
+         tier: pick._tier ?? null,
+@@ -2246,13 +2481,16 @@ if (typeof module !== "undefined" && require.main === module) {
+             ? researchKeyForSupplementLookup(pick._tag, tm, researchData)
+             : null,
+         supplements: {
+-          mostResearched: suppRecs.mostResearched[tm] ?? null,
+-          emergingResearch: suppRecs.emergingResearch[tm] ?? null,
++          mostResearched: perPickSupplements[srcIdx]?.mostResearched ?? null,
++          emergingResearch: perPickSupplements[srcIdx]?.emergingResearch ?? null,
+         },
+       };
+-      return row;
+     });
+ 
++    // Acceptance checks: every card has ≥1 supplement AND no supplement repeats.
++    assertEveryFocusCardHasSupplements(focusMetricsTagsSupplements);
++    assertNoDuplicateFocusSupplements(focusMetricsTagsSupplements);
++
+     const focusOutPath = path.join(baseDir, "focus_metrics_tags_supplements.json");
+     fs.writeFileSync(focusOutPath, JSON.stringify(focusMetricsTagsSupplements, null, 2), "utf8");
+     console.log("\n  Focus picks — metrics, tags, supplements:");
+@@ -2293,6 +2531,11 @@ if (typeof module !== "undefined") {
+     parseLabelMetricKeys,
+     hungarianAssignment,
+     assignSupplementsToFocusCards,
++    assignFocusSupplementsWithUniqueness,
++    assertEveryFocusCardHasSupplements,
++    assertNoDuplicateFocusSupplements,
++    TIER5_SUPPLEMENT_PRIORITY,
++    CSV_GRAPH_TO_SUPPLEMENT_SLOT,
+     researchKeyForSupplementLookup,
+     TARGET_METRIC_TO_RESEARCH_KEY,
+     buildGlobalMetricPriority,

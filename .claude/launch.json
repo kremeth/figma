@@ -6,6 +6,18 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["serve", "-l", "8080", "/tmp/figma-preview"],
       "port": 8080
+    },
+    {
+      "name": "lp-server",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4321", "/Users/mathieukremeth/Desktop/LP"],
+      "port": 4321
+    },
+    {
+      "name": "figma-server",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-l", "4322", "/Users/mathieukremeth/Desktop/figma"],
+      "port": 4322
     }
   ]
 }

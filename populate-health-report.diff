@@ -1,0 +1,259 @@
+diff --git a/populate-health-report.mjs b/populate-health-report.mjs
+index bfb20ef..7e58ebe 100644
+--- a/populate-health-report.mjs
++++ b/populate-health-report.mjs
+@@ -95,6 +95,14 @@ const m = viz.metrics;
+ const dailyAct = viz.daily_activity;
+ const totalAct = viz.total_activity || {};
+ 
++/** Prefer `daily_activity[i].total.{total_duration,average_intensity}`; fall back to legacy flat day row. */
++function dailyActivityTotals(dayRow) {
++  if (!dayRow || typeof dayRow !== 'object') return null;
++  const t = dayRow.total;
++  if (t != null && typeof t === 'object') return t;
++  return dayRow;
++}
++
+ function ageBand(age) {
+   if (age < 26) return '18-25';
+   if (age < 36) return '26-35';
+@@ -508,7 +516,7 @@ const effPct = effAvg != null ? effAvg * 100 : null;
+ // TRIMP / daily intensity
+ const intensities = [];
+ for (let i = 1; i <= (meta.num_days || 30); i++) {
+-  const ai = dailyAct?.[String(i)]?.average_intensity;
++  const ai = dailyActivityTotals(dailyAct?.[String(i)])?.average_intensity;
+   if (ai != null && typeof ai === 'number') intensities.push(ai);
+ }
+ const trimpAvg = intensities.length ? intensities.reduce((a, b) => a + b, 0) / intensities.length : null;
+@@ -563,7 +571,7 @@ function projectionBandFromScore(score) {
+ /** X-axis span: max observed workout duration rounded up to whole hours; default 6h when no points. */
+ const trimpRawRows = [];
+ for (let d = 1; d <= (meta.num_days || 30); d++) {
+-  const row = dailyAct?.[String(d)];
++  const row = dailyActivityTotals(dailyAct?.[String(d)]);
+   const dur = row?.total_duration;
+   const ai = row?.average_intensity;
+   const nextRecovery = m.recovery?.[String(d + 1)];
+@@ -1180,7 +1188,7 @@ const deepDailyFC = Array(30).fill(null);
+ const intensityDailyFC = Array(30).fill(null);
+ for (let d = 1; d <= 30; d += 1) {
+   const k = String(d);
+-  const ai = dailyAct?.[k]?.average_intensity;
++  const ai = dailyActivityTotals(dailyAct?.[k])?.average_intensity;
+   if (ai != null && Number.isFinite(+ai) && +ai > 0) intensityDailyFC[d - 1] = +ai;
+   const st = m.sleep_time?.[k];
+   const deep = m.deep_sleep?.[k];
+@@ -1734,7 +1742,7 @@ function mainCardsCsvGraph(graphType) {
+  * (Cohort version from bio standing; variance version from stability tiers.)
+  */
+ function mainCardsCsvVersion(graphType, metric) {
+-  if (graphType === 'healthspan') return 'NA';
++  if (graphType === 'healthspan' || graphType === 'systems' || graphType === 'energy' || graphType === 'inflammation') return 'NA';
+   const eff = mainCardsCsvGraph(graphType);
+   if (eff === 'cohort') {
+     const BIO_KEY = {
+@@ -1870,7 +1878,7 @@ function scatterPointsForMetric(metric) {
+   const ySeries = metricDailySeries(mKey);
+   const pts = [];
+   for (let day = 1; day <= numDaysFc; day += 1) {
+-    const x = dailyAct?.[String(day)]?.average_intensity;
++    const x = dailyActivityTotals(dailyAct?.[String(day)])?.average_intensity;
+     const yi = ySeries[day - 1];
+     if (x == null || yi == null) continue;
+     if (!Number.isFinite(+x) || !Number.isFinite(+yi)) continue;
+@@ -1910,10 +1918,9 @@ function focusChartDataForGraphType(graphType, metric) {
+       };
+     }
+     case 'healthspan':
+-      return null;
+-    case 'extension_system_decline':
+-    case 'extension_energy_age':
+-    case 'extension_inflammation':
++    case 'systems':
++    case 'energy':
++    case 'inflammation':
+       return null;
+     default:
+       return variancePayloadForMetric(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV');
+@@ -1932,11 +1939,11 @@ function focusCaptionForGraphType(graphType, metric) {
+       return `Training intensity vs ${metricChartLabel(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV')}`;
+     case 'healthspan':
+       return 'HEALTHSPAN WITH PROACTIVE SUPPORT';
+-    case 'extension_system_decline':
++    case 'systems':
+       return 'SYSTEM FUNCTION VS LIFESPAN';
+-    case 'extension_energy_age':
++    case 'energy':
+       return 'ENERGY VS AGE';
+-    case 'extension_inflammation':
++    case 'inflammation':
+       return 'Impact of inflammation on longevity';
+     default:
+       return 'Metric trend';
+@@ -1968,11 +1975,11 @@ function focusChartAria(graphType, metric) {
+     }
+     case 'healthspan':
+       return 'Lifespan versus healthspan schematic: Normal and With Protocol curves';
+-    case 'extension_system_decline':
++    case 'systems':
+       return 'System function vs lifespan: gut, immunity, metabolism, musculoskeletal illustrative curves';
+-    case 'extension_energy_age':
++    case 'energy':
+       return 'Energy vs age illustrative curve';
+-    case 'extension_inflammation':
++    case 'inflammation':
+       return 'Longevity expectation vs inflammation load illustrative curve';
+     default:
+       return 'Focus chart';
+@@ -2020,7 +2027,7 @@ function focusLegendInner(fc, graphType, metric) {
+                     </div>
+                   </div>`;
+   }
+-  if (graphType === 'extension_system_decline') {
++  if (graphType === 'systems') {
+     return `<div class="${fc}-legend" aria-hidden="true">
+                     <div class="${fc}-legend__item">
+                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #ef4444;border-radius:0;background:transparent;"></span>
+@@ -2040,7 +2047,7 @@ function focusLegendInner(fc, graphType, metric) {
+                     </div>
+                   </div>`;
+   }
+-  if (graphType === 'extension_energy_age') {
++  if (graphType === 'energy') {
+     return `<div class="${fc}-legend" aria-hidden="true">
+                     <div class="${fc}-legend__item">
+                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
+@@ -2048,7 +2055,7 @@ function focusLegendInner(fc, graphType, metric) {
+                     </div>
+                   </div>`;
+   }
+-  if (graphType === 'extension_inflammation') {
++  if (graphType === 'inflammation') {
+     return `<div class="${fc}-legend" aria-hidden="true">
+                     <div class="${fc}-legend__item">
+                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
+@@ -2068,7 +2075,8 @@ function buildFocusSlotFromFm(fm, cardIndex) {
+   const metric = fm.metric;
+   const corr = pickCorrForResolvedMetric(correlationCardsResolved, metric);
+   const graphType = fm.graph_type || defaultGraphTypeFromTier(fm.tier);
+-  const data = graphType === 'healthspan' ? null : focusChartDataForGraphType(graphType, metric);
++  const isTier5Graph = graphType === 'healthspan' || graphType === 'systems' || graphType === 'energy' || graphType === 'inflammation';
++  const data = isTier5Graph ? null : focusChartDataForGraphType(graphType, metric);
+   const useCorr = Boolean(corr && corr.significant && corr.title);
+   const cap = focusCaptionForGraphType(graphType, metric);
+   const csvGraph = mainCardsCsvGraph(graphType);
+@@ -2112,68 +2120,22 @@ function focusDotLabelForStackIndex(idx, stackSlot) {
+   return stackSlot?.dotLabel || stackSlot?.cap || `Slide ${idx + 1}`;
+ }
+ 
+-/** Static extension slides after priority 1–4 (Figma Nutricode 23838:18813, 18865, 18898). */
+-// Text (title/summary/why) — Layer A: main_cards.csv keyed by csvGraph.
+-// Supplement — Layer B: assigned separately via assignTier5Supplements(); never influences text.
+-const _extSystems = mainCardText('healthspan', 'systems',      'NA', 5);
+-const _extEnergy  = mainCardText('healthspan', 'energy',       'NA', 6);
+-const _extInflam  = mainCardText('healthspan', 'inflammation', 'NA', 7);
+-
+-const focusExtensionSlots = [
+-  {
+-    metric: 'extension_system_decline',
+-    graphType: 'extension_system_decline',
+-    csvGraph: 'systems',      // Layer A key (main_cards.csv `graph` column)
+-    data: null,
+-    corr: null,
+-    dotLabel: 'Systems',
+-    title:   escapeHtmlText(_extSystems.title),
+-    summary: _extSystems.summary,
+-    cap:     'SYSTEM FUNCTION VS LIFESPAN',
+-    why:     _extSystems.why,
+-  },
+-  {
+-    metric: 'extension_energy_age',
+-    graphType: 'extension_energy_age',
+-    csvGraph: 'energy',       // Layer A key
+-    data: null,
+-    corr: null,
+-    dotLabel: 'Energy',
+-    title:   escapeHtmlText(_extEnergy.title),
+-    summary: _extEnergy.summary,
+-    cap:     'ENERGY VS AGE',
+-    why:     _extEnergy.why,
+-  },
+-  {
+-    metric: 'extension_inflammation',
+-    graphType: 'extension_inflammation',
+-    csvGraph: 'inflammation', // Layer A key; Layer B slot key = 'oxidative_stress' via TIER5_SUPPLEMENT_SLOT_KEY
+-    data: null,
+-    corr: null,
+-    dotLabel: 'Inflammation',
+-    title:   escapeHtmlText(_extInflam.title),
+-    summary: _extInflam.summary,
+-    cap:     'Impact of inflammation on longevity',
+-    why:     _extInflam.why,
+-  },
+-];
+-
+ // ── Tier 5 supplement assignment (Layer B) ────────────────────────────────────
+-// Collect all Tier 5 slots: the healthspan slot from focusSlotsResolved + the three extension slots.
++// All slots with metric 'healthspan' — covers healthspan/systems/energy/inflammation graph types.
+ const tier5Slots = [
+-  ...focusSlotsResolved.filter(s => s.metric === 'healthspan' || s.graphType === 'healthspan'),
+-  ...focusExtensionSlots,
++  ...focusSlotsResolved.filter(s => s.metric === 'healthspan'),
+ ];
+ assignTier5Supplements(tier5Slots);
+ // ─────────────────────────────────────────────────────────────────────────────
+ 
+-const focusStackSlots = [...focusSlotsResolved, ...focusExtensionSlots];
++/** Focus carousel: top four priority cards only (no trailing longevity extension slides). */
++const focusStackSlots = [...focusSlotsResolved];
+ 
+ const focusSlotChartSpecs = focusStackSlots.map((s) =>
+   s.graphType === 'healthspan' ||
+-    s.graphType === 'extension_system_decline' ||
+-    s.graphType === 'extension_energy_age' ||
+-    s.graphType === 'extension_inflammation'
++    s.graphType === 'systems' ||
++    s.graphType === 'energy' ||
++    s.graphType === 'inflammation'
+     ? { graph_type: null, data: null }
+     : { graph_type: s.graphType, data: s.data },
+ );
+@@ -2457,9 +2419,9 @@ function renderFocusCardShell(slotIdx, s) {
+           ? '4 38 279 140'
+           : '14 38 269 140';
+   const isHealthspanChart = s.graphType === 'healthspan';
+-  const isExtSystem = s.graphType === 'extension_system_decline';
+-  const isExtEnergy = s.graphType === 'extension_energy_age';
+-  const isExtInflam = s.graphType === 'extension_inflammation';
++  const isExtSystem = s.graphType === 'systems';
++  const isExtEnergy = s.graphType === 'energy';
++  const isExtInflam = s.graphType === 'inflammation';
+   const scatterExtra =
+     s.graphType === 'single_correlation'
+       ? ' class="trimp-chart focus-scatter-svg" overflow="visible"'
+@@ -2487,6 +2449,7 @@ function renderFocusCardShell(slotIdx, s) {
+                 <div class="focus-card__head">
+                   <h3 class="${fc}-title">${s.title}</h3>
+                   <p class="${fc}-summary">${s.summary}</p>
++                  ${s.assignedSupplement ? `<p class="${fc}-supplement" aria-label="Recommended supplement"><span class="${fc}-supplement__label">Supplement</span><strong class="${fc}-supplement__name">${s.assignedSupplement}</strong></p>` : ''}
+                 </div>
+                 <div class="${fc}-sep" aria-hidden="true"></div>
+                 <div class="focus-card__mid">
+@@ -2500,7 +2463,7 @@ ${chartInner}
+                   <details class="${fc}-why-details">
+                     <summary>
+                       <span class="focus-why-summary-row">
+-                        <span class="${fc}-why-label">Why it matters</span>
++                        <span class="${fc}-why-label">WHAT IT MEANS</span>
+                         <span class="${fc}-why-icon" aria-hidden="true"></span>
+                       </span>
+                     </summary>
+@@ -3067,6 +3030,7 @@ const reportData = {
+       chart_caption: s.cap,
+       why_panel: s.why,
+       chart_data: s.data,
++      assigned_supplement: s.assignedSupplement ?? null,
+       correlation: s.corr
+         ? {
+             label: s.corr.label,

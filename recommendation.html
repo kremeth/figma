@@ -162,21 +162,27 @@
 
     .report-name {
       font-family: var(--font-ui);
-      font-size: 34px;
+      font-size: clamp(24px, 7.1vw, 36px);
       font-weight: 600;
-      letter-spacing: var(--ls-34);
+      letter-spacing: -0.026em;
       color: var(--ink);
-      line-height: 1.1;
+      line-height: 1.08;
+      max-width: none;
+    }
+    .report-name__line {
+      display: block;
+      white-space: nowrap;
     }
     .report-meta-line {
       font-family: var(--font-ui);
-      font-size: 14px;
+      font-size: clamp(14px, 3.45vw, 15px);
       font-weight: 400;
       color: var(--ink-4);
-      margin-top: 8px;
+      margin-top: clamp(10px, 2.4vw, 14px);
       letter-spacing: var(--ls-14);
-      line-height: 1.5;
-      max-width: 28em;
+      line-height: 1.55;
+      max-width: 34em;
+      text-wrap: pretty;
     }
 
     .status-pill {
@@ -194,14 +200,6 @@
     .pill-amber { background: var(--amber-bg); color: var(--amber); }
     .pill-green { background: var(--green-bg); color: var(--green); }
     .pill-gray  { background: rgba(0,0,0,0.05); color: var(--ink-3); }
-
-    /* Hero metric tags: sentence case (health-report pills are all-caps) */
-    .nc-hero__snapgrid .status-pill {
-      text-transform: none;
-      font-weight: 500;
-      font-size: 11px;
-      letter-spacing: var(--ls-11);
-    }
 
     .score-headline {
       font-family: var(--font-ui);
@@ -259,21 +257,17 @@
        HERO
     ═══════════════════════════════════════════════════════════════ */
     .nc-hero {
-      padding: var(--space-5) 0 var(--space-4);
+      padding: clamp(34px, 8.5vw, 64px) 0 clamp(34px, 7vw, 54px);
     }
 
     .nc-hero__inner {
       display: grid;
-      grid-template-columns: 1fr auto;
-      gap: var(--space-4);
-      align-items: start;
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(24px, 5.4vw, 40px);
+      align-items: center;
     }
     .nc-hero__inner > div:first-child {
       min-width: 0;
-    }
-    /* Stack below 700px; from 700px up use desktop row (copy | biomarkers) */
-    @media (max-width: 699px) {
-      .nc-hero__inner { grid-template-columns: 1fr; gap: var(--space-4); }
     }
 
     .nc-hero__eyebrow {
@@ -306,51 +300,342 @@
 
     .nc-hero__inner .report-name { margin-bottom: 0; }
 
-    /* Snapshot grid (health report snapshot-tile pattern) */
-    .nc-hero__snapgrid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      flex-shrink: 0;
+    /* Hero scorecard — premium health insight (Apple Health / Fitness language) */
+    .nc-hero__scorecard {
+      --sc-label: #86868b;
+      --sc-ink: #1d1d1f;
+      --sc-ink-soft: #636366;
+      --sc-green: #30d158;
+      --sc-green-mid: #5cdb7a;
+      --sc-green-soft: rgba(48, 209, 88, 0.09);
+      --sc-green-line: rgba(48, 209, 88, 0.18);
+      --sc-ring-size: clamp(96px, 22vw, 112px);
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      justify-self: start;
+      padding: clamp(20px, 4.8vw, 28px) clamp(18px, 4.5vw, 28px);
+      width: min(100%, 520px);
       min-width: 0;
-      max-width: 340px;
-    }
-    @media (max-width: 699px) {
-      .nc-hero__snapgrid { max-width: none; width: 100%; }
-    }
-    /* Always 2 columns × 2 rows (never stack to single column) */
-
-    .snapshot-tile {
-      background: var(--card);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--card-border);
-      box-shadow: var(--card-shadow);
-      padding: var(--space-3);
-      min-width: 0;
-      width: 100%;
       box-sizing: border-box;
+      border-radius: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: #fff;
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.03),
+        0 10px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .nc-hero__sc-left {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .nc-hero__sc-ring {
+      position: relative;
+      width: var(--sc-ring-size);
+      height: var(--sc-ring-size);
+    }
+    .nc-hero__sc-ring svg {
+      width: 100%;
       height: 100%;
+      display: block;
+    }
+    .nc-hero__sc-ring-track {
+      fill: none;
+      stroke: #ececec;
+      stroke-width: 7;
+    }
+    /* pathLength=100 on arcs: dash values are % of ring; start at 12 o'clock via rotate(-90) */
+    .nc-hero__sc-ring-arc--base {
+      fill: none;
+      stroke: var(--sc-green);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 77 23;
+      stroke-dashoffset: 0;
+    }
+    .nc-hero__sc-ring-arc--delta {
+      fill: none;
+      stroke: var(--sc-green-mid);
+      stroke-width: 7;
+      stroke-linecap: round;
+      opacity: 0.3;
+      /* 10% segment placed after 77%: negative offset skips first 77% of path */
+      stroke-dasharray: 10 90;
+      stroke-dashoffset: -77;
     }
 
-    .nc-hero__metric-val,
-    .snap-val {
+    .nc-hero__sc-ring-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      gap: clamp(7px, 1.7vw, 9px);
+      padding: 0 6px;
       font-family: var(--font-mono);
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--ink);
-      letter-spacing: var(--ls-20);
+      font-feature-settings: "tnum" 1;
+    }
+    .nc-hero__sc-move {
+      display: flex;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: center;
+      gap: 5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .nc-hero__sc-from {
+      font-size: clamp(15px, 3.7vw, 18px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      color: #aeaeb2;
       line-height: 1;
     }
-    .nc-hero__metric-name {
-      font-family: var(--font-ui);
-      font-size: 12px;
+    .nc-hero__sc-arrow {
+      font-size: clamp(11px, 2.8vw, 12px);
+      font-weight: 500;
+      color: #aeaeb2;
+      line-height: 1;
+      transform: translateY(-1px);
+    }
+    .nc-hero__sc-to {
+      font-size: clamp(19px, 4.6vw, 22px);
       font-weight: 600;
-      color: var(--ink-2);
-      letter-spacing: var(--ls-12);
+      letter-spacing: -0.045em;
+      color: var(--sc-ink);
+      line-height: 1;
+    }
+    .nc-hero__sc-delta {
+      display: block;
+      align-self: stretch;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0;
+      color: rgba(48, 209, 88, 0.58);
+      line-height: 1;
+      font-feature-settings: normal;
+    }
+
+    .nc-hero__sc-sep {
+      align-self: stretch;
+      width: 1px;
+      margin: 6px clamp(18px, 4.7vw, 28px);
+      flex-shrink: 0;
+      border: none;
+      padding: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(60, 60, 67, 0) 0%,
+        rgba(60, 60, 67, 0.1) 18%,
+        rgba(60, 60, 67, 0.1) 82%,
+        rgba(60, 60, 67, 0) 100%
+      );
+    }
+
+    .nc-hero__sc-right {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(13px, 3vw, 16px);
+      padding: 2px 0;
+    }
+    .nc-hero__sc-eyebrow {
+      font-family: var(--font-ui), -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sc-label);
+      margin: 0;
+      line-height: 1.4;
+    }
+    .nc-hero__sc-benefits {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(7px, 1.7vw, 8px);
+    }
+    .nc-hero__sc-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      padding: clamp(9px, 2.2vw, 10px) clamp(12px, 3vw, 14px);
+      border-radius: 13px;
+      border: 1px solid var(--sc-green-line);
+      background: linear-gradient(180deg, var(--sc-green-soft) 0%, rgba(255, 255, 255, 0.65) 100%);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+      font-family: var(--font-ui), -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      font-size: clamp(12px, 3vw, 13px);
+      font-weight: 500;
+      letter-spacing: -0.018em;
       line-height: 1.25;
+      color: var(--sc-ink-soft);
+    }
+    .nc-hero__sc-chip-mark {
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #8ef0a8, var(--sc-green) 70%);
+      box-shadow: 0 0 0 1px rgba(48, 209, 88, 0.22);
+    }
+
+    @media (max-width: 420px) {
+      .report-name {
+        font-size: clamp(23px, 6.25vw, 25px);
+        letter-spacing: -0.034em;
+      }
+
+      .nc-hero__scorecard {
+        --sc-ring-size: clamp(92px, 29vw, 102px);
+        flex-direction: column;
+        align-items: center;
+        padding: 22px 18px 18px;
+        border-radius: 16px;
+      }
+      .nc-hero__sc-sep {
+        width: 100%;
+        height: 1px;
+        margin: 18px 0 16px;
+        background: linear-gradient(
+          90deg,
+          rgba(60, 60, 67, 0) 0%,
+          rgba(60, 60, 67, 0.1) 18%,
+          rgba(60, 60, 67, 0.1) 82%,
+          rgba(60, 60, 67, 0) 100%
+        );
+      }
+      .nc-hero__sc-right {
+        width: 100%;
+        text-align: center;
+        align-items: stretch;
+      }
+      .nc-hero__sc-eyebrow {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+      }
+      .nc-hero__sc-ring-inner {
+        gap: 6px;
+      }
+      .nc-hero__sc-move {
+        gap: 4px;
+      }
+      .nc-hero__sc-from {
+        font-size: 14px;
+      }
+      .nc-hero__sc-arrow {
+        font-size: 9.5px;
+        transform: translateY(-0.5px);
+      }
+      .nc-hero__sc-to {
+        font-size: 18px;
+        letter-spacing: -0.04em;
+      }
+      .nc-hero__sc-delta {
+        font-size: 9px;
+      }
+      .nc-hero__sc-chip {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .report-name {
+        font-size: clamp(22px, 6.6vw, 23.5px);
+        letter-spacing: -0.036em;
+      }
+      .nc-hero__scorecard {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+
+    @media (min-width: 700px) {
+      .nc-hero > .nc-wrap {
+        max-width: min(980px, calc(100vw - 2 * var(--page-edge)));
+      }
+
+      .nc-hero__inner {
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 0.92fr);
+        gap: clamp(22px, 3.8vw, 40px);
+        align-items: center;
+      }
+
+      .report-name {
+        font-size: clamp(25px, 3.65vw, 35px);
+        line-height: 1.06;
+      }
+
+      .report-meta-line {
+        max-width: 31em;
+      }
+
+      .nc-hero__scorecard {
+        --sc-ring-size: clamp(82px, 12vw, 104px);
+        justify-self: end;
+        width: 100%;
+        padding: clamp(16px, 2.7vw, 24px);
+        border-radius: 16px;
+      }
+
+      .nc-hero__sc-sep {
+        margin: 4px clamp(12px, 2.2vw, 22px);
+      }
+
+      .nc-hero__sc-eyebrow {
+        font-size: 9px;
+        letter-spacing: 0.13em;
+      }
+
+      .nc-hero__sc-ring-inner {
+        gap: 6px;
+      }
+
+      .nc-hero__sc-move {
+        gap: 3px;
+      }
+
+      .nc-hero__sc-from {
+        font-size: 15px;
+        letter-spacing: -0.012em;
+      }
+
+      .nc-hero__sc-arrow {
+        font-size: 10px;
+        transform: translateY(-0.5px);
+      }
+
+      .nc-hero__sc-to {
+        font-size: 19px;
+        letter-spacing: -0.038em;
+      }
+
+      .nc-hero__sc-delta {
+        font-size: 9.5px;
+      }
+
+      .nc-hero__sc-chip {
+        padding: 8px 11px;
+        font-size: 12px;
+        border-radius: 12px;
+      }
+    }
+
+    @media (prefers-reduced-transparency: reduce) {
+      .nc-hero__scorecard {
+        background: #fff;
+      }
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -2871,17 +3156,17 @@
       }
 
       .report-name {
-        font-size: 42px;
-        letter-spacing: -0.025em;
-        line-height: 1.08;
+        font-size: clamp(36px, 4vw, 42px);
+        letter-spacing: -0.031em;
+        line-height: 1.04;
       }
 
       .report-meta-line {
         font-size: 15px;
         color: var(--ink-3);
-        margin-top: 12px;
+        margin-top: 14px;
         line-height: 1.55;
-        max-width: 32em;
+        max-width: 33em;
       }
 
       .cta-headline,
@@ -2900,25 +3185,61 @@
 
       /* ── 2. Hero ────────────────────────────────────────────── */
       .nc-hero {
-        padding: 72px 0 56px;
+        padding: clamp(68px, 6vw, 84px) 0 clamp(54px, 5vw, 68px);
       }
 
       .nc-hero__inner {
-        gap: 48px;
+        grid-template-columns: minmax(0, 1fr) minmax(348px, 400px);
+        gap: clamp(36px, 4.6vw, 52px);
+        align-items: center;
       }
 
-      .nc-hero__snapgrid {
-        gap: 12px;
-        max-width: 360px;
+      .nc-hero__scorecard {
+        --sc-ring-size: clamp(110px, 9vw, 116px);
+        justify-self: end;
+        width: 100%;
+        max-width: none;
+        padding: 30px 28px;
+        border-radius: 18px;
       }
 
-      .snapshot-tile {
-        padding: 20px 24px;
+      .nc-hero__sc-from {
+        font-size: 18px;
       }
 
-      .nc-hero__metric-val,
-      .snap-val {
-        font-size: 28px;
+      .nc-hero__sc-ring-inner {
+        gap: 8px;
+      }
+
+      .nc-hero__sc-move {
+        gap: 5px;
+      }
+
+      .nc-hero__sc-arrow {
+        font-size: 12px;
+        transform: translateY(-1px);
+      }
+
+      .nc-hero__sc-to {
+        font-size: 22px;
+      }
+
+      .nc-hero__sc-delta {
+        font-size: 11px;
+      }
+
+      .nc-hero__sc-sep {
+        margin: 8px 26px;
+      }
+
+      .nc-hero__sc-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.15em;
+      }
+
+      .nc-hero__sc-chip {
+        font-size: 14px;
+        padding: 11px 16px;
       }
 
       /* ── 3. Protocol band (Your compounds) ──────────────────── */
@@ -3051,7 +3372,7 @@
       .nc-product-card,
       .nc-stack-card,
       .nc-price-card,
-      .snapshot-tile {
+      .nc-hero__scorecard {
         border-color: rgba(0,0,0,0.06);
       }
 
@@ -3063,6 +3384,19 @@
       .rhr-card {
         animation-duration: 0.7s;
         animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .nc-hero__inner {
+        grid-template-columns: minmax(0, 1fr) minmax(400px, 448px);
+        gap: clamp(44px, 5vw, 56px);
+        align-items: center;
+      }
+
+      .nc-hero__scorecard {
+        justify-self: end;
+        width: 100%;
       }
     }
 
@@ -3244,29 +3578,50 @@
             <span class="nc-hero__eyebrow-dot" aria-hidden="true"></span>
             <span class="section-label">GARMIN · April 2026</span>
           </p>
-          <h1 class="report-name">Your personalised stack, built from your data.</h1>
-          <p class="report-meta-line">Based on your latest biomarkers, three priority focus areas, and 30 days of biometric patterns.</p>
+          <h1 class="report-name"><span class="report-name__line">Your personalised stack,</span><span class="report-name__line">built for your data.</span></h1>
+          <p class="report-meta-line">Based on your last 30 days of Garmin data, we built a supplement stack designed to move the metrics that matter most.</p>
         </div>
-        <div class="nc-hero__snapgrid snapshot-grid" aria-label="Key biomarkers">
-          <div class="snapshot-tile nc-hero__metric">
-            <span class="snap-val nc-hero__metric-val">67</span>
-            <span class="nc-hero__metric-name">HRV</span>
-            <span class="status-pill pill-red">33% below average</span>
+        <div class="nc-hero__scorecard" role="region" aria-label="Health score improves from 77 to 87. In the next 30 days: better recovery, more energy, deeper sleep.">
+          <!-- Left: dual-segment ring (current 77%, projected +10 to 87%) -->
+          <div class="nc-hero__sc-left" aria-hidden="true">
+            <div class="nc-hero__sc-ring">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle class="nc-hero__sc-ring-track" cx="50" cy="50" r="44" pathLength="100"/>
+                <!-- 0→77% -->
+                <circle
+                  class="nc-hero__sc-ring-arc--base"
+                  cx="50" cy="50" r="44"
+                  pathLength="100"
+                  transform="rotate(-90 50 50)"
+                />
+                <!-- 77%→87% (projected gain) -->
+                <circle
+                  class="nc-hero__sc-ring-arc--delta"
+                  cx="50" cy="50" r="44"
+                  pathLength="100"
+                  transform="rotate(-90 50 50)"
+                />
+              </svg>
+              <div class="nc-hero__sc-ring-inner">
+                <div class="nc-hero__sc-move">
+                  <span class="nc-hero__sc-from">77</span>
+                  <span class="nc-hero__sc-arrow" aria-hidden="true">&rarr;</span>
+                  <span class="nc-hero__sc-to">87</span>
+                </div>
+                <span class="nc-hero__sc-delta">+10 pts</span>
+              </div>
+            </div>
           </div>
-          <div class="snapshot-tile nc-hero__metric">
-            <span class="snap-val nc-hero__metric-val">38ms</span>
-            <span class="nc-hero__metric-name">Deep Sleep</span>
-            <span class="status-pill pill-amber">13% below average</span>
-          </div>
-          <div class="snapshot-tile nc-hero__metric">
-            <span class="snap-val nc-hero__metric-val">33%</span>
-            <span class="nc-hero__metric-name">REM Sleep</span>
-            <span class="status-pill pill-amber">15% above average</span>
-          </div>
-          <div class="snapshot-tile nc-hero__metric">
-            <span class="snap-val nc-hero__metric-val">4</span>
-            <span class="nc-hero__metric-name">RHR</span>
-            <span class="status-pill pill-gray">high variance</span>
+
+          <div class="nc-hero__sc-sep" aria-hidden="true"></div>
+
+          <div class="nc-hero__sc-right">
+            <p class="nc-hero__sc-eyebrow">Expected in 30 days</p>
+            <ul class="nc-hero__sc-benefits">
+              <li class="nc-hero__sc-chip"><span class="nc-hero__sc-chip-mark" aria-hidden="true"></span>Better Recovery</li>
+              <li class="nc-hero__sc-chip"><span class="nc-hero__sc-chip-mark" aria-hidden="true"></span>More Energy</li>
+              <li class="nc-hero__sc-chip"><span class="nc-hero__sc-chip-mark" aria-hidden="true"></span>Deeper Sleep</li>
+            </ul>
           </div>
         </div>
       </div>

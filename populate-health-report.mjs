@@ -95,6 +95,14 @@ const m = viz.metrics;
 const dailyAct = viz.daily_activity;
 const totalAct = viz.total_activity || {};
 
+/** Prefer `daily_activity[i].total.{total_duration,average_intensity}`; fall back to legacy flat day row. */
+function dailyActivityTotals(dayRow) {
+  if (!dayRow || typeof dayRow !== 'object') return null;
+  const t = dayRow.total;
+  if (t != null && typeof t === 'object') return t;
+  return dayRow;
+}
+
 function ageBand(age) {
   if (age < 26) return '18-25';
   if (age < 36) return '26-35';
@@ -508,7 +516,7 @@ const effPct = effAvg != null ? effAvg * 100 : null;
 // TRIMP / daily intensity
 const intensities = [];
 for (let i = 1; i <= (meta.num_days || 30); i++) {
-  const ai = dailyAct?.[String(i)]?.average_intensity;
+  const ai = dailyActivityTotals(dailyAct?.[String(i)])?.average_intensity;
   if (ai != null && typeof ai === 'number') intensities.push(ai);
 }
 const trimpAvg = intensities.length ? intensities.reduce((a, b) => a + b, 0) / intensities.length : null;
@@ -563,7 +571,7 @@ function projectionBandFromScore(score) {
 /** X-axis span: max observed workout duration rounded up to whole hours; default 6h when no points. */
 const trimpRawRows = [];
 for (let d = 1; d <= (meta.num_days || 30); d++) {
-  const row = dailyAct?.[String(d)];
+  const row = dailyActivityTotals(dailyAct?.[String(d)]);
   const dur = row?.total_duration;
   const ai = row?.average_intensity;
   const nextRecovery = m.recovery?.[String(d + 1)];
@@ -1180,7 +1188,7 @@ const deepDailyFC = Array(30).fill(null);
 const intensityDailyFC = Array(30).fill(null);
 for (let d = 1; d <= 30; d += 1) {
   const k = String(d);
-  const ai = dailyAct?.[k]?.average_intensity;
+  const ai = dailyActivityTotals(dailyAct?.[k])?.average_intensity;
   if (ai != null && Number.isFinite(+ai) && +ai > 0) intensityDailyFC[d - 1] = +ai;
   const st = m.sleep_time?.[k];
   const deep = m.deep_sleep?.[k];
@@ -1261,57 +1269,10 @@ function mainCardText(csvMetric, csvGraph, csvVersion, cardIndex) {
   return { title: row.title, summary: row.copy, why: row.how_it_works };
 }
 
-// ─── Tier 5 supplement priority ───────────────────────────────────────────────
-
-/**
- * Maps the CSV `graph` key used in main_cards.csv to the supplement-slot key
- * used in the Tier 5 priority table.  These are intentionally kept distinct.
- */
-const TIER5_SUPPLEMENT_SLOT_KEY = {
-  healthspan:   'healthspan',
-  systems:      'systems',
-  energy:       'energy',
-  inflammation: 'oxidative_stress',  // CSV graph key → supplement slot key
-};
-
-const TIER5_SUPPLEMENT_PRIORITY = [
-  { supplement: 'Magnesium',          slots: ['healthspan', 'oxidative_stress'] },
-  { supplement: 'Vitamin B12',        slots: ['healthspan', 'systems'] },
-  { supplement: 'Probiotics',         slots: ['healthspan', 'systems'] },
-  { supplement: 'Ashwagandha',        slots: ['healthspan', 'oxidative_stress'] },
-  { supplement: 'CoQ10',              slots: ['healthspan', 'energy'] },
-  { supplement: 'Resveratrol',        slots: ['healthspan', 'energy'] },
-  { supplement: 'Acetyl L-Carnitine', slots: ['healthspan', 'energy'] },
-  { supplement: 'Omega 3',            slots: ['healthspan', 'oxidative_stress'] },
-  { supplement: 'Vitamin D',          slots: ['healthspan', 'systems'] },
-];
-
-/**
- * Assigns one supplement to each Tier 5 slot using the fixed priority order.
- * Each slot must have a `csvGraph` property (the main_cards.csv graph column value).
- * Mutates each slot by adding `assignedSupplement`.
- */
-function assignTier5Supplements(tier5Slots) {
-  for (const slot of tier5Slots) slot.assignedSupplement = null;
-  const takenSlotKeys  = new Set();
-  const takenSupplements = new Set();
-  for (const { supplement, slots: preferred } of TIER5_SUPPLEMENT_PRIORITY) {
-    if (takenSupplements.has(supplement)) continue;
-    for (const prefSlotKey of preferred) {
-      if (takenSlotKeys.has(prefSlotKey)) continue;
-      const slot = tier5Slots.find(
-        s => TIER5_SUPPLEMENT_SLOT_KEY[s.csvGraph] === prefSlotKey,
-      );
-      if (!slot) continue;
-      slot.assignedSupplement = supplement;
-      takenSlotKeys.add(prefSlotKey);
-      takenSupplements.add(supplement);
-      break;
-    }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
+// Tier 5 supplement assignment (incl. uniqueness across Tier 1–4) is resolved
+// upstream in correlationAnalysis.js; populate-health-report.mjs reads
+// `supplements.mostResearched.supplement` per card from
+// `focus_metrics_tags_supplements.json` and only renders it.
 
 /** Best resolved correlation row for a focus metric (prefers significant). */
 function pickCorrForResolvedMetric(cards, metric) {
@@ -1608,6 +1569,57 @@ const FOCUS_VARIANCE_METRICS = new Set([
   'Awake',
 ]);
 
+/** When true, variance charts always use demo nightly points. When false, real series is used if present; otherwise demo fill. */
+const VARIANCE_CHART_USE_FAKE_DATA = false;
+
+function varianceDemoHashSeed(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+
+function varianceDemoRng(seed) {
+  let s = seed >>> 0;
+  return () => {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+/**
+ * Deterministic nightly jitter around the target band for preview / empty-input charts.
+ */
+function fakeVarianceNightlySeries(mKey, numDays, targetMin, targetMax) {
+  const rng = varianceDemoRng(varianceDemoHashSeed(`var-demo:${mKey}:${numDays}`));
+  const lo = Math.min(targetMin, targetMax);
+  const hi = Math.max(targetMin, targetMax);
+  const mid = (lo + hi) / 2;
+  const span = Math.max(1e-9, hi - lo);
+  return Array.from({ length: numDays }, (_, i) => {
+    const wave = Math.sin((i / Math.max(1, numDays - 1)) * Math.PI * 2 * 1.6) * 0.28;
+    const u = (rng() - 0.5) * 2;
+    let v = mid + u * span * 0.55 + wave * span * 0.35;
+    if (mKey === 'HRV') {
+      v = Math.round(v);
+      return Math.max(18, Math.min(220, v));
+    }
+    if (mKey === 'RHR') {
+      v = Math.round(v);
+      return Math.max(36, Math.min(115, v));
+    }
+    if (mKey === 'TotalSleep') {
+      v = round1(Math.max(3.5, Math.min(12, v)));
+      return v;
+    }
+    if (mKey === 'Disruptions') {
+      v = Math.round(Math.max(0, v) * 100) / 100;
+      return Math.min(Math.max(0, v), hi * 2.5);
+    }
+    v = round1(Math.max(0, Math.min(100, v)));
+    return v;
+  });
+}
+
 /**
  * Nightly band chart payload for any focus metric (graph_type "variance").
  * Shaded target band uses variance_rules.json via varianceRules.js (band around
@@ -1709,10 +1721,16 @@ function variancePayloadForMetric(metric) {
   const titleSuffix = mKey === 'HRV' ? ' (RMSSD)' : '';
   const titleLabel = `Nightly ${label}${titleSuffix}`;
 
+  const useFake =
+    VARIANCE_CHART_USE_FAKE_DATA || vals.length === 0;
+  const seriesOut = useFake
+    ? fakeVarianceNightlySeries(mKey, numDaysFc, targetMin, targetMax)
+    : series;
+
   return {
     numDays: numDaysFc,
-    seriesByDay: series,
-    hrvByDay: series,
+    seriesByDay: seriesOut,
+    hrvByDay: seriesOut,
     targetMin,
     targetMax,
     metricLabel: label,
@@ -1734,7 +1752,7 @@ function mainCardsCsvGraph(graphType) {
  * (Cohort version from bio standing; variance version from stability tiers.)
  */
 function mainCardsCsvVersion(graphType, metric) {
-  if (graphType === 'healthspan') return 'NA';
+  if (graphType === 'healthspan' || graphType === 'systems' || graphType === 'energy' || graphType === 'inflammation') return 'NA';
   const eff = mainCardsCsvGraph(graphType);
   if (eff === 'cohort') {
     const BIO_KEY = {
@@ -1870,7 +1888,7 @@ function scatterPointsForMetric(metric) {
   const ySeries = metricDailySeries(mKey);
   const pts = [];
   for (let day = 1; day <= numDaysFc; day += 1) {
-    const x = dailyAct?.[String(day)]?.average_intensity;
+    const x = dailyActivityTotals(dailyAct?.[String(day)])?.average_intensity;
     const yi = ySeries[day - 1];
     if (x == null || yi == null) continue;
     if (!Number.isFinite(+x) || !Number.isFinite(+yi)) continue;
@@ -1910,10 +1928,9 @@ function focusChartDataForGraphType(graphType, metric) {
       };
     }
     case 'healthspan':
-      return null;
-    case 'extension_system_decline':
-    case 'extension_energy_age':
-    case 'extension_inflammation':
+    case 'systems':
+    case 'energy':
+    case 'inflammation':
       return null;
     default:
       return variancePayloadForMetric(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV');
@@ -1932,11 +1949,11 @@ function focusCaptionForGraphType(graphType, metric) {
       return `Training intensity vs ${metricChartLabel(FOCUS_VARIANCE_METRICS.has(metric) ? metric : 'HRV')}`;
     case 'healthspan':
       return 'HEALTHSPAN WITH PROACTIVE SUPPORT';
-    case 'extension_system_decline':
+    case 'systems':
       return 'SYSTEM FUNCTION VS LIFESPAN';
-    case 'extension_energy_age':
+    case 'energy':
       return 'ENERGY VS AGE';
-    case 'extension_inflammation':
+    case 'inflammation':
       return 'Impact of inflammation on longevity';
     default:
       return 'Metric trend';
@@ -1968,11 +1985,11 @@ function focusChartAria(graphType, metric) {
     }
     case 'healthspan':
       return 'Lifespan versus healthspan schematic: Normal and With Protocol curves';
-    case 'extension_system_decline':
+    case 'systems':
       return 'System function vs lifespan: gut, immunity, metabolism, musculoskeletal illustrative curves';
-    case 'extension_energy_age':
+    case 'energy':
       return 'Energy vs age illustrative curve';
-    case 'extension_inflammation':
+    case 'inflammation':
       return 'Longevity expectation vs inflammation load illustrative curve';
     default:
       return 'Focus chart';
@@ -2020,7 +2037,7 @@ function focusLegendInner(fc, graphType, metric) {
                     </div>
                   </div>`;
   }
-  if (graphType === 'extension_system_decline') {
+  if (graphType === 'systems') {
     return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #ef4444;border-radius:0;background:transparent;"></span>
@@ -2040,7 +2057,7 @@ function focusLegendInner(fc, graphType, metric) {
                     </div>
                   </div>`;
   }
-  if (graphType === 'extension_energy_age') {
+  if (graphType === 'energy') {
     return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #3b82f6;border-radius:0;background:transparent;"></span>
@@ -2048,7 +2065,7 @@ function focusLegendInner(fc, graphType, metric) {
                     </div>
                   </div>`;
   }
-  if (graphType === 'extension_inflammation') {
+  if (graphType === 'inflammation') {
     return `<div class="${fc}-legend" aria-hidden="true">
                     <div class="${fc}-legend__item">
                       <span class="${fc}-legend__swatch" style="display:inline-block;width:22px;height:0;border-top:2px solid #10b981;border-radius:0;background:transparent;"></span>
@@ -2068,7 +2085,8 @@ function buildFocusSlotFromFm(fm, cardIndex) {
   const metric = fm.metric;
   const corr = pickCorrForResolvedMetric(correlationCardsResolved, metric);
   const graphType = fm.graph_type || defaultGraphTypeFromTier(fm.tier);
-  const data = graphType === 'healthspan' ? null : focusChartDataForGraphType(graphType, metric);
+  const isTier5Graph = graphType === 'healthspan' || graphType === 'systems' || graphType === 'energy' || graphType === 'inflammation';
+  const data = isTier5Graph ? null : focusChartDataForGraphType(graphType, metric);
   const useCorr = Boolean(corr && corr.significant && corr.title);
   const cap = focusCaptionForGraphType(graphType, metric);
   const csvGraph = mainCardsCsvGraph(graphType);
@@ -2099,81 +2117,59 @@ function buildFocusSlotFromFm(fm, cardIndex) {
     why = interpolateMainCardCopy(csvText.why, metric, csvMetric, csvGraph, csvVersion);
   }
 
-  return { metric, graphType, csvGraph, data, title, summary, cap, why, corr: useCorr ? corr : null };
+  // Supplement is taken as-is from focus_metrics_tags_supplements.json.  Tier 5
+  // uniqueness is enforced upstream in correlationAnalysis.js (Layer B), so no
+  // repair is needed here.
+  const assignedSupplement = fm.tier === 5
+    ? (fm.supplements?.mostResearched?.supplement ?? null)
+    : null;
+
+  return { metric, graphType, csvGraph, data, title, summary, cap, why, corr: useCorr ? corr : null, assignedSupplement };
 }
 
 const focusSlotsResolved = sortedFocusMetrics.slice(0, 4).map((fm, idx) => buildFocusSlotFromFm(fm, idx + 1));
 
+/** Fifth carousel card: nightly variance band (HRV); main_cards copy only (no correlation overlay). */
+function buildVarianceShowcaseSlot(cardIndex) {
+  const metric = 'HRV';
+  const graphType = 'variance';
+  const data = focusChartDataForGraphType(graphType, metric);
+  const cap = focusCaptionForGraphType(graphType, metric);
+  const csvGraph = mainCardsCsvGraph(graphType);
+  const csvMetric = METRIC_TO_CSV_METRIC[metric];
+  const csvVersion = mainCardsCsvVersion(graphType, metric);
+  const csvText = mainCardText(csvMetric, csvGraph, csvVersion, cardIndex);
+  return {
+    metric,
+    graphType,
+    csvGraph,
+    data,
+    title: escapeHtmlText(csvText.title),
+    summary: interpolateMainCardCopy(csvText.summary, metric, csvMetric, csvGraph, csvVersion),
+    cap,
+    why: interpolateMainCardCopy(csvText.why, metric, csvMetric, csvGraph, csvVersion),
+    corr: null,
+    dotLabel: 'Variance',
+  };
+}
+
 function focusDotLabelForStackIndex(idx, stackSlot) {
+  if (stackSlot?.dotLabel) return stackSlot.dotLabel;
   if (idx < sortedFocusMetrics.length) {
     const fm = sortedFocusMetrics[idx];
     return fm?.tag ? tagDisplayLabel(fm.tag) : metricDotLabel(fm.metric);
   }
-  return stackSlot?.dotLabel || stackSlot?.cap || `Slide ${idx + 1}`;
+  return stackSlot?.cap || `Slide ${idx + 1}`;
 }
 
-/** Static extension slides after priority 1–4 (Figma Nutricode 23838:18813, 18865, 18898). */
-// Text (title/summary/why) — Layer A: main_cards.csv keyed by csvGraph.
-// Supplement — Layer B: assigned separately via assignTier5Supplements(); never influences text.
-const _extSystems = mainCardText('healthspan', 'systems',      'NA', 5);
-const _extEnergy  = mainCardText('healthspan', 'energy',       'NA', 6);
-const _extInflam  = mainCardText('healthspan', 'inflammation', 'NA', 7);
-
-const focusExtensionSlots = [
-  {
-    metric: 'extension_system_decline',
-    graphType: 'extension_system_decline',
-    csvGraph: 'systems',      // Layer A key (main_cards.csv `graph` column)
-    data: null,
-    corr: null,
-    dotLabel: 'Systems',
-    title:   escapeHtmlText(_extSystems.title),
-    summary: _extSystems.summary,
-    cap:     'SYSTEM FUNCTION VS LIFESPAN',
-    why:     _extSystems.why,
-  },
-  {
-    metric: 'extension_energy_age',
-    graphType: 'extension_energy_age',
-    csvGraph: 'energy',       // Layer A key
-    data: null,
-    corr: null,
-    dotLabel: 'Energy',
-    title:   escapeHtmlText(_extEnergy.title),
-    summary: _extEnergy.summary,
-    cap:     'ENERGY VS AGE',
-    why:     _extEnergy.why,
-  },
-  {
-    metric: 'extension_inflammation',
-    graphType: 'extension_inflammation',
-    csvGraph: 'inflammation', // Layer A key; Layer B slot key = 'oxidative_stress' via TIER5_SUPPLEMENT_SLOT_KEY
-    data: null,
-    corr: null,
-    dotLabel: 'Inflammation',
-    title:   escapeHtmlText(_extInflam.title),
-    summary: _extInflam.summary,
-    cap:     'Impact of inflammation on longevity',
-    why:     _extInflam.why,
-  },
-];
-
-// ── Tier 5 supplement assignment (Layer B) ────────────────────────────────────
-// Collect all Tier 5 slots: the healthspan slot from focusSlotsResolved + the three extension slots.
-const tier5Slots = [
-  ...focusSlotsResolved.filter(s => s.metric === 'healthspan' || s.graphType === 'healthspan'),
-  ...focusExtensionSlots,
-];
-assignTier5Supplements(tier5Slots);
-// ─────────────────────────────────────────────────────────────────────────────
-
-const focusStackSlots = [...focusSlotsResolved, ...focusExtensionSlots];
+/** Focus carousel: top four priority cards + optional fifth (variance showcase). */
+const focusStackSlots = [...focusSlotsResolved, buildVarianceShowcaseSlot(5)];
 
 const focusSlotChartSpecs = focusStackSlots.map((s) =>
   s.graphType === 'healthspan' ||
-    s.graphType === 'extension_system_decline' ||
-    s.graphType === 'extension_energy_age' ||
-    s.graphType === 'extension_inflammation'
+    s.graphType === 'systems' ||
+    s.graphType === 'energy' ||
+    s.graphType === 'inflammation'
     ? { graph_type: null, data: null }
     : { graph_type: s.graphType, data: s.data },
 );
@@ -2457,9 +2453,9 @@ function renderFocusCardShell(slotIdx, s) {
           ? '4 38 279 140'
           : '14 38 269 140';
   const isHealthspanChart = s.graphType === 'healthspan';
-  const isExtSystem = s.graphType === 'extension_system_decline';
-  const isExtEnergy = s.graphType === 'extension_energy_age';
-  const isExtInflam = s.graphType === 'extension_inflammation';
+  const isExtSystem = s.graphType === 'systems';
+  const isExtEnergy = s.graphType === 'energy';
+  const isExtInflam = s.graphType === 'inflammation';
   const scatterExtra =
     s.graphType === 'single_correlation'
       ? ' class="trimp-chart focus-scatter-svg" overflow="visible"'
@@ -2487,6 +2483,7 @@ function renderFocusCardShell(slotIdx, s) {
                 <div class="focus-card__head">
                   <h3 class="${fc}-title">${s.title}</h3>
                   <p class="${fc}-summary">${s.summary}</p>
+                  ${s.assignedSupplement ? `<p class="${fc}-supplement" aria-label="Recommended supplement"><span class="${fc}-supplement__label">Supplement</span><strong class="${fc}-supplement__name">${s.assignedSupplement}</strong></p>` : ''}
                 </div>
                 <div class="${fc}-sep" aria-hidden="true"></div>
                 <div class="focus-card__mid">
@@ -2500,7 +2497,7 @@ ${chartInner}
                   <details class="${fc}-why-details">
                     <summary>
                       <span class="focus-why-summary-row">
-                        <span class="${fc}-why-label">Why it matters</span>
+                        <span class="${fc}-why-label">WHAT IT MEANS</span>
                         <span class="${fc}-why-icon" aria-hidden="true"></span>
                       </span>
                     </summary>
@@ -3067,6 +3064,7 @@ const reportData = {
       chart_caption: s.cap,
       why_panel: s.why,
       chart_data: s.data,
+      assigned_supplement: s.assignedSupplement ?? null,
       correlation: s.corr
         ? {
             label: s.corr.label,
