@@ -1,824 +1,798 @@
 {
   "meta": {
-    "date_range": "Mar 14–Apr 12, 2026 · Whoop · Men · 26–35",
-    "device": "whoop",
-    "gender": "male",
-    "age_band": "26-35",
-    "cohort_label": "men aged 26–35",
+    "date_range": "Mar 27–Apr 25, 2026 · Garmin · Women · 46–55",
+    "device": "garmin",
+    "gender": "female",
+    "age_band": "46-55",
+    "cohort_label": "women aged 46–55",
     "num_days": 30,
-    "report_title": "Mathieu's Report"
+    "report_title": "Your Report"
   },
   "health_score": {
-    "score": 77,
-    "headline": "Good progress",
-    "context": "You're in the 82nd percentile for health metrics among men your age. In phase 1, the focus is on improving the limiting metrics that will move your score to 90+, where phase 2 begins and the focus shifts to longevity.",
-    "score_band_id": "70-79",
+    "score": 56,
+    "headline": "Build momentum",
+    "context": "You're in the 35th percentile for health metrics among women your age. Phase 1 is about moving your score toward 90+, where phase 2 begins and the focus shifts to longevity.",
+    "score_band_id": "50-59",
     "phase_current": 1,
     "phase_label": "phase1",
     "phase_total": 2,
     "ring_stroke_hex": "#17FF00",
-    "health_metrics_percentile": 82,
-    "demographic_composite_mean": 64,
+    "health_metrics_percentile": 35,
+    "demographic_composite_mean": 61.5,
     "percentile_model": "normal_cdf_vs_demographicCompositeScoreMean",
     "percentile_sigma": 14,
-    "ahead_of_peer_pct": 70,
+    "ahead_of_peer_pct": 69,
     "ahead_of_peer_pct_basis": "biometric_standing_mean",
     "ahead_of_peer_metrics_count": 10,
     "ring_circumference": 314.16,
-    "ring_dash": 241.9,
-    "ring_dash_gap": 72.26
+    "ring_dash": 175.93,
+    "ring_dash_gap": 138.23
   },
   "longevity_path": {
-    "selected_graph": "green",
-    "selected_card_class": "proj-card--green"
+    "selected_graph": "yellow",
+    "selected_card_class": "proj-card--yellow"
   },
   "limiting_section_title": "LIMITING METRICS",
   "limiting_metrics": [
     {
-      "name": "HRV",
+      "name": "REM sleep",
       "badge": "below average",
       "dot": "red",
       "issue_type": "below_average",
-      "severity_score": 4027
+      "severity_score": 4019
     },
     {
-      "name": "Sleep disruptions",
+      "name": "Deep sleep",
+      "badge": "below average",
+      "dot": "red",
+      "issue_type": "below_average",
+      "severity_score": 4011
+    },
+    {
+      "name": "Light sleep",
       "badge": "above average",
       "dot": "red",
       "issue_type": "below_average",
-      "severity_score": 4005
-    },
-    {
-      "name": "Overnight awake time",
-      "badge": "above target",
-      "dot": "amber",
-      "issue_type": "below_target",
-      "severity_score": 3133
+      "severity_score": 4009
     }
   ],
   "snapshot": {
     "avg_recovery": {
-      "value": 61,
+      "value": 66,
       "tag": "Moderate",
       "tag_cls": "snap-tag--moderate",
       "foot_text": "Recovery can improve"
     },
     "sleep_performance": {
-      "value": 85,
-      "tag": "Optimal",
-      "tag_cls": "snap-tag--easy",
-      "foot_text": "Sleep looks good"
+      "value": 75,
+      "tag": "Sufficient",
+      "tag_cls": "snap-tag--moderate",
+      "foot_text": "Sleep can improve"
     },
     "avg_training_intensity": {
-      "value": 0.9,
-      "tag": "Easy",
-      "tag_cls": "snap-tag--vhard",
-      "foot_text": "Low VO2 Max stimulus"
+      "value": 1.6,
+      "tag": "Moderate",
+      "tag_cls": "snap-tag--moderate",
+      "foot_text": "Moderate VO2 Max stimulus"
     }
   },
   "recovery_donut": {
-    "average_pct": 61,
-    "high_days": 8,
-    "moderate_days": 18,
+    "average_pct": 66,
+    "high_days": 17,
+    "moderate_days": 13,
     "low_days": 0,
     "legend_high_range": "67%+",
     "legend_moderate_range": "34–66%",
     "legend_low_range": "0–33%"
   },
   "sleep_breakdown": {
-    "avg_rem_pct": 26,
-    "avg_deep_pct": 26,
-    "avg_light_pct": 41,
-    "avg_awake_pct": 7,
+    "avg_rem_pct": 17,
+    "avg_deep_pct": 12,
+    "avg_light_pct": 66,
+    "avg_awake_pct": 5,
     "nights": [
       [
-        27,
-        36,
-        20,
-        18
+        5,
+        66,
+        12,
+        17
       ],
       [
         2,
-        47,
-        22,
-        29
+        79,
+        12,
+        8
+      ],
+      [
+        12,
+        59,
+        13,
+        16
+      ],
+      [
+        9,
+        75,
+        11,
+        4
       ],
       [
         2,
-        47,
-        27,
-        24
-      ],
-      [
-        1,
-        42,
-        32,
-        24
-      ],
-      null,
-      [
-        3,
-        41,
-        29,
-        27
-      ],
-      [
-        6,
-        44,
-        24,
-        26
+        66,
+        17,
+        16
       ],
       [
         4,
-        39,
-        35,
-        22
+        71,
+        10,
+        15
       ],
       [
         3,
-        56,
-        22,
+        69,
+        13,
+        16
+      ],
+      [
+        4,
+        68,
+        12,
+        16
+      ],
+      [
+        1,
+        68,
+        10,
+        21
+      ],
+      [
+        4,
+        72,
+        12,
+        13
+      ],
+      [
+        7,
+        70,
+        13,
+        10
+      ],
+      [
+        5,
+        69,
+        15,
+        12
+      ],
+      [
+        4,
+        66,
+        10,
+        20
+      ],
+      [
+        5,
+        59,
+        13,
+        23
+      ],
+      [
+        7,
+        60,
+        10,
+        23
+      ],
+      [
+        2,
+        70,
+        11,
+        16
+      ],
+      [
+        11,
+        54,
+        12,
+        23
+      ],
+      [
+        0,
+        68,
+        13,
+        19
+      ],
+      [
+        2,
+        64,
+        15,
         19
       ],
       [
         4,
-        49,
-        25,
-        23
+        67,
+        14,
+        15
       ],
       [
-        4,
-        37,
-        28,
-        31
+        7,
+        71,
+        11,
+        11
       ],
       [
-        3,
-        43,
-        26,
+        6,
+        66,
+        6,
+        22
+      ],
+      [
+        2,
+        57,
+        11,
         29
       ],
       [
         5,
-        39,
-        26,
-        30
+        63,
+        10,
+        22
       ],
       [
-        46,
-        25,
-        6,
-        23
-      ],
-      [
+        4,
+        76,
         5,
-        40,
-        29,
-        26
+        14
+      ],
+      [
+        3,
+        59,
+        11,
+        27
+      ],
+      [
+        6,
+        56,
+        18,
+        20
       ],
       [
         8,
-        44,
-        27,
-        21
+        59,
+        15,
+        19
       ],
       [
-        3,
-        47,
-        24,
-        26
-      ],
-      [
-        3,
-        48,
-        28,
-        21
-      ],
-      [
-        10,
-        38,
-        26,
-        26
-      ],
-      [
-        7,
-        41,
-        23,
-        29
-      ],
-      [
-        4,
-        39,
-        26,
-        31
-      ],
-      [
-        6,
-        47,
-        24,
-        24
-      ],
-      [
-        7,
-        41,
-        21,
-        31
-      ],
-      [
-        3,
-        42,
-        26,
-        28
-      ],
-      [
-        14,
-        37,
-        24,
+        0,
+        61,
+        13,
         25
       ],
       [
-        2,
-        34,
-        33,
-        31
-      ],
-      [
-        2,
-        34,
-        29,
-        35
-      ],
-      [
-        2,
-        42,
-        27,
-        29
-      ],
-      [
-        3,
-        34,
-        33,
-        30
-      ],
-      [
-        13,
-        38,
-        25,
-        24
+        6,
+        74,
+        6,
+        13
       ]
     ]
   },
   "training_intensity_vs_next_day_recovery": {
     "points": [
       {
-        "day": 1,
-        "duration_sec": 1167,
-        "average_intensity": 0.38269807839823516,
+        "day": 5,
+        "duration_sec": 3019,
+        "average_intensity": 1.5880807426491603,
         "next_day_recovery": 41,
-        "chart_x": 111,
-        "chart_y": 231,
+        "chart_x": 157,
+        "chart_y": 144,
         "color_hex": "#f59e0b",
         "recovery_band": "moderate"
       },
       {
-        "day": 2,
-        "duration_sec": 2337,
-        "average_intensity": 1.0684431095156932,
-        "next_day_recovery": 66,
-        "chart_x": 175,
-        "chart_y": 201,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 6,
-        "duration_sec": 1256,
-        "average_intensity": 0.42228205998421375,
-        "next_day_recovery": 62,
-        "chart_x": 116,
-        "chart_y": 231,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 8,
-        "duration_sec": 3777,
-        "average_intensity": 0.4222820599842138,
-        "next_day_recovery": 54,
-        "chart_x": 253,
-        "chart_y": 231,
+        "day": 7,
+        "duration_sec": 8436,
+        "average_intensity": 1.4392390200053857,
+        "next_day_recovery": 53,
+        "chart_x": 353,
+        "chart_y": 160,
         "color_hex": "#f59e0b",
         "recovery_band": "moderate"
       },
       {
         "day": 9,
-        "duration_sec": 2878,
-        "average_intensity": 0.9487968468328299,
-        "next_day_recovery": 48,
-        "chart_x": 204,
-        "chart_y": 215,
+        "duration_sec": 2006,
+        "average_intensity": 3.0189181688290114,
+        "next_day_recovery": 51,
+        "chart_x": 120,
+        "chart_y": 10,
         "color_hex": "#f59e0b",
         "recovery_band": "moderate"
       },
       {
-        "day": 11,
-        "duration_sec": 5127,
-        "average_intensity": 1.3590856356954715,
-        "next_day_recovery": 39,
-        "chart_x": 326,
-        "chart_y": 169,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
+        "day": 10,
+        "duration_sec": 1224,
+        "average_intensity": 1.405441497469797,
+        "next_day_recovery": 68,
+        "chart_x": 92,
+        "chart_y": 164,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
       },
       {
         "day": 12,
-        "duration_sec": 2877,
-        "average_intensity": 1.0132167127168217,
-        "next_day_recovery": 45,
-        "chart_x": 204,
-        "chart_y": 207,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
+        "duration_sec": 2162,
+        "average_intensity": 1.927370740462173,
+        "next_day_recovery": 70,
+        "chart_x": 126,
+        "chart_y": 106,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 14,
+        "duration_sec": 8609,
+        "average_intensity": 1.1222184791569063,
+        "next_day_recovery": 77,
+        "chart_x": 359,
+        "chart_y": 195,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
       },
       {
         "day": 18,
-        "duration_sec": 3248,
-        "average_intensity": 1.5691796765803205,
-        "next_day_recovery": 57,
-        "chart_x": 224,
-        "chart_y": 146,
+        "duration_sec": 2479,
+        "average_intensity": 1.0541464574135118,
+        "next_day_recovery": 66,
+        "chart_x": 138,
+        "chart_y": 203,
         "color_hex": "#f59e0b",
         "recovery_band": "moderate"
       },
       {
         "day": 19,
-        "duration_sec": 807,
-        "average_intensity": 0.4949636370664113,
-        "next_day_recovery": 44,
-        "chart_x": 92,
-        "chart_y": 231,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 20,
-        "duration_sec": 5936,
-        "average_intensity": 1.3522337658514372,
-        "next_day_recovery": 60,
-        "chart_x": 370,
-        "chart_y": 170,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 21,
-        "duration_sec": 4589,
-        "average_intensity": 0.8028034158684105,
-        "next_day_recovery": 66,
-        "chart_x": 297,
-        "chart_y": 231,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 22,
-        "duration_sec": 1797,
-        "average_intensity": 0.34517451578486036,
-        "next_day_recovery": 93,
-        "chart_x": 145,
-        "chart_y": 231,
+        "duration_sec": 2648,
+        "average_intensity": 2.2719426042113255,
+        "next_day_recovery": 72,
+        "chart_x": 144,
+        "chart_y": 68,
         "color_hex": "#22c55e",
         "recovery_band": "good"
       },
       {
-        "day": 23,
-        "duration_sec": 5713,
-        "average_intensity": 1.4556878563987488,
-        "next_day_recovery": 71,
-        "chart_x": 357,
-        "chart_y": 159,
+        "day": 21,
+        "duration_sec": 2082,
+        "average_intensity": 1.1105351436213262,
+        "next_day_recovery": 72,
+        "chart_x": 123,
+        "chart_y": 197,
         "color_hex": "#22c55e",
         "recovery_band": "good"
       },
       {
         "day": 24,
-        "duration_sec": 3688,
-        "average_intensity": 0.9633540412394223,
-        "next_day_recovery": 51,
-        "chart_x": 248,
-        "chart_y": 213,
+        "duration_sec": 8876,
+        "average_intensity": 1.620798243452838,
+        "next_day_recovery": 48,
+        "chart_x": 369,
+        "chart_y": 140,
         "color_hex": "#f59e0b",
         "recovery_band": "moderate"
       },
       {
         "day": 25,
-        "duration_sec": 5665,
-        "average_intensity": 1.6073276344943326,
-        "next_day_recovery": 84,
-        "chart_x": 355,
-        "chart_y": 142,
+        "duration_sec": 1454,
+        "average_intensity": 0.7500539068224247,
+        "next_day_recovery": 83,
+        "chart_x": 101,
+        "chart_y": 231,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
+      },
+      {
+        "day": 26,
+        "duration_sec": 1579,
+        "average_intensity": 0.46118350631575444,
+        "next_day_recovery": 79,
+        "chart_x": 105,
+        "chart_y": 231,
         "color_hex": "#22c55e",
         "recovery_band": "good"
       },
       {
         "day": 27,
-        "duration_sec": 5936,
-        "average_intensity": 1.2445040657466562,
-        "next_day_recovery": 45,
-        "chart_x": 370,
-        "chart_y": 182,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
-      },
-      {
-        "day": 28,
-        "duration_sec": 2788,
-        "average_intensity": 0.8357428714953976,
-        "next_day_recovery": 53,
-        "chart_x": 199,
-        "chart_y": 227,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
+        "duration_sec": 2063,
+        "average_intensity": 2.0563364543381284,
+        "next_day_recovery": 77,
+        "chart_x": 122,
+        "chart_y": 92,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
       },
       {
         "day": 29,
-        "duration_sec": 1078,
-        "average_intensity": 0.25335841610093124,
-        "next_day_recovery": 52,
-        "chart_x": 106,
-        "chart_y": 231,
-        "color_hex": "#f59e0b",
-        "recovery_band": "moderate"
+        "duration_sec": 2162,
+        "average_intensity": 2.1538718165969426,
+        "next_day_recovery": 69,
+        "chart_x": 126,
+        "chart_y": 81,
+        "color_hex": "#22c55e",
+        "recovery_band": "good"
       }
     ],
-    "duration_axis_max_seconds": 7200,
-    "duration_axis_max_hours": 2
+    "duration_axis_max_seconds": 10800,
+    "duration_axis_max_hours": 3
   },
   "activities": {
-    "total_count": 23,
-    "total_duration_sec": 75767,
-    "total_duration_fmt": "21:02",
+    "total_count": 15,
+    "total_duration_sec": 48799,
+    "total_duration_fmt": "13:33",
     "by_sport": [
+      {
+        "key": "trail_running",
+        "display_name": "Trail Running",
+        "session_count": 3,
+        "duration_sec": 25921,
+        "duration_fmt": "7:12"
+      },
       {
         "key": "running",
         "display_name": "Running",
-        "session_count": 13,
-        "duration_sec": 59507,
-        "duration_fmt": "16:31"
+        "session_count": 9,
+        "duration_sec": 18540,
+        "duration_fmt": "5:09"
       },
       {
-        "key": "weightlifting",
-        "display_name": "Weightlifting",
-        "session_count": 5,
-        "duration_sec": 8626,
-        "duration_fmt": "2:23"
-      },
-      {
-        "key": "activity",
-        "display_name": "Activity",
-        "session_count": 4,
-        "duration_sec": 5297,
-        "duration_fmt": "1:28"
-      },
-      {
-        "key": "assault bike",
-        "display_name": "Assault bike",
-        "session_count": 1,
-        "duration_sec": 2337,
-        "duration_fmt": "0:38"
+        "key": "walking",
+        "display_name": "Walking",
+        "session_count": 3,
+        "duration_sec": 4338,
+        "duration_fmt": "1:12"
       }
     ]
   },
   "heart_rate_zones": [
     {
       "zone_label": "90–100%",
-      "seconds": 0,
-      "time_fmt": "0:00",
-      "bar_width_pct": 0.5,
+      "seconds": 2760,
+      "time_fmt": "0:46",
+      "bar_width_pct": 13.91,
       "color": "#ef4444"
     },
     {
       "zone_label": "80–89%",
-      "seconds": 2740,
-      "time_fmt": "0:45",
-      "bar_width_pct": 8.79,
+      "seconds": 10725,
+      "time_fmt": "2:58",
+      "bar_width_pct": 54.06,
       "color": "#f59e0b"
     },
     {
       "zone_label": "70–79%",
-      "seconds": 11302,
-      "time_fmt": "3:08",
-      "bar_width_pct": 36.24,
+      "seconds": 19837.5,
+      "time_fmt": "5:30",
+      "bar_width_pct": 100,
       "color": "#22c55e"
     },
     {
       "zone_label": "60–69%",
-      "seconds": 21528,
-      "time_fmt": "5:58",
-      "bar_width_pct": 69.03,
+      "seconds": 9847.5,
+      "time_fmt": "2:44",
+      "bar_width_pct": 49.64,
       "color": "#60a5fa"
     },
     {
       "zone_label": "50–59%",
-      "seconds": 31188,
-      "time_fmt": "8:39",
-      "bar_width_pct": 100,
+      "seconds": 3750,
+      "time_fmt": "1:02",
+      "bar_width_pct": 18.9,
       "color": "#93c5fd"
     },
     {
       "zone_label": "0–49%",
-      "seconds": 9009,
-      "time_fmt": "2:30",
-      "bar_width_pct": 28.89,
+      "seconds": 2025,
+      "time_fmt": "0:33",
+      "bar_width_pct": 10.21,
       "color": "#d1d5db"
     }
   ],
   "biometric_health": {
     "cardiovascular": {
       "vo2_max": {
-        "value_display": "56",
+        "value_display": "47",
         "unit": "ml/kg/min",
-        "bar_width": "86.7%",
-        "dot_position": "86.7%",
-        "fill_hex": "#34c759",
-        "bench_bottom10": "26.5",
-        "bench_average": "42",
-        "bench_top10": "57",
-        "badge_cls": "optimal",
-        "badge_text": "Optimal",
-        "cohort_standing_pct": 86.7
+        "bar_width": "95%",
+        "dot_position": "95%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "17.5",
+        "bench_average": "29.5",
+        "bench_top10": "41",
+        "badge_cls": "elite",
+        "badge_text": "Elite",
+        "cohort_standing_pct": 95
       },
       "hrv": {
-        "value_display": "47",
+        "value_display": "55",
         "unit": "ms",
-        "bar_width": "33.3%",
-        "dot_position": "33.3%",
-        "fill_hex": "#ff9f0a",
-        "bench_bottom10": "23",
-        "bench_average": "65",
-        "bench_top10": "100",
-        "badge_cls": "below",
-        "badge_text": "Limited",
-        "cohort_standing_pct": 33.3
-      },
-      "resting_hr": {
-        "value_display": "50",
-        "unit": "bpm",
-        "bar_width": "13.6%",
-        "dot_position": "13.6%",
+        "bar_width": "70.5%",
+        "dot_position": "70.5%",
         "fill_hex": "#34c759",
-        "bench_bottom10": "49",
-        "bench_average": "65",
-        "bench_top10": "88",
+        "bench_bottom10": "15",
+        "bench_average": "43",
+        "bench_top10": "67",
         "badge_cls": "optimal",
         "badge_text": "Optimal",
-        "cohort_standing_pct": 86.4
+        "cohort_standing_pct": 70.5
+      },
+      "resting_hr": {
+        "value_display": "63",
+        "unit": "bpm",
+        "bar_width": "32%",
+        "dot_position": "32%",
+        "fill_hex": "#34c759",
+        "bench_bottom10": "54",
+        "bench_average": "71",
+        "bench_top10": "93",
+        "badge_cls": "optimal",
+        "badge_text": "Optimal",
+        "cohort_standing_pct": 68
       }
     },
     "sleep_quality": {
       "total_sleep": {
-        "value_display": "7.2",
+        "value_display": "7.8",
         "unit": "h",
-        "bar_width": "52.9%",
-        "dot_position": "52.9%",
-        "fill_hex": "#ff9f0a",
-        "bench_bottom10": "5.4",
-        "bench_average": "7.1",
-        "bench_top10": "8.5",
-        "badge_cls": "below",
-        "badge_text": "Normal",
-        "cohort_standing_pct": 52.9
-      },
-      "sleep_efficiency": {
-        "value_display": "93",
-        "unit": "%",
-        "bar_width": "70.9%",
-        "dot_position": "70.9%",
+        "bar_width": "76.3%",
+        "dot_position": "76.3%",
         "fill_hex": "#34c759",
-        "bench_bottom10": "72",
-        "bench_average": "90",
-        "bench_top10": "96",
+        "bench_bottom10": "5.1",
+        "bench_average": "6.8",
+        "bench_top10": "8.3",
         "badge_cls": "optimal",
         "badge_text": "Optimal",
-        "cohort_standing_pct": 70.9
+        "cohort_standing_pct": 76.3
+      },
+      "sleep_efficiency": {
+        "value_display": "95",
+        "unit": "%",
+        "bar_width": "93.5%",
+        "dot_position": "93.5%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "65",
+        "bench_average": "85",
+        "bench_top10": "93",
+        "badge_cls": "elite",
+        "badge_text": "Elite",
+        "cohort_standing_pct": 93.5
       },
       "disruptions_per_hour": {
-        "value_display": "1.2",
+        "value_display": "0.5",
         "unit": "/h",
-        "bar_width": "51.2%",
-        "dot_position": "51.2%",
-        "fill_hex": "#ff9f0a",
-        "bench_bottom10": "0.3",
-        "bench_average": "1.1",
-        "bench_top10": "3",
-        "badge_cls": "below",
-        "badge_text": "Normal",
-        "cohort_standing_pct": 48.8
+        "bar_width": "7.5%",
+        "dot_position": "7.5%",
+        "fill_hex": "#5da9c8",
+        "bench_bottom10": "0.7",
+        "bench_average": "1.9",
+        "bench_top10": "4.6",
+        "badge_cls": "elite",
+        "badge_text": "Elite",
+        "cohort_standing_pct": 92.5
       }
     },
     "sleep_stages": {
       "rem_pct": {
-        "value_display": "26",
+        "value_display": "17",
         "unit": "%",
-        "bar_width": "80.8%",
-        "dot_position": "80.8%",
-        "fill_hex": "#34c759",
-        "bench_bottom10": "13.5",
+        "bar_width": "30%",
+        "dot_position": "30%",
+        "fill_hex": "#ff0000",
+        "bench_bottom10": "13",
         "bench_average": "21",
-        "bench_top10": "27.5",
-        "badge_cls": "optimal",
-        "badge_text": "Optimal",
-        "cohort_standing_pct": 80.8
+        "bench_top10": "28",
+        "badge_cls": "low",
+        "badge_text": "Low",
+        "cohort_standing_pct": 30
       },
       "deep_pct": {
-        "value_display": "26",
+        "value_display": "12",
         "unit": "%",
-        "bar_width": "93.3%",
-        "dot_position": "93.3%",
-        "fill_hex": "#5da9c8",
-        "bench_bottom10": "7",
-        "bench_average": "16.5",
-        "bench_top10": "24",
-        "badge_cls": "elite",
-        "badge_text": "Elite",
-        "cohort_standing_pct": 93.3
-      },
-      "light_pct": {
-        "value_display": "41",
-        "unit": "%",
-        "bar_width": "6.1%",
-        "dot_position": "6.1%",
-        "fill_hex": "#5da9c8",
-        "bench_bottom10": "45",
-        "bench_average": "57",
-        "bench_top10": "74",
-        "badge_cls": "elite",
-        "badge_text": "Elite",
-        "cohort_standing_pct": 93.9
-      },
-      "awake_pct": {
-        "value_display": "7",
-        "unit": "%",
-        "bar_width": "50%",
-        "dot_position": "50%",
+        "bar_width": "42%",
+        "dot_position": "42%",
         "fill_hex": "#ff9f0a",
-        "bench_bottom10": "3",
-        "bench_average": "7",
-        "bench_top10": "14",
+        "bench_bottom10": "6",
+        "bench_average": "13.5",
+        "bench_top10": "20",
         "badge_cls": "below",
         "badge_text": "Normal",
-        "cohort_standing_pct": 50
+        "cohort_standing_pct": 42
+      },
+      "light_pct": {
+        "value_display": "66",
+        "unit": "%",
+        "bar_width": "64.2%",
+        "dot_position": "64.2%",
+        "fill_hex": "#ff9f0a",
+        "bench_bottom10": "49",
+        "bench_average": "60.5",
+        "bench_top10": "76",
+        "badge_cls": "below",
+        "badge_text": "Limited",
+        "cohort_standing_pct": 35.8
+      },
+      "awake_pct": {
+        "value_display": "5",
+        "unit": "%",
+        "bar_width": "10%",
+        "dot_position": "10%",
+        "fill_hex": "#34c759",
+        "bench_bottom10": "5",
+        "bench_average": "9.5",
+        "bench_top10": "18",
+        "badge_cls": "optimal",
+        "badge_text": "Optimal",
+        "cohort_standing_pct": 90
       }
     }
   },
   "focus_section": {
-    "heading_template": "How you move from 77 to 90+",
+    "heading_template": "How you move from 56 to 90+",
     "tab_order": [
       {
         "priority": 1,
-        "metric": "HRV",
-        "tab_label": "HRV"
+        "metric": "REM",
+        "tab_label": "Recovery"
       },
       {
         "priority": 2,
-        "metric": "Disruptions",
-        "tab_label": "Sleep Quality"
+        "metric": "DeepSleep",
+        "tab_label": "Deep Sleep"
       },
       {
         "priority": 3,
-        "metric": "healthspan",
-        "tab_label": "Healthspan"
+        "metric": "LightSleep",
+        "tab_label": "Disruptions"
       },
       {
         "priority": 4,
-        "metric": "healthspan",
-        "tab_label": "Healthspan"
-      },
-      {
-        "priority": 5,
         "metric": "HRV",
-        "tab_label": "Variance"
+        "tab_label": "REM Sleep"
       }
     ],
     "cards": [
       {
         "slot": 1,
         "dom_id": "focus-card-1",
-        "metric": "HRV",
-        "chart_type": "cohort",
-        "tab_label": "HRV",
-        "title": "Improve Baseline HRV",
-        "summary_html": "Your HRV is 27% lower than average for your age and sex: 47 ms vs 65 ms.",
-        "chart_caption": "Daily HRV vs demographic average",
-        "why_panel": "This graph shows that your HRV was generally below the demographic average across the last 30 days.",
+        "metric": "REM",
+        "chart_type": "single_correlation",
+        "tab_label": "Recovery",
+        "title": "Protect REM Sleep",
+        "summary_html": "When your 7-day average training intensity stayed above 1.75, your 7-day average REM Sleep tended to remain below 1.2 hours.",
+        "chart_caption": "Training intensity vs REM Sleep",
+        "why_panel": "This graph suggests that higher training intensity across the week was usually associated with lower REM sleep, making recovery especially important for protecting long-term REM sleep quality.",
         "chart_data": {
-          "numDays": 30,
-          "dailyPct": [
-            46.278416,
-            43.315247,
-            49.84873,
-            56.96931,
-            null,
-            49.892483,
-            45.60042,
-            46.207653,
-            46.77598,
-            46.151344,
-            46.94552,
-            42.345974,
-            43.618034,
-            null,
-            null,
-            51.240124,
-            null,
-            57.374928,
-            46.99453,
-            43.03888,
-            43.18898,
-            48.256687,
-            55.54408,
-            48.503765,
-            43.24861,
-            52.8369,
-            49.906597,
-            42.0221,
-            44.134567,
-            43.18766
+          "points": [
+            {
+              "x": 1.5880807426491603,
+              "y": 15.913978494623656
+            },
+            {
+              "x": 1.4392390200053857,
+              "y": 16.49048625792812
+            },
+            {
+              "x": 3.0189181688290114,
+              "y": 20.850202429149796
+            },
+            {
+              "x": 1.405441497469797,
+              "y": 13.024282560706402
+            },
+            {
+              "x": 1.927370740462173,
+              "y": 12.584269662921349
+            },
+            {
+              "x": 1.1222184791569063,
+              "y": 24.22062350119904
+            },
+            {
+              "x": 1.0541464574135118,
+              "y": 18.976545842217483
+            },
+            {
+              "x": 2.2719426042113255,
+              "y": 19.12442396313364
+            },
+            {
+              "x": 1.1105351436213262,
+              "y": 12.26215644820296
+            },
+            {
+              "x": 1.620798243452838,
+              "y": 22.787610619469028
+            },
+            {
+              "x": 0.7500539068224247,
+              "y": 14.455445544554456
+            },
+            {
+              "x": 0.46118350631575444,
+              "y": 27.852998065764023
+            },
+            {
+              "x": 2.0563364543381284,
+              "y": 20.947630922693268
+            },
+            {
+              "x": 2.1538718165969426,
+              "y": 25
+            }
           ],
-          "remPctiles": {
-            "p50": 65,
-            "p30": 23,
-            "p60": 65,
-            "p90": 100
-          },
-          "demographicPct": 65,
-          "metaGender": "male",
-          "metaAge": 29,
-          "metricLabel": "HRV",
-          "baselineLabel": "cohort median",
-          "unitLabel": "ms",
-          "lowerIsBetter": false
+          "yAxisLabel": "REM SLEEP",
+          "xAxisLabel": "Training Intensity",
+          "yUnit": "%",
+          "pointYLabel": "REM Sleep"
         },
         "assigned_supplement": null,
-        "correlation": null
+        "correlation": {
+          "label": "REM rolling mean ~ Training Intensity rolling mean",
+          "marginScore": 0.27199999999999996,
+          "csvKey": "REM rolling mean (7-day)|Training Intensity rolling mean (7-day)",
+          "significant": true
+        }
       },
       {
         "slot": 2,
         "dom_id": "focus-card-2",
-        "metric": "Disruptions",
+        "metric": "DeepSleep",
         "chart_type": "cohort",
-        "tab_label": "Sleep Quality",
-        "title": "Improve Sleep Continuity",
-        "summary_html": "Your sleep disruptions are 5% higher than average for your age and sex: 1.2 per hour vs 1.1 per hour.",
-        "chart_caption": "Daily Disruptions vs demographic average",
-        "why_panel": "This graph shows that your sleep disruptions were generally above the demographic average across the last 30 days.",
+        "tab_label": "Deep Sleep",
+        "title": "Improve Deep Sleep",
+        "summary_html": "Your deep sleep is 5% lower than average for your age and sex: 57.8 min vs 55.1 min.",
+        "chart_caption": "Daily Deep Sleep vs demographic average",
+        "why_panel": "This graph shows that your deep sleep was generally below the demographic average across the last 30 days.",
         "chart_data": {
           "numDays": 30,
           "dailyPct": [
-            0.1778568252556692,
-            0.8468595624558928,
-            1.162290142057684,
-            0.8683766181555037,
-            null,
-            1.6952222262469665,
-            1.4579728286881926,
-            2.0641412790030964,
-            1.1021392216141748,
-            0.8509967693641163,
-            1.069995541685243,
-            1.0286816444619067,
-            0.9158307893589184,
-            1.3157894736842106,
-            1.3025544540125913,
-            1.1819263758361718,
-            0.9719972228650775,
-            1.8023569282908418,
-            0.6030403283219565,
-            1.3623978201634879,
-            0.783289817232376,
-            1.125195346414308,
-            0.8423304475716148,
-            1.706409975935244,
-            0.8454342635719597,
-            1.5854956508973466,
-            1.5978695073235687,
-            0.530543069781151,
-            0.7903113680436135,
-            1.8570691639220667
+            12.781954887218046,
+            11.789473684210526,
+            14.720215089900856,
+            12.555066079295154,
+            16.989247311827956,
+            10.81081081081081,
+            13.10782241014799,
+            12.903225806451612,
+            10.526315789473685,
+            12.141280353200884,
+            14.197530864197532,
+            15.280898876404494,
+            10.424710424710424,
+            13.908872901678658,
+            10.91703056768559,
+            11.617312072892938,
+            12.923728813559322,
+            13.219616204690832,
+            14.976958525345623,
+            14.76997578692494,
+            11.627906976744185,
+            6.32183908045977,
+            11.627906976744185,
+            10.84070796460177,
+            5.742574257425742,
+            11.411992263056092,
+            19.45137157107232,
+            15.811965811965813,
+            13.247863247863247,
+            6.733167082294265
           ],
           "remPctiles": {
-            "p50": 1.1,
-            "p30": 0.3,
-            "p60": 1.1,
-            "p90": 3
+            "p50": 13.5,
+            "p30": 6,
+            "p60": 13.5,
+            "p90": 20
           },
-          "demographicPct": 1.1,
-          "metaGender": "male",
-          "metaAge": 29,
-          "metricLabel": "Disruptions",
+          "demographicPct": 13.5,
+          "metaGender": "female",
+          "metaAge": 53,
+          "metricLabel": "Deep Sleep",
           "baselineLabel": "cohort median",
-          "unitLabel": "/h",
-          "lowerIsBetter": true
+          "unitLabel": "%",
+          "lowerIsBetter": false
         },
         "assigned_supplement": null,
         "correlation": null
@@ -826,117 +800,166 @@
       {
         "slot": 3,
         "dom_id": "focus-card-3",
-        "metric": "healthspan",
-        "chart_type": "healthspan",
-        "tab_label": "Healthspan",
-        "title": "Protect long-term healthspan",
-        "summary_html": "Healthspan declines with age, which reduces physical function, resilience, and day-to-day capacity over time.",
-        "chart_caption": "HEALTHSPAN WITH PROACTIVE SUPPORT",
-        "why_panel": "This graph shows that, at the same age, a more proactive approach helps preserve more healthspan for longer.",
-        "chart_data": null,
-        "assigned_supplement": "Magnesium",
-        "correlation": null
+        "metric": "LightSleep",
+        "chart_type": "single_correlation",
+        "tab_label": "Disruptions",
+        "title": "Reduce Sleep Disruptions",
+        "summary_html": "On nights when your sleep disruptions rose above 4.8 per hour, your Light Sleep that night tended to rise above 5.8 hours.",
+        "chart_caption": "Training intensity vs Light Sleep",
+        "why_panel": "The upward direction of the regression line suggests that more sleep disruptions are linked to more light sleep, making sleep continuity important for reducing light sleep duration.",
+        "chart_data": {
+          "points": [
+            {
+              "x": 1.5880807426491603,
+              "y": 67.09677419354838
+            },
+            {
+              "x": 1.4392390200053857,
+              "y": 70.40169133192389
+            },
+            {
+              "x": 3.0189181688290114,
+              "y": 68.62348178137651
+            },
+            {
+              "x": 1.405441497469797,
+              "y": 74.83443708609272
+            },
+            {
+              "x": 1.927370740462173,
+              "y": 72.13483146067416
+            },
+            {
+              "x": 1.1222184791569063,
+              "y": 61.8705035971223
+            },
+            {
+              "x": 1.0541464574135118,
+              "y": 67.80383795309169
+            },
+            {
+              "x": 2.2719426042113255,
+              "y": 65.89861751152074
+            },
+            {
+              "x": 1.1105351436213262,
+              "y": 76.10993657505286
+            },
+            {
+              "x": 1.620798243452838,
+              "y": 66.3716814159292
+            },
+            {
+              "x": 0.7500539068224247,
+              "y": 79.8019801980198
+            },
+            {
+              "x": 0.46118350631575444,
+              "y": 60.73500967117988
+            },
+            {
+              "x": 2.0563364543381284,
+              "y": 59.600997506234414
+            },
+            {
+              "x": 2.1538718165969426,
+              "y": 61.75213675213675
+            }
+          ],
+          "yAxisLabel": "LIGHT SLEEP",
+          "xAxisLabel": "Training Intensity",
+          "yUnit": "%",
+          "pointYLabel": "Light Sleep"
+        },
+        "assigned_supplement": null,
+        "correlation": {
+          "label": "LightSleep ~ Disruptions",
+          "marginScore": 0.043999999999999984,
+          "csvKey": "LightSleep(t)|Disruptions(t)",
+          "significant": true
+        }
       },
       {
         "slot": 4,
         "dom_id": "focus-card-4",
-        "metric": "healthspan",
-        "chart_type": "systems",
-        "tab_label": "Healthspan",
-        "title": "Preserve whole-body function",
-        "summary_html": "The body’s main systems also decline with age, though not all at the same rate, which can gradually weaken overall function and resilience.",
-        "chart_caption": "SYSTEM FUNCTION VS LIFESPAN",
-        "why_panel": "This graph shows how the body’s main systems all decline over the lifespan, which is why preserving function longer matters for healthier aging.",
-        "chart_data": null,
-        "assigned_supplement": "Vitamin D",
-        "correlation": null
-      },
-      {
-        "slot": 5,
-        "dom_id": "focus-card-5",
         "metric": "HRV",
-        "chart_type": "variance",
-        "tab_label": "Variance",
-        "title": "Refine Baseline HRV",
-        "summary_html": "Your HRV is already elite. Only 23% of nights fall outside range. The goal is greater recovery robustness.",
-        "chart_caption": "Nightly HRV (RMSSD)",
-        "why_panel": "This graph shows that your HRV is already strong and mostly stays in range, with just a few nights still sitting outside it.",
+        "chart_type": "single_correlation",
+        "tab_label": "REM Sleep",
+        "title": "Improve REM Sleep",
+        "summary_html": "On nights when your REM Sleep dropped below 67 min, your next-day HRV tended to fall below 53 ms.",
+        "chart_caption": "Training intensity vs HRV",
+        "why_panel": "The upward direction of the regression line suggests that higher HRV is linked to more rem sleep, making rem sleep quality especially important for recovery.",
         "chart_data": {
-          "numDays": 30,
-          "seriesByDay": [
-            46.278416,
-            43.315247,
-            49.84873,
-            56.96931,
-            null,
-            49.892483,
-            45.60042,
-            46.207653,
-            46.77598,
-            46.151344,
-            46.94552,
-            42.345974,
-            43.618034,
-            null,
-            null,
-            51.240124,
-            null,
-            57.374928,
-            46.99453,
-            43.03888,
-            43.18898,
-            48.256687,
-            55.54408,
-            48.503765,
-            43.24861,
-            52.8369,
-            49.906597,
-            42.0221,
-            44.134567,
-            43.18766
+          "points": [
+            {
+              "x": 1.5880807426491603,
+              "y": 53
+            },
+            {
+              "x": 1.4392390200053857,
+              "y": 48
+            },
+            {
+              "x": 3.0189181688290114,
+              "y": 50
+            },
+            {
+              "x": 1.405441497469797,
+              "y": 57
+            },
+            {
+              "x": 1.927370740462173,
+              "y": 55
+            },
+            {
+              "x": 1.1222184791569063,
+              "y": 61
+            },
+            {
+              "x": 1.0541464574135118,
+              "y": 56
+            },
+            {
+              "x": 2.2719426042113255,
+              "y": 40
+            },
+            {
+              "x": 1.1105351436213262,
+              "y": 40
+            },
+            {
+              "x": 1.620798243452838,
+              "y": 50
+            },
+            {
+              "x": 0.7500539068224247,
+              "y": 51
+            },
+            {
+              "x": 0.46118350631575444,
+              "y": 63
+            },
+            {
+              "x": 2.0563364543381284,
+              "y": 46
+            },
+            {
+              "x": 2.1538718165969426,
+              "y": 49
+            }
           ],
-          "hrvByDay": [
-            46.278416,
-            43.315247,
-            49.84873,
-            56.96931,
-            null,
-            49.892483,
-            45.60042,
-            46.207653,
-            46.77598,
-            46.151344,
-            46.94552,
-            42.345974,
-            43.618034,
-            null,
-            null,
-            51.240124,
-            null,
-            57.374928,
-            46.99453,
-            43.03888,
-            43.18898,
-            48.256687,
-            55.54408,
-            48.503765,
-            43.24861,
-            52.8369,
-            49.906597,
-            42.0221,
-            44.134567,
-            43.18766
-          ],
-          "targetMin": 42.69556796538461,
-          "targetMax": 52.183471957692305,
-          "metricLabel": "HRV",
-          "unitLabel": "ms",
           "yAxisLabel": "HRV",
-          "titleLabel": "Nightly HRV (RMSSD)",
-          "lowerIsBetter": false
+          "xAxisLabel": "Training Intensity",
+          "yUnit": "ms",
+          "pointYLabel": "HRV"
         },
         "assigned_supplement": null,
-        "correlation": null
+        "correlation": {
+          "label": "HRV ~ REM",
+          "marginScore": 0.10400000000000004,
+          "csvKey": "HRV(t)|REM(t)",
+          "significant": true
+        }
       }
     ]
   }

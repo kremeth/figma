@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mitch Woodward — Quiz metrics over time (Apr 2026)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #151c26;
+      --ink: #e8edf4;
+      --muted: #8b98a8;
+      --grid: rgba(255, 255, 255, 0.06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 24px clamp(16px, 4vw, 40px) 48px;
+      line-height: 1.45;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    .source {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .source code { font-size: 0.8rem; }
+    .grid {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: 1fr;
+      max-width: 900px;
+    }
+    @media (min-width: 840px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+    .chart-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 18px 16px 12px;
+    }
+    .chart-card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0 0 4px;
+      color: var(--ink);
+    }
+    .chart-card p.note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 0 0 12px;
+    }
+    .chart-wrap {
+      position: relative;
+      height: 240px;
+    }
+    .chart-wrap--tall { height: 280px; }
+    footer {
+      margin-top: 28px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      max-width: 900px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Quiz metrics over time</h1>
+  <p class="source">Extracted from <code>quiz_data_Mitch_Woodward_APR_2026.json</code> — 3 weekly snapshots (Mar 30, Apr 6, Apr 13).</p>
+
+  <div class="grid">
+    <div class="chart-card">
+      <h2>Body weight</h2>
+      <p class="note">kg (single selected value per week)</p>
+      <div class="chart-wrap"><canvas id="chart-bw" aria-label="Body weight over time"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h2>Coffee consumption</h2>
+      <p class="note">Ordinal mapped to scale: 0 = none, 1.5 = 1–2 cups, 3 = 3–4, 4 = 4+ cups</p>
+      <div class="chart-wrap"><canvas id="chart-coffee" aria-label="Coffee consumption over time"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h2>Sun exposure</h2>
+      <p class="note">Ordinal mapped: 1.5 = 1–2 days, 3.5 = 3–4, 5 = 5+ days per week</p>
+      <div class="chart-wrap"><canvas id="chart-sun" aria-label="Sun exposure over time"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h2>Lifts over time</h2>
+      <p class="note">Barbell: <strong>volume = reps × weight (kg)</strong>. Apr 6 bench weight 12 kg in JSON — dashed = raw; solid = 120 kg if typo. Below: pull-ups, push-ups (reps), plank (min).</p>
+      <div class="chart-wrap" style="height: 220px;"><canvas id="chart-lifts" aria-label="Barbell lift volume over time"></canvas></div>
+      <div class="chart-wrap" style="height: 200px; margin-top: 8px;"><canvas id="chart-cal" aria-label="Calisthenics and plank over time"></canvas></div>
+    </div>
+  </div>
+
+  <footer>
+    Coffee and sun are Likert-style buckets, not daily logs — charts show week-to-week category changes. Lifts reflect the performance fields recorded each quiz (best-effort entries).
+  </footer>
+
+  <script>
+    const labels = ["Mar 30", "Apr 6", "Apr 13"];
+
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: "#c5cdd8", font: { size: 11 } },
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: "rgba(255,255,255,0.06)" },
+          ticks: { color: "#8b98a8", maxRotation: 0 },
+        },
+        y: {
+          grid: { color: "rgba(255,255,255,0.06)" },
+          ticks: { color: "#8b98a8" },
+        },
+      },
+    };
+
+    // quiz_data_Mitch_Woodward_APR_2026.json — ordered by time
+    const bw = [90, 88, 88];
+
+    // Coffee / sun: buckets from JSON → numeric scale (see card notes)
+    const coffee = [4, 1.5, 1.5]; // 4+ cups, 1–2 cups, 1–2 cups
+    const sun = [5, 1.5, 1.5]; // 5+ days, 1–2 days, 1–2 days
+
+    // Barbell volume (reps × kg) — from Performance_* in quiz JSON
+    const benchReps = [8, 8, 10];
+    const benchWtAdj = [120, 120, 150];
+    const squatReps = [15, 8, 7];
+    const squatWt = [140, 120, 100];
+    const deadReps = [6, 6, 6];
+    const deadWt = [140, 140, 120];
+    const vol3 = (r, w) => [0, 1, 2].map((i) => r[i] * w[i]);
+    const benchVolAdj = vol3(benchReps, benchWtAdj);
+    const squatVol = vol3(squatReps, squatWt);
+    const deadVol = vol3(deadReps, deadWt);
+
+    const pullups = [15, 15, 0];
+    const pushups = [30, 30, 22];
+    const plankMin = [3, 3, 3]; // minutes
+
+    new Chart(document.getElementById("chart-bw"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Weight (kg)",
+            data: bw,
+            borderColor: "#60a5fa",
+            backgroundColor: "rgba(96,165,250,0.15)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 5,
+          },
+        ],
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: { ...commonOptions.scales.y, title: { display: true, text: "kg", color: "#6b7a8c" } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("chart-coffee"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Coffee (ordinal scale)",
+            data: coffee,
+            borderColor: "#d4a574",
+            backgroundColor: "rgba(212,165,116,0.12)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 5,
+          },
+        ],
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: {
+            ...commonOptions.scales.y,
+            min: 0,
+            max: 4.5,
+            title: { display: true, text: "Scale", color: "#6b7a8c" },
+          },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("chart-sun"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Sun (ordinal scale)",
+            data: sun,
+            borderColor: "#fbbf24",
+            backgroundColor: "rgba(251,191,36,0.12)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 5,
+          },
+        ],
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: {
+            ...commonOptions.scales.y,
+            min: 0,
+            max: 5.5,
+            title: { display: true, text: "Scale", color: "#6b7a8c" },
+          },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("chart-lifts"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Bench (reps×kg, Apr 6 wt→120)",
+            data: benchVolAdj,
+            borderColor: "#38bdf8",
+            tension: 0.2,
+            pointRadius: 4,
+          },
+          {
+            label: "Squat (reps×kg)",
+            data: squatVol,
+            borderColor: "#4ade80",
+            tension: 0.2,
+            pointRadius: 4,
+          },
+          {
+            label: "Deadlift (reps×kg)",
+            data: deadVol,
+            borderColor: "#f472b6",
+            tension: 0.2,
+            pointRadius: 4,
+          },
+        ],
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: { ...commonOptions.scales.y, title: { display: true, text: "reps × kg", color: "#6b7a8c" } },
+        },
+      },
+    });
+
+    new Chart(document.getElementById("chart-cal"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Pull-ups (reps)",
+            data: pullups,
+            borderColor: "#a78bfa",
+            tension: 0.2,
+            yAxisID: "y",
+          },
+          {
+            label: "Push-ups (reps)",
+            data: pushups,
+            borderColor: "#2dd4bf",
+            tension: 0.2,
+            yAxisID: "y",
+          },
+          {
+            label: "Plank (min)",
+            data: plankMin,
+            borderColor: "#fb923c",
+            tension: 0.2,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: "#c5cdd8", font: { size: 11 } } },
+        },
+        scales: {
+          x: {
+            grid: { color: "rgba(255,255,255,0.06)" },
+            ticks: { color: "#8b98a8" },
+          },
+          y: {
+            type: "linear",
+            position: "left",
+            grid: { color: "rgba(255,255,255,0.06)" },
+            ticks: { color: "#8b98a8" },
+            title: { display: true, text: "Reps", color: "#6b7a8c" },
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            grid: { drawOnChartArea: false },
+            ticks: { color: "#fb923c" },
+            title: { display: true, text: "Plank (min)", color: "#fb923c" },
+          },
+        },
+      },
+    });
+  </script>
+</body>
+</html>

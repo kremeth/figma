@@ -2314,7 +2314,7 @@ if (typeof module !== "undefined" && require.main === module) {
 
   /** Same idea as populate-health-report.mjs: inputs relative to this script’s folder. */
   const ROOT = __dirname;
-  const DEFAULT_RAW_FILE = "raw_data5.json";
+  const DEFAULT_RAW_FILE = "raw_data_c.json";
 
   const argRaw = process.argv[2];
   let resolvedRaw;

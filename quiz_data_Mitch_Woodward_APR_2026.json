@@ -1,0 +1,425 @@
+{
+  "userId": "3I7g7a4t2dSbvc3I4v4pagEs3fx2",
+  "extracted_at": "2026-04-19T23:38:19.024Z",
+  "quizData": {
+    "2026-03-30T05:14:56.607Z": {
+      "SupplementConsistency": {
+        "Mon, Mar 23": true,
+        "Tue, Mar 24": true,
+        "Wed, Mar 25": true,
+        "Thu, Mar 26": true,
+        "Fri, Mar 27": true,
+        "Sat, Mar 28": true,
+        "Sun, Mar 29": true
+      },
+      "UsualFood": {
+        "Berries (strawberries, blueberries, raspberries)": true,
+        "Leafy greens (spinach, kale, arugula)": true,
+        "Root vegetables (carrots, beets, potatoes)": true,
+        "Chicken": true,
+        "Beef": true,
+        "Eggs": true,
+        "Nuts and seeds (almonds, walnuts, chia seeds)": true,
+        "Wheat (bread, pasta)": true,
+        "Rice (white, brown)": true,
+        "Yogurt": true,
+        "Olive oil": true,
+        "Chocolate": true
+      },
+      "NeverFood": {
+        "Pork": true,
+        "Fish (salmon, tuna, cod)": false,
+        "Tofu": true,
+        "Tempeh": true,
+        "Beans (black beans, chickpeas, lentils)": true,
+        "Quinoa": true,
+        "Oats": true,
+        "Barley": true,
+        "Corn": true,
+        "Milk": true,
+        "Cheese": true,
+        "Chips": true,
+        "Ice cream": true
+      },
+      "OtherSupplements": {
+        "Creatine": true,
+        "Protein Powder": true,
+        "Amino Acids": true,
+        "Pre-workout": false
+      },
+      "PortionSize": {
+        "Average": true
+      },
+      "MealComposition": {
+        "Balanced (protein, veggies, some starches)": true
+      },
+      "CheatMeals": {
+        "1-2 meals": true
+      },
+      "Goals": {
+        "Improving your Sleep": true,
+        "Boosting your Endurance": true,
+        "Boosting your Strength": true,
+        "Losing Body Fat": true,
+        "Boosting your daily Energy": true,
+        "Improving your Recovery": true,
+        "Reducing your Body Inflammations": true
+      },
+      "BodyWeight": {
+        "90": true
+      },
+      "CoffeeConsumption": {
+        "4+ cups": true
+      },
+      "SunExposure": {
+        "5+ days": true
+      },
+      "EnduranceTraining": {
+        "Correct": true
+      },
+      "EnduranceExertion": {
+        "Easier than expected": true
+      },
+      "StrengthTraining": {
+        "Correct": true
+      },
+      "StrengthExertion": {
+        "As expected": true
+      },
+      "StrengthExerciseToTrack": {
+        "Bench Press": true,
+        "Squats": true,
+        "Plank": true,
+        "Deadlift": true,
+        "Wall Climbing": false,
+        "Pull-ups": true,
+        "Push-ups": true
+      },
+      "Performance_Bench Press": {
+        "reps": 8,
+        "weightInteger": 120,
+        "weightDecimal": 0
+      },
+      "Performance_Squats": {
+        "reps": 15,
+        "weightInteger": 140,
+        "weightDecimal": 0
+      },
+      "Performance_Plank": {
+        "hours": 0,
+        "minutes": 3,
+        "seconds": 0
+      },
+      "Performance_Deadlift": {
+        "reps": 6,
+        "weightInteger": 140,
+        "weightDecimal": 0
+      },
+      "Performance_Pull-ups": {
+        "reps": 15
+      },
+      "Performance_Push-ups": {
+        "reps": 30
+      },
+      "MuscleSoreness": {
+        "None": true
+      },
+      "Inflammation": {
+        "Mild": true
+      },
+      "EnergyLevels": {
+        "Normal": true
+      },
+      "sleepQuality": {
+        "Fairly good": true
+      },
+      "sleepLatency": {
+        "16-30min": true
+      },
+      "sleepDisturbances": {
+        "More than twice": true
+      },
+      "sleepMedication": {
+        "More than twice": true
+      },
+      "sleepDaytimeTiredness": {
+        "Not this week": true
+      }
+    },
+    "2026-04-06T02:58:09.010Z": {
+      "SupplementConsistency": {
+        "Mon, Mar 30": true,
+        "Tue, Mar 31": true,
+        "Wed, Apr 1": true,
+        "Thu, Apr 2": true,
+        "Fri, Apr 3": true,
+        "Sat, Apr 4": true,
+        "Sun, Apr 5": true
+      },
+      "UsualFood": {
+        "Chicken": true,
+        "Nuts and seeds (almonds, walnuts, chia seeds)": true,
+        "Yogurt": true,
+        "Olive oil": true,
+        "Berries (strawberries, blueberries, raspberries)": true,
+        "Wheat (bread, pasta)": true,
+        "Beef": true,
+        "Rice (white, brown)": true,
+        "Leafy greens (spinach, kale, arugula)": true,
+        "Eggs": true,
+        "Chocolate": true,
+        "Root vegetables (carrots, beets, potatoes)": true
+      },
+      "NeverFood": {
+        "Cheese": true,
+        "Tofu": true,
+        "Corn": true,
+        "Pork": true,
+        "Oats": true,
+        "Barley": true,
+        "Milk": true,
+        "Chips": true,
+        "Ice cream": true,
+        "Tempeh": true,
+        "Quinoa": true,
+        "Beans (black beans, chickpeas, lentils)": true,
+        "Fish (salmon, tuna, cod)": false,
+        "Cucumbers": false
+      },
+      "OtherSupplements": {
+        "Amino Acids": true,
+        "Protein Powder": true,
+        "Creatine": true,
+        "Pre-workout": false
+      },
+      "PortionSize": {
+        "Average": true
+      },
+      "MealComposition": {
+        "Balanced (protein, veggies, some starches)": true
+      },
+      "CheatMeals": {
+        "1-2 meals": true
+      },
+      "Goals": {
+        "Improving your Recovery": true,
+        "Losing Body Fat": true,
+        "Boosting your daily Energy": true,
+        "Improving your Sleep": true,
+        "Boosting your Endurance": true,
+        "Reducing your Body Inflammations": true,
+        "Boosting your Strength": true
+      },
+      "BodyWeight": {
+        "88": true
+      },
+      "CoffeeConsumption": {
+        "1-2 cups": true
+      },
+      "SunExposure": {
+        "1-2 days": true
+      },
+      "EnduranceTraining": {
+        "Correct": true
+      },
+      "EnduranceExertion": {
+        "As expected": true
+      },
+      "StrengthTraining": {
+        "Correct": true
+      },
+      "StrengthExertion": {
+        "As expected": true
+      },
+      "Performance_Pull-ups": {
+        "reps": 15
+      },
+      "Performance_Push-ups": {
+        "reps": 30
+      },
+      "Performance_Bench Press": {
+        "reps": 8,
+        "weightInteger": 12,
+        "weightDecimal": 0
+      },
+      "Performance_Squats": {
+        "reps": 8,
+        "weightInteger": 120,
+        "weightDecimal": 0
+      },
+      "Performance_Deadlift": {
+        "reps": 6,
+        "weightInteger": 140,
+        "weightDecimal": 0
+      },
+      "Performance_Plank": {
+        "hours": 0,
+        "minutes": 3,
+        "seconds": 0
+      },
+      "MuscleSoreness": {
+        "None": true
+      },
+      "Inflammation": {
+        "None": true
+      },
+      "EnergyLevels": {
+        "Normal": true
+      },
+      "sleepQuality": {
+        "Fairly good": true
+      },
+      "sleepLatency": {
+        "16-30min": true
+      },
+      "sleepDisturbances": {
+        "More than twice": true
+      },
+      "sleepMedication": {
+        "Not this week": true
+      },
+      "sleepDaytimeTiredness": {
+        "Not this week": true
+      }
+    },
+    "2026-04-13T13:59:08.642Z": {
+      "SupplementConsistency": {
+        "Mon, Apr 6": true,
+        "Tue, Apr 7": true,
+        "Wed, Apr 8": true,
+        "Thu, Apr 9": true,
+        "Fri, Apr 10": true,
+        "Sat, Apr 11": true,
+        "Sun, Apr 12": true
+      },
+      "UsualFood": {
+        "Berries (strawberries, blueberries, raspberries)": true,
+        "Wheat (bread, pasta)": true,
+        "Beef": true,
+        "Eggs": true,
+        "Yogurt": true,
+        "Chicken": true,
+        "Rice (white, brown)": true,
+        "Olive oil": true,
+        "Leafy greens (spinach, kale, arugula)": true,
+        "Chocolate": true,
+        "Root vegetables (carrots, beets, potatoes)": true,
+        "Nuts and seeds (almonds, walnuts, chia seeds)": true
+      },
+      "NeverFood": {
+        "Fish (salmon, tuna, cod)": false,
+        "Tofu": true,
+        "Tempeh": true,
+        "Ice cream": true,
+        "Milk": true,
+        "Pork": true,
+        "Corn": true,
+        "Beans (black beans, chickpeas, lentils)": true,
+        "Cucumbers": false,
+        "Cheese": true,
+        "Barley": true,
+        "Chips": true,
+        "Oats": true,
+        "Quinoa": true
+      },
+      "OtherSupplements": {
+        "Pre-workout": false,
+        "Creatine": true,
+        "Protein Powder": true,
+        "Amino Acids": true
+      },
+      "PortionSize": {
+        "Average": true
+      },
+      "MealComposition": {
+        "Balanced (protein, veggies, some starches)": true
+      },
+      "CheatMeals": {
+        "1-2 meals": true
+      },
+      "Goals": {
+        "Losing Body Fat": true,
+        "Improving your Sleep": true,
+        "Improving your Recovery": true,
+        "Boosting your Endurance": true,
+        "Boosting your Strength": true,
+        "Boosting your daily Energy": true,
+        "Reducing your Body Inflammations": true
+      },
+      "BodyWeight": {
+        "88": true
+      },
+      "AlcoholConsumption": {
+        "Fri, Apr 10": true
+      },
+      "CoffeeConsumption": {
+        "1-2 cups": true
+      },
+      "SunExposure": {
+        "1-2 days": true
+      },
+      "EnduranceTraining": {
+        "Correct": true
+      },
+      "EnduranceExertion": {
+        "As expected": true
+      },
+      "StrengthTraining": {
+        "Correct": true
+      },
+      "StrengthExertion": {
+        "As expected": true
+      },
+      "Performance_Deadlift": {
+        "reps": 6,
+        "weightInteger": 120,
+        "weightDecimal": 0
+      },
+      "Performance_Pull-ups": {
+        "reps": 0
+      },
+      "Performance_Bench Press": {
+        "reps": 10,
+        "weightInteger": 150,
+        "weightDecimal": 0
+      },
+      "Performance_Push-ups": {
+        "reps": 22
+      },
+      "Performance_Squats": {
+        "reps": 7,
+        "weightInteger": 100,
+        "weightDecimal": 0
+      },
+      "Performance_Plank": {
+        "hours": 0,
+        "minutes": 3,
+        "seconds": 0
+      },
+      "MuscleSoreness": {
+        "None": true
+      },
+      "Inflammation": {
+        "Mild": true
+      },
+      "EnergyLevels": {
+        "Normal": true
+      },
+      "sleepQuality": {
+        "Fairly bad": true
+      },
+      "sleepLatency": {
+        "31-60min": true
+      },
+      "sleepDisturbances": {
+        "More than twice": true
+      },
+      "sleepMedication": {
+        "Once": true
+      },
+      "sleepDaytimeTiredness": {
+        "Not this week": true
+      }
+    }
+  }
+}

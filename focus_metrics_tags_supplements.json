@@ -1,76 +1,80 @@
 [
   {
     "order": 1,
-    "metric": "HRV",
-    "tag": "hrv",
+    "metric": "REM",
+    "tag": "recovery",
     "tier": 1,
-    "graph_type": "cohort",
-    "correlation_source": "HRV fallback",
-    "researchKey": "hrv",
+    "graph_type": "single_correlation",
+    "correlation_source": "REM(t)|Training Intensity(t-1)",
+    "researchKey": "recovery",
     "supplements": {
       "mostResearched": {
-        "supplement": "Iron",
-        "score": 27.5,
+        "supplement": "Vitamin E",
+        "score": 28.5,
         "impact": "Very High"
       },
-      "emergingResearch": null
+      "emergingResearch": {
+        "supplement": "Rhodiola Rosea",
+        "score": 28,
+        "impact": "Very High"
+      }
     }
   },
   {
     "order": 2,
-    "metric": "Disruptions",
-    "tag": "sleep_quality",
+    "metric": "DeepSleep",
+    "tag": "deep_sleep",
     "tier": 1,
     "graph_type": "cohort",
-    "correlation_source": "Disruptions fallback",
-    "researchKey": "sleep_quality",
+    "correlation_source": "DeepSleep fallback",
+    "researchKey": "deep_sleep",
     "supplements": {
       "mostResearched": {
         "supplement": "Probiotics",
-        "score": 25.5,
-        "impact": "High"
+        "score": 27.5,
+        "impact": "Very High"
       },
       "emergingResearch": {
-        "supplement": "L-Theanine",
-        "score": 25.5,
+        "supplement": "Tongkat Ali",
+        "score": 24.5,
         "impact": "High"
       }
     }
   },
   {
     "order": 3,
-    "metric": "healthspan",
-    "tag": "healthspan",
-    "tier": 5,
-    "graph_type": "healthspan",
-    "correlation_source": "healthspan fallback",
-    "researchKey": "healthspan",
+    "metric": "LightSleep",
+    "tag": "sleep_disruptions",
+    "tier": 1,
+    "graph_type": "single_correlation",
+    "correlation_source": "LightSleep(t)|Disruptions(t)",
+    "researchKey": "sleep_disruptions",
     "supplements": {
       "mostResearched": {
-        "supplement": "Magnesium",
-        "score": 28.5,
+        "supplement": "Ashwagandha",
+        "score": 26,
         "impact": "Very High"
       },
       "emergingResearch": {
-        "supplement": "Vitamin B12",
-        "score": 28.5,
-        "impact": "Very High"
+        "supplement": "L-Theanine",
+        "score": 25,
+        "impact": "High"
       }
     }
   },
   {
     "order": 4,
-    "metric": "healthspan",
-    "tag": "healthspan",
-    "tier": 5,
-    "graph_type": "systems",
-    "correlation_source": "healthspan fallback",
-    "researchKey": "healthspan",
+    "metric": "HRV",
+    "tag": "rem_sleep",
+    "tier": 2,
+    "graph_type": "single_correlation",
+    "correlation_source": "HRV(t)|REM(t)",
+    "researchKey": "rem_sleep",
     "supplements": {
       "mostResearched": {
         "supplement": "Vitamin D",
-        "score": 23.5,
-        "impact": "High"
+        "score": 28,
+        "impact": "Very High"
       },
       "emergingResearch": null
     }

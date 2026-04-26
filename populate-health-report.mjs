@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 /**
  * Fills nutricode-health-report.html from raw_data.json + cohort JSON files.
- * Run from repo root: node populate-health-report.mjs
+ *
+ * Run from repo root:
+ *   node populate-health-report.mjs
+ *   node populate-health-report.mjs --input extraction_Rajeev_Singh_whoop_APR_2026.json
+ *   node populate-health-report.mjs --input extraction_Rajeev_Singh_whoop_APR_2026.json --out nutricode-health-report-rajeev-singh.html
+ *
+ * Extraction exports use top-level `visualization` (+ optional `info`); legacy shape uses
+ * `connect_device_recommendation.metric_analysis.visualization`.
  */
 import fs from 'fs';
 import path from 'path';
@@ -11,6 +18,58 @@ import { createRequire } from 'module';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = __dirname;
 
+/** Map extraction (`visualization` at root) or legacy `raw_data2.json` into one shape. */
+function normalizeRawInput(data) {
+  if (!data || typeof data !== 'object') {
+    throw new Error('Invalid JSON root');
+  }
+  const legacyViz = data?.connect_device_recommendation?.metric_analysis?.visualization;
+  if (legacyViz && typeof legacyViz === 'object') {
+    return data;
+  }
+  const extViz = data.visualization;
+  if (extViz && typeof extViz === 'object') {
+    return {
+      info: data.info,
+      connect_device_recommendation: {
+        metric_analysis: {
+          device: data.device,
+          generated_at: data.generated_at,
+          window_note: data.window_note,
+          date_range: data.date_range,
+          visualization: extViz,
+          info: data.info,
+        },
+      },
+    };
+  }
+  throw new Error(
+    'JSON must include either connect_device_recommendation.metric_analysis.visualization or top-level visualization'
+  );
+}
+
+function parseCli(argv) {
+  let inputFile = 'raw_data_c.json';
+  let outHtml = path.join(root, 'nutricode-health-report.html');
+  for (let i = 2; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--input' && argv[i + 1]) {
+      inputFile = argv[++i];
+      continue;
+    }
+    if (a === '--out' && argv[i + 1]) {
+      const p = argv[++i];
+      outHtml = path.isAbsolute(p) ? p : path.join(root, p);
+      continue;
+    }
+  }
+  const reportDataOut =
+    outHtml === path.join(root, 'nutricode-health-report.html')
+      ? path.join(root, 'report_data.json')
+      : `${path.join(path.dirname(outHtml), path.parse(outHtml).name)}.report_data.json`;
+  return { inputFile, outHtml, reportDataOut };
+}
+
 const require = createRequire(import.meta.url);
 const {
   optimalBand: varianceOptimalBand,
@@ -18,9 +77,14 @@ const {
   analyzeSeries: varianceAnalyzeSeries,
 } = require('./varianceRules.js');
 
-const readJson = (f) => JSON.parse(fs.readFileSync(path.join(root, f), 'utf8'));
+function readJson(f) {
+  const full = path.isAbsolute(f) ? f : path.join(root, f);
+  return JSON.parse(fs.readFileSync(full, 'utf8'));
+}
 
-const raw = readJson('raw_data2.json');
+const cli = parseCli(process.argv);
+const inputPath = path.isAbsolute(cli.inputFile) ? cli.inputFile : path.join(root, cli.inputFile);
+const raw = normalizeRawInput(readJson(cli.inputFile));
 const bottom10 = readJson('bottom10_percent.json');
 const normative = readJson('normative_metrics.json');
 const top10 = readJson('top10_percent.json');
@@ -84,11 +148,114 @@ const mainCardsRows = parseCsv(
   fs.readFileSync(path.join(root, 'correlation_cards - main_cards.csv'), 'utf8')
 );
 
+/** Report uses at most this many recent days (Whoop extractions can include full history). */
+const REPORT_LAST_DAYS = 30;
+
+/**
+ * Remap string keys "1".."N" to "1".."keepDays" using the last `keepDays` days (1-based indices).
+ */
+function remapDayKeyedSeries(seriesObj, totalDaysOld, keepDays) {
+  if (!seriesObj || typeof seriesObj !== 'object' || Array.isArray(seriesObj)) return seriesObj;
+  if (totalDaysOld <= keepDays) return seriesObj;
+  const start = totalDaysOld - keepDays + 1;
+  const out = {};
+  for (let i = 0; i < keepDays; i++) {
+    const oldKey = String(start + i);
+    const newKey = String(i + 1);
+    if (Object.prototype.hasOwnProperty.call(seriesObj, oldKey)) {
+      out[newKey] = seriesObj[oldKey];
+    }
+  }
+  return out;
+}
+
+/** Map average_intensity (Whoop) to HR zone bucket 0–5 for aggregating duration. */
+function intensityToHrZone(intensity) {
+  if (intensity == null || !Number.isFinite(Number(intensity))) return 0;
+  const x = Number(intensity);
+  if (x < 0.45) return 0;
+  if (x < 0.75) return 1;
+  if (x < 1.05) return 2;
+  if (x < 1.35) return 3;
+  if (x < 1.65) return 4;
+  return 5;
+}
+
+/** Rebuild `total_activity` from per-day rows so HR zones + sport list match the trimmed window. */
+function rebuildTotalActivityFromDaily(daily, numDays) {
+  const acc = {};
+  for (let d = 1; d <= numDays; d++) {
+    const row = daily?.[String(d)];
+    if (!row || typeof row !== 'object') continue;
+    for (const [name, o] of Object.entries(row)) {
+      if (name === 'total') continue;
+      if (!o || typeof o !== 'object') continue;
+      const dur = o.total_duration;
+      if (dur == null || !Number.isFinite(Number(dur)) || Number(dur) <= 0) continue;
+      const sec = Math.round(Number(dur));
+      const z = intensityToHrZone(o.average_intensity);
+      if (!acc[name]) {
+        acc[name] = {
+          total_duration: 0,
+          total: 0,
+          time_zone_0: 0,
+          time_zone_1: 0,
+          time_zone_2: 0,
+          time_zone_3: 0,
+          time_zone_4: 0,
+          time_zone_5: 0,
+        };
+      }
+      acc[name].total_duration += sec;
+      acc[name].total += 1;
+      const tz = `time_zone_${z}`;
+      acc[name][tz] = (acc[name][tz] || 0) + sec;
+    }
+  }
+  return acc;
+}
+
+/**
+ * Restrict visualization to the last `keepDays` calendar days: meta, metrics, daily_activity,
+ * and a rebuilt total_activity. No-op if `date_keys` length <= keepDays.
+ */
+function trimVisualizationToLastNDays(viz, keepDays) {
+  if (!viz || typeof viz !== 'object' || !Number.isFinite(keepDays) || keepDays < 1) return;
+  const meta = viz.meta;
+  if (!meta || !Array.isArray(meta.date_keys) || meta.date_keys.length === 0) return;
+  const N = meta.date_keys.length;
+  if (N <= keepDays) return;
+
+  const sliceKeys = meta.date_keys.slice(-keepDays);
+  meta.date_keys = sliceKeys;
+  meta.num_days = sliceKeys.length;
+  meta.start_date = sliceKeys[0];
+  meta.end_date = sliceKeys[sliceKeys.length - 1];
+
+  const mets = viz.metrics;
+  if (mets && typeof mets === 'object') {
+    for (const key of Object.keys(mets)) {
+      const series = mets[key];
+      if (series && typeof series === 'object' && !Array.isArray(series)) {
+        mets[key] = remapDayKeyedSeries(series, N, keepDays);
+      }
+    }
+  }
+
+  if (viz.daily_activity && typeof viz.daily_activity === 'object') {
+    viz.daily_activity = remapDayKeyedSeries(viz.daily_activity, N, keepDays);
+  }
+
+  viz.total_activity = rebuildTotalActivityFromDaily(viz.daily_activity, keepDays);
+}
+
 const viz = raw?.connect_device_recommendation?.metric_analysis?.visualization;
 if (!viz) {
-  console.error('Missing connect_device_recommendation.metric_analysis.visualization in raw_data.json');
+  console.error('Missing visualization data (check --input file).');
   process.exit(1);
 }
+
+trimVisualizationToLastNDays(viz, REPORT_LAST_DAYS);
 
 const meta = viz.meta;
 const m = viz.metrics;
@@ -2129,30 +2296,6 @@ function buildFocusSlotFromFm(fm, cardIndex) {
 
 const focusSlotsResolved = sortedFocusMetrics.slice(0, 4).map((fm, idx) => buildFocusSlotFromFm(fm, idx + 1));
 
-/** Fifth carousel card: nightly variance band (HRV); main_cards copy only (no correlation overlay). */
-function buildVarianceShowcaseSlot(cardIndex) {
-  const metric = 'HRV';
-  const graphType = 'variance';
-  const data = focusChartDataForGraphType(graphType, metric);
-  const cap = focusCaptionForGraphType(graphType, metric);
-  const csvGraph = mainCardsCsvGraph(graphType);
-  const csvMetric = METRIC_TO_CSV_METRIC[metric];
-  const csvVersion = mainCardsCsvVersion(graphType, metric);
-  const csvText = mainCardText(csvMetric, csvGraph, csvVersion, cardIndex);
-  return {
-    metric,
-    graphType,
-    csvGraph,
-    data,
-    title: escapeHtmlText(csvText.title),
-    summary: interpolateMainCardCopy(csvText.summary, metric, csvMetric, csvGraph, csvVersion),
-    cap,
-    why: interpolateMainCardCopy(csvText.why, metric, csvMetric, csvGraph, csvVersion),
-    corr: null,
-    dotLabel: 'Variance',
-  };
-}
-
 function focusDotLabelForStackIndex(idx, stackSlot) {
   if (stackSlot?.dotLabel) return stackSlot.dotLabel;
   if (idx < sortedFocusMetrics.length) {
@@ -2162,8 +2305,8 @@ function focusDotLabelForStackIndex(idx, stackSlot) {
   return stackSlot?.cap || `Slide ${idx + 1}`;
 }
 
-/** Focus carousel: top four priority cards + optional fifth (variance showcase). */
-const focusStackSlots = [...focusSlotsResolved, buildVarianceShowcaseSlot(5)];
+/** Focus carousel: top four priority cards (correlation / main_cards). */
+const focusStackSlots = [...focusSlotsResolved];
 
 const focusSlotChartSpecs = focusStackSlots.map((s) =>
   s.graphType === 'healthspan' ||
@@ -3084,6 +3227,8 @@ if (process.argv.includes('--debug-limiting-metrics')) {
   logLimitingMetricsDebug();
 }
 
-fs.writeFileSync(path.join(root, 'report_data.json'), `${JSON.stringify(reportData, null, 2)}\n`, 'utf8');
-fs.writeFileSync(path.join(root, 'nutricode-health-report.html'), html, 'utf8');
-console.log('Updated nutricode-health-report.html and report_data.json from raw_data2.json + focus order.');
+fs.writeFileSync(cli.reportDataOut, `${JSON.stringify(reportData, null, 2)}\n`, 'utf8');
+fs.writeFileSync(cli.outHtml, html, 'utf8');
+console.log(
+  `Wrote ${path.relative(root, cli.outHtml) || cli.outHtml} and ${path.relative(root, cli.reportDataOut) || cli.reportDataOut} from ${path.relative(root, inputPath) || inputPath}.`
+);
